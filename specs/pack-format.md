@@ -1,111 +1,236 @@
 # Pack format requirements
 
-## Status
+## Status and identity
 
-This is a pre-schema contract for review. It defines required semantics without
-choosing a serialization format or final manifest shape. Implementations and
-examples must not treat headings or prose ordering here as a field layout.
+This document defines the first-pass pack contract,
+`spine.pack-manifest.v1`. Its machine-readable authority is
+`contracts/schemas/spine-pack-manifest.v1.schema.json`, identified by:
 
-## Pack identity
+```text
+https://spine-packs.local/contracts/schemas/spine-pack-manifest.v1.schema.json
+```
 
-A pack must have a stable identity that is distinct from its display name and
-does not depend on an owner or environment. The identity must be sufficient to
-disambiguate dependency references and released artifacts. Renaming rules,
-namespace ownership, allowed characters, and collision governance are
-**unsettled**.
+Manifests MUST be UTF-8 JSON objects and MUST declare
+`manifest_schema=spine.pack-manifest.v1`. YAML, TOML, split manifests, comments,
+and alternate encodings are not supported by v1.
 
-`kinflow-starter` is reserved in this repository as the first candidate pack;
-the reservation is not a released manifest.
+Every object is closed. Unknown fields, duplicate JSON object member names,
+missing required fields, and invalid field types MUST fail validation. V1 has
+no optional fields. `description` is required for archetypes and profiles but
+is explicitly nullable; absent and `null` are not equivalent.
 
-## Versioning and immutability
+## Pack identity and version
 
-Every installable pack must identify one explicit version. A released
-identity/version pair is immutable: content, compatibility claims, dependency
-references, and ordering semantics must not change after release. A semantic
-change requires a new version.
+`pack_id` MUST match `^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$` and contain at most 64
+characters. It is owner-neutral and stable across versions.
 
-The version grammar, prerelease policy, release marker, artifact digest, and
-signing or provenance mechanism are **unsettled**. Until they are reviewed, no
-pack in this repository is installable or released.
+Version 1 supports two lifecycle forms:
+
+- a draft version matching semantic version core plus
+  `-draft.<positive-decimal>`, paired with `status=draft`; or
+- a stable semantic version with no prerelease or build suffix, paired with
+  `status=released`.
+
+Numeric components MUST NOT contain leading zeroes. `1.0.0-draft.1` is a draft
+toward `1.0.0`; it is not the `1.0.0` release.
+
+Draft content MAY change before release, but its content digest MUST be updated.
+Once a manifest is published with `status=released`, the entire pack
+identity/version/digest tuple and its content are immutable. Any later semantic,
+compatibility, or metadata change requires a new stable pack version.
+
+## Top-level shape
+
+A v1 manifest contains exactly:
+
+- `manifest_schema`;
+- `pack`, containing `pack_id`, `version`, and `status`;
+- `compatibility`;
+- `dependencies`;
+- `archetypes`;
+- `notification_profiles`;
+- `binding_intents`; and
+- `content_identity`.
+
+The first schema requires at least one archetype, one notification profile, and
+one binding intent because it establishes the complete vertical-slice shape.
+
+## Compatibility
+
+`compatibility.spine_runtime_versions` and
+`compatibility.spine_content_contracts` are required exact allowlists governed
+by `specs/compatibility.md`. They MUST be unique and deterministically ordered.
+The content-contract list describes definition semantics only and MUST NOT be
+used as proof that every contract needed by a future installer command is
+available.
+
+## Dependencies
+
+`dependencies` is required and MUST be an empty array in
+`spine.pack-manifest.v1`. A future manifest-contract version must define pack
+reference identity, version selection, integrity, cycle handling, and ordering
+before dependencies may be added. An installer MUST fail closed rather than
+ignore a non-empty dependency array.
 
 ## Archetypes
 
-A pack may declare owner-neutral archetype definitions. Each definition must
-have a stable pack-local key and enough semantic content for a future installer
-to compare it with Spine's authoritative definition. Archetypes must not embed
-owner IDs or environment-specific facts.
+Each archetype contains exactly:
 
-The required archetype fields, normalization rules, and semantic-equivalence
-algorithm are **unsettled** and must align with Spine's reviewed public
-contracts before a schema is created.
+- `archetype_key`, matching Spine's public catalog-key grammar;
+- `intended_status`, currently fixed to `active`; and
+- `revision`, containing required `display_name`, required nullable
+  `description`, and required `compatible_item_types`.
 
-## Notification profiles
+The revision shape is the owner-neutral semantic subset of Spine
+`item_archetype.create`. Owner, command, actor, timestamp, generated ID,
+revision ID, receipt, and normalized hash fields are forbidden.
 
-A pack may declare owner-neutral notification-profile definitions. Each profile
-must have a stable pack-local key and semantic content that can be compared
-through Spine's public command surface. Profiles must not embed delivery
-targets, subjects, routes, credentials, owner IDs, or environment-specific
-facts.
+Compatible item types are a sorted, unique, non-empty subset of `event` and
+`task`. Archetype keys MUST be unique within the pack.
 
-The boundary between reusable profile policy and operator-supplied delivery
-configuration, plus the profile equivalence rules, is **unsettled**.
+## Notification profiles and templates
 
-## Bindings
+Each profile contains exactly:
 
-Spine is the sole authority for bindings. If the reviewed format permits a pack
-to express binding intent, that intent must be owner-neutral and may refer only
-to definitions by stable pack-local or dependency-qualified references. A
-reusable pack must not identify an owner, subject, route, delivery target, or
-environment.
+- `profile_key`, matching Spine's public catalog-key grammar;
+- required `display_name` and required nullable `description`;
+- `intended_status`, currently fixed to `active`; and
+- `revision`, containing required `compatible_item_types` and `templates`.
 
-Materializing a binding would require explicit installation inputs and Spine's
-public command surface. Whether packs should contain binding templates at all,
-which relationships they may express, and how required operator inputs are
-declared are **unsettled**. No binding syntax is established here.
+V1 templates contain exactly `template_key`, `schedule`, and `late_handling`.
+The v1 schedule subset is intentionally narrow:
 
-## Dependency references
+```json
+{
+  "kind": "once",
+  "at": {
+    "kind": "target_offset",
+    "offset_basis": "elapsed",
+    "offset_seconds": "-86400"
+  }
+}
+```
 
-A dependency reference must unambiguously identify a pack and a compatible or
-exact version selection, then address referenced definitions by stable keys and
-definition kind. Resolution must produce a fully pinned dependency set before
-`apply`; missing, ambiguous, conflicting, or cyclic dependencies must fail
-closed.
+`offset_seconds` MUST be a negative, non-zero decimal string. It represents
+elapsed seconds before the target anchor. Calendar-day and fixed-local-time
+interpretations are forbidden.
 
-Version-range policy, registry or local-source discovery, vendoring, lock-file
-ownership, cycle rules, and dependency integrity proofs are **unsettled**.
+V1 late handling is:
+
+```json
+{
+  "kind": "deliver_within",
+  "grace_seconds": "21600"
+}
+```
+
+`grace_seconds` MUST be a positive decimal string. The pack restriction is
+stricter than Spine's general non-negative decimal type because a zero-width
+`deliver_within` window has no useful meaning in curated pack content.
+
+Profile keys MUST be unique within the pack. Template keys MUST be unique
+within each profile. Compatible item types and templates MUST be sorted.
+Recipients, subjects, groups, routes, channels, delivery targets, destinations,
+credentials, target anchors, recurrence scope, generated hashes, and any
+environment fact are forbidden.
+
+## Binding intents and local references
+
+A binding intent contains exactly:
+
+- `binding_kind=archetype_default`;
+- `archetype_key`; and
+- `notification_profile_key`.
+
+Both keys are pack-local references. The archetype and profile MUST exist in the
+same manifest, and their compatible item-type sets MUST intersect. Binding pairs
+MUST be unique, and each `archetype_key` MUST appear in at most one binding
+intent. Two profiles therefore cannot both claim to be the default for the same
+archetype. V1 does not permit dependency-qualified references.
+
+The intent says that the named profile should become the default for the named
+archetype under an owner chosen at installation time. It is not a Spine binding
+and contains no owner or Spine-generated ID. A future installer must resolve or
+create both definitions through public commands, then submit the resolved IDs
+and explicit owner to `notification_profile.binding.set`.
 
 ## Deterministic ordering
 
-For identical pack bytes, pinned dependencies, explicit operator inputs, and
-observed Spine state, `plan` must produce the same ordered operations and
-diagnostics. Ordering must derive from stable semantic keys rather than
-filesystem enumeration, mapping insertion order, locale, or timestamps.
+Array order is contract-bearing and MUST be normalized before digesting:
 
-The final contract must define:
+1. runtime versions by semantic-version numeric order;
+2. content contracts by bytewise lexicographic order;
+3. compatible item types by bytewise lexicographic order;
+4. archetypes by `archetype_key`;
+5. profiles by `profile_key`;
+6. templates by `template_key`; and
+7. binding intents by `archetype_key`, which is unique within this collection.
 
-- a total order across definition kinds;
-- a total order within each kind;
-- dependency-before-dependent behavior;
-- stable tie-breaking and collision failures; and
-- whether any authored list order has semantic meaning.
+`dependencies` is empty. Input that is valid in content but not in canonical
+order MUST fail validation rather than be silently reordered.
 
-The exact canonical ordering algorithm is **unsettled**.
+## Content identity
 
-## Reconciliation behavior
+`content_identity` contains exactly:
 
-The future installer must classify target definitions as missing, equivalent,
-or semantically drifted. Missing definitions may be created. Equivalent
-definitions must be retained. Semantic drift must fail closed unless an
-explicit update is authorized for that operation. Authorization must not be
-inferred from the existence of a pack or from a broad compatibility match.
+- `algorithm=sha256`;
+- `canonical_json_version=spine.canonical-json.v1`; and
+- a lowercase 64-character hexadecimal `digest`.
 
-Canonicalization, comparison diagnostics, authorization scope, idempotency
-keys, and receipt correlation are **unsettled** and require agreement with
-Spine's public contracts.
+The digest preimage is the following object:
 
-## Serialization questions
+```text
+{
+  "canonical_json_version": "spine.canonical-json.v1",
+  "derivation_version": "spine-pack-content-sha256.v1",
+  "manifest": <the complete manifest with content_identity omitted>
+}
+```
 
-Serialization format, schema language, required and optional field behavior,
-unknown-field handling, comments, file splitting, and canonical byte encoding
-are all **unsettled**. A final schema, example manifests, and parser must wait
-until these semantics have been reviewed.
+The preimage is encoded exactly under Spine canonical JSON v1: valid UTF-8; no
+insignificant whitespace; object keys sorted lexicographically by Unicode
+codepoint; duplicate keys forbidden; array order preserved; strings preserved
+without implicit normalization; invalid surrogate code points rejected; only
+quote, backslash, and U+0000 through U+001F escaped; lowercase `\\u00xx` control
+escapes; slash never escaped; and JSON numbers forbidden. The digest is SHA-256
+over those bytes, encoded as lowercase hexadecimal.
+
+The manifest uses decimal strings rather than JSON numbers, so every current
+semantic value is legal in the canonical preimage. A digest mismatch fails
+closed. Draft edits recompute the digest; released content must never change.
+
+## Validation order and fail-closed behavior
+
+Validation MUST proceed in this order:
+
+1. reject malformed JSON and duplicate object members;
+2. validate the closed JSON Schema;
+3. validate unique definition keys, binding pairs, and one default binding per
+   archetype key;
+4. resolve binding references and compatible item-type intersections;
+5. validate deterministic ordering; and
+6. recompute and compare the content digest.
+
+Any failure rejects the complete pack. Implementations MUST NOT drop unknown
+fields, skip invalid definitions, guess references, coerce values, reorder input
+silently, or install a valid subset.
+
+The dependency-free repository test implements the closed JSON Schema subset
+used by v1 plus the semantic, ordering, and digest stages above. Before any pack
+version is released, development or CI MUST also meta-validate the schema and
+run the complete fixture matrix with an independent standards-conforming JSON
+Schema Draft 2020-12 implementation. That independent check is not available in
+the current local environment and is a release blocker, not evidence against
+the passing local contract suite.
+
+## Deferred decisions
+
+The following remain outside `spine.pack-manifest.v1`:
+
+- dependency references and resolution;
+- broader Spine notification schedule and late-handling variants;
+- semantic-equivalence comparison against installed definitions;
+- update-authorization and receipt-correlation forms;
+- installer version compatibility;
+- signing, publisher identity, registries, and release transport; and
+- the `plan`, `apply`, and `verify` command contracts and implementation.

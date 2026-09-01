@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the seed-stage Spine Packs repository shape and boundaries."""
+"""Verify the draft-contract Spine Packs repository shape and boundaries."""
 
 from __future__ import annotations
 
@@ -13,12 +13,28 @@ REQUIRED_FILES = (
     ".gitignore",
     "AGENTS.md",
     "README.md",
+    "contracts/pack-fixture-manifest.v1.json",
+    "contracts/schemas/spine-pack-manifest.v1.schema.json",
     "packs/kinflow-starter/README.md",
+    "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json",
     "scripts/verify_repo.py",
     "specs/architecture.md",
     "specs/compatibility.md",
     "specs/overview.md",
     "specs/pack-format.md",
+    "tests/contract/test_pack_manifest_contract.py",
+    "tests/fixtures/pack-manifest/positive/medical_vertical_slice.json",
+    "tests/fixtures/pack-manifest/negative/duplicate_keys.json",
+    "tests/fixtures/pack-manifest/negative/embedded_owner_data.json",
+    "tests/fixtures/pack-manifest/negative/incompatible_item_types.json",
+    "tests/fixtures/pack-manifest/negative/incorrect_content_digest.json",
+    "tests/fixtures/pack-manifest/negative/invalid_grace_window.json",
+    "tests/fixtures/pack-manifest/negative/invalid_notification_offset.json",
+    "tests/fixtures/pack-manifest/negative/multiple_defaults_for_archetype.json",
+    "tests/fixtures/pack-manifest/negative/noncanonical_array_ordering.json",
+    "tests/fixtures/pack-manifest/negative/unknown_fields.json",
+    "tests/fixtures/pack-manifest/negative/unresolved_binding_reference.json",
+    "tests/fixtures/pack-manifest/negative/version_status_mismatch.json",
 )
 
 REQUIRED_MARKERS = {
@@ -28,7 +44,7 @@ REQUIRED_MARKERS = {
         "`plan`",
         "`apply`",
         "`verify`",
-        "seed-spec",
+        "draft-contract",
     ),
     "AGENTS.md": (
         "The files in `specs/` are the normative source of truth",
@@ -44,15 +60,26 @@ REQUIRED_MARKERS = {
         "semantic drift",
     ),
     "specs/compatibility.md": (
-        "Spine runtime versions",
-        "Spine contract versions",
-        "fail closed",
+        "exact Spine runtime versions",
+        "exact Spine content-contract identifiers",
+        "Fail-closed behavior",
     ),
     "specs/pack-format.md": (
-        "pre-schema contract",
-        "identity/version pair is immutable",
+        "`spine.pack-manifest.v1`",
+        "Every object is closed",
         "Deterministic ordering",
-        "**unsettled**",
+        "Content identity",
+        "Deferred decisions",
+    ),
+    "contracts/schemas/spine-pack-manifest.v1.schema.json": (
+        "https://json-schema.org/draft/2020-12/schema",
+        "spine.pack-manifest.v1",
+        "additionalProperties",
+    ),
+    "tests/contract/test_pack_manifest_contract.py": (
+        "Dependency-free contract checks",
+        "validate_pack",
+        "content_digest",
     ),
 }
 
@@ -67,14 +94,11 @@ CANDIDATE_NAMES = (
 
 FORBIDDEN_TOP_LEVEL = (
     "adapters",
-    "contracts",
     "examples",
     "models",
     "services",
     "src",
 )
-
-MANIFEST_SUFFIXES = (".json", ".toml", ".yaml", ".yml")
 
 
 def verify() -> list[str]:
@@ -103,14 +127,17 @@ def verify() -> list[str]:
 
     for name in FORBIDDEN_TOP_LEVEL:
         if (ROOT / name).exists():
-            errors.append(f"seed-stage repository must not contain: {name}/")
+            errors.append(f"draft-contract repository must not contain: {name}/")
 
     packs_root = ROOT / "packs"
     if packs_root.is_dir():
-        for path in sorted(packs_root.rglob("*")):
-            if path.is_file() and path.suffix.lower() in MANIFEST_SUFFIXES:
-                relative = path.relative_to(ROOT)
-                errors.append(f"manifest-like file is premature at seed stage: {relative}")
+        alternate_manifests = sorted(
+            path.relative_to(ROOT)
+            for path in packs_root.rglob("*")
+            if path.is_file() and path.suffix.lower() in {".toml", ".yaml", ".yml"}
+        )
+        for relative in alternate_manifests:
+            errors.append(f"v1 packs must use JSON, found alternate manifest: {relative}")
 
     return errors
 
@@ -125,7 +152,7 @@ def main() -> int:
 
     print(f"repository verification passed ({len(REQUIRED_FILES)} required files)")
     print("source of truth: specs/")
-    print("seed-stage boundary markers: present")
+    print("draft-contract boundary markers: present")
     return 0
 
 

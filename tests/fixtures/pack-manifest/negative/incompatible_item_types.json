@@ -1,0 +1,119 @@
+{
+  "manifest_schema": "spine.pack-manifest.v1",
+  "pack": {
+    "pack_id": "kinflow-starter",
+    "version": "1.0.0-draft.1",
+    "status": "draft"
+  },
+  "compatibility": {
+    "spine_runtime_versions": [
+      "0.3.0"
+    ],
+    "spine_content_contracts": [
+      "spine.item-archetypes.v1",
+      "spine.notification-profile-bindings.v1",
+      "spine.notification-profiles.v1"
+    ]
+  },
+  "dependencies": [],
+  "archetypes": [
+    {
+      "archetype_key": "medical_appointment",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Medical appointment",
+        "description": "Medical, dental, vision, therapy, diagnostic, and other scheduled healthcare appointments.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    }
+  ],
+  "notification_profiles": [
+    {
+      "profile_key": "medical_appointment_standard",
+      "display_name": "Medical appointment standard",
+      "description": null,
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "seven_days_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-604800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_minutes_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-1800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "binding_intents": [
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "medical_appointment",
+      "notification_profile_key": "medical_appointment_standard"
+    }
+  ],
+  "content_identity": {
+    "algorithm": "sha256",
+    "canonical_json_version": "spine.canonical-json.v1",
+    "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

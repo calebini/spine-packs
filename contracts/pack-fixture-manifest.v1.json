@@ -1,0 +1,82 @@
+{
+  "schema_version": "spine.pack-contract-fixtures.v1",
+  "schema": "contracts/schemas/spine-pack-manifest.v1.schema.json",
+  "cases": [
+    {
+      "case_id": "published_draft_manifest",
+      "fixture": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json",
+      "valid": true
+    },
+    {
+      "case_id": "positive_medical_vertical_slice",
+      "fixture": "tests/fixtures/pack-manifest/positive/medical_vertical_slice.json",
+      "valid": true
+    },
+    {
+      "case_id": "negative_embedded_owner_data",
+      "fixture": "tests/fixtures/pack-manifest/negative/embedded_owner_data.json",
+      "valid": false,
+      "expected_error": "$.owner: unknown field"
+    },
+    {
+      "case_id": "negative_unresolved_binding_reference",
+      "fixture": "tests/fixtures/pack-manifest/negative/unresolved_binding_reference.json",
+      "valid": false,
+      "expected_error": "unresolved notification_profile_key"
+    },
+    {
+      "case_id": "negative_duplicate_keys",
+      "fixture": "tests/fixtures/pack-manifest/negative/duplicate_keys.json",
+      "valid": false,
+      "expected_error": "duplicate archetype_key"
+    },
+    {
+      "case_id": "negative_multiple_defaults_for_archetype",
+      "fixture": "tests/fixtures/pack-manifest/negative/multiple_defaults_for_archetype.json",
+      "valid": false,
+      "expected_error": "duplicate archetype_default for archetype_key"
+    },
+    {
+      "case_id": "negative_notification_offset",
+      "fixture": "tests/fixtures/pack-manifest/negative/invalid_notification_offset.json",
+      "valid": false,
+      "expected_error": "offset_seconds: pattern mismatch"
+    },
+    {
+      "case_id": "negative_grace_window",
+      "fixture": "tests/fixtures/pack-manifest/negative/invalid_grace_window.json",
+      "valid": false,
+      "expected_error": "grace_seconds: pattern mismatch"
+    },
+    {
+      "case_id": "negative_incompatible_item_types",
+      "fixture": "tests/fixtures/pack-manifest/negative/incompatible_item_types.json",
+      "valid": false,
+      "expected_error": "no compatible item type"
+    },
+    {
+      "case_id": "negative_unknown_fields",
+      "fixture": "tests/fixtures/pack-manifest/negative/unknown_fields.json",
+      "valid": false,
+      "expected_error": "unexpected_field: unknown field"
+    },
+    {
+      "case_id": "negative_noncanonical_array_ordering",
+      "fixture": "tests/fixtures/pack-manifest/negative/noncanonical_array_ordering.json",
+      "valid": false,
+      "expected_error": "$.compatibility.spine_content_contracts: values are not in deterministic order"
+    },
+    {
+      "case_id": "negative_incorrect_content_digest",
+      "fixture": "tests/fixtures/pack-manifest/negative/incorrect_content_digest.json",
+      "valid": false,
+      "expected_error": "$.content_identity.digest: expected"
+    },
+    {
+      "case_id": "negative_version_status_mismatch",
+      "fixture": "tests/fixtures/pack-manifest/negative/version_status_mismatch.json",
+      "valid": false,
+      "expected_error": "$.pack: must match exactly one allowed shape"
+    }
+  ]
+}

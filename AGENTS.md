@@ -32,8 +32,10 @@ rather than redefine the specs.
 
 ## Stage discipline
 
-This is a seed-spec repository. Until the pack-format contract is reviewed, do
-not add a final manifest schema, installer implementation, example manifests,
+This is a draft-contract repository. The first-pass contract is
+limited to `spine.pack-manifest.v1` and the medical-appointment vertical slice.
+Do not broaden the schema or pack semantics without matching normative spec,
+fixture, and contract-test changes. Do not add an installer implementation,
 package runtime, or speculative service/adapter/model/package directories.
 Mark unresolved design details explicitly instead of silently choosing them.
 
@@ -48,6 +50,7 @@ For documentation-only and seed-structure changes, run:
 
 ```sh
 python3 scripts/verify_repo.py
+python3 -m unittest discover -s tests/contract -p 'test_*.py'
 git diff --check
 ```
 

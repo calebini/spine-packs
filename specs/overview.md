@@ -2,9 +2,8 @@
 
 ## Status and normative language
 
-This document is normative for the seed stage. The terms **MUST**, **MUST NOT**,
-**SHOULD**, and **MAY** describe requirements, even before a machine-readable
-pack contract exists.
+This document is normative for the draft-contract stage. The terms **MUST**,
+**MUST NOT**, **SHOULD**, and **MAY** describe requirements.
 
 ## Purpose
 
@@ -34,6 +33,10 @@ from Spine through its public command surface.
 Pack releases MUST be immutable. Corrections or semantic changes after release
 MUST use a new version.
 
+A draft is reviewable working content, not a release. Draft content MAY change
+while its status remains `draft`, provided its content digest is recomputed.
+Changing status to `released` creates the immutable release boundary.
+
 ## Content neutrality
 
 A reusable pack MUST NOT contain owner IDs, delivery targets, subjects, routes,
@@ -50,7 +53,8 @@ This repository MUST NOT provide:
 - direct reads from or writes to Spine's database;
 - changes to Spine runtime behavior;
 - owner-specific deployment configuration; or
-- a finalized manifest schema before pack-format review.
+- an installer before its command mapping and reconciliation behavior receive
+  separate review.
 
 An installer may be added after contract review, but its role will be bounded
 translation and reconciliation through Spine's existing public commands, not

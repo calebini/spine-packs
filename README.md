@@ -1,6 +1,6 @@
 # Spine Packs
 
-Spine Packs is a seed-stage repository for independently versioned,
+Spine Packs is a draft-contract repository for independently versioned,
 operator-installable archetype and notification-profile packs for Spine. Packs
 are declarative, reusable content; they are not services and do not become
 authoritative runtime state merely by existing here.
@@ -32,29 +32,34 @@ A future installer is expected to expose three phases:
 3. `verify` confirms through the public command surface that the intended
    definitions and resulting Spine receipts agree with the approved plan.
 
-This workflow is a design target, not an implemented command. The installer,
-manifest schema, example manifests, and package runtime are intentionally
-deferred until the pack-format contract has been reviewed.
+This workflow is a design target, not an implemented command. This repository
+contains a first-pass manifest contract and draft content, but no
+installer or package runtime.
 
 ## Repository map
 
 - `specs/` is the normative source of truth for purpose, architecture,
-  compatibility, and the pre-schema pack-format requirements.
-- `packs/` contains independently versioned pack source material. At this
-  stage, `packs/kinflow-starter/README.md` only reserves the first pack.
-- `scripts/verify_repo.py` checks the seed repository shape and high-level
-  boundary markers without third-party dependencies.
+  compatibility, and pack-format requirements.
+- `contracts/schemas/` contains the machine-readable manifest contract.
+- `packs/` contains independently versioned pack source material, including
+  the draft `kinflow-starter` medical vertical slice.
+- `tests/contract/` and `tests/fixtures/` contain dependency-free contract
+  checks and positive/negative manifest fixtures.
+- `scripts/verify_repo.py` checks repository shape and high-level boundary
+  markers without third-party dependencies.
 - `AGENTS.md` gives repository-specific instructions to automated contributors.
 
 ## Current maturity
 
-This repository is at the **seed-spec** stage. It defines ownership and design
-constraints but does not yet define an installable pack or stable
-machine-readable contract. Review and resolve the open questions in
-`specs/pack-format.md` before defining `kinflow-starter.v1`.
+This repository is at the **draft-contract** stage. Schema identity
+`spine.pack-manifest.v1` and draft `kinflow-starter` version
+`1.0.0-draft.1` cover one complete medical-appointment vertical slice. The
+draft is not released or installable, and additional archetypes may be added
+before a future immutable `1.0.0` release.
 
 Run the local structural check with:
 
 ```sh
 python3 scripts/verify_repo.py
+python3 -m unittest discover -s tests/contract -p 'test_*.py'
 ```

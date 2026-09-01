@@ -1,0 +1,395 @@
+#!/usr/bin/env python3
+"""Dependency-free contract checks for Spine pack manifests."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+import re
+import unittest
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[2]
+SCHEMA_PATH = ROOT / "contracts/schemas/spine-pack-manifest.v1.schema.json"
+FIXTURE_MANIFEST_PATH = ROOT / "contracts/pack-fixture-manifest.v1.json"
+DRAFT_MANIFEST_PATH = (
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json"
+)
+POSITIVE_FIXTURE_PATH = (
+    ROOT / "tests/fixtures/pack-manifest/positive/medical_vertical_slice.json"
+)
+
+
+class DuplicateObjectMember(ValueError):
+    """Raised when a JSON object repeats a member name."""
+
+
+def _closed_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    value: dict[str, Any] = {}
+    for key, member in pairs:
+        if key in value:
+            raise DuplicateObjectMember(f"duplicate JSON object member: {key}")
+        value[key] = member
+    return value
+
+
+def load_json(path: Path) -> Any:
+    with path.open(encoding="utf-8") as handle:
+        return json.load(handle, object_pairs_hook=_closed_object)
+
+
+def _resolve_ref(root_schema: dict[str, Any], reference: str) -> dict[str, Any]:
+    if not reference.startswith("#/"):
+        raise ValueError(f"unsupported non-local schema reference: {reference}")
+    current: Any = root_schema
+    for token in reference[2:].split("/"):
+        token = token.replace("~1", "/").replace("~0", "~")
+        current = current[token]
+    if not isinstance(current, dict):
+        raise ValueError(f"schema reference does not resolve to an object: {reference}")
+    return current
+
+
+def _is_type(value: Any, expected: str) -> bool:
+    return {
+        "array": isinstance(value, list),
+        "null": value is None,
+        "object": isinstance(value, dict),
+        "string": isinstance(value, str),
+    }.get(expected, False)
+
+
+def schema_errors(
+    value: Any,
+    schema: dict[str, Any],
+    root_schema: dict[str, Any],
+    path: str = "$",
+) -> list[str]:
+    """Validate the deliberately small Draft 2020-12 subset used by the schema."""
+
+    if "$ref" in schema:
+        return schema_errors(value, _resolve_ref(root_schema, schema["$ref"]), root_schema, path)
+
+    if "oneOf" in schema:
+        branch_errors = [
+            schema_errors(value, branch, root_schema, path)
+            for branch in schema["oneOf"]
+        ]
+        matches = sum(not errors for errors in branch_errors)
+        if matches != 1:
+            return [f"{path}: must match exactly one allowed shape"]
+        return []
+
+    errors: list[str] = []
+    if "const" in schema and value != schema["const"]:
+        errors.append(f"{path}: must equal {schema['const']!r}")
+    if "enum" in schema and value not in schema["enum"]:
+        errors.append(f"{path}: value is not in the allowed set")
+
+    expected_type = schema.get("type")
+    if expected_type is not None and not _is_type(value, expected_type):
+        return [f"{path}: expected {expected_type}"]
+
+    if isinstance(value, str):
+        if len(value) < schema.get("minLength", 0):
+            errors.append(f"{path}: string is too short")
+        if "maxLength" in schema and len(value) > schema["maxLength"]:
+            errors.append(f"{path}: string is too long")
+        if "pattern" in schema and re.fullmatch(schema["pattern"], value) is None:
+            errors.append(f"{path}: pattern mismatch")
+
+    if isinstance(value, dict):
+        properties = schema.get("properties", {})
+        for required in schema.get("required", []):
+            if required not in value:
+                errors.append(f"{path}.{required}: required field is missing")
+        for key, member in value.items():
+            member_path = f"{path}.{key}"
+            if key in properties:
+                errors.extend(schema_errors(member, properties[key], root_schema, member_path))
+            elif schema.get("additionalProperties") is False:
+                errors.append(f"{member_path}: unknown field")
+
+    if isinstance(value, list):
+        if len(value) < schema.get("minItems", 0):
+            errors.append(f"{path}: array has too few items")
+        if "maxItems" in schema and len(value) > schema["maxItems"]:
+            errors.append(f"{path}: array has too many items")
+        if schema.get("uniqueItems"):
+            encoded = [json.dumps(item, sort_keys=True, separators=(",", ":")) for item in value]
+            if len(encoded) != len(set(encoded)):
+                errors.append(f"{path}: array items must be unique")
+        item_schema = schema.get("items")
+        if isinstance(item_schema, dict):
+            for index, item in enumerate(value):
+                errors.extend(schema_errors(item, item_schema, root_schema, f"{path}[{index}]"))
+
+    return errors
+
+
+def _duplicate_errors(manifest: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+
+    def check(values: list[str], label: str, path: str) -> None:
+        seen: set[str] = set()
+        for value in values:
+            if value in seen:
+                errors.append(f"{path}: duplicate {label} {value!r}")
+            seen.add(value)
+
+    check(
+        [entry["archetype_key"] for entry in manifest["archetypes"]],
+        "archetype_key",
+        "$.archetypes",
+    )
+    check(
+        [entry["profile_key"] for entry in manifest["notification_profiles"]],
+        "profile_key",
+        "$.notification_profiles",
+    )
+    for index, profile in enumerate(manifest["notification_profiles"]):
+        check(
+            [entry["template_key"] for entry in profile["revision"]["templates"]],
+            "template_key",
+            f"$.notification_profiles[{index}].revision.templates",
+        )
+    check(
+        [entry["archetype_key"] for entry in manifest["binding_intents"]],
+        "archetype_default for archetype_key",
+        "$.binding_intents",
+    )
+    return errors
+
+
+def _reference_errors(manifest: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    archetypes = {entry["archetype_key"]: entry for entry in manifest["archetypes"]}
+    profiles = {
+        entry["profile_key"]: entry for entry in manifest["notification_profiles"]
+    }
+    for index, binding in enumerate(manifest["binding_intents"]):
+        archetype_key = binding["archetype_key"]
+        profile_key = binding["notification_profile_key"]
+        archetype = archetypes.get(archetype_key)
+        profile = profiles.get(profile_key)
+        if archetype is None:
+            errors.append(
+                f"$.binding_intents[{index}]: unresolved archetype_key {archetype_key!r}"
+            )
+        if profile is None:
+            errors.append(
+                "$.binding_intents[{}]: unresolved notification_profile_key {!r}".format(
+                    index, profile_key
+                )
+            )
+        if archetype is not None and profile is not None:
+            archetype_types = set(archetype["revision"]["compatible_item_types"])
+            profile_types = set(profile["revision"]["compatible_item_types"])
+            if not archetype_types.intersection(profile_types):
+                errors.append(
+                    f"$.binding_intents[{index}]: binding has no compatible item type"
+                )
+    return errors
+
+
+def _ordering_errors(manifest: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+
+    def ordered(values: list[Any], expected: list[Any], path: str) -> None:
+        if values != expected:
+            errors.append(f"{path}: values are not in deterministic order")
+
+    runtime_versions = manifest["compatibility"]["spine_runtime_versions"]
+    ordered(
+        runtime_versions,
+        sorted(runtime_versions, key=lambda value: tuple(int(part) for part in value.split("."))),
+        "$.compatibility.spine_runtime_versions",
+    )
+    contracts = manifest["compatibility"]["spine_content_contracts"]
+    ordered(contracts, sorted(contracts), "$.compatibility.spine_content_contracts")
+
+    archetypes = manifest["archetypes"]
+    ordered(
+        [entry["archetype_key"] for entry in archetypes],
+        sorted(entry["archetype_key"] for entry in archetypes),
+        "$.archetypes",
+    )
+    for index, archetype in enumerate(archetypes):
+        item_types = archetype["revision"]["compatible_item_types"]
+        ordered(item_types, sorted(item_types), f"$.archetypes[{index}].revision.compatible_item_types")
+
+    profiles = manifest["notification_profiles"]
+    ordered(
+        [entry["profile_key"] for entry in profiles],
+        sorted(entry["profile_key"] for entry in profiles),
+        "$.notification_profiles",
+    )
+    for index, profile in enumerate(profiles):
+        item_types = profile["revision"]["compatible_item_types"]
+        ordered(
+            item_types,
+            sorted(item_types),
+            f"$.notification_profiles[{index}].revision.compatible_item_types",
+        )
+        template_keys = [
+            entry["template_key"] for entry in profile["revision"]["templates"]
+        ]
+        ordered(
+            template_keys,
+            sorted(template_keys),
+            f"$.notification_profiles[{index}].revision.templates",
+        )
+
+    binding_keys = [entry["archetype_key"] for entry in manifest["binding_intents"]]
+    ordered(binding_keys, sorted(binding_keys), "$.binding_intents")
+    return errors
+
+
+def canonical_json(value: Any) -> str:
+    """Encode the no-number subset of spine.canonical-json.v1."""
+
+    if value is None:
+        return "null"
+    if value is True:
+        return "true"
+    if value is False:
+        return "false"
+    if isinstance(value, str):
+        pieces = ['"']
+        for character in value:
+            codepoint = ord(character)
+            if 0xD800 <= codepoint <= 0xDFFF:
+                raise ValueError("invalid surrogate code point in canonical JSON")
+            if character == '"':
+                pieces.append('\\"')
+            elif character == "\\":
+                pieces.append("\\\\")
+            elif codepoint <= 0x1F:
+                pieces.append(f"\\u{codepoint:04x}")
+            else:
+                pieces.append(character)
+        pieces.append('"')
+        return "".join(pieces)
+    if isinstance(value, list):
+        return "[" + ",".join(canonical_json(item) for item in value) + "]"
+    if isinstance(value, dict):
+        if not all(isinstance(key, str) for key in value):
+            raise ValueError("canonical JSON object keys must be strings")
+        return "{" + ",".join(
+            canonical_json(key) + ":" + canonical_json(value[key])
+            for key in sorted(value)
+        ) + "}"
+    raise ValueError(f"JSON numbers and unsupported values are forbidden: {value!r}")
+
+
+def content_digest(manifest: dict[str, Any]) -> str:
+    semantic_manifest = {
+        key: value for key, value in manifest.items() if key != "content_identity"
+    }
+    preimage = {
+        "canonical_json_version": "spine.canonical-json.v1",
+        "derivation_version": "spine-pack-content-sha256.v1",
+        "manifest": semantic_manifest,
+    }
+    encoded = canonical_json(preimage).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def validate_pack(manifest: Any, schema: dict[str, Any]) -> list[str]:
+    errors = schema_errors(manifest, schema, schema)
+    if errors:
+        return errors
+    assert isinstance(manifest, dict)
+
+    errors = _duplicate_errors(manifest)
+    if errors:
+        return errors
+    errors = _reference_errors(manifest)
+    if errors:
+        return errors
+    errors = _ordering_errors(manifest)
+    if errors:
+        return errors
+
+    actual = manifest["content_identity"]["digest"]
+    expected = content_digest(manifest)
+    if actual != expected:
+        return [f"$.content_identity.digest: expected {expected}, got {actual}"]
+    return []
+
+
+class PackManifestContractTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.schema = load_json(SCHEMA_PATH)
+        cls.fixture_manifest = load_json(FIXTURE_MANIFEST_PATH)
+
+    def test_schema_identity_and_dialect(self) -> None:
+        self.assertEqual(
+            self.schema["$schema"], "https://json-schema.org/draft/2020-12/schema"
+        )
+        self.assertEqual(
+            self.schema["$id"],
+            "https://spine-packs.local/contracts/schemas/"
+            "spine-pack-manifest.v1.schema.json",
+        )
+
+    def test_every_fixture_has_expected_schema_result(self) -> None:
+        for case in self.fixture_manifest["cases"]:
+            with self.subTest(case=case["case_id"]):
+                fixture = load_json(ROOT / case["fixture"])
+                errors = validate_pack(fixture, self.schema)
+                if case["valid"]:
+                    self.assertEqual(errors, [])
+                else:
+                    self.assertTrue(errors, "negative fixture unexpectedly validated")
+                    self.assertIn(case["expected_error"], "\n".join(errors))
+
+    def test_fixture_manifest_covers_every_test_fixture(self) -> None:
+        fixture_root = ROOT / "tests/fixtures/pack-manifest"
+        actual = {
+            path.relative_to(ROOT).as_posix()
+            for path in fixture_root.rglob("*.json")
+        }
+        declared = {
+            case["fixture"]
+            for case in self.fixture_manifest["cases"]
+            if case["fixture"].startswith("tests/fixtures/pack-manifest/")
+        }
+        self.assertEqual(actual, declared)
+
+    def test_published_manifest_matches_positive_vector(self) -> None:
+        self.assertEqual(load_json(DRAFT_MANIFEST_PATH), load_json(POSITIVE_FIXTURE_PATH))
+
+    def test_published_manifest_contains_no_installation_identity(self) -> None:
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        forbidden = {
+            "actor_subject_id",
+            "command_id",
+            "delivery_target_id",
+            "destination",
+            "owner",
+            "owner_group_id",
+            "owner_subject_id",
+            "receipt_id",
+            "route",
+            "subject_id",
+            "timestamp",
+        }
+
+        def visit(value: Any) -> None:
+            if isinstance(value, dict):
+                self.assertFalse(forbidden.intersection(value))
+                for member in value.values():
+                    visit(member)
+            elif isinstance(value, list):
+                for member in value:
+                    visit(member)
+
+        visit(manifest)
+
+
+if __name__ == "__main__":
+    unittest.main()

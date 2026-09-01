@@ -54,6 +54,33 @@ For each definition, planning must distinguish at least:
 The exact equivalence algorithm and update-authorization representation remain
 unsettled and belong to pack-format and installer contract review.
 
+### Public command mapping
+
+The v1 manifest deliberately mirrors only semantic inputs accepted by Spine
+runtime `0.3.0`:
+
+- an archetype becomes the `archetype_key` and `revision` inputs to
+  `item_archetype.create` under `spine.item-archetypes.v1`;
+- a notification profile becomes the `profile_key`, presentation metadata, and
+  `revision` inputs to `notification_profile.create` under
+  `spine.notification-profiles.v1`; and
+- a binding intent resolves its pack-local archetype and profile keys to the
+  Spine-owned IDs returned or retained by those commands, then becomes a
+  `notification_profile.binding.set` request under
+  `spine.notification-profile-bindings.v1`.
+
+The future installer supplies command IDs, actor identity, action timestamps,
+owner scope, and resolved Spine IDs at installation time. None of those facts
+belong in the pack. This mapping documents a boundary; it does not implement or
+authorize installation.
+
+The manifest's `spine_content_contracts` declaration identifies only the Spine
+contracts needed to interpret pack definitions. It is not a complete execution
+dependency set. A future installer specification MUST derive and verify the
+full per-command contract union advertised by Spine, including canonical JSON,
+readback, cursor, response, and receipt contracts required by the commands it
+actually invokes.
+
 ## Input boundary
 
 Owner IDs, delivery targets, subjects, routes, and environment-specific facts
