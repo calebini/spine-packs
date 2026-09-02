@@ -339,8 +339,12 @@ class PackManifestContractTests(unittest.TestCase):
     def test_every_fixture_has_expected_schema_result(self) -> None:
         for case in self.fixture_manifest["cases"]:
             with self.subTest(case=case["case_id"]):
-                fixture = load_json(ROOT / case["fixture"])
-                errors = validate_pack(fixture, self.schema)
+                try:
+                    fixture = load_json(ROOT / case["fixture"])
+                except (json.JSONDecodeError, DuplicateObjectMember) as error:
+                    errors = [str(error)]
+                else:
+                    errors = validate_pack(fixture, self.schema)
                 if case["valid"]:
                     self.assertEqual(errors, [])
                 else:

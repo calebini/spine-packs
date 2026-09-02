@@ -93,6 +93,6 @@ dependency-free contract tests describe one coherent bounded contract.
 
 # Submission Status
 
-Prepared and scoped, but awaiting explicit authorization to send this notes
-file and exactly the 18 files listed above to the nested Codex reviewer. Use
-the `consistency` profile and do not mutate source files.
+Explicitly authorized by the operator on 2026-09-02 to send this notes file and
+exactly the 18 files listed above to the nested Codex reviewer. Use the
+`consistency` profile and do not mutate source files.

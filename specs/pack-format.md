@@ -19,6 +19,12 @@ missing required fields, and invalid field types MUST fail validation. V1 has
 no optional fields. `description` is required for archetypes and profiles but
 is explicitly nullable; absent and `null` are not equivalent.
 
+Duplicate JSON object member names and duplicate definition keys are distinct
+failure classes. A repeated member name in one JSON object is a lexical input
+failure rejected before schema validation. Repeated `archetype_key`,
+`profile_key`, or `template_key` values occur across separate array entries and
+are semantic uniqueness failures rejected after schema validation.
+
 ## Pack identity and version
 
 `pack_id` MUST match `^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$` and contain at most 64

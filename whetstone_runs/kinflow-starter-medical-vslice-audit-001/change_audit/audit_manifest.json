@@ -1,0 +1,86 @@
+{
+  "audit_notes_hash": "b17cafe46c463344273bdff77002b8f09ff718bce26ec3feb97706e18ce7a717",
+  "audit_notes_path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/kinflow-starter-medical-vslice-audit-001/audit-notes.md",
+  "client": {
+    "model": "gpt-5.5",
+    "name": "codex",
+    "version": "unknown"
+  },
+  "generated_at": "2026-09-01T22:06:49.034104+00:00",
+  "profile": "consistency",
+  "schema_version": "change-audit-manifest-v1",
+  "specs": [
+    {
+      "hash": "efa26dd11195e3357ab32c27d6e250a1694ad95a13ec06c8eab8fea7b8ba2c12",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/pack-format.md"
+    },
+    {
+      "hash": "755aacb83316675fdf3de34083b5c0e79ecfa4d915a6d130f0c77ce5412b410e",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/compatibility.md"
+    },
+    {
+      "hash": "67e6ba43cc3a7f840d29643318cb88d0362c746ee19b3933e28a27203bae350a",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/schemas/spine-pack-manifest.v1.schema.json"
+    },
+    {
+      "hash": "c0baa85773b72d69e5e0a27ef0ddf4d3faa1eabb705fb368768ec630ab2bc21f",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json"
+    },
+    {
+      "hash": "7f520570969f34584fb382fdba7deec6b2bdbbdd8ed2c9869d69fc2abb3bac09",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/pack-fixture-manifest.v1.json"
+    },
+    {
+      "hash": "c0baa85773b72d69e5e0a27ef0ddf4d3faa1eabb705fb368768ec630ab2bc21f",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/positive/medical_vertical_slice.json"
+    },
+    {
+      "hash": "8e7ababa9aa18c93c532219af357a6bb2bee64757ea454e0206e76dd181f9a60",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/negative/embedded_owner_data.json"
+    },
+    {
+      "hash": "3027869314116318c9c59072e137333aec8a59b24c8adb2c2456a3da2815da10",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/negative/unresolved_binding_reference.json"
+    },
+    {
+      "hash": "794d0fa652e4fccb9ae30efb998a50e0f771ea9f904f8c1eb0f4e3407c963774",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/negative/duplicate_keys.json"
+    },
+    {
+      "hash": "d9b1b9f7d966ed215b67d272810387189f5c7f45558ed85ab5e889a770907e8f",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/negative/multiple_defaults_for_archetype.json"
+    },
+    {
+      "hash": "2b81c31e7405e87e77dbb6d8ce0054ad7a49bc0f7c07f36c4c2bf586c52d31f5",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/negative/invalid_notification_offset.json"
+    },
+    {
+      "hash": "5c8e1c6ea843ce34c3279b0db57f5995e2b63b5594ec435b692316bc34cfcd60",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/negative/invalid_grace_window.json"
+    },
+    {
+      "hash": "8bc7b1da07a93b35bf1b94381d8d87df12d7eb1d599ef2109c72d1df2e5bbf5d",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/negative/incompatible_item_types.json"
+    },
+    {
+      "hash": "0f230182a1aa6b8d3e5301858cd85ef12791cf75dbb5ab3fa691b70eeae66345",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/negative/unknown_fields.json"
+    },
+    {
+      "hash": "45f8ecfe905257d35f402cf4e0d712aa35bf966883d10deec70b31f2a693313d",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/negative/noncanonical_array_ordering.json"
+    },
+    {
+      "hash": "aae723a33c49d2e6d09aa51df4495baa04322f2b335339bf3faed35ab6af2b1b",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/negative/incorrect_content_digest.json"
+    },
+    {
+      "hash": "53043c7aeff2838398f5bf032eeec9e2c87a6e6a153e9a8d52fec2d06df8fda3",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/pack-manifest/negative/version_status_mismatch.json"
+    },
+    {
+      "hash": "69f501f536b706cf9bc9a15890b5d25d8ba860fac9ff84fdfc271d218b0a9a26",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/contract/test_pack_manifest_contract.py"
+    }
+  ]
+}

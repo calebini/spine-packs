@@ -1,0 +1,22 @@
+{
+  "audit_brief_hash": "e6917f78a3d5d8f4b6d14ae61ba099872ed8a4ac3e289bbce44873afe621d531",
+  "audit_manifest_path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/kinflow-starter-medical-vslice-audit-001/change_audit/audit_manifest.json",
+  "boundary_preserved": true,
+  "failure_reason": null,
+  "feedback_counts": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 1,
+    "nit": 0
+  },
+  "generated_at": "2026-09-01T22:07:07.467255+00:00",
+  "in_scope_feedback_ids": [
+    "fb_001"
+  ],
+  "out_of_scope_feedback_ids": [],
+  "profile": "consistency",
+  "recommended_next_action": "manual_patch",
+  "schema_version": "change-audit-report-v1",
+  "source_feedback_path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/kinflow-starter-medical-vslice-audit-001/change_audit/change_audit_feedback.json",
+  "verdict": "pass_with_minor_clarification"
+}

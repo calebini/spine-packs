@@ -1,0 +1,37 @@
+{
+  "draft_hash": "e6917f78a3d5d8f4b6d14ae61ba099872ed8a4ac3e289bbce44873afe621d531",
+  "feedback": [
+    {
+      "affected_sections": [
+        "Expected Boundary",
+        "Files To Check",
+        "contracts/pack-fixture-manifest.v1.json",
+        "tests/fixtures/pack-manifest/negative/duplicate_keys.json",
+        "tests/contract/test_pack_manifest_contract.py"
+      ],
+      "authority_impact": null,
+      "baseline_severity": "minor",
+      "claim": "The audit boundary uses the term \"duplicate keys\" ambiguously for two distinct validation rules: duplicate JSON object member names and duplicate definition keys. The listed negative fixture named `duplicate_keys.json` and its expected error only prove duplicate `archetype_key`, while duplicate JSON object member rejection is implemented in the loader but has no indexed fixture case under the stated negative boundary.",
+      "determinism_impact": "minor",
+      "evidence": "`pack-format.md` says validation first rejects \"duplicate object members\" and later validates \"unique definition keys\". The Expected Boundary says \"duplicate keys\" fail closed. The fixture index maps `negative_duplicate_keys` to `tests/fixtures/pack-manifest/negative/duplicate_keys.json` with expected error \"duplicate archetype_key\", and the fixture duplicates the `archetype_key` value, not a JSON object member name. `load_json(..., object_pairs_hook=_closed_object)` would reject repeated member names, but no fixture-index case exercises that specific boundary.",
+      "feedback_id": "fb_001",
+      "in_scope": true,
+      "invariant_violated": "artifact_integrity",
+      "issue_fingerprint": "74bba291a372e3143b68302960cf94d16f52c82d794171ffe325b734aeefe992",
+      "issue_id": "iss_74bba291a372e314",
+      "issue_type": "terminology_consistency",
+      "normalized_severity": "minor",
+      "oscillation_key": null,
+      "recommended_change": "Rename the existing fixture/case to `duplicate_archetype_key` or update the expected-boundary wording to distinguish `duplicate JSON object member names` from `duplicate definition keys`. If duplicate member rejection is intended to be proven by fixtures, add a separate indexed negative fixture for repeated JSON object members with its own expected error.",
+      "rubric_impact": null,
+      "severity_rationale": "This is a consistency gap in artifact terminology and fixture coverage naming, not a contradiction in the core manifest shape. It can cause reviewers or implementers to believe duplicate JSON object members are covered by the named negative fixture when they are not."
+    }
+  ],
+  "profile": "consistency",
+  "reviewer": {
+    "model": "gpt-5",
+    "name": "Codex Whetstone Consistency Reviewer",
+    "version": "1.0.0"
+  },
+  "round_number": 1
+}

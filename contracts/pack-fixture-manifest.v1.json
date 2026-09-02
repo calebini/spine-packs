@@ -25,10 +25,16 @@
       "expected_error": "unresolved notification_profile_key"
     },
     {
-      "case_id": "negative_duplicate_keys",
-      "fixture": "tests/fixtures/pack-manifest/negative/duplicate_keys.json",
+      "case_id": "negative_duplicate_archetype_key",
+      "fixture": "tests/fixtures/pack-manifest/negative/duplicate_archetype_key.json",
       "valid": false,
       "expected_error": "duplicate archetype_key"
+    },
+    {
+      "case_id": "negative_duplicate_json_object_member",
+      "fixture": "tests/fixtures/pack-manifest/negative/duplicate_json_object_member.json",
+      "valid": false,
+      "expected_error": "duplicate JSON object member: manifest_schema"
     },
     {
       "case_id": "negative_multiple_defaults_for_archetype",
