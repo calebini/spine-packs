@@ -104,7 +104,7 @@ Each profile contains exactly:
 - `revision`, containing required `compatible_item_types` and `templates`.
 
 V1 templates contain exactly `template_key`, `schedule`, and `late_handling`.
-The v1 schedule subset is intentionally narrow:
+The v1 schedule subset permits a once-only elapsed target offset:
 
 ```json
 {
@@ -118,8 +118,33 @@ The v1 schedule subset is intentionally narrow:
 ```
 
 `offset_seconds` MUST be a negative, non-zero decimal string. It represents
-elapsed seconds before the target anchor. Calendar-day and fixed-local-time
-interpretations are forbidden.
+elapsed seconds before the target anchor.
+
+The subset also permits a once-only calendar-day target offset:
+
+```json
+{
+  "kind": "once",
+  "at": {
+    "kind": "target_offset",
+    "offset_basis": "calendar_days",
+    "offset_days": "-1",
+    "local_time": "09:00:00"
+  }
+}
+```
+
+`offset_days` MUST be a canonical decimal string from `-3660` through `0`.
+Negative values are local calendar days before the target date; `0` is the
+target date. `local_time` MUST be a canonical `HH:MM:SS` wall-clock time.
+Calendar-day arithmetic preserves that wall-clock time across UTC-offset
+changes; it MUST NOT be treated as elapsed seconds.
+
+Reusable packs MUST omit `timezone` and `timezone_database_version` from a
+calendar-day boundary. Those facts are inherited from the applicable local
+item target at profile application time. Application to a target that cannot
+supply both facts MUST fail closed in Spine. This inheritance does not make the
+pack authoritative for the target, timezone, or recurrence.
 
 V1 late handling is:
 
@@ -137,8 +162,8 @@ stricter than Spine's general non-negative decimal type because a zero-width
 Profile keys MUST be unique within the pack. Template keys MUST be unique
 within each profile. Compatible item types and templates MUST be sorted.
 Recipients, subjects, groups, routes, channels, delivery targets, destinations,
-credentials, target anchors, recurrence scope, generated hashes, and any
-environment fact are forbidden.
+credentials, target anchors, embedded timezones, timezone-database versions,
+recurrence scope, generated hashes, and any environment fact are forbidden.
 
 ## Binding intents and local references
 
@@ -211,8 +236,8 @@ Validation MUST proceed in this order:
 
 1. reject malformed JSON and duplicate object members;
 2. validate the closed JSON Schema;
-3. validate unique definition keys, binding pairs, and one default binding per
-   archetype key;
+3. validate unique definition keys, binding pairs, one default binding per
+   archetype key, and calendar-day offset bounds;
 4. resolve binding references and compatible item-type intersections;
 5. validate deterministic ordering; and
 6. recompute and compare the content digest.

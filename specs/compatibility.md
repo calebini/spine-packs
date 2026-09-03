@@ -40,6 +40,11 @@ content-contract allowlists as `1.0.0-draft.1`. The lesson slice uses only the
 existing v1 content shapes; it does not widen compatibility or assert support
 for any item-level recurrence command.
 
+Draft `1.0.0-draft.3` retains those exact allowlists. Its birthday templates
+use Spine's existing calendar-day target-offset shape and inherit timezone
+facts from the applicable local item target. The pack does not declare a
+timezone, timezone-database version, or recurrence capability.
+
 ## Content compatibility is not execution readiness
 
 `spine_content_contracts` is intentionally limited to the contracts that give

@@ -1,0 +1,420 @@
+{
+  "manifest_schema": "spine.pack-manifest.v1",
+  "pack": {
+    "pack_id": "kinflow-starter",
+    "version": "1.0.0-draft.3",
+    "status": "draft"
+  },
+  "compatibility": {
+    "spine_runtime_versions": [
+      "0.3.0"
+    ],
+    "spine_content_contracts": [
+      "spine.item-archetypes.v1",
+      "spine.notification-profile-bindings.v1",
+      "spine.notification-profiles.v1"
+    ]
+  },
+  "dependencies": [],
+  "archetypes": [
+    {
+      "archetype_key": "birthday",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Birthday",
+        "description": "Annual birthday occasions for advance planning and day-of recognition.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "flight",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Flight",
+        "description": "Scheduled flight departures.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "game_or_competition",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Game or competition",
+        "description": "Scheduled sports games, tournaments, and competitions.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "lesson",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Lesson",
+        "description": "Scheduled instructional sessions such as classes, tutoring, coaching, or private lessons.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "medical_appointment",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Medical appointment",
+        "description": "Medical, dental, vision, therapy, diagnostic, and other scheduled healthcare appointments.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    }
+  ],
+  "notification_profiles": [
+    {
+      "profile_key": "birthday_standard",
+      "display_name": "Birthday standard",
+      "description": "Advance planning and day-of reminders for a birthday.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "birthday_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-30",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          }
+        ],
+        "recurrence_scope": "annual"
+      }
+    },
+    {
+      "profile_key": "flight_standard",
+      "display_name": "Flight standard",
+      "description": "Booking, travel-document, packing, check-in, gate, and boarding reminders for a scheduled flight.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-14400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          },
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "seven_days_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-604800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "game_or_competition_standard",
+      "display_name": "Game or competition standard",
+      "description": "Preparation and arrival reminders for a scheduled game or competition.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "lesson_standard",
+      "display_name": "Lesson standard",
+      "description": "Default reminders for an upcoming lesson.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1800"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "medical_appointment_standard",
+      "display_name": "Medical appointment standard",
+      "description": null,
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "seven_days_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-604800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_minutes_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-1800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "binding_intents": [
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "birthday",
+      "notification_profile_key": "birthday_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "flight",
+      "notification_profile_key": "flight_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "game_or_competition",
+      "notification_profile_key": "game_or_competition_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "lesson",
+      "notification_profile_key": "lesson_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "medical_appointment",
+      "notification_profile_key": "medical_appointment_standard"
+    }
+  ],
+  "content_identity": {
+    "algorithm": "sha256",
+    "canonical_json_version": "spine.canonical-json.v1",
+    "digest": "d4149d91f22a7d6790764fbd70123ce055121bbabed28c4fa0accf74d03ab858"
+  }
+}

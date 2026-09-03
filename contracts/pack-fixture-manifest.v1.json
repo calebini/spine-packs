@@ -23,6 +23,16 @@
       "valid": true
     },
     {
+      "case_id": "published_kinflow_starter_draft_3",
+      "fixture": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.3.json",
+      "valid": true
+    },
+    {
+      "case_id": "positive_kinflow_starter_draft_3",
+      "fixture": "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_3.json",
+      "valid": true
+    },
+    {
       "case_id": "negative_embedded_owner_data",
       "fixture": "tests/fixtures/pack-manifest/negative/embedded_owner_data.json",
       "valid": false,
@@ -56,7 +66,7 @@
       "case_id": "negative_notification_offset",
       "fixture": "tests/fixtures/pack-manifest/negative/invalid_notification_offset.json",
       "valid": false,
-      "expected_error": "offset_seconds: pattern mismatch"
+      "expected_error": "schedule: must match exactly one allowed shape"
     },
     {
       "case_id": "negative_grace_window",
@@ -99,6 +109,18 @@
       "fixture": "tests/fixtures/pack-manifest/negative/lesson_profile_recurrence.json",
       "valid": false,
       "expected_error": "$.notification_profiles[0].revision.recurrence_scope: unknown field"
+    },
+    {
+      "case_id": "negative_birthday_profile_recurrence",
+      "fixture": "tests/fixtures/pack-manifest/negative/birthday_profile_recurrence.json",
+      "valid": false,
+      "expected_error": "$.notification_profiles[0].revision.recurrence_scope: unknown field"
+    },
+    {
+      "case_id": "negative_birthday_embedded_timezone",
+      "fixture": "tests/fixtures/pack-manifest/negative/birthday_embedded_timezone.json",
+      "valid": false,
+      "expected_error": "$.notification_profiles[0].revision.templates[0].schedule: must match exactly one allowed shape"
     }
   ]
 }

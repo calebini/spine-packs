@@ -35,7 +35,8 @@ rather than redefine the specs.
 ## Stage discipline
 
 This is a draft-contract repository. The current scope is limited to
-`spine.pack-manifest.v1` and the medical-appointment and lesson vertical slices.
+`spine.pack-manifest.v1` and the medical-appointment, lesson,
+game-or-competition, flight, and birthday vertical slices.
 Do not broaden the schema or pack semantics without matching normative spec,
 fixture, and contract-test changes. Do not add an installer implementation,
 package runtime, or speculative service/adapter/model/package directories.

@@ -42,7 +42,7 @@ installer or package runtime.
   compatibility, pack-format requirements, and approved pack content.
 - `contracts/schemas/` contains the machine-readable manifest contract.
 - `packs/` contains independently versioned pack source material, including
-  the draft `kinflow-starter` medical and lesson vertical slices.
+  the draft `kinflow-starter` vertical slices.
 - `tests/contract/` and `tests/fixtures/` contain dependency-free contract
   checks and positive/negative manifest fixtures.
 - `scripts/verify_repo.py` checks repository shape and high-level boundary
@@ -53,12 +53,12 @@ installer or package runtime.
 
 This repository is at the **draft-contract** stage. Schema identity
 `spine.pack-manifest.v1` and draft `kinflow-starter` version
-`1.0.0-draft.2` cover complete medical-appointment and lesson vertical slices.
-The medical-only `1.0.0-draft.1` is preserved as the reviewed predecessor.
+`1.0.0-draft.3` covers medical-appointment, lesson, game-or-competition,
+flight, and birthday vertical slices. Earlier drafts remain preserved.
 Approved content is specified in [specs/kinflow-starter.md](specs/kinflow-starter.md).
 The drafts are not released or installable, and additional archetypes may be
 added before a future immutable `1.0.0` release. The recorded Whetstone audit
-covers the earlier medical-only slice, not the new lesson content.
+covers the earlier medical-only slice, not later draft content.
 
 Run the local structural check with:
 

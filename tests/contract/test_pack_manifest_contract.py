@@ -15,18 +15,25 @@ ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = ROOT / "contracts/schemas/spine-pack-manifest.v1.schema.json"
 FIXTURE_MANIFEST_PATH = ROOT / "contracts/pack-fixture-manifest.v1.json"
 DRAFT_MANIFEST_PATH = (
-    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.2.json"
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.3.json"
 )
 POSITIVE_FIXTURE_PATH = (
-    ROOT / "tests/fixtures/pack-manifest/positive/medical_and_lesson.json"
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_3.json"
 )
 PREVIOUS_DRAFT_MANIFEST_PATH = (
-    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json"
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.2.json"
 )
 PREVIOUS_POSITIVE_FIXTURE_PATH = (
+    ROOT / "tests/fixtures/pack-manifest/positive/medical_and_lesson.json"
+)
+FIRST_DRAFT_MANIFEST_PATH = (
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json"
+)
+FIRST_POSITIVE_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/medical_vertical_slice.json"
 )
 DRAFT_FIXTURE_PAIRS = (
+    (FIRST_DRAFT_MANIFEST_PATH, FIRST_POSITIVE_FIXTURE_PATH),
     (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH),
     (DRAFT_MANIFEST_PATH, POSITIVE_FIXTURE_PATH),
 )
@@ -204,6 +211,19 @@ def _reference_errors(manifest: dict[str, Any]) -> list[str]:
     return errors
 
 
+def _schedule_errors(manifest: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for profile_index, profile in enumerate(manifest["notification_profiles"]):
+        for template_index, template in enumerate(profile["revision"]["templates"]):
+            at = template["schedule"]["at"]
+            if at["offset_basis"] == "calendar_days" and int(at["offset_days"]) < -3660:
+                errors.append(
+                    f"$.notification_profiles[{profile_index}].revision.templates[{template_index}]"
+                    ".schedule.at.offset_days: outside supported range -3660..0"
+                )
+    return errors
+
+
 def _ordering_errors(manifest: dict[str, Any]) -> list[str]:
     errors: list[str] = []
 
@@ -316,6 +336,9 @@ def validate_pack(manifest: Any, schema: dict[str, Any]) -> list[str]:
     errors = _duplicate_errors(manifest)
     if errors:
         return errors
+    errors = _schedule_errors(manifest)
+    if errors:
+        return errors
     errors = _reference_errors(manifest)
     if errors:
         return errors
@@ -387,27 +410,38 @@ class PackManifestContractTests(unittest.TestCase):
         }
         self.assertEqual(actual, declared)
 
-    def test_medical_predecessor_is_preserved(self) -> None:
+    def test_predecessor_drafts_are_preserved(self) -> None:
         # Pin the reviewed artifact bytes, not just its mutable semantic digest.
         reviewed_hash = "c0baa85773b72d69e5e0a27ef0ddf4d3faa1eabb705fb368768ec630ab2bc21f"
-        for path in (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH):
+        for path in (FIRST_DRAFT_MANIFEST_PATH, FIRST_POSITIVE_FIXTURE_PATH):
             with self.subTest(path=path.name):
                 self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
         previous = load_json(PREVIOUS_DRAFT_MANIFEST_PATH)
         current = load_json(DRAFT_MANIFEST_PATH)
         self.assertEqual(current["pack"], {
-            "pack_id": "kinflow-starter", "version": "1.0.0-draft.2", "status": "draft",
+            "pack_id": "kinflow-starter", "version": "1.0.0-draft.3", "status": "draft",
         })
+        reviewed_hash = "28c1f6358908a63b2b6cde0f1aadeec32bee3c3bd3a8912fd12b3f5295b122ab"
+        for path in (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH):
+            with self.subTest(path=path.name):
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
         for field in ("manifest_schema", "compatibility", "dependencies"):
             self.assertEqual(current[field], previous[field])
         for field in ("archetypes", "notification_profiles", "binding_intents"):
-            self.assertEqual(current[field][1:], previous[field])
+            previous_keys = {
+                "archetypes": "archetype_key", "notification_profiles": "profile_key",
+                "binding_intents": "archetype_key",
+            }
+            key = previous_keys[field]
+            retained = [entry for entry in current[field] if entry[key] in {v[key] for v in previous[field]}]
+            self.assertEqual(retained, previous[field])
         self.assertEqual(content_digest(current), current["content_identity"]["digest"])
         self.assertNotEqual(current["content_identity"], previous["content_identity"])
 
     def test_lesson_matches_approved_content(self) -> None:
         manifest = load_json(DRAFT_MANIFEST_PATH)
-        self.assertEqual(manifest["archetypes"][0], {
+        lesson = next(v for v in manifest["archetypes"] if v["archetype_key"] == "lesson")
+        self.assertEqual(lesson, {
             "archetype_key": "lesson",
             "intended_status": "active",
             "revision": {
@@ -430,14 +464,16 @@ class PackManifestContractTests(unittest.TestCase):
                 ("twenty_four_hours_before", "-86400", "21600"),
             )
         ]
-        self.assertEqual(manifest["notification_profiles"][0], {
+        lesson_profile = next(v for v in manifest["notification_profiles"] if v["profile_key"] == "lesson_standard")
+        self.assertEqual(lesson_profile, {
             "profile_key": "lesson_standard",
             "display_name": "Lesson standard",
             "description": "Default reminders for an upcoming lesson.",
             "intended_status": "active",
             "revision": {"compatible_item_types": ["event"], "templates": expected_templates},
         })
-        self.assertEqual(manifest["binding_intents"][0], {
+        lesson_binding = next(v for v in manifest["binding_intents"] if v["archetype_key"] == "lesson")
+        self.assertEqual(lesson_binding, {
             "binding_kind": "archetype_default",
             "archetype_key": "lesson",
             "notification_profile_key": "lesson_standard",
@@ -473,15 +509,75 @@ class PackManifestContractTests(unittest.TestCase):
                 target[field] = value
                 manifest["content_identity"]["digest"] = content_digest(manifest)
                 errors = validate_pack(manifest, self.schema)
-                self.assertIn(f"{field}: unknown field", "\n".join(errors))
+                expected = (
+                    "schedule: must match exactly one allowed shape"
+                    if field == "recurrence" else f"{field}: unknown field"
+                )
+                self.assertIn(expected, "\n".join(errors))
 
     def test_lesson_binding_references_and_default_uniqueness(self) -> None:
         manifest = load_json(DRAFT_MANIFEST_PATH)
-        manifest["notification_profiles"].pop(0)
+        manifest["notification_profiles"] = [
+            value for value in manifest["notification_profiles"]
+            if value["profile_key"] != "lesson_standard"
+        ]
         self.assertIn(
             "unresolved notification_profile_key 'lesson_standard'",
             "\n".join(validate_pack(manifest, self.schema)),
         )
+
+    def test_draft_three_matches_approved_content(self) -> None:
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
+        profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
+        expected = {
+            "birthday": ("Birthday", "Annual birthday occasions for advance planning and day-of recognition."),
+            "flight": ("Flight", "Scheduled flight departures."),
+            "game_or_competition": ("Game or competition", "Scheduled sports games, tournaments, and competitions."),
+        }
+        for key, (name, description) in expected.items():
+            self.assertEqual(archetypes[key]["revision"], {
+                "display_name": name, "description": description, "compatible_item_types": ["event"],
+            })
+            self.assertEqual(profiles[key + "_standard"]["revision"]["compatible_item_types"], ["event"])
+        schedules = {
+            key: [
+                (t["template_key"], t["schedule"]["at"], t["late_handling"]["grace_seconds"])
+                for t in profiles[key]["revision"]["templates"]
+            ]
+            for key in ("birthday_standard", "flight_standard", "game_or_competition_standard")
+        }
+        self.assertEqual(schedules["game_or_competition_standard"], [
+            ("twenty_four_hours_before", {"kind": "target_offset", "offset_basis": "elapsed", "offset_seconds": "-86400"}, "21600"),
+            ("two_hours_before", {"kind": "target_offset", "offset_basis": "elapsed", "offset_seconds": "-7200"}, "3600"),
+        ])
+        self.assertEqual(
+            [(key, at["offset_seconds"], grace) for key, at, grace in schedules["flight_standard"]],
+            [("four_hours_before", "-14400", "3600"), ("one_hour_before", "-3600", "900"),
+             ("seven_days_before", "-604800", "86400"), ("twenty_four_hours_before", "-86400", "21600")],
+        )
+        self.assertEqual(
+            [(key, at["offset_days"], at["local_time"], grace) for key, at, grace in schedules["birthday_standard"]],
+            [("birthday_day_at_nine", "0", "09:00:00", "43200"),
+             ("one_day_before_at_nine", "-1", "09:00:00", "43200"),
+             ("seven_days_before_at_nine", "-7", "09:00:00", "86400"),
+             ("thirty_days_before_at_nine", "-30", "09:00:00", "259200")],
+        )
+        for key in expected:
+            binding = next(v for v in manifest["binding_intents"] if v["archetype_key"] == key)
+            self.assertEqual(binding["notification_profile_key"], key + "_standard")
+
+    def test_calendar_day_boundaries_fail_closed(self) -> None:
+        for field, value, expected in (
+            ("offset_days", "-3661", "outside supported range -3660..0"),
+            ("offset_days", "1", "must match exactly one allowed shape"),
+            ("local_time", "9:00:00", "must match exactly one allowed shape"),
+        ):
+            with self.subTest(field=field, value=value):
+                manifest = load_json(DRAFT_MANIFEST_PATH)
+                manifest["notification_profiles"][0]["revision"]["templates"][0]["schedule"]["at"][field] = value
+                manifest["content_identity"]["digest"] = content_digest(manifest)
+                self.assertIn(expected, "\n".join(validate_pack(manifest, self.schema)))
         manifest = load_json(DRAFT_MANIFEST_PATH)
         manifest["binding_intents"].append({
             "binding_kind": "archetype_default",

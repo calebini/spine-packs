@@ -164,6 +164,31 @@
       },
       "additionalProperties": false
     },
+    "calendarDaySchedule": {
+      "type": "object",
+      "required": ["kind", "at"],
+      "properties": {
+        "kind": { "const": "once" },
+        "at": {
+          "type": "object",
+          "required": ["kind", "offset_basis", "offset_days", "local_time"],
+          "properties": {
+            "kind": { "const": "target_offset" },
+            "offset_basis": { "const": "calendar_days" },
+            "offset_days": {
+              "type": "string",
+              "pattern": "^(?:0|-[1-9][0-9]{0,3})$"
+            },
+            "local_time": {
+              "type": "string",
+              "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "lateHandling": {
       "type": "object",
       "required": ["kind", "grace_seconds"],
@@ -181,7 +206,12 @@
       "required": ["template_key", "schedule", "late_handling"],
       "properties": {
         "template_key": { "$ref": "#/$defs/key" },
-        "schedule": { "$ref": "#/$defs/elapsedBeforeSchedule" },
+        "schedule": {
+          "oneOf": [
+            { "$ref": "#/$defs/elapsedBeforeSchedule" },
+            { "$ref": "#/$defs/calendarDaySchedule" }
+          ]
+        },
         "late_handling": { "$ref": "#/$defs/lateHandling" }
       },
       "additionalProperties": false

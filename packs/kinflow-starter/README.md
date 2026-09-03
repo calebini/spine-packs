@@ -1,8 +1,8 @@
 # kinflow-starter
 
 `kinflow-starter` is a draft Spine pack. Current draft version
-`1.0.0-draft.2` is not installable, released, or a publication of `1.0.0`.
-The medical-only `1.0.0-draft.1` remains unchanged for review provenance.
+`1.0.0-draft.3` is not installable, released, or a publication of `1.0.0`.
+The first two drafts remain unchanged for review provenance.
 
 ## Exact draft contents
 
@@ -39,14 +39,17 @@ receipt, credential, or environment-specific data.
 The recorded Whetstone audit applies to the medical-only predecessor, not to
 this expanded draft.
 
+Draft 3 additionally contains event-only `game_or_competition`, `flight`, and
+`birthday` archetypes, their standard profiles, and local default bindings.
+Game and flight use elapsed offsets. Birthday uses 9:00 AM calendar-day offsets
+that inherit timezone facts from each applicable local item target; annual
+recurrence remains item-level Spine truth.
+
 ## Candidate future content
 
 The following archetypes remain candidates and have no definitions yet:
 
 - `passport_renewal`
-- `game_or_competition`
-- `flight`
-- `birthday`
 
 Their semantics must not be inferred from their names. The pack remains draft
 while these definitions are developed and reviewed before a future `1.0.0`
