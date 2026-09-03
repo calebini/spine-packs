@@ -117,8 +117,10 @@ The v1 schedule subset permits a once-only elapsed target offset:
 }
 ```
 
-`offset_seconds` MUST be a negative, non-zero decimal string. It represents
-elapsed seconds before the target anchor.
+`offset_seconds` MUST be a canonical non-positive decimal string: either `0`
+or a negative value without leading zeroes. A negative value represents
+elapsed seconds before the target anchor; `0` represents exactly the target
+instant. Positive, post-target elapsed offsets are not supported by v1.
 
 The subset also permits a once-only calendar-day target offset:
 

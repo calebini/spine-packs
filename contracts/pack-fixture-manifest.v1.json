@@ -33,6 +33,11 @@
       "valid": true
     },
     {
+      "case_id": "positive_exact_target_elapsed_offset",
+      "fixture": "tests/fixtures/pack-manifest/positive/exact_target_elapsed_offset.json",
+      "valid": true
+    },
+    {
       "case_id": "negative_embedded_owner_data",
       "fixture": "tests/fixtures/pack-manifest/negative/embedded_owner_data.json",
       "valid": false,

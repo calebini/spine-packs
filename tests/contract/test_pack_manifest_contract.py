@@ -20,6 +20,9 @@ DRAFT_MANIFEST_PATH = (
 POSITIVE_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_3.json"
 )
+EXACT_TARGET_FIXTURE_PATH = (
+    ROOT / "tests/fixtures/pack-manifest/positive/exact_target_elapsed_offset.json"
+)
 PREVIOUS_DRAFT_MANIFEST_PATH = (
     ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.2.json"
 )
@@ -409,6 +412,23 @@ class PackManifestContractTests(unittest.TestCase):
             if case["fixture"].startswith("packs/") and case["valid"]
         }
         self.assertEqual(actual, declared)
+
+    def test_elapsed_target_offset_allows_zero_but_rejects_positive_values(self) -> None:
+        manifest = load_json(EXACT_TARGET_FIXTURE_PATH)
+        self.assertEqual(validate_pack(manifest, self.schema), [])
+
+        at = manifest["notification_profiles"][0]["revision"]["templates"][0][
+            "schedule"
+        ]["at"]
+        self.assertEqual(at["offset_seconds"], "0")
+        for invalid in ("1", "-0", "00"):
+            with self.subTest(invalid=invalid):
+                at["offset_seconds"] = invalid
+                manifest["content_identity"]["digest"] = content_digest(manifest)
+                self.assertIn(
+                    "schedule: must match exactly one allowed shape",
+                    "\n".join(validate_pack(manifest, self.schema)),
+                )
 
     def test_predecessor_drafts_are_preserved(self) -> None:
         # Pin the reviewed artifact bytes, not just its mutable semantic digest.

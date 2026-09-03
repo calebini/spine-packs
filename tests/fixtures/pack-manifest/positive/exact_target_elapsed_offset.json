@@ -1,0 +1,74 @@
+{
+  "manifest_schema": "spine.pack-manifest.v1",
+  "pack": {
+    "pack_id": "contract-fixture",
+    "version": "1.0.0-draft.1",
+    "status": "draft"
+  },
+  "compatibility": {
+    "spine_runtime_versions": [
+      "0.3.0"
+    ],
+    "spine_content_contracts": [
+      "spine.item-archetypes.v1",
+      "spine.notification-profile-bindings.v1",
+      "spine.notification-profiles.v1"
+    ]
+  },
+  "dependencies": [],
+  "archetypes": [
+    {
+      "archetype_key": "contract_event",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Contract event",
+        "description": "Fixture event for exact-target notification validation.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    }
+  ],
+  "notification_profiles": [
+    {
+      "profile_key": "contract_event_standard",
+      "display_name": "Contract event standard",
+      "description": "Fixture profile with an exact-target reminder.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "at_target",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "0"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "binding_intents": [
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "contract_event",
+      "notification_profile_key": "contract_event_standard"
+    }
+  ],
+  "content_identity": {
+    "algorithm": "sha256",
+    "canonical_json_version": "spine.canonical-json.v1",
+    "digest": "e842c2b98702b8a09113f2b13d420a8fd05f8a584417079237600230d54a8738"
+  }
+}

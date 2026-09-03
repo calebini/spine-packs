@@ -29,6 +29,7 @@ REQUIRED_FILES = (
     "tests/fixtures/pack-manifest/positive/medical_vertical_slice.json",
     "tests/fixtures/pack-manifest/positive/medical_and_lesson.json",
     "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_3.json",
+    "tests/fixtures/pack-manifest/positive/exact_target_elapsed_offset.json",
     "tests/fixtures/pack-manifest/negative/birthday_embedded_timezone.json",
     "tests/fixtures/pack-manifest/negative/birthday_profile_recurrence.json",
     "tests/fixtures/pack-manifest/negative/duplicate_archetype_key.json",

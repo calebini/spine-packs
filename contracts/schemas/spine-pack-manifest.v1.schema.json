@@ -143,7 +143,7 @@
       },
       "additionalProperties": false
     },
-    "elapsedBeforeSchedule": {
+    "elapsedAtOrBeforeSchedule": {
       "type": "object",
       "required": ["kind", "at"],
       "properties": {
@@ -156,7 +156,7 @@
             "offset_basis": { "const": "elapsed" },
             "offset_seconds": {
               "type": "string",
-              "pattern": "^-[1-9][0-9]*$"
+              "pattern": "^(?:0|-[1-9][0-9]*)$"
             }
           },
           "additionalProperties": false
@@ -208,7 +208,7 @@
         "template_key": { "$ref": "#/$defs/key" },
         "schedule": {
           "oneOf": [
-            { "$ref": "#/$defs/elapsedBeforeSchedule" },
+            { "$ref": "#/$defs/elapsedAtOrBeforeSchedule" },
             { "$ref": "#/$defs/calendarDaySchedule" }
           ]
         },
