@@ -13,6 +13,16 @@
       "valid": true
     },
     {
+      "case_id": "published_medical_and_lesson_draft_manifest",
+      "fixture": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.2.json",
+      "valid": true
+    },
+    {
+      "case_id": "positive_medical_and_lesson",
+      "fixture": "tests/fixtures/pack-manifest/positive/medical_and_lesson.json",
+      "valid": true
+    },
+    {
       "case_id": "negative_embedded_owner_data",
       "fixture": "tests/fixtures/pack-manifest/negative/embedded_owner_data.json",
       "valid": false,
@@ -83,6 +93,12 @@
       "fixture": "tests/fixtures/pack-manifest/negative/version_status_mismatch.json",
       "valid": false,
       "expected_error": "$.pack: must match exactly one allowed shape"
+    },
+    {
+      "case_id": "negative_lesson_profile_recurrence",
+      "fixture": "tests/fixtures/pack-manifest/negative/lesson_profile_recurrence.json",
+      "valid": false,
+      "expected_error": "$.notification_profiles[0].revision.recurrence_scope: unknown field"
     }
   ]
 }

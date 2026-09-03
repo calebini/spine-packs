@@ -17,13 +17,16 @@ REQUIRED_FILES = (
     "contracts/schemas/spine-pack-manifest.v1.schema.json",
     "packs/kinflow-starter/README.md",
     "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json",
+    "packs/kinflow-starter/kinflow-starter.1.0.0-draft.2.json",
     "scripts/verify_repo.py",
     "specs/architecture.md",
     "specs/compatibility.md",
+    "specs/kinflow-starter.md",
     "specs/overview.md",
     "specs/pack-format.md",
     "tests/contract/test_pack_manifest_contract.py",
     "tests/fixtures/pack-manifest/positive/medical_vertical_slice.json",
+    "tests/fixtures/pack-manifest/positive/medical_and_lesson.json",
     "tests/fixtures/pack-manifest/negative/duplicate_archetype_key.json",
     "tests/fixtures/pack-manifest/negative/duplicate_json_object_member.json",
     "tests/fixtures/pack-manifest/negative/embedded_owner_data.json",
@@ -31,6 +34,7 @@ REQUIRED_FILES = (
     "tests/fixtures/pack-manifest/negative/incorrect_content_digest.json",
     "tests/fixtures/pack-manifest/negative/invalid_grace_window.json",
     "tests/fixtures/pack-manifest/negative/invalid_notification_offset.json",
+    "tests/fixtures/pack-manifest/negative/lesson_profile_recurrence.json",
     "tests/fixtures/pack-manifest/negative/multiple_defaults_for_archetype.json",
     "tests/fixtures/pack-manifest/negative/noncanonical_array_ordering.json",
     "tests/fixtures/pack-manifest/negative/unknown_fields.json",
@@ -72,6 +76,11 @@ REQUIRED_MARKERS = {
         "Content identity",
         "Deferred decisions",
     ),
+    "specs/kinflow-starter.md": (
+        "1.0.0-draft.2",
+        "Lesson notification profile",
+        "Spine-owned item state",
+    ),
     "contracts/schemas/spine-pack-manifest.v1.schema.json": (
         "https://json-schema.org/draft/2020-12/schema",
         "spine.pack-manifest.v1",
@@ -84,7 +93,7 @@ REQUIRED_MARKERS = {
     ),
 }
 
-CANDIDATE_NAMES = (
+PACK_ARCHETYPE_NAMES = (
     "medical_appointment",
     "lesson",
     "passport_renewal",
@@ -122,9 +131,9 @@ def verify() -> list[str]:
     pack_readme = ROOT / "packs/kinflow-starter/README.md"
     if pack_readme.is_file():
         text = pack_readme.read_text(encoding="utf-8")
-        for name in CANDIDATE_NAMES:
+        for name in PACK_ARCHETYPE_NAMES:
             if f"`{name}`" not in text:
-                errors.append(f"missing kinflow-starter candidate name: {name}")
+                errors.append(f"missing kinflow-starter archetype name: {name}")
 
     for name in FORBIDDEN_TOP_LEVEL:
         if (ROOT / name).exists():

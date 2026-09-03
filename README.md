@@ -39,10 +39,10 @@ installer or package runtime.
 ## Repository map
 
 - `specs/` is the normative source of truth for purpose, architecture,
-  compatibility, and pack-format requirements.
+  compatibility, pack-format requirements, and approved pack content.
 - `contracts/schemas/` contains the machine-readable manifest contract.
 - `packs/` contains independently versioned pack source material, including
-  the draft `kinflow-starter` medical vertical slice.
+  the draft `kinflow-starter` medical and lesson vertical slices.
 - `tests/contract/` and `tests/fixtures/` contain dependency-free contract
   checks and positive/negative manifest fixtures.
 - `scripts/verify_repo.py` checks repository shape and high-level boundary
@@ -53,9 +53,12 @@ installer or package runtime.
 
 This repository is at the **draft-contract** stage. Schema identity
 `spine.pack-manifest.v1` and draft `kinflow-starter` version
-`1.0.0-draft.1` cover one complete medical-appointment vertical slice. The
-draft is not released or installable, and additional archetypes may be added
-before a future immutable `1.0.0` release.
+`1.0.0-draft.2` cover complete medical-appointment and lesson vertical slices.
+The medical-only `1.0.0-draft.1` is preserved as the reviewed predecessor.
+Approved content is specified in [specs/kinflow-starter.md](specs/kinflow-starter.md).
+The drafts are not released or installable, and additional archetypes may be
+added before a future immutable `1.0.0` release. The recorded Whetstone audit
+covers the earlier medical-only slice, not the new lesson content.
 
 Run the local structural check with:
 

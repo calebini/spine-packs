@@ -35,6 +35,11 @@ runtime `0.3.0` public artifacts and requires:
 These declarations do not assert that any staging or production environment is
 compatible. No environment was queried.
 
+`kinflow-starter` draft `1.0.0-draft.2` retains exactly the same runtime and
+content-contract allowlists as `1.0.0-draft.1`. The lesson slice uses only the
+existing v1 content shapes; it does not widen compatibility or assert support
+for any item-level recurrence command.
+
 ## Content compatibility is not execution readiness
 
 `spine_content_contracts` is intentionally limited to the contracts that give

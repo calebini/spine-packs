@@ -11,6 +11,8 @@ Before changing pack behavior or format, read:
 3. `specs/compatibility.md`
 4. `specs/pack-format.md`
 
+Before changing `kinflow-starter` content, also read `specs/kinflow-starter.md`.
+
 The files in `specs/` are the normative source of truth. `README.md` is
 orientation, pack-local READMEs describe pack status, and code must implement
 rather than redefine the specs.
@@ -32,8 +34,8 @@ rather than redefine the specs.
 
 ## Stage discipline
 
-This is a draft-contract repository. The first-pass contract is
-limited to `spine.pack-manifest.v1` and the medical-appointment vertical slice.
+This is a draft-contract repository. The current scope is limited to
+`spine.pack-manifest.v1` and the medical-appointment and lesson vertical slices.
 Do not broaden the schema or pack semantics without matching normative spec,
 fixture, and contract-test changes. Do not add an installer implementation,
 package runtime, or speculative service/adapter/model/package directories.

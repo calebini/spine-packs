@@ -15,10 +15,20 @@ ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = ROOT / "contracts/schemas/spine-pack-manifest.v1.schema.json"
 FIXTURE_MANIFEST_PATH = ROOT / "contracts/pack-fixture-manifest.v1.json"
 DRAFT_MANIFEST_PATH = (
-    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json"
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.2.json"
 )
 POSITIVE_FIXTURE_PATH = (
+    ROOT / "tests/fixtures/pack-manifest/positive/medical_and_lesson.json"
+)
+PREVIOUS_DRAFT_MANIFEST_PATH = (
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json"
+)
+PREVIOUS_POSITIVE_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/medical_vertical_slice.json"
+)
+DRAFT_FIXTURE_PAIRS = (
+    (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH),
+    (DRAFT_MANIFEST_PATH, POSITIVE_FIXTURE_PATH),
 )
 
 
@@ -365,10 +375,125 @@ class PackManifestContractTests(unittest.TestCase):
         self.assertEqual(actual, declared)
 
     def test_published_manifest_matches_positive_vector(self) -> None:
-        self.assertEqual(load_json(DRAFT_MANIFEST_PATH), load_json(POSITIVE_FIXTURE_PATH))
+        for manifest_path, fixture_path in DRAFT_FIXTURE_PAIRS:
+            with self.subTest(manifest=manifest_path.name):
+                self.assertEqual(load_json(manifest_path), load_json(fixture_path))
+
+    def test_fixture_manifest_covers_every_pack_manifest(self) -> None:
+        actual = {path.relative_to(ROOT).as_posix() for path in (ROOT / "packs").rglob("*.json")}
+        declared = {
+            case["fixture"] for case in self.fixture_manifest["cases"]
+            if case["fixture"].startswith("packs/") and case["valid"]
+        }
+        self.assertEqual(actual, declared)
+
+    def test_medical_predecessor_is_preserved(self) -> None:
+        # Pin the reviewed artifact bytes, not just its mutable semantic digest.
+        reviewed_hash = "c0baa85773b72d69e5e0a27ef0ddf4d3faa1eabb705fb368768ec630ab2bc21f"
+        for path in (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH):
+            with self.subTest(path=path.name):
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
+        previous = load_json(PREVIOUS_DRAFT_MANIFEST_PATH)
+        current = load_json(DRAFT_MANIFEST_PATH)
+        self.assertEqual(current["pack"], {
+            "pack_id": "kinflow-starter", "version": "1.0.0-draft.2", "status": "draft",
+        })
+        for field in ("manifest_schema", "compatibility", "dependencies"):
+            self.assertEqual(current[field], previous[field])
+        for field in ("archetypes", "notification_profiles", "binding_intents"):
+            self.assertEqual(current[field][1:], previous[field])
+        self.assertEqual(content_digest(current), current["content_identity"]["digest"])
+        self.assertNotEqual(current["content_identity"], previous["content_identity"])
+
+    def test_lesson_matches_approved_content(self) -> None:
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        self.assertEqual(manifest["archetypes"][0], {
+            "archetype_key": "lesson",
+            "intended_status": "active",
+            "revision": {
+                "display_name": "Lesson",
+                "description": "Scheduled instructional sessions such as classes, tutoring, coaching, or private lessons.",
+                "compatible_item_types": ["event"],
+            },
+        })
+        expected_templates = [
+            {
+                "template_key": key,
+                "schedule": {
+                    "kind": "once",
+                    "at": {"kind": "target_offset", "offset_basis": "elapsed", "offset_seconds": offset},
+                },
+                "late_handling": {"kind": "deliver_within", "grace_seconds": grace},
+            }
+            for key, offset, grace in (
+                ("one_hour_before", "-3600", "1800"),
+                ("twenty_four_hours_before", "-86400", "21600"),
+            )
+        ]
+        self.assertEqual(manifest["notification_profiles"][0], {
+            "profile_key": "lesson_standard",
+            "display_name": "Lesson standard",
+            "description": "Default reminders for an upcoming lesson.",
+            "intended_status": "active",
+            "revision": {"compatible_item_types": ["event"], "templates": expected_templates},
+        })
+        self.assertEqual(manifest["binding_intents"][0], {
+            "binding_kind": "archetype_default",
+            "archetype_key": "lesson",
+            "notification_profile_key": "lesson_standard",
+        })
+
+    def test_expanded_pack_rejects_reordered_arrays(self) -> None:
+        for path in (
+            ("archetypes",), ("notification_profiles",), ("binding_intents",),
+            ("notification_profiles", 0, "revision", "templates"),
+        ):
+            with self.subTest(path=path):
+                manifest = load_json(DRAFT_MANIFEST_PATH)
+                collection = manifest
+                for key in path:
+                    collection = collection[key]
+                collection.reverse()
+                manifest["content_identity"]["digest"] = content_digest(manifest)
+                errors = validate_pack(manifest, self.schema)
+                self.assertIn("not in deterministic order", "\n".join(errors))
+
+    def test_lesson_rejects_recurrence_and_localization_fields(self) -> None:
+        for path, field, value in (
+            (("notification_profiles", 0, "revision"), "recurrence_scope", "series"),
+            (("notification_profiles", 0, "revision", "templates", 0, "schedule"), "recurrence", "weekly"),
+            (("archetypes", 0, "revision"), "localized_display_names", {"en": "Lesson"}),
+            (("notification_profiles", 0), "localized_display_names", {"en": "Lesson standard"}),
+        ):
+            with self.subTest(path=path, field=field):
+                manifest = load_json(DRAFT_MANIFEST_PATH)
+                target = manifest
+                for key in path:
+                    target = target[key]
+                target[field] = value
+                manifest["content_identity"]["digest"] = content_digest(manifest)
+                errors = validate_pack(manifest, self.schema)
+                self.assertIn(f"{field}: unknown field", "\n".join(errors))
+
+    def test_lesson_binding_references_and_default_uniqueness(self) -> None:
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        manifest["notification_profiles"].pop(0)
+        self.assertIn(
+            "unresolved notification_profile_key 'lesson_standard'",
+            "\n".join(validate_pack(manifest, self.schema)),
+        )
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        manifest["binding_intents"].append({
+            "binding_kind": "archetype_default",
+            "archetype_key": "lesson",
+            "notification_profile_key": "medical_appointment_standard",
+        })
+        self.assertIn(
+            "duplicate archetype_default for archetype_key 'lesson'",
+            "\n".join(validate_pack(manifest, self.schema)),
+        )
 
     def test_published_manifest_contains_no_installation_identity(self) -> None:
-        manifest = load_json(DRAFT_MANIFEST_PATH)
         forbidden = {
             "actor_subject_id",
             "command_id",
@@ -392,7 +517,9 @@ class PackManifestContractTests(unittest.TestCase):
                 for member in value:
                     visit(member)
 
-        visit(manifest)
+        for manifest_path, _ in DRAFT_FIXTURE_PAIRS:
+            with self.subTest(manifest=manifest_path.name):
+                visit(load_json(manifest_path))
 
 
 if __name__ == "__main__":
