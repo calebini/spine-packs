@@ -7,17 +7,34 @@ installation. General format and authority rules remain in `pack-format.md`,
 
 ## Draft lineage
 
-`1.0.0-draft.3` is the current draft. It MUST contain exactly the `birthday`,
-`flight`, `game_or_competition`, `lesson`, and `medical_appointment`
-archetypes, their respective standard profiles, and one local default-binding
-intent per archetype.
+`1.0.0-draft.4` is the current draft. It MUST contain exactly these archetypes,
+their respective same-named `_standard` profiles, and one local default-binding
+intent per archetype:
 
-The medical-only `1.0.0-draft.1`, medical-and-lesson `1.0.0-draft.2`, and their
-positive fixtures MUST remain unchanged as review evidence. Every predecessor
-definition and binding MUST be preserved without semantic change in draft 3.
-Draft 3 MUST retain the exact compatibility declarations and empty dependencies
-and MUST have a newly computed content digest. All artifacts remain drafts, not
-releases or evidence of installation.
+- `birthday`;
+- `camp_or_program`;
+- `community_event`;
+- `dinner_reservation`;
+- `flight`;
+- `game_or_competition`;
+- `lesson`;
+- `medical_appointment`;
+- `parent_teacher_meeting`;
+- `party`;
+- `performance`;
+- `playdate`;
+- `school_deadline`;
+- `school_event`;
+- `social_gathering`; and
+- `visitor_arrival`.
+
+The medical-only `1.0.0-draft.1`, medical-and-lesson `1.0.0-draft.2`, expanded
+event `1.0.0-draft.3`, and their positive fixtures MUST remain byte-for-byte
+unchanged as review evidence. Every predecessor definition and binding MUST be
+preserved without semantic change in draft 4. Draft 4 MUST retain the exact
+compatibility declarations and empty dependencies and MUST have a newly
+computed content digest. All artifacts remain drafts, not releases or evidence
+of installation.
 
 ## Lesson meaning and display text
 
@@ -69,10 +86,32 @@ The lesson binding intent MUST contain exactly
 `notification_profile_key=lesson_standard`. It references definitions in this
 pack, not installed Spine IDs or an owner.
 
-In draft 3, archetypes and bindings MUST be ordered `birthday`, `flight`,
-`game_or_competition`, `lesson`, then `medical_appointment`. Profiles MUST use
-the corresponding lexicographic order. Template ordering is by key, not
-reminder time.
+Draft 4 archetypes, profiles, and bindings MUST use the lexicographic ordering
+required by `specs/pack-format.md`. Template ordering is by key, not reminder
+time. Historical draft 3 remains unchanged in its earlier canonical order.
+
+## Late-delivery spacing policy
+
+Draft 4 profiles MUST leave a quiet interval before the next scheduled
+notification. For two templates whose resolved nominal notification instants
+are `A` and `B`, where `A` occurs before `B`, the positive delivery grace for
+`A` MUST be no greater than the smaller of:
+
+- the domain-specific grace selected for `A`; and
+- `floor(0.75 * (B - A))` seconds.
+
+For the final pre-target reminder, the item target is the next boundary. A
+template nominally scheduled at the target has no later target boundary and
+MUST instead declare a short, explicit domain-specific grace. Calendar-day and
+mixed-basis profiles MUST satisfy the rule against the shortest possible gap
+between their resolved instants, including an early target time and local
+clock changes. If the ordering or gap cannot be established, validation or
+application MUST fail closed rather than assume a longer interval.
+
+The rule constrains pack authorship; it does not merge notification
+opportunities or add scheduling behavior to this repository. The JSON arrays
+remain ordered lexicographically by template key, so chronological ordering
+for this calculation is derived from the schedules rather than array position.
 
 ## Recurrence and authority
 
@@ -150,8 +189,119 @@ item's local target. Profile application MUST fail closed when the target
 cannot supply them. Annual recurrence, occurrence generation, exceptions, and
 the target date remain Spine-owned item facts and MUST NOT appear in the pack.
 
+## Education and activities
+
+Every definition in this section MUST use `intended_status=active`. Profiles
+MUST be archetype-specific even where their template schedules repeat another
+profile. Repeated templates do not create a shared profile identity.
+
+The archetypes MUST be exactly:
+
+| Archetype key | Display name | Description | Compatible item types |
+| --- | --- | --- | --- |
+| `camp_or_program` | `Camp or program` | `Scheduled camps and bounded programs represented by their overall start.` | `event` |
+| `parent_teacher_meeting` | `Parent-teacher meeting` | `Scheduled meetings between parents or guardians and teachers.` | `event` |
+| `performance` | `Performance` | `Scheduled recitals, concerts, plays, and similar events in which the participant is performing.` | `event` |
+| `school_deadline` | `School deadline` | `School-related completion and submission deadlines.` | `task` |
+| `school_event` | `School event` | `Scheduled school carnivals, fairs, concerts, open houses, and similar events.` | `event` |
+
+The corresponding profiles MUST be exactly:
+
+| Profile key | Display name | Description | Compatible item types |
+| --- | --- | --- | --- |
+| `camp_or_program_standard` | `Camp or program standard` | `Preparation and start reminders for an upcoming camp or program.` | `event` |
+| `parent_teacher_meeting_standard` | `Parent-teacher meeting standard` | `Preparation and attendance reminders for a parent-teacher meeting.` | `event` |
+| `performance_standard` | `Performance standard` | `Preparation and arrival reminders for a scheduled performance.` | `event` |
+| `school_deadline_standard` | `School deadline standard` | `Progressive reminders leading up to and on a school deadline.` | `task` |
+| `school_event_standard` | `School event standard` | `Preparation and arrival reminders for a school event.` | `event` |
+
+Their templates MUST be exactly:
+
+| Profile | Template key | Basis | Offset | Local time | Grace |
+| --- | --- | --- | --- | --- | --- |
+| `camp_or_program_standard` | `one_day_before_at_noon` | `calendar_days` | `-1` day | `12:00:00` | `21600` seconds |
+| `camp_or_program_standard` | `seven_days_before_at_noon` | `calendar_days` | `-7` days | `12:00:00` | `86400` seconds |
+| `camp_or_program_standard` | `thirty_days_before_at_noon` | `calendar_days` | `-30` days | `12:00:00` | `259200` seconds |
+| `camp_or_program_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `parent_teacher_meeting_standard` | `one_hour_before` | `elapsed` | `-3600` seconds | — | `1800` seconds |
+| `parent_teacher_meeting_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `performance_standard` | `seven_days_before` | `elapsed` | `-604800` seconds | — | `86400` seconds |
+| `performance_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `performance_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `school_deadline_standard` | `due_day_at_nine` | `calendar_days` | `0` days | `09:00:00` | `21600` seconds |
+| `school_deadline_standard` | `one_day_before_at_nine` | `calendar_days` | `-1` day | `09:00:00` | `43200` seconds |
+| `school_deadline_standard` | `seven_days_before_at_nine` | `calendar_days` | `-7` days | `09:00:00` | `86400` seconds |
+| `school_deadline_standard` | `two_days_before_at_nine` | `calendar_days` | `-2` days | `09:00:00` | `43200` seconds |
+| `school_event_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `school_event_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+
+`performance` is for a participant or performer, not merely an attendee; a
+generic attended performance may use another event archetype. A
+`camp_or_program` target is the overall program start, not each session in a
+recurring program. Session recurrence and occurrence creation remain
+Spine-owned. A `school_deadline` target represents the due date for completion
+or submission. Operators SHOULD use an exact item target when a deadline has a
+specific time; the reusable day-based profile does not embed that local fact.
+
+The one-day camp reminder uses a six-hour grace rather than twelve hours. This
+keeps it within the 75% spacing cap even when the program starts at midnight:
+the next two-hour reminder is only ten elapsed hours after the preceding noon
+reminder.
+
+## Social
+
+Every definition in this section MUST use `intended_status=active` and be
+compatible with exactly `event`. The archetypes MUST be exactly:
+
+| Archetype key | Display name | Description |
+| --- | --- | --- |
+| `community_event` | `Community event` | `Scheduled community, neighborhood, civic, and local public events.` |
+| `dinner_reservation` | `Dinner reservation` | `Scheduled restaurant dinner reservations.` |
+| `party` | `Party` | `Scheduled parties and celebrations.` |
+| `playdate` | `Playdate` | `Scheduled playdates for children and their caregivers.` |
+| `social_gathering` | `Social gathering` | `Scheduled informal social gatherings.` |
+| `visitor_arrival` | `Visitor arrival` | `Expected arrivals of visitors at a scheduled time.` |
+
+The corresponding profiles MUST be exactly:
+
+| Profile key | Display name | Description |
+| --- | --- | --- |
+| `community_event_standard` | `Community event standard` | `Preparation and arrival reminders for a community event.` |
+| `dinner_reservation_standard` | `Dinner reservation standard` | `Arrival reminders for a dinner reservation, including a time-now reminder.` |
+| `party_standard` | `Party standard` | `Planning, preparation, and arrival reminders for a party.` |
+| `playdate_standard` | `Playdate standard` | `Coordination and arrival reminders for a playdate.` |
+| `social_gathering_standard` | `Social gathering standard` | `Preparation and arrival reminders for a social gathering.` |
+| `visitor_arrival_standard` | `Visitor arrival standard` | `Preparation and arrival-time reminders for an expected visitor.` |
+
+Their templates MUST be exactly:
+
+| Profile | Template key | Basis | Offset | Local time | Grace |
+| --- | --- | --- | --- | --- | --- |
+| `community_event_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `community_event_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `dinner_reservation_standard` | `at_reservation_time` | `elapsed` | `0` seconds | — | `900` seconds |
+| `dinner_reservation_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `party_standard` | `seven_days_before` | `elapsed` | `-604800` seconds | — | `86400` seconds |
+| `party_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `party_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `playdate_standard` | `one_hour_before` | `elapsed` | `-3600` seconds | — | `1800` seconds |
+| `playdate_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `social_gathering_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `social_gathering_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `visitor_arrival_standard` | `at_arrival_time` | `elapsed` | `0` seconds | — | `900` seconds |
+| `visitor_arrival_standard` | `one_day_before_at_noon` | `calendar_days` | `-1` day | `12:00:00` | `21600` seconds |
+| `visitor_arrival_standard` | `one_hour_before` | `elapsed` | `-3600` seconds | — | `1800` seconds |
+
+The `0` offsets are intentional time-now reminders anchored to the dinner
+reservation time and expected visitor arrival. They do not assert that the
+person or reservation actually arrived. The visitor's one-day reminder uses
+the target's local date at noon and inherits timezone facts from the item.
+Specific venues, invitees, addresses, reservation details, hosts, and visitor
+identities remain item- or operator-owned facts.
+
 ## Default bindings
 
-Draft 3 MUST bind each of `birthday`, `flight`, and `game_or_competition` to
-its same-named `_standard` profile using one owner-neutral
-`archetype_default` intent. These bindings contain only pack-local keys.
+Draft 4 MUST bind every included archetype to its same-named `_standard`
+profile using exactly one owner-neutral `archetype_default` intent. These
+bindings contain only pack-local keys. Historical drafts retain the binding
+sets specified by their own content.

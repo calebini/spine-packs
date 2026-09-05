@@ -45,6 +45,11 @@ use Spine's existing calendar-day target-offset shape and inherit timezone
 facts from the applicable local item target. The pack does not declare a
 timezone, timezone-database version, or recurrence capability.
 
+Draft `1.0.0-draft.4` retains those exact allowlists. Its Education and Social
+profiles use only the already-declared elapsed and calendar-day target-offset
+forms. The exact-target dinner and visitor templates use the supported
+`offset_seconds=0` form described below.
+
 The v1 pack contract's exact-target elapsed form, `offset_seconds=0`, is within
 the signed elapsed-offset semantics accepted by the inspected Spine runtime
 `0.3.0` under `spine.notification-profiles.v1`. Supporting that form does not

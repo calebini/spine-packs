@@ -19,6 +19,7 @@ REQUIRED_FILES = (
     "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json",
     "packs/kinflow-starter/kinflow-starter.1.0.0-draft.2.json",
     "packs/kinflow-starter/kinflow-starter.1.0.0-draft.3.json",
+    "packs/kinflow-starter/kinflow-starter.1.0.0-draft.4.json",
     "scripts/verify_repo.py",
     "specs/architecture.md",
     "specs/compatibility.md",
@@ -29,6 +30,7 @@ REQUIRED_FILES = (
     "tests/fixtures/pack-manifest/positive/medical_vertical_slice.json",
     "tests/fixtures/pack-manifest/positive/medical_and_lesson.json",
     "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_3.json",
+    "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_4.json",
     "tests/fixtures/pack-manifest/positive/exact_target_elapsed_offset.json",
     "tests/fixtures/pack-manifest/negative/birthday_embedded_timezone.json",
     "tests/fixtures/pack-manifest/negative/birthday_profile_recurrence.json",
@@ -82,11 +84,14 @@ REQUIRED_MARKERS = {
         "Deferred decisions",
     ),
     "specs/kinflow-starter.md": (
-        "1.0.0-draft.3",
+        "1.0.0-draft.4",
         "Lesson notification profile",
         "Game or competition",
         "Flight",
         "Birthday",
+        "Education and activities",
+        "Social",
+        "Late-delivery spacing policy",
         "Spine-owned item state",
     ),
     "contracts/schemas/spine-pack-manifest.v1.schema.json": (
@@ -102,12 +107,23 @@ REQUIRED_MARKERS = {
 }
 
 PACK_ARCHETYPE_NAMES = (
-    "medical_appointment",
-    "lesson",
-    "passport_renewal",
-    "game_or_competition",
-    "flight",
     "birthday",
+    "camp_or_program",
+    "community_event",
+    "dinner_reservation",
+    "flight",
+    "game_or_competition",
+    "lesson",
+    "medical_appointment",
+    "parent_teacher_meeting",
+    "party",
+    "passport_renewal",
+    "performance",
+    "playdate",
+    "school_deadline",
+    "school_event",
+    "social_gathering",
+    "visitor_arrival",
 )
 
 FORBIDDEN_TOP_LEVEL = (

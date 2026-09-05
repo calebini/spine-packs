@@ -15,10 +15,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = ROOT / "contracts/schemas/spine-pack-manifest.v1.schema.json"
 FIXTURE_MANIFEST_PATH = ROOT / "contracts/pack-fixture-manifest.v1.json"
 DRAFT_MANIFEST_PATH = (
-    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.3.json"
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.4.json"
 )
 POSITIVE_FIXTURE_PATH = (
-    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_3.json"
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_4.json"
 )
 EXACT_TARGET_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/exact_target_elapsed_offset.json"
@@ -35,9 +35,16 @@ FIRST_DRAFT_MANIFEST_PATH = (
 FIRST_POSITIVE_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/medical_vertical_slice.json"
 )
+THIRD_DRAFT_MANIFEST_PATH = (
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.3.json"
+)
+THIRD_POSITIVE_FIXTURE_PATH = (
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_3.json"
+)
 DRAFT_FIXTURE_PAIRS = (
     (FIRST_DRAFT_MANIFEST_PATH, FIRST_POSITIVE_FIXTURE_PATH),
     (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH),
+    (THIRD_DRAFT_MANIFEST_PATH, THIRD_POSITIVE_FIXTURE_PATH),
     (DRAFT_MANIFEST_PATH, POSITIVE_FIXTURE_PATH),
 )
 
@@ -436,15 +443,20 @@ class PackManifestContractTests(unittest.TestCase):
         for path in (FIRST_DRAFT_MANIFEST_PATH, FIRST_POSITIVE_FIXTURE_PATH):
             with self.subTest(path=path.name):
                 self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
-        previous = load_json(PREVIOUS_DRAFT_MANIFEST_PATH)
-        current = load_json(DRAFT_MANIFEST_PATH)
-        self.assertEqual(current["pack"], {
-            "pack_id": "kinflow-starter", "version": "1.0.0-draft.3", "status": "draft",
-        })
         reviewed_hash = "28c1f6358908a63b2b6cde0f1aadeec32bee3c3bd3a8912fd12b3f5295b122ab"
         for path in (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH):
             with self.subTest(path=path.name):
                 self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
+        reviewed_hash = "d13bc7932eb5ab9fe5afaff149667445784d0453ddcbe7dbe95db0dee7301166"
+        for path in (THIRD_DRAFT_MANIFEST_PATH, THIRD_POSITIVE_FIXTURE_PATH):
+            with self.subTest(path=path.name):
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
+
+        previous = load_json(THIRD_DRAFT_MANIFEST_PATH)
+        current = load_json(DRAFT_MANIFEST_PATH)
+        self.assertEqual(current["pack"], {
+            "pack_id": "kinflow-starter", "version": "1.0.0-draft.4", "status": "draft",
+        })
         for field in ("manifest_schema", "compatibility", "dependencies"):
             self.assertEqual(current[field], previous[field])
         for field in ("archetypes", "notification_profiles", "binding_intents"):
@@ -547,7 +559,7 @@ class PackManifestContractTests(unittest.TestCase):
         )
 
     def test_draft_three_matches_approved_content(self) -> None:
-        manifest = load_json(DRAFT_MANIFEST_PATH)
+        manifest = load_json(THIRD_DRAFT_MANIFEST_PATH)
         archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
         profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
         expected = {
@@ -586,6 +598,229 @@ class PackManifestContractTests(unittest.TestCase):
         for key in expected:
             binding = next(v for v in manifest["binding_intents"] if v["archetype_key"] == key)
             self.assertEqual(binding["notification_profile_key"], key + "_standard")
+
+    def test_draft_four_matches_approved_education_and_social_content(self) -> None:
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
+        profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
+        bindings = {v["archetype_key"]: v for v in manifest["binding_intents"]}
+
+        expected_archetypes = {
+            "camp_or_program": (
+                "Camp or program",
+                "Scheduled camps and bounded programs represented by their overall start.",
+                "event",
+            ),
+            "community_event": (
+                "Community event",
+                "Scheduled community, neighborhood, civic, and local public events.",
+                "event",
+            ),
+            "dinner_reservation": (
+                "Dinner reservation", "Scheduled restaurant dinner reservations.", "event",
+            ),
+            "parent_teacher_meeting": (
+                "Parent-teacher meeting",
+                "Scheduled meetings between parents or guardians and teachers.",
+                "event",
+            ),
+            "party": ("Party", "Scheduled parties and celebrations.", "event"),
+            "performance": (
+                "Performance",
+                "Scheduled recitals, concerts, plays, and similar events in which the participant is performing.",
+                "event",
+            ),
+            "playdate": (
+                "Playdate", "Scheduled playdates for children and their caregivers.", "event",
+            ),
+            "school_deadline": (
+                "School deadline", "School-related completion and submission deadlines.", "task",
+            ),
+            "school_event": (
+                "School event",
+                "Scheduled school carnivals, fairs, concerts, open houses, and similar events.",
+                "event",
+            ),
+            "social_gathering": (
+                "Social gathering", "Scheduled informal social gatherings.", "event",
+            ),
+            "visitor_arrival": (
+                "Visitor arrival", "Expected arrivals of visitors at a scheduled time.", "event",
+            ),
+        }
+        expected_profile_text = {
+            "camp_or_program": ("Camp or program standard", "Preparation and start reminders for an upcoming camp or program."),
+            "community_event": ("Community event standard", "Preparation and arrival reminders for a community event."),
+            "dinner_reservation": ("Dinner reservation standard", "Arrival reminders for a dinner reservation, including a time-now reminder."),
+            "parent_teacher_meeting": ("Parent-teacher meeting standard", "Preparation and attendance reminders for a parent-teacher meeting."),
+            "party": ("Party standard", "Planning, preparation, and arrival reminders for a party."),
+            "performance": ("Performance standard", "Preparation and arrival reminders for a scheduled performance."),
+            "playdate": ("Playdate standard", "Coordination and arrival reminders for a playdate."),
+            "school_deadline": ("School deadline standard", "Progressive reminders leading up to and on a school deadline."),
+            "school_event": ("School event standard", "Preparation and arrival reminders for a school event."),
+            "social_gathering": ("Social gathering standard", "Preparation and arrival reminders for a social gathering."),
+            "visitor_arrival": ("Visitor arrival standard", "Preparation and arrival-time reminders for an expected visitor."),
+        }
+        expected_schedules = {
+            "camp_or_program": [
+                ("one_day_before_at_noon", "calendar_days", "-1", "12:00:00", "21600"),
+                ("seven_days_before_at_noon", "calendar_days", "-7", "12:00:00", "86400"),
+                ("thirty_days_before_at_noon", "calendar_days", "-30", "12:00:00", "259200"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "community_event": [
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "dinner_reservation": [
+                ("at_reservation_time", "elapsed", "0", None, "900"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "parent_teacher_meeting": [
+                ("one_hour_before", "elapsed", "-3600", None, "1800"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+            ],
+            "party": [
+                ("seven_days_before", "elapsed", "-604800", None, "86400"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "performance": [
+                ("seven_days_before", "elapsed", "-604800", None, "86400"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "playdate": [
+                ("one_hour_before", "elapsed", "-3600", None, "1800"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+            ],
+            "school_deadline": [
+                ("due_day_at_nine", "calendar_days", "0", "09:00:00", "21600"),
+                ("one_day_before_at_nine", "calendar_days", "-1", "09:00:00", "43200"),
+                ("seven_days_before_at_nine", "calendar_days", "-7", "09:00:00", "86400"),
+                ("two_days_before_at_nine", "calendar_days", "-2", "09:00:00", "43200"),
+            ],
+            "school_event": [
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "social_gathering": [
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "visitor_arrival": [
+                ("at_arrival_time", "elapsed", "0", None, "900"),
+                ("one_day_before_at_noon", "calendar_days", "-1", "12:00:00", "21600"),
+                ("one_hour_before", "elapsed", "-3600", None, "1800"),
+            ],
+        }
+
+        self.assertEqual(set(expected_archetypes), set(expected_profile_text))
+        self.assertEqual(set(expected_archetypes), set(expected_schedules))
+        for key, (display_name, description, item_type) in expected_archetypes.items():
+            with self.subTest(archetype=key):
+                self.assertEqual(archetypes[key], {
+                    "archetype_key": key,
+                    "intended_status": "active",
+                    "revision": {
+                        "display_name": display_name,
+                        "description": description,
+                        "compatible_item_types": [item_type],
+                    },
+                })
+                profile = profiles[key + "_standard"]
+                profile_display, profile_description = expected_profile_text[key]
+                self.assertEqual(profile["display_name"], profile_display)
+                self.assertEqual(profile["description"], profile_description)
+                self.assertEqual(profile["intended_status"], "active")
+                self.assertEqual(profile["revision"]["compatible_item_types"], [item_type])
+                actual_schedules = []
+                for template in profile["revision"]["templates"]:
+                    at = template["schedule"]["at"]
+                    offset = at.get("offset_seconds", at.get("offset_days"))
+                    actual_schedules.append((
+                        template["template_key"], at["offset_basis"], offset,
+                        at.get("local_time"), template["late_handling"]["grace_seconds"],
+                    ))
+                self.assertEqual(actual_schedules, expected_schedules[key])
+                self.assertEqual(bindings[key], {
+                    "binding_kind": "archetype_default",
+                    "archetype_key": key,
+                    "notification_profile_key": key + "_standard",
+                })
+
+    def test_late_windows_obey_seventy_five_percent_spacing_policy(self) -> None:
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
+
+        # Pure elapsed profiles can be checked directly against the next
+        # chronological reminder, using the target as the final boundary.
+        elapsed_profiles = {
+            "community_event_standard", "dinner_reservation_standard",
+            "flight_standard", "game_or_competition_standard", "lesson_standard",
+            "medical_appointment_standard", "parent_teacher_meeting_standard",
+            "party_standard", "performance_standard", "playdate_standard",
+            "school_event_standard", "social_gathering_standard",
+        }
+        for profile_key in elapsed_profiles:
+            entries = []
+            for template in profiles[profile_key]["revision"]["templates"]:
+                at = template["schedule"]["at"]
+                self.assertEqual(at["offset_basis"], "elapsed")
+                entries.append((
+                    int(at["offset_seconds"]),
+                    int(template["late_handling"]["grace_seconds"]),
+                    template["template_key"],
+                ))
+            entries.sort()
+            for index, (offset, grace, template_key) in enumerate(entries):
+                if offset == 0:
+                    self.assertLessEqual(grace, 900)
+                    continue
+                next_offset = entries[index + 1][0] if index + 1 < len(entries) else 0
+                with self.subTest(profile=profile_key, template=template_key):
+                    self.assertLessEqual(grace, ((next_offset - offset) * 3) // 4)
+
+        # Same-time calendar reminders use 23 hours per calendar-day step as
+        # a conservative local-clock-change interval.
+        for profile_key in ("birthday_standard", "school_deadline_standard"):
+            entries = []
+            for template in profiles[profile_key]["revision"]["templates"]:
+                at = template["schedule"]["at"]
+                self.assertEqual(at["offset_basis"], "calendar_days")
+                entries.append((
+                    int(at["offset_days"]),
+                    int(template["late_handling"]["grace_seconds"]),
+                    template["template_key"],
+                ))
+            entries.sort()
+            for (day, grace, template_key), (next_day, _, _) in zip(entries, entries[1:]):
+                conservative_gap = (next_day - day) * 23 * 3600
+                with self.subTest(profile=profile_key, template=template_key):
+                    self.assertLessEqual(grace, (conservative_gap * 3) // 4)
+
+        # The shortest target-time cases for the two mixed-basis profiles are
+        # pinned explicitly: midnight camp start and midnight visitor arrival.
+        mixed_gaps = {
+            "camp_or_program_standard": [
+                ("thirty_days_before_at_noon", 23 * 24 * 3600),
+                ("seven_days_before_at_noon", 6 * 24 * 3600),
+                ("one_day_before_at_noon", 10 * 3600),
+                ("two_hours_before", 2 * 3600),
+            ],
+            "visitor_arrival_standard": [
+                ("one_day_before_at_noon", 11 * 3600),
+                ("one_hour_before", 3600),
+            ],
+        }
+        for profile_key, boundaries in mixed_gaps.items():
+            templates = {
+                v["template_key"]: v for v in profiles[profile_key]["revision"]["templates"]
+            }
+            for template_key, gap in boundaries:
+                grace = int(templates[template_key]["late_handling"]["grace_seconds"])
+                with self.subTest(profile=profile_key, template=template_key):
+                    self.assertLessEqual(grace, (gap * 3) // 4)
 
     def test_calendar_day_boundaries_fail_closed(self) -> None:
         for field, value, expected in (

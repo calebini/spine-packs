@@ -1,56 +1,45 @@
 # kinflow-starter
 
 `kinflow-starter` is a draft Spine pack. Current draft version
-`1.0.0-draft.3` is not installable, released, or a publication of `1.0.0`.
-The first two drafts remain unchanged for review provenance.
+`1.0.0-draft.4` is not installable, released, or a publication of `1.0.0`.
+Drafts 1 through 3 remain byte-for-byte unchanged for review provenance.
 
-## Exact draft contents
+## Current draft contents
 
-The medical slice remains unchanged:
+Draft 4 contains these archetypes, each with its own same-named `_standard`
+notification profile and one owner-neutral local default-binding intent:
 
-- archetype `medical_appointment`, compatible with `event`;
-- notification profile `medical_appointment_standard`, compatible with
-  `event`;
-- templates `seven_days_before`, `twenty_four_hours_before`,
-  `two_hours_before`, and `thirty_minutes_before`, using negative elapsed
-  target offsets and positive `deliver_within` grace windows; and
-- one owner-neutral `archetype_default` binding intent from
-  `medical_appointment` to `medical_appointment_standard`.
+- established slices: `medical_appointment`, `lesson`,
+  `game_or_competition`, `flight`, and `birthday`;
+- Education and activities: `performance`, `school_event`,
+  `parent_teacher_meeting`, `camp_or_program`, and `school_deadline`; and
+- Social: `social_gathering`, `party`, `playdate`, `dinner_reservation`,
+  `visitor_arrival`, and `community_event`.
 
-The approved lesson slice adds:
+All are event archetypes except `school_deadline`, which is a task. Profiles
+remain archetype-specific even when template schedules repeat. Calendar-day
+templates inherit local timezone facts from each applicable Spine item;
+recurrence, occurrence timing, exact item targets, and exceptions remain
+Spine-owned state.
 
-- archetype `lesson` for scheduled instruction such as swimming and piano
-  lessons, compatible only with `event`;
-- profile `lesson_standard`, also compatible only with `event`;
-- a 24-hour elapsed reminder with 6-hour positive delivery grace and a 1-hour
-  elapsed reminder with 30-minute positive delivery grace; and
-- one local `archetype_default` binding from `lesson` to `lesson_standard`.
+The late-delivery windows follow the pack's 75% spacing rule so an earlier
+opportunity expires before the final quarter of the interval leading to the
+next reminder. `dinner_reservation` and `visitor_arrival` include deliberate
+exact-target reminders with short delivery windows.
 
-Recurrence, occurrence timing, and exceptions remain Spine-owned item state;
-the profile contains no recurrence rules. Display text is English only, using
-the existing unlocalized string fields. Exact content is governed by
-[the pack specification](../../specs/kinflow-starter.md).
-
-The current draft manifest is
-`packs/kinflow-starter/kinflow-starter.1.0.0-draft.2.json`. It contains no
+Exact definitions, descriptions, schedules, and boundary rules are normative
+in [the pack specification](../../specs/kinflow-starter.md). The current draft
+manifest is
+`packs/kinflow-starter/kinflow-starter.1.0.0-draft.4.json`. It contains no
 owner, subject, group, route, delivery target, generated Spine ID, timestamp,
 receipt, credential, or environment-specific data.
 
 The recorded Whetstone audit applies to the medical-only predecessor, not to
 this expanded draft.
 
-Draft 3 additionally contains event-only `game_or_competition`, `flight`, and
-`birthday` archetypes, their standard profiles, and local default bindings.
-Game and flight use elapsed offsets. Birthday uses 9:00 AM calendar-day offsets
-that inherit timezone facts from each applicable local item target; annual
-recurrence remains item-level Spine truth.
-
 ## Candidate future content
 
-The following archetypes remain candidates and have no definitions yet:
-
-- `passport_renewal`
-
-Their semantics must not be inferred from their names. The pack remains draft
-while these definitions are developed and reviewed before a future `1.0.0`
-release.
+`passport_renewal` remains a candidate and has no definition in this draft.
+Its semantics must not be inferred from its name. Other catalog sections will
+be reviewed before they are added. The pack remains draft while those
+definitions are developed and reviewed before a future `1.0.0` release.

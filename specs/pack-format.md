@@ -161,6 +161,14 @@ V1 late handling is:
 stricter than Spine's general non-negative decimal type because a zero-width
 `deliver_within` window has no useful meaning in curated pack content.
 
+The manifest schema validates each template's late-handling window in
+isolation. It does not infer cross-template spacing because the resolved gap
+between calendar-day and elapsed boundaries can depend on the applicable item
+target and timezone. A pack that imposes a stronger spacing policy MUST state
+that policy in its normative pack specification and pin every approved grace
+value in contract tests. `kinflow-starter` uses the 75-percent rule defined in
+`specs/kinflow-starter.md`.
+
 Profile keys MUST be unique within the pack. Template keys MUST be unique
 within each profile. Compatible item types and templates MUST be sorted.
 Recipients, subjects, groups, routes, channels, delivery targets, destinations,

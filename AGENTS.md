@@ -36,7 +36,8 @@ rather than redefine the specs.
 
 This is a draft-contract repository. The current scope is limited to
 `spine.pack-manifest.v1` and the medical-appointment, lesson,
-game-or-competition, flight, and birthday vertical slices.
+game-or-competition, flight, birthday, Education, and Social vertical slices
+specified for `kinflow-starter` draft 4.
 Do not broaden the schema or pack semantics without matching normative spec,
 fixture, and contract-test changes. Do not add an installer implementation,
 package runtime, or speculative service/adapter/model/package directories.

@@ -53,8 +53,9 @@ installer or package runtime.
 
 This repository is at the **draft-contract** stage. Schema identity
 `spine.pack-manifest.v1` and draft `kinflow-starter` version
-`1.0.0-draft.3` covers medical-appointment, lesson, game-or-competition,
-flight, and birthday vertical slices. Earlier drafts remain preserved.
+`1.0.0-draft.4` covers the five earlier vertical slices plus the approved
+Education and Social archetypes and archetype-specific notification profiles.
+Earlier drafts remain preserved byte-for-byte.
 Approved content is specified in [specs/kinflow-starter.md](specs/kinflow-starter.md).
 The drafts are not released or installable, and additional archetypes may be
 added before a future immutable `1.0.0` release. The recorded Whetstone audit
