@@ -70,6 +70,11 @@ logistics profiles use only the existing elapsed and calendar-day target-offset
 forms, including the already-supported exact-target elapsed form. The delivery
 window definition does not claim range-scheduling semantics.
 
+Draft `1.0.0-draft.9` retains those exact allowlists. Its General commitments
+profiles use only the existing elapsed and calendar-day target-offset forms,
+including the already-supported exact-target elapsed form. General archetypes
+do not introduce runtime fallback or item-dependency semantics.
+
 The v1 pack contract's exact-target elapsed form, `offset_seconds=0`, is within
 the signed elapsed-offset semantics accepted by the inspected Spine runtime
 `0.3.0` under `spine.notification-profiles.v1`. Supporting that form does not

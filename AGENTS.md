@@ -38,7 +38,8 @@ This is a draft-contract repository. The current scope is limited to
 `spine.pack-manifest.v1` and the medical-appointment, lesson,
 game-or-competition, flight, birthday, Education, Social, Travel, and Renewals
 and administration, Health, and Home, vehicle, and logistics vertical slices
-specified for `kinflow-starter` draft 8.
+plus the General commitments vertical slice specified for `kinflow-starter`
+draft 9.
 Do not broaden the schema or pack semantics without matching normative spec,
 fixture, and contract-test changes. Do not add an installer implementation,
 package runtime, or speculative service/adapter/model/package directories.

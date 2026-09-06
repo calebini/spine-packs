@@ -1,12 +1,12 @@
 # kinflow-starter
 
 `kinflow-starter` is a draft Spine pack. Current draft version
-`1.0.0-draft.8` is not installable, released, or a publication of `1.0.0`.
-Drafts 1 through 7 remain byte-for-byte unchanged for review provenance.
+`1.0.0-draft.9` is not installable, released, or a publication of `1.0.0`.
+Drafts 1 through 8 remain byte-for-byte unchanged for review provenance.
 
 ## Current draft contents
 
-Draft 8 contains these archetypes, each with its own same-named `_standard`
+Draft 9 contains these archetypes, each with its own same-named `_standard`
 notification profile and one owner-neutral local default-binding intent:
 
 - established slices: `medical_appointment`, `lesson`,
@@ -26,15 +26,20 @@ notification profile and one owner-neutral local default-binding intent:
   and
 - Home, vehicle, and logistics: `home_service_appointment`,
   `home_maintenance`, `vehicle_service`, `delivery_window`, `pickup`,
-  `dropoff`, and `pet_appointment`.
+  `dropoff`, and `pet_appointment`; and
+- General commitments: `reservation`, `ticketed_event`, `meeting`,
+  `interview`, `work_deadline`, `personal_deadline`, `follow_up`, `errand`,
+  and `purchase_required`.
 
 The task archetypes are `school_deadline`, `travel_preparation`, `packing`,
-`check_in_required`, `home_maintenance`, every Health archetype, plus every
-Renewals and administration archetype except `subscription_renewal` and
-`insurance_renewal`; all others are events. Profiles remain archetype-specific
-even when template schedules repeat. Calendar-day templates inherit local
-timezone facts from each applicable Spine item; recurrence, occurrence timing,
-exact item targets, relationships, and exceptions remain Spine-owned state.
+`check_in_required`, `home_maintenance`, every Health archetype, every General
+commitments archetype except `reservation`, `ticketed_event`, `meeting`, and
+`interview`, plus every Renewals and administration archetype except
+`subscription_renewal` and `insurance_renewal`; all others are events. Profiles
+remain archetype-specific even when template schedules repeat. Calendar-day
+templates inherit local timezone facts from each applicable Spine item;
+recurrence, occurrence timing, exact item targets, relationships, and
+exceptions remain Spine-owned state.
 
 The late-delivery windows follow the pack's 75% spacing rule so an earlier
 opportunity expires before the final quarter of the interval leading to the
@@ -44,7 +49,7 @@ exact-target reminders with short delivery windows.
 Exact definitions, descriptions, schedules, and boundary rules are normative
 in [the pack specification](../../specs/kinflow-starter.md). The current draft
 manifest is
-`packs/kinflow-starter/kinflow-starter.1.0.0-draft.8.json`. It contains no
+`packs/kinflow-starter/kinflow-starter.1.0.0-draft.9.json`. It contains no
 owner, subject, group, route, delivery target, generated Spine ID, timestamp,
 receipt, credential, or environment-specific data.
 
@@ -53,6 +58,6 @@ this expanded draft.
 
 ## Candidate future content
 
-Other catalog sections will be reviewed before they are added. Their semantics
-must not be inferred from names alone. The pack remains draft while those
-definitions are developed and reviewed before a future `1.0.0` release.
+The planned archetype sections are now represented. The pack remains draft
+while the complete content and contract are reviewed before a future immutable
+`1.0.0` release.

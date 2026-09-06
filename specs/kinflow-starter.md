@@ -7,7 +7,7 @@ installation. General format and authority rules remain in `pack-format.md`,
 
 ## Draft lineage
 
-`1.0.0-draft.8` is the current draft. It MUST contain exactly these archetypes,
+`1.0.0-draft.9` is the current draft. It MUST contain exactly these archetypes,
 their respective same-named `_standard` profiles, and one local default-binding
 intent per archetype:
 
@@ -20,47 +20,57 @@ intent per archetype:
 - `dinner_reservation`;
 - `document_renewal`;
 - `dropoff`;
+- `errand`;
 - `flight`;
+- `follow_up`;
 - `game_or_competition`;
 - `home_maintenance`;
 - `home_service_appointment`;
 - `insurance_renewal`;
+- `interview`;
 - `lesson`;
 - `license_renewal`;
 - `lodging_checkin`;
 - `lodging_checkout`;
 - `medical_appointment`;
 - `medication_refill`;
+- `meeting`;
 - `packing`;
 - `parent_teacher_meeting`;
 - `party`;
 - `passport_renewal`;
 - `payment_due`;
 - `performance`;
+- `personal_deadline`;
 - `pet_appointment`;
 - `pickup`;
 - `playdate`;
 - `prescription_pickup`;
+- `purchase_required`;
 - `registration_deadline`;
+- `reservation`;
 - `school_deadline`;
 - `school_event`;
 - `social_gathering`;
 - `subscription_renewal`;
 - `tax_deadline`;
+- `ticketed_event`;
 - `train_or_bus_trip`;
 - `travel_preparation`;
 - `travel_transfer`;
 - `trip_departure`;
 - `vaccination_due`;
 - `vehicle_service`;
-- `visitor_arrival`.
+- `visitor_arrival`;
+- `work_deadline`.
 
 The medical-only `1.0.0-draft.1`, medical-and-lesson `1.0.0-draft.2`, expanded
 event `1.0.0-draft.3`, Education-and-Social `1.0.0-draft.4`, Travel
 `1.0.0-draft.5`, Renewals-and-administration `1.0.0-draft.6`, Health
-`1.0.0-draft.7`, and their positive fixtures MUST remain byte-for-byte
-unchanged as review evidence. Every predecessor definition and binding MUST be
-preserved without semantic change in draft 8. Draft 8 MUST retain the exact
+`1.0.0-draft.7`, Home-vehicle-and-logistics `1.0.0-draft.8`, and their positive
+fixtures MUST remain byte-for-byte unchanged as review evidence. Every
+predecessor definition and binding MUST be preserved without semantic change
+in draft 9. Draft 9 MUST retain the exact
 compatibility declarations and empty dependencies and MUST have a newly
 computed content digest. All artifacts remain drafts, not releases or evidence
 of installation.
@@ -115,13 +125,13 @@ The lesson binding intent MUST contain exactly
 `notification_profile_key=lesson_standard`. It references definitions in this
 pack, not installed Spine IDs or an owner.
 
-Draft 8 archetypes, profiles, and bindings MUST use the lexicographic ordering
+Draft 9 archetypes, profiles, and bindings MUST use the lexicographic ordering
 required by `specs/pack-format.md`. Template ordering is by key, not reminder
 time. Historical draft 3 remains unchanged in its earlier canonical order.
 
 ## Late-delivery spacing policy
 
-Draft 8 profiles MUST leave a quiet interval before the next scheduled
+Draft 9 profiles MUST leave a quiet interval before the next scheduled
 notification. For two templates whose resolved nominal notification instants
 are `A` and `B`, where `A` occurs before `B`, the positive delivery grace for
 `A` MUST be no greater than the smaller of:
@@ -643,9 +653,97 @@ operator-, or external-system-owned facts and MUST NOT appear in reusable pack
 content. Every approved grace window in this section satisfies the 75-percent
 spacing policy.
 
+## General commitments
+
+Every definition in this section MUST use `intended_status=active` and have an
+owner-neutral same-named `_standard` profile. `reservation`, `ticketed_event`,
+`meeting`, and `interview` and their profiles MUST be compatible with exactly
+`event`. `work_deadline`, `personal_deadline`, `follow_up`, `errand`, and
+`purchase_required` and their profiles MUST be compatible with exactly `task`.
+
+The archetypes MUST be exactly:
+
+| Archetype key | Display name | Description | Compatible item types |
+| --- | --- | --- | --- |
+| `errand` | `Errand` | `Errands to complete by a selected date.` | `task` |
+| `follow_up` | `Follow-up` | `Tasks to follow up by a selected date.` | `task` |
+| `interview` | `Interview` | `Scheduled employment, school, media, and other interviews.` | `event` |
+| `meeting` | `Meeting` | `Scheduled meetings without a more specific archetype.` | `event` |
+| `personal_deadline` | `Personal deadline` | `Personal completion deadlines without a more specific archetype.` | `task` |
+| `purchase_required` | `Purchase required` | `Purchases that must be completed by a selected date.` | `task` |
+| `reservation` | `Reservation` | `Scheduled reservations without a more specific archetype.` | `event` |
+| `ticketed_event` | `Ticketed event` | `Scheduled events attended with an admission ticket.` | `event` |
+| `work_deadline` | `Work deadline` | `Work-related completion and submission deadlines.` | `task` |
+
+The corresponding profiles MUST be exactly:
+
+| Profile key | Display name | Description | Compatible item types |
+| --- | --- | --- | --- |
+| `errand_standard` | `Errand standard` | `A day-before and due-day reminder for an errand.` | `task` |
+| `follow_up_standard` | `Follow-up standard` | `A day-before and due-day reminder for a follow-up.` | `task` |
+| `interview_standard` | `Interview standard` | `Preparation and arrival reminders for a scheduled interview.` | `event` |
+| `meeting_standard` | `Meeting standard` | `Near-term reminders for a scheduled meeting.` | `event` |
+| `personal_deadline_standard` | `Personal deadline standard` | `Progressive reminders leading up to and on a personal deadline.` | `task` |
+| `purchase_required_standard` | `Purchase required standard` | `Progressive reminders for completing a required purchase.` | `task` |
+| `reservation_standard` | `Reservation standard` | `Preparation and time-now reminders for a general reservation.` | `event` |
+| `ticketed_event_standard` | `Ticketed event standard` | `Planning and arrival reminders for a ticketed event.` | `event` |
+| `work_deadline_standard` | `Work deadline standard` | `Progressive reminders leading up to and on a work deadline.` | `task` |
+
+Their templates MUST be exactly:
+
+| Profile | Template key | Basis | Offset | Local time | Grace |
+| --- | --- | --- | --- | --- | --- |
+| `errand_standard` | `due_day_at_nine` | `calendar_days` | `0` days | `09:00:00` | `21600` seconds |
+| `errand_standard` | `one_day_before_at_nine` | `calendar_days` | `-1` day | `09:00:00` | `43200` seconds |
+| `follow_up_standard` | `due_day_at_nine` | `calendar_days` | `0` days | `09:00:00` | `21600` seconds |
+| `follow_up_standard` | `one_day_before_at_nine` | `calendar_days` | `-1` day | `09:00:00` | `43200` seconds |
+| `interview_standard` | `seven_days_before` | `elapsed` | `-604800` seconds | — | `86400` seconds |
+| `interview_standard` | `thirty_minutes_before` | `elapsed` | `-1800` seconds | — | `900` seconds |
+| `interview_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `interview_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `meeting_standard` | `fifteen_minutes_before` | `elapsed` | `-900` seconds | — | `600` seconds |
+| `meeting_standard` | `one_hour_before` | `elapsed` | `-3600` seconds | — | `1800` seconds |
+| `personal_deadline_standard` | `due_day_at_nine` | `calendar_days` | `0` days | `09:00:00` | `21600` seconds |
+| `personal_deadline_standard` | `one_day_before_at_nine` | `calendar_days` | `-1` day | `09:00:00` | `43200` seconds |
+| `personal_deadline_standard` | `seven_days_before_at_nine` | `calendar_days` | `-7` days | `09:00:00` | `86400` seconds |
+| `personal_deadline_standard` | `two_days_before_at_nine` | `calendar_days` | `-2` days | `09:00:00` | `43200` seconds |
+| `purchase_required_standard` | `due_day_at_nine` | `calendar_days` | `0` days | `09:00:00` | `21600` seconds |
+| `purchase_required_standard` | `one_day_before_at_nine` | `calendar_days` | `-1` day | `09:00:00` | `43200` seconds |
+| `purchase_required_standard` | `seven_days_before_at_nine` | `calendar_days` | `-7` days | `09:00:00` | `86400` seconds |
+| `purchase_required_standard` | `two_days_before_at_nine` | `calendar_days` | `-2` days | `09:00:00` | `43200` seconds |
+| `reservation_standard` | `at_reservation_time` | `elapsed` | `0` seconds | — | `900` seconds |
+| `reservation_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `reservation_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `ticketed_event_standard` | `seven_days_before` | `elapsed` | `-604800` seconds | — | `86400` seconds |
+| `ticketed_event_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `ticketed_event_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `work_deadline_standard` | `due_day_at_nine` | `calendar_days` | `0` days | `09:00:00` | `21600` seconds |
+| `work_deadline_standard` | `one_day_before_at_nine` | `calendar_days` | `-1` day | `09:00:00` | `43200` seconds |
+| `work_deadline_standard` | `seven_days_before_at_nine` | `calendar_days` | `-7` days | `09:00:00` | `86400` seconds |
+| `work_deadline_standard` | `two_days_before_at_nine` | `calendar_days` | `-2` days | `09:00:00` | `43200` seconds |
+
+`reservation` is for scheduled reservations without a more specific
+archetype; it is not an automatic runtime fallback. `ticketed_event` represents
+attendance, whereas `performance` represents participation. `meeting` is the
+general meeting choice when a more specific meeting archetype does not fit.
+
+`follow_up` is an independently scheduled action due by a selected date, not
+an automatic response to another item. `purchase_required` is anchored to the
+date by which the purchase must be completed, not necessarily the date when
+the purchased item will be used. Related-item creation, dependency tracking,
+and completion remain Spine-owned item behavior.
+
+All calendar-day templates inherit timezone facts from the applicable item
+target. Due-day-at-nine templates are intended for date-based tasks; when a
+task has an earlier exact deadline, the operator MUST use an appropriate
+item-level schedule. Venues, attendees, interviewers, employers, ticket and
+reservation details, work content, purchases, and other owner-specific facts
+MUST NOT appear in reusable pack content. Every approved grace window in this
+section satisfies the 75-percent spacing policy.
+
 ## Default bindings
 
-Draft 8 MUST bind every included archetype to its same-named `_standard`
+Draft 9 MUST bind every included archetype to its same-named `_standard`
 profile using exactly one owner-neutral `archetype_default` intent. These
 bindings contain only pack-local keys. Historical drafts retain the binding
 sets specified by their own content.

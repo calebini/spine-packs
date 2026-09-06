@@ -15,10 +15,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = ROOT / "contracts/schemas/spine-pack-manifest.v1.schema.json"
 FIXTURE_MANIFEST_PATH = ROOT / "contracts/pack-fixture-manifest.v1.json"
 DRAFT_MANIFEST_PATH = (
-    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.8.json"
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.9.json"
 )
 POSITIVE_FIXTURE_PATH = (
-    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_8.json"
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_9.json"
 )
 EXACT_TARGET_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/exact_target_elapsed_offset.json"
@@ -65,6 +65,12 @@ SEVENTH_DRAFT_MANIFEST_PATH = (
 SEVENTH_POSITIVE_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_7.json"
 )
+EIGHTH_DRAFT_MANIFEST_PATH = (
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.8.json"
+)
+EIGHTH_POSITIVE_FIXTURE_PATH = (
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_8.json"
+)
 DRAFT_FIXTURE_PAIRS = (
     (FIRST_DRAFT_MANIFEST_PATH, FIRST_POSITIVE_FIXTURE_PATH),
     (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH),
@@ -73,6 +79,7 @@ DRAFT_FIXTURE_PAIRS = (
     (FIFTH_DRAFT_MANIFEST_PATH, FIFTH_POSITIVE_FIXTURE_PATH),
     (SIXTH_DRAFT_MANIFEST_PATH, SIXTH_POSITIVE_FIXTURE_PATH),
     (SEVENTH_DRAFT_MANIFEST_PATH, SEVENTH_POSITIVE_FIXTURE_PATH),
+    (EIGHTH_DRAFT_MANIFEST_PATH, EIGHTH_POSITIVE_FIXTURE_PATH),
     (DRAFT_MANIFEST_PATH, POSITIVE_FIXTURE_PATH),
 )
 
@@ -495,11 +502,15 @@ class PackManifestContractTests(unittest.TestCase):
         for path in (SEVENTH_DRAFT_MANIFEST_PATH, SEVENTH_POSITIVE_FIXTURE_PATH):
             with self.subTest(path=path.name):
                 self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
+        reviewed_hash = "34b97ab631c2779d2462dabef9640037af11335396cac1a0c3b7c530d9293cbf"
+        for path in (EIGHTH_DRAFT_MANIFEST_PATH, EIGHTH_POSITIVE_FIXTURE_PATH):
+            with self.subTest(path=path.name):
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
 
-        previous = load_json(SEVENTH_DRAFT_MANIFEST_PATH)
+        previous = load_json(EIGHTH_DRAFT_MANIFEST_PATH)
         current = load_json(DRAFT_MANIFEST_PATH)
         self.assertEqual(current["pack"], {
-            "pack_id": "kinflow-starter", "version": "1.0.0-draft.8", "status": "draft",
+            "pack_id": "kinflow-starter", "version": "1.0.0-draft.9", "status": "draft",
         })
         for field in ("manifest_schema", "compatibility", "dependencies"):
             self.assertEqual(current[field], previous[field])
@@ -1121,7 +1132,7 @@ class PackManifestContractTests(unittest.TestCase):
                 })
 
     def test_draft_eight_matches_approved_home_vehicle_and_logistics_content(self) -> None:
-        manifest = load_json(DRAFT_MANIFEST_PATH)
+        manifest = load_json(EIGHTH_DRAFT_MANIFEST_PATH)
         archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
         profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
         bindings = {v["archetype_key"]: v for v in manifest["binding_intents"]}
@@ -1241,6 +1252,141 @@ class PackManifestContractTests(unittest.TestCase):
                     "notification_profile_key": key + "_standard",
                 })
 
+    def test_draft_nine_matches_approved_general_commitments_content(self) -> None:
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
+        profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
+        bindings = {v["archetype_key"]: v for v in manifest["binding_intents"]}
+        self.assertEqual((len(archetypes), len(profiles), len(bindings)), (52, 52, 52))
+
+        expected_archetypes = {
+            "errand": ("Errand", "Errands to complete by a selected date.", "task"),
+            "follow_up": ("Follow-up", "Tasks to follow up by a selected date.", "task"),
+            "interview": (
+                "Interview", "Scheduled employment, school, media, and other interviews.", "event",
+            ),
+            "meeting": (
+                "Meeting", "Scheduled meetings without a more specific archetype.", "event",
+            ),
+            "personal_deadline": (
+                "Personal deadline", "Personal completion deadlines without a more specific archetype.", "task",
+            ),
+            "purchase_required": (
+                "Purchase required", "Purchases that must be completed by a selected date.", "task",
+            ),
+            "reservation": (
+                "Reservation", "Scheduled reservations without a more specific archetype.", "event",
+            ),
+            "ticketed_event": (
+                "Ticketed event", "Scheduled events attended with an admission ticket.", "event",
+            ),
+            "work_deadline": (
+                "Work deadline", "Work-related completion and submission deadlines.", "task",
+            ),
+        }
+        expected_profiles = {
+            "errand": ("Errand standard", "A day-before and due-day reminder for an errand."),
+            "follow_up": ("Follow-up standard", "A day-before and due-day reminder for a follow-up."),
+            "interview": ("Interview standard", "Preparation and arrival reminders for a scheduled interview."),
+            "meeting": ("Meeting standard", "Near-term reminders for a scheduled meeting."),
+            "personal_deadline": (
+                "Personal deadline standard", "Progressive reminders leading up to and on a personal deadline.",
+            ),
+            "purchase_required": (
+                "Purchase required standard", "Progressive reminders for completing a required purchase.",
+            ),
+            "reservation": (
+                "Reservation standard", "Preparation and time-now reminders for a general reservation.",
+            ),
+            "ticketed_event": (
+                "Ticketed event standard", "Planning and arrival reminders for a ticketed event.",
+            ),
+            "work_deadline": (
+                "Work deadline standard", "Progressive reminders leading up to and on a work deadline.",
+            ),
+        }
+        expected_schedules = {
+            "errand": [
+                ("due_day_at_nine", "calendar_days", "0", "09:00:00", "21600"),
+                ("one_day_before_at_nine", "calendar_days", "-1", "09:00:00", "43200"),
+            ],
+            "follow_up": [
+                ("due_day_at_nine", "calendar_days", "0", "09:00:00", "21600"),
+                ("one_day_before_at_nine", "calendar_days", "-1", "09:00:00", "43200"),
+            ],
+            "interview": [
+                ("seven_days_before", "elapsed", "-604800", None, "86400"),
+                ("thirty_minutes_before", "elapsed", "-1800", None, "900"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "meeting": [
+                ("fifteen_minutes_before", "elapsed", "-900", None, "600"),
+                ("one_hour_before", "elapsed", "-3600", None, "1800"),
+            ],
+            "personal_deadline": [
+                ("due_day_at_nine", "calendar_days", "0", "09:00:00", "21600"),
+                ("one_day_before_at_nine", "calendar_days", "-1", "09:00:00", "43200"),
+                ("seven_days_before_at_nine", "calendar_days", "-7", "09:00:00", "86400"),
+                ("two_days_before_at_nine", "calendar_days", "-2", "09:00:00", "43200"),
+            ],
+            "purchase_required": [
+                ("due_day_at_nine", "calendar_days", "0", "09:00:00", "21600"),
+                ("one_day_before_at_nine", "calendar_days", "-1", "09:00:00", "43200"),
+                ("seven_days_before_at_nine", "calendar_days", "-7", "09:00:00", "86400"),
+                ("two_days_before_at_nine", "calendar_days", "-2", "09:00:00", "43200"),
+            ],
+            "reservation": [
+                ("at_reservation_time", "elapsed", "0", None, "900"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "ticketed_event": [
+                ("seven_days_before", "elapsed", "-604800", None, "86400"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "work_deadline": [
+                ("due_day_at_nine", "calendar_days", "0", "09:00:00", "21600"),
+                ("one_day_before_at_nine", "calendar_days", "-1", "09:00:00", "43200"),
+                ("seven_days_before_at_nine", "calendar_days", "-7", "09:00:00", "86400"),
+                ("two_days_before_at_nine", "calendar_days", "-2", "09:00:00", "43200"),
+            ],
+        }
+
+        for key, (display_name, description, item_type) in expected_archetypes.items():
+            with self.subTest(archetype=key):
+                self.assertEqual(archetypes[key], {
+                    "archetype_key": key,
+                    "intended_status": "active",
+                    "revision": {
+                        "display_name": display_name,
+                        "description": description,
+                        "compatible_item_types": [item_type],
+                    },
+                })
+                profile = profiles[key + "_standard"]
+                profile_display, profile_description = expected_profiles[key]
+                self.assertEqual(profile["display_name"], profile_display)
+                self.assertEqual(profile["description"], profile_description)
+                self.assertEqual(profile["intended_status"], "active")
+                self.assertEqual(profile["revision"]["compatible_item_types"], [item_type])
+                actual_schedules = []
+                for template in profile["revision"]["templates"]:
+                    at = template["schedule"]["at"]
+                    actual_schedules.append((
+                        template["template_key"], at["offset_basis"],
+                        at.get("offset_seconds", at.get("offset_days")),
+                        at.get("local_time"),
+                        template["late_handling"]["grace_seconds"],
+                    ))
+                self.assertEqual(actual_schedules, expected_schedules[key])
+                self.assertEqual(bindings[key], {
+                    "binding_kind": "archetype_default",
+                    "archetype_key": key,
+                    "notification_profile_key": key + "_standard",
+                })
+
     def test_late_windows_obey_seventy_five_percent_spacing_policy(self) -> None:
         manifest = load_json(DRAFT_MANIFEST_PATH)
         profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
@@ -1250,13 +1396,15 @@ class PackManifestContractTests(unittest.TestCase):
         elapsed_profiles = {
             "check_in_required_standard", "community_event_standard",
             "dinner_reservation_standard", "dropoff_standard",
-            "flight_standard", "game_or_competition_standard", "lesson_standard",
+            "flight_standard", "game_or_competition_standard",
             "home_service_appointment_standard", "medical_appointment_standard",
+            "interview_standard", "lesson_standard", "meeting_standard",
             "parent_teacher_meeting_standard", "party_standard",
             "performance_standard", "pet_appointment_standard",
-            "pickup_standard", "playdate_standard",
+            "pickup_standard", "playdate_standard", "reservation_standard",
             "school_event_standard", "social_gathering_standard",
-            "train_or_bus_trip_standard", "travel_transfer_standard",
+            "ticketed_event_standard", "train_or_bus_trip_standard",
+            "travel_transfer_standard",
             "vehicle_service_standard",
         }
         for profile_key in elapsed_profiles:
@@ -1282,14 +1430,16 @@ class PackManifestContractTests(unittest.TestCase):
         # a conservative local-clock-change interval.
         for profile_key in (
             "application_deadline_standard", "birthday_standard",
-            "document_renewal_standard", "insurance_renewal_standard",
+            "document_renewal_standard", "errand_standard",
+            "follow_up_standard", "insurance_renewal_standard",
             "home_maintenance_standard", "license_renewal_standard",
             "passport_renewal_standard",
             "medication_refill_standard", "payment_due_standard",
-            "prescription_pickup_standard", "registration_deadline_standard",
+            "personal_deadline_standard", "prescription_pickup_standard",
+            "purchase_required_standard", "registration_deadline_standard",
             "school_deadline_standard", "subscription_renewal_standard",
             "tax_deadline_standard", "vaccination_due_standard",
-            "travel_preparation_standard",
+            "travel_preparation_standard", "work_deadline_standard",
         ):
             entries = []
             for template in profiles[profile_key]["revision"]["templates"]:
