@@ -7,7 +7,7 @@ installation. General format and authority rules remain in `pack-format.md`,
 
 ## Draft lineage
 
-`1.0.0-draft.6` is the current draft. It MUST contain exactly these archetypes,
+`1.0.0-draft.7` is the current draft. It MUST contain exactly these archetypes,
 their respective same-named `_standard` profiles, and one local default-binding
 intent per archetype:
 
@@ -26,6 +26,7 @@ intent per archetype:
 - `lodging_checkin`;
 - `lodging_checkout`;
 - `medical_appointment`;
+- `medication_refill`;
 - `packing`;
 - `parent_teacher_meeting`;
 - `party`;
@@ -33,6 +34,7 @@ intent per archetype:
 - `payment_due`;
 - `performance`;
 - `playdate`;
+- `prescription_pickup`;
 - `registration_deadline`;
 - `school_deadline`;
 - `school_event`;
@@ -43,13 +45,15 @@ intent per archetype:
 - `travel_preparation`;
 - `travel_transfer`;
 - `trip_departure`;
+- `vaccination_due`;
 - `visitor_arrival`.
 
 The medical-only `1.0.0-draft.1`, medical-and-lesson `1.0.0-draft.2`, expanded
 event `1.0.0-draft.3`, Education-and-Social `1.0.0-draft.4`, Travel
-`1.0.0-draft.5`, and their positive fixtures MUST remain byte-for-byte
-unchanged as review evidence. Every predecessor definition and binding MUST be
-preserved without semantic change in draft 6. Draft 6 MUST retain the exact
+`1.0.0-draft.5`, Renewals-and-administration `1.0.0-draft.6`, and their
+positive fixtures MUST remain byte-for-byte unchanged as review evidence.
+Every predecessor definition and binding MUST be preserved without semantic
+change in draft 7. Draft 7 MUST retain the exact
 compatibility declarations and empty dependencies and MUST have a newly
 computed content digest. All artifacts remain drafts, not releases or evidence
 of installation.
@@ -104,13 +108,13 @@ The lesson binding intent MUST contain exactly
 `notification_profile_key=lesson_standard`. It references definitions in this
 pack, not installed Spine IDs or an owner.
 
-Draft 6 archetypes, profiles, and bindings MUST use the lexicographic ordering
+Draft 7 archetypes, profiles, and bindings MUST use the lexicographic ordering
 required by `specs/pack-format.md`. Template ordering is by key, not reminder
 time. Historical draft 3 remains unchanged in its earlier canonical order.
 
 ## Late-delivery spacing policy
 
-Draft 6 profiles MUST leave a quiet interval before the next scheduled
+Draft 7 profiles MUST leave a quiet interval before the next scheduled
 notification. For two templates whose resolved nominal notification instants
 are `A` and `B`, where `A` occurs before `B`, the positive delivery grace for
 `A` MUST be no greater than the smaller of:
@@ -501,9 +505,67 @@ rather than rely on a reminder that could resolve after the deadline. Amounts,
 accounts, vendors, policy identifiers, tax authorities, filing details, and
 payment routes MUST NOT appear in reusable pack content.
 
+## Health
+
+Every definition in this section MUST use `intended_status=active`, be
+compatible with exactly `task`, and have an owner-neutral same-named
+`_standard` profile. All templates use `offset_basis=calendar_days`, inherit
+timezone facts from the applicable item target, and resolve at `09:00:00`
+local time.
+
+The archetypes MUST be exactly:
+
+| Archetype key | Display name | Description |
+| --- | --- | --- |
+| `medication_refill` | `Medication refill` | `Tasks to arrange medication refills by a selected refill-by date.` |
+| `prescription_pickup` | `Prescription pickup` | `Tasks to collect prescriptions by a selected pickup deadline.` |
+| `vaccination_due` | `Vaccination due` | `Vaccination tasks due by a future date, distinct from scheduled appointments.` |
+
+The corresponding profiles MUST be exactly:
+
+| Profile key | Display name | Description |
+| --- | --- | --- |
+| `medication_refill_standard` | `Medication refill standard` | `Pre-due reminders to arrange a medication refill.` |
+| `prescription_pickup_standard` | `Prescription pickup standard` | `Pre-due reminders to collect a prescription.` |
+| `vaccination_due_standard` | `Vaccination due standard` | `Long-horizon reminders leading up to a vaccination due date.` |
+
+Their templates MUST be exactly:
+
+| Profile | Template key | Calendar-day offset | Grace |
+| --- | --- | --- | --- |
+| `medication_refill_standard` | `due_day_at_nine` | `0` | `21600` seconds |
+| `medication_refill_standard` | `one_day_before_at_nine` | `-1` | `43200` seconds |
+| `medication_refill_standard` | `seven_days_before_at_nine` | `-7` | `86400` seconds |
+| `medication_refill_standard` | `three_days_before_at_nine` | `-3` | `43200` seconds |
+| `prescription_pickup_standard` | `due_day_at_nine` | `0` | `21600` seconds |
+| `prescription_pickup_standard` | `one_day_before_at_nine` | `-1` | `43200` seconds |
+| `prescription_pickup_standard` | `three_days_before_at_nine` | `-3` | `43200` seconds |
+| `vaccination_due_standard` | `due_day_at_nine` | `0` | `21600` seconds |
+| `vaccination_due_standard` | `one_hundred_eighty_days_before_at_nine` | `-180` | `604800` seconds |
+| `vaccination_due_standard` | `seven_days_before_at_nine` | `-7` | `86400` seconds |
+| `vaccination_due_standard` | `thirty_days_before_at_nine` | `-30` | `259200` seconds |
+| `vaccination_due_standard` | `three_hundred_sixty_five_days_before_at_nine` | `-365` | `1209600` seconds |
+
+`medication_refill` is anchored to an operator-selected refill-by date, not an
+inferred medication run-out instant. `prescription_pickup` is anchored to the
+selected or pharmacy-provided pickup deadline. Neither profile introduces an
+overdue loop or claims that the task remains incomplete.
+
+`vaccination_due` represents a task due at a future health milestone, such as
+a tetanus booster due in six years. It is not a scheduled vaccination event;
+an actual booked vaccination uses `medical_appointment`. Vaccine cadence,
+future milestone creation, completion, and any relationship to a later
+appointment remain Spine-owned item state. The pack contains no recurrence or
+clinical-guidance rule.
+
+Medication names, dosage, patient and prescriber identities, pharmacies,
+clinical instructions, and medical records MUST NOT appear in reusable pack
+content. Every approved grace window in this section satisfies the 75-percent
+spacing policy.
+
 ## Default bindings
 
-Draft 6 MUST bind every included archetype to its same-named `_standard`
+Draft 7 MUST bind every included archetype to its same-named `_standard`
 profile using exactly one owner-neutral `archetype_default` intent. These
 bindings contain only pack-local keys. Historical drafts retain the binding
 sets specified by their own content.

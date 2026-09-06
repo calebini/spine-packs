@@ -53,8 +53,8 @@ installer or package runtime.
 
 This repository is at the **draft-contract** stage. Schema identity
 `spine.pack-manifest.v1` and draft `kinflow-starter` version
-`1.0.0-draft.6` covers the established slices plus the approved Education,
-Social, Travel, and Renewals and administration archetypes and
+`1.0.0-draft.7` covers the established slices plus the approved Education,
+Social, Travel, Renewals and administration, and Health archetypes and
 archetype-specific notification profiles.
 Earlier drafts remain preserved byte-for-byte.
 Approved content is specified in [specs/kinflow-starter.md](specs/kinflow-starter.md).

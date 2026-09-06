@@ -15,10 +15,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = ROOT / "contracts/schemas/spine-pack-manifest.v1.schema.json"
 FIXTURE_MANIFEST_PATH = ROOT / "contracts/pack-fixture-manifest.v1.json"
 DRAFT_MANIFEST_PATH = (
-    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.6.json"
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.7.json"
 )
 POSITIVE_FIXTURE_PATH = (
-    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_6.json"
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_7.json"
 )
 EXACT_TARGET_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/exact_target_elapsed_offset.json"
@@ -53,12 +53,19 @@ FIFTH_DRAFT_MANIFEST_PATH = (
 FIFTH_POSITIVE_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_5.json"
 )
+SIXTH_DRAFT_MANIFEST_PATH = (
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.6.json"
+)
+SIXTH_POSITIVE_FIXTURE_PATH = (
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_6.json"
+)
 DRAFT_FIXTURE_PAIRS = (
     (FIRST_DRAFT_MANIFEST_PATH, FIRST_POSITIVE_FIXTURE_PATH),
     (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH),
     (THIRD_DRAFT_MANIFEST_PATH, THIRD_POSITIVE_FIXTURE_PATH),
     (FOURTH_DRAFT_MANIFEST_PATH, FOURTH_POSITIVE_FIXTURE_PATH),
     (FIFTH_DRAFT_MANIFEST_PATH, FIFTH_POSITIVE_FIXTURE_PATH),
+    (SIXTH_DRAFT_MANIFEST_PATH, SIXTH_POSITIVE_FIXTURE_PATH),
     (DRAFT_MANIFEST_PATH, POSITIVE_FIXTURE_PATH),
 )
 
@@ -473,11 +480,15 @@ class PackManifestContractTests(unittest.TestCase):
         for path in (FIFTH_DRAFT_MANIFEST_PATH, FIFTH_POSITIVE_FIXTURE_PATH):
             with self.subTest(path=path.name):
                 self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
+        reviewed_hash = "69e68d88feb06c0540252d3b33d028427eb8e6ac641b4ef675a61c0f0f560173"
+        for path in (SIXTH_DRAFT_MANIFEST_PATH, SIXTH_POSITIVE_FIXTURE_PATH):
+            with self.subTest(path=path.name):
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
 
-        previous = load_json(FIFTH_DRAFT_MANIFEST_PATH)
+        previous = load_json(SIXTH_DRAFT_MANIFEST_PATH)
         current = load_json(DRAFT_MANIFEST_PATH)
         self.assertEqual(current["pack"], {
-            "pack_id": "kinflow-starter", "version": "1.0.0-draft.6", "status": "draft",
+            "pack_id": "kinflow-starter", "version": "1.0.0-draft.7", "status": "draft",
         })
         for field in ("manifest_schema", "compatibility", "dependencies"):
             self.assertEqual(current[field], previous[field])
@@ -883,7 +894,7 @@ class PackManifestContractTests(unittest.TestCase):
         )
 
     def test_draft_six_matches_approved_renewal_and_administration_content(self) -> None:
-        manifest = load_json(DRAFT_MANIFEST_PATH)
+        manifest = load_json(SIXTH_DRAFT_MANIFEST_PATH)
         archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
         profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
         bindings = {v["archetype_key"]: v for v in manifest["binding_intents"]}
@@ -1009,6 +1020,95 @@ class PackManifestContractTests(unittest.TestCase):
             len(profiles["insurance_renewal_standard"]["revision"]["templates"]), 3
         )
 
+    def test_draft_seven_matches_approved_health_content(self) -> None:
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
+        profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
+        bindings = {v["archetype_key"]: v for v in manifest["binding_intents"]}
+        self.assertEqual((len(archetypes), len(profiles), len(bindings)), (36, 36, 36))
+
+        expected_archetypes = {
+            "medication_refill": (
+                "Medication refill",
+                "Tasks to arrange medication refills by a selected refill-by date.",
+            ),
+            "prescription_pickup": (
+                "Prescription pickup",
+                "Tasks to collect prescriptions by a selected pickup deadline.",
+            ),
+            "vaccination_due": (
+                "Vaccination due",
+                "Vaccination tasks due by a future date, distinct from scheduled appointments.",
+            ),
+        }
+        expected_profiles = {
+            "medication_refill": (
+                "Medication refill standard",
+                "Pre-due reminders to arrange a medication refill.",
+            ),
+            "prescription_pickup": (
+                "Prescription pickup standard",
+                "Pre-due reminders to collect a prescription.",
+            ),
+            "vaccination_due": (
+                "Vaccination due standard",
+                "Long-horizon reminders leading up to a vaccination due date.",
+            ),
+        }
+        expected_schedules = {
+            "medication_refill": [
+                ("due_day_at_nine", "0", "21600"),
+                ("one_day_before_at_nine", "-1", "43200"),
+                ("seven_days_before_at_nine", "-7", "86400"),
+                ("three_days_before_at_nine", "-3", "43200"),
+            ],
+            "prescription_pickup": [
+                ("due_day_at_nine", "0", "21600"),
+                ("one_day_before_at_nine", "-1", "43200"),
+                ("three_days_before_at_nine", "-3", "43200"),
+            ],
+            "vaccination_due": [
+                ("due_day_at_nine", "0", "21600"),
+                ("one_hundred_eighty_days_before_at_nine", "-180", "604800"),
+                ("seven_days_before_at_nine", "-7", "86400"),
+                ("thirty_days_before_at_nine", "-30", "259200"),
+                ("three_hundred_sixty_five_days_before_at_nine", "-365", "1209600"),
+            ],
+        }
+
+        for key, (display_name, description) in expected_archetypes.items():
+            with self.subTest(archetype=key):
+                self.assertEqual(archetypes[key], {
+                    "archetype_key": key,
+                    "intended_status": "active",
+                    "revision": {
+                        "display_name": display_name,
+                        "description": description,
+                        "compatible_item_types": ["task"],
+                    },
+                })
+                profile = profiles[key + "_standard"]
+                profile_display, profile_description = expected_profiles[key]
+                self.assertEqual(profile["display_name"], profile_display)
+                self.assertEqual(profile["description"], profile_description)
+                self.assertEqual(profile["intended_status"], "active")
+                self.assertEqual(profile["revision"]["compatible_item_types"], ["task"])
+                actual_schedules = []
+                for template in profile["revision"]["templates"]:
+                    at = template["schedule"]["at"]
+                    self.assertEqual(at["offset_basis"], "calendar_days")
+                    self.assertEqual(at["local_time"], "09:00:00")
+                    actual_schedules.append((
+                        template["template_key"], at["offset_days"],
+                        template["late_handling"]["grace_seconds"],
+                    ))
+                self.assertEqual(actual_schedules, expected_schedules[key])
+                self.assertEqual(bindings[key], {
+                    "binding_kind": "archetype_default",
+                    "archetype_key": key,
+                    "notification_profile_key": key + "_standard",
+                })
+
     def test_late_windows_obey_seventy_five_percent_spacing_policy(self) -> None:
         manifest = load_json(DRAFT_MANIFEST_PATH)
         profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
@@ -1049,9 +1149,10 @@ class PackManifestContractTests(unittest.TestCase):
             "application_deadline_standard", "birthday_standard",
             "document_renewal_standard", "insurance_renewal_standard",
             "license_renewal_standard", "passport_renewal_standard",
-            "payment_due_standard", "registration_deadline_standard",
+            "medication_refill_standard", "payment_due_standard",
+            "prescription_pickup_standard", "registration_deadline_standard",
             "school_deadline_standard", "subscription_renewal_standard",
-            "tax_deadline_standard",
+            "tax_deadline_standard", "vaccination_due_standard",
             "travel_preparation_standard",
         ):
             entries = []
