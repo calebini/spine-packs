@@ -50,6 +50,11 @@ profiles use only the already-declared elapsed and calendar-day target-offset
 forms. The exact-target dinner and visitor templates use the supported
 `offset_seconds=0` form described below.
 
+Draft `1.0.0-draft.5` retains those exact allowlists. Its Travel profiles use
+only the same elapsed and calendar-day target-offset forms. Item relationships,
+including a packing task's relationship to a trip, are not manifest content
+and make no additional compatibility claim.
+
 The v1 pack contract's exact-target elapsed form, `offset_seconds=0`, is within
 the signed elapsed-offset semantics accepted by the inspected Spine runtime
 `0.3.0` under `spine.notification-profiles.v1`. Supporting that form does not

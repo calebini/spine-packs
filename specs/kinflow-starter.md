@@ -7,34 +7,42 @@ installation. General format and authority rules remain in `pack-format.md`,
 
 ## Draft lineage
 
-`1.0.0-draft.4` is the current draft. It MUST contain exactly these archetypes,
+`1.0.0-draft.5` is the current draft. It MUST contain exactly these archetypes,
 their respective same-named `_standard` profiles, and one local default-binding
 intent per archetype:
 
 - `birthday`;
 - `camp_or_program`;
+- `check_in_required`;
 - `community_event`;
 - `dinner_reservation`;
 - `flight`;
 - `game_or_competition`;
 - `lesson`;
+- `lodging_checkin`;
+- `lodging_checkout`;
 - `medical_appointment`;
+- `packing`;
 - `parent_teacher_meeting`;
 - `party`;
 - `performance`;
 - `playdate`;
 - `school_deadline`;
 - `school_event`;
-- `social_gathering`; and
+- `social_gathering`;
+- `train_or_bus_trip`;
+- `travel_preparation`;
+- `travel_transfer`;
+- `trip_departure`;
 - `visitor_arrival`.
 
 The medical-only `1.0.0-draft.1`, medical-and-lesson `1.0.0-draft.2`, expanded
-event `1.0.0-draft.3`, and their positive fixtures MUST remain byte-for-byte
-unchanged as review evidence. Every predecessor definition and binding MUST be
-preserved without semantic change in draft 4. Draft 4 MUST retain the exact
-compatibility declarations and empty dependencies and MUST have a newly
-computed content digest. All artifacts remain drafts, not releases or evidence
-of installation.
+event `1.0.0-draft.3`, Education-and-Social `1.0.0-draft.4`, and their positive
+fixtures MUST remain byte-for-byte unchanged as review evidence. Every
+predecessor definition and binding MUST be preserved without semantic change
+in draft 5. Draft 5 MUST retain the exact compatibility declarations and empty
+dependencies and MUST have a newly computed content digest. All artifacts
+remain drafts, not releases or evidence of installation.
 
 ## Lesson meaning and display text
 
@@ -86,13 +94,13 @@ The lesson binding intent MUST contain exactly
 `notification_profile_key=lesson_standard`. It references definitions in this
 pack, not installed Spine IDs or an owner.
 
-Draft 4 archetypes, profiles, and bindings MUST use the lexicographic ordering
+Draft 5 archetypes, profiles, and bindings MUST use the lexicographic ordering
 required by `specs/pack-format.md`. Template ordering is by key, not reminder
 time. Historical draft 3 remains unchanged in its earlier canonical order.
 
 ## Late-delivery spacing policy
 
-Draft 4 profiles MUST leave a quiet interval before the next scheduled
+Draft 5 profiles MUST leave a quiet interval before the next scheduled
 notification. For two templates whose resolved nominal notification instants
 are `A` and `B`, where `A` occurs before `B`, the positive delivery grace for
 `A` MUST be no greater than the smaller of:
@@ -299,9 +307,93 @@ the target's local date at noon and inherits timezone facts from the item.
 Specific venues, invitees, addresses, reservation details, hosts, and visitor
 identities remain item- or operator-owned facts.
 
+## Travel
+
+Every definition in this section MUST use `intended_status=active`. Event
+profiles and task profiles remain archetype-specific even where another
+profile contains equivalent template schedules.
+
+The archetypes MUST be exactly:
+
+| Archetype key | Display name | Description | Compatible item types |
+| --- | --- | --- | --- |
+| `check_in_required` | `Check-in required` | `Required check-in actions with a specific completion deadline.` | `task` |
+| `lodging_checkin` | `Lodging check-in` | `Scheduled lodging check-in times.` | `event` |
+| `lodging_checkout` | `Lodging checkout` | `Scheduled lodging checkout deadlines.` | `event` |
+| `packing` | `Packing` | `Packing tasks completed before a related trip starts.` | `task` |
+| `train_or_bus_trip` | `Train or bus trip` | `Scheduled train and bus departures.` | `event` |
+| `travel_preparation` | `Travel preparation` | `Travel preparation tasks with a specific completion deadline.` | `task` |
+| `travel_transfer` | `Travel transfer` | `Scheduled transfers between travel legs or locations.` | `event` |
+| `trip_departure` | `Trip departure` | `Scheduled departures for general or otherwise unspecified trips.` | `event` |
+
+The corresponding profiles MUST be exactly:
+
+| Profile key | Display name | Description | Compatible item types |
+| --- | --- | --- | --- |
+| `check_in_required_standard` | `Check-in required standard` | `Progressive reminders before a required check-in deadline.` | `task` |
+| `lodging_checkin_standard` | `Lodging check-in standard` | `Preparation and arrival reminders for lodging check-in.` | `event` |
+| `lodging_checkout_standard` | `Lodging checkout standard` | `Preparation and departure reminders before a lodging checkout deadline.` | `event` |
+| `packing_standard` | `Packing standard` | `Advance reminders for packing before a trip starts.` | `task` |
+| `train_or_bus_trip_standard` | `Train or bus trip standard` | `Preparation and boarding reminders for a scheduled train or bus trip.` | `event` |
+| `travel_preparation_standard` | `Travel preparation standard` | `Progressive reminders for completing travel preparation.` | `task` |
+| `travel_transfer_standard` | `Travel transfer standard` | `Preparation and arrival reminders for a scheduled travel transfer.` | `event` |
+| `trip_departure_standard` | `Trip departure standard` | `Advance preparation and departure reminders for a trip.` | `event` |
+
+Their templates MUST be exactly:
+
+| Profile | Template key | Basis | Offset | Local time | Grace |
+| --- | --- | --- | --- | --- | --- |
+| `check_in_required_standard` | `four_hours_before` | `elapsed` | `-14400` seconds | — | `3600` seconds |
+| `check_in_required_standard` | `one_hour_before` | `elapsed` | `-3600` seconds | — | `1800` seconds |
+| `check_in_required_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `lodging_checkin_standard` | `one_day_before_at_noon` | `calendar_days` | `-1` day | `12:00:00` | `21600` seconds |
+| `lodging_checkin_standard` | `seven_days_before_at_noon` | `calendar_days` | `-7` days | `12:00:00` | `86400` seconds |
+| `lodging_checkin_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `lodging_checkout_standard` | `one_day_before_at_six_pm` | `calendar_days` | `-1` day | `18:00:00` | `10800` seconds |
+| `lodging_checkout_standard` | `one_hour_before` | `elapsed` | `-3600` seconds | — | `1800` seconds |
+| `packing_standard` | `one_day_before_at_nine` | `calendar_days` | `-1` day | `09:00:00` | `21600` seconds |
+| `packing_standard` | `two_days_before_at_nine` | `calendar_days` | `-2` days | `09:00:00` | `43200` seconds |
+| `train_or_bus_trip_standard` | `thirty_minutes_before` | `elapsed` | `-1800` seconds | — | `900` seconds |
+| `train_or_bus_trip_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `train_or_bus_trip_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `travel_preparation_standard` | `due_day_at_nine` | `calendar_days` | `0` days | `09:00:00` | `21600` seconds |
+| `travel_preparation_standard` | `seven_days_before_at_nine` | `calendar_days` | `-7` days | `09:00:00` | `86400` seconds |
+| `travel_preparation_standard` | `two_days_before_at_nine` | `calendar_days` | `-2` days | `09:00:00` | `43200` seconds |
+| `travel_transfer_standard` | `thirty_minutes_before` | `elapsed` | `-1800` seconds | — | `900` seconds |
+| `travel_transfer_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `travel_transfer_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `trip_departure_standard` | `fifteen_minutes_before` | `elapsed` | `-900` seconds | — | `600` seconds |
+| `trip_departure_standard` | `one_day_before_at_noon` | `calendar_days` | `-1` day | `12:00:00` | `21600` seconds |
+| `trip_departure_standard` | `seven_days_before_at_noon` | `calendar_days` | `-7` days | `12:00:00` | `86400` seconds |
+
+`train_or_bus_trip` is anchored to its scheduled departure. `trip_departure`
+is for a general or otherwise unspecified trip departure when a more specific
+travel archetype does not apply; it is not an automatic runtime fallback.
+Lodging definitions are anchored to the stated check-in time or checkout
+deadline. `travel_transfer` is anchored to the scheduled transfer, connection,
+or pickup time.
+
+`travel_preparation` and `check_in_required` are independently scheduled tasks
+whose targets are their actual completion deadlines. The check-in profile has
+no target-time reminder because notification at the deadline would already be
+too late.
+
+`packing` is a task that is normally related to a trip event. When so related,
+its deadline MUST equal that trip event's start time. Its profile deliberately
+ends with the day-before-at-nine reminder; it has no final elapsed reminder.
+Creating the relationship, copying or synchronizing the target, and handling a
+changed trip start are Spine-owned item operations. The manifest does not
+encode an item relationship or cause a packing task to be created.
+
+The trip-departure profile deliberately uses a fifteen-minute final reminder
+instead of a two-hour reminder. Its ten-minute delivery grace remains within
+the 75% cap of eleven minutes and fifteen seconds before the departure target.
+The checkout evening reminder and all mixed calendar/elapsed profiles are
+bounded against their shortest early-target intervals.
+
 ## Default bindings
 
-Draft 4 MUST bind every included archetype to its same-named `_standard`
+Draft 5 MUST bind every included archetype to its same-named `_standard`
 profile using exactly one owner-neutral `archetype_default` intent. These
 bindings contain only pack-local keys. Historical drafts retain the binding
 sets specified by their own content.

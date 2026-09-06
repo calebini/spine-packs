@@ -15,10 +15,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = ROOT / "contracts/schemas/spine-pack-manifest.v1.schema.json"
 FIXTURE_MANIFEST_PATH = ROOT / "contracts/pack-fixture-manifest.v1.json"
 DRAFT_MANIFEST_PATH = (
-    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.4.json"
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.5.json"
 )
 POSITIVE_FIXTURE_PATH = (
-    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_4.json"
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_5.json"
 )
 EXACT_TARGET_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/exact_target_elapsed_offset.json"
@@ -41,10 +41,17 @@ THIRD_DRAFT_MANIFEST_PATH = (
 THIRD_POSITIVE_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_3.json"
 )
+FOURTH_DRAFT_MANIFEST_PATH = (
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.4.json"
+)
+FOURTH_POSITIVE_FIXTURE_PATH = (
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_4.json"
+)
 DRAFT_FIXTURE_PAIRS = (
     (FIRST_DRAFT_MANIFEST_PATH, FIRST_POSITIVE_FIXTURE_PATH),
     (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH),
     (THIRD_DRAFT_MANIFEST_PATH, THIRD_POSITIVE_FIXTURE_PATH),
+    (FOURTH_DRAFT_MANIFEST_PATH, FOURTH_POSITIVE_FIXTURE_PATH),
     (DRAFT_MANIFEST_PATH, POSITIVE_FIXTURE_PATH),
 )
 
@@ -451,11 +458,15 @@ class PackManifestContractTests(unittest.TestCase):
         for path in (THIRD_DRAFT_MANIFEST_PATH, THIRD_POSITIVE_FIXTURE_PATH):
             with self.subTest(path=path.name):
                 self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
+        reviewed_hash = "51be7dbaf5d1fa6f5ecd3424d77d7492e0fe51a0aedcc77686b77558c711a6f2"
+        for path in (FOURTH_DRAFT_MANIFEST_PATH, FOURTH_POSITIVE_FIXTURE_PATH):
+            with self.subTest(path=path.name):
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
 
-        previous = load_json(THIRD_DRAFT_MANIFEST_PATH)
+        previous = load_json(FOURTH_DRAFT_MANIFEST_PATH)
         current = load_json(DRAFT_MANIFEST_PATH)
         self.assertEqual(current["pack"], {
-            "pack_id": "kinflow-starter", "version": "1.0.0-draft.4", "status": "draft",
+            "pack_id": "kinflow-starter", "version": "1.0.0-draft.5", "status": "draft",
         })
         for field in ("manifest_schema", "compatibility", "dependencies"):
             self.assertEqual(current[field], previous[field])
@@ -600,7 +611,7 @@ class PackManifestContractTests(unittest.TestCase):
             self.assertEqual(binding["notification_profile_key"], key + "_standard")
 
     def test_draft_four_matches_approved_education_and_social_content(self) -> None:
-        manifest = load_json(DRAFT_MANIFEST_PATH)
+        manifest = load_json(FOURTH_DRAFT_MANIFEST_PATH)
         archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
         profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
         bindings = {v["archetype_key"]: v for v in manifest["binding_intents"]}
@@ -749,6 +760,117 @@ class PackManifestContractTests(unittest.TestCase):
                     "notification_profile_key": key + "_standard",
                 })
 
+    def test_draft_five_matches_approved_travel_content(self) -> None:
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
+        profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
+        bindings = {v["archetype_key"]: v for v in manifest["binding_intents"]}
+        self.assertEqual((len(archetypes), len(profiles), len(bindings)), (24, 24, 24))
+
+        expected_archetypes = {
+            "check_in_required": ("Check-in required", "Required check-in actions with a specific completion deadline.", "task"),
+            "lodging_checkin": ("Lodging check-in", "Scheduled lodging check-in times.", "event"),
+            "lodging_checkout": ("Lodging checkout", "Scheduled lodging checkout deadlines.", "event"),
+            "packing": ("Packing", "Packing tasks completed before a related trip starts.", "task"),
+            "train_or_bus_trip": ("Train or bus trip", "Scheduled train and bus departures.", "event"),
+            "travel_preparation": ("Travel preparation", "Travel preparation tasks with a specific completion deadline.", "task"),
+            "travel_transfer": ("Travel transfer", "Scheduled transfers between travel legs or locations.", "event"),
+            "trip_departure": ("Trip departure", "Scheduled departures for general or otherwise unspecified trips.", "event"),
+        }
+        expected_profiles = {
+            "check_in_required": ("Check-in required standard", "Progressive reminders before a required check-in deadline."),
+            "lodging_checkin": ("Lodging check-in standard", "Preparation and arrival reminders for lodging check-in."),
+            "lodging_checkout": ("Lodging checkout standard", "Preparation and departure reminders before a lodging checkout deadline."),
+            "packing": ("Packing standard", "Advance reminders for packing before a trip starts."),
+            "train_or_bus_trip": ("Train or bus trip standard", "Preparation and boarding reminders for a scheduled train or bus trip."),
+            "travel_preparation": ("Travel preparation standard", "Progressive reminders for completing travel preparation."),
+            "travel_transfer": ("Travel transfer standard", "Preparation and arrival reminders for a scheduled travel transfer."),
+            "trip_departure": ("Trip departure standard", "Advance preparation and departure reminders for a trip."),
+        }
+        expected_schedules = {
+            "check_in_required": [
+                ("four_hours_before", "elapsed", "-14400", None, "3600"),
+                ("one_hour_before", "elapsed", "-3600", None, "1800"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+            ],
+            "lodging_checkin": [
+                ("one_day_before_at_noon", "calendar_days", "-1", "12:00:00", "21600"),
+                ("seven_days_before_at_noon", "calendar_days", "-7", "12:00:00", "86400"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "lodging_checkout": [
+                ("one_day_before_at_six_pm", "calendar_days", "-1", "18:00:00", "10800"),
+                ("one_hour_before", "elapsed", "-3600", None, "1800"),
+            ],
+            "packing": [
+                ("one_day_before_at_nine", "calendar_days", "-1", "09:00:00", "21600"),
+                ("two_days_before_at_nine", "calendar_days", "-2", "09:00:00", "43200"),
+            ],
+            "train_or_bus_trip": [
+                ("thirty_minutes_before", "elapsed", "-1800", None, "900"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "travel_preparation": [
+                ("due_day_at_nine", "calendar_days", "0", "09:00:00", "21600"),
+                ("seven_days_before_at_nine", "calendar_days", "-7", "09:00:00", "86400"),
+                ("two_days_before_at_nine", "calendar_days", "-2", "09:00:00", "43200"),
+            ],
+            "travel_transfer": [
+                ("thirty_minutes_before", "elapsed", "-1800", None, "900"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "trip_departure": [
+                ("fifteen_minutes_before", "elapsed", "-900", None, "600"),
+                ("one_day_before_at_noon", "calendar_days", "-1", "12:00:00", "21600"),
+                ("seven_days_before_at_noon", "calendar_days", "-7", "12:00:00", "86400"),
+            ],
+        }
+
+        for key, (display_name, description, item_type) in expected_archetypes.items():
+            with self.subTest(archetype=key):
+                self.assertEqual(archetypes[key], {
+                    "archetype_key": key,
+                    "intended_status": "active",
+                    "revision": {
+                        "display_name": display_name,
+                        "description": description,
+                        "compatible_item_types": [item_type],
+                    },
+                })
+                profile = profiles[key + "_standard"]
+                profile_display, profile_description = expected_profiles[key]
+                self.assertEqual(profile["display_name"], profile_display)
+                self.assertEqual(profile["description"], profile_description)
+                self.assertEqual(profile["intended_status"], "active")
+                self.assertEqual(profile["revision"]["compatible_item_types"], [item_type])
+                actual_schedules = []
+                for template in profile["revision"]["templates"]:
+                    at = template["schedule"]["at"]
+                    actual_schedules.append((
+                        template["template_key"],
+                        at["offset_basis"],
+                        at.get("offset_seconds", at.get("offset_days")),
+                        at.get("local_time"),
+                        template["late_handling"]["grace_seconds"],
+                    ))
+                self.assertEqual(actual_schedules, expected_schedules[key])
+                self.assertEqual(bindings[key], {
+                    "binding_kind": "archetype_default",
+                    "archetype_key": key,
+                    "notification_profile_key": key + "_standard",
+                })
+
+        packing_templates = profiles["packing_standard"]["revision"]["templates"]
+        self.assertNotIn(
+            "two_hours_before", {template["template_key"] for template in packing_templates}
+        )
+        trip_templates = profiles["trip_departure_standard"]["revision"]["templates"]
+        self.assertNotIn(
+            "two_hours_before", {template["template_key"] for template in trip_templates}
+        )
+
     def test_late_windows_obey_seventy_five_percent_spacing_policy(self) -> None:
         manifest = load_json(DRAFT_MANIFEST_PATH)
         profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
@@ -756,11 +878,13 @@ class PackManifestContractTests(unittest.TestCase):
         # Pure elapsed profiles can be checked directly against the next
         # chronological reminder, using the target as the final boundary.
         elapsed_profiles = {
-            "community_event_standard", "dinner_reservation_standard",
+            "check_in_required_standard", "community_event_standard",
+            "dinner_reservation_standard",
             "flight_standard", "game_or_competition_standard", "lesson_standard",
             "medical_appointment_standard", "parent_teacher_meeting_standard",
             "party_standard", "performance_standard", "playdate_standard",
             "school_event_standard", "social_gathering_standard",
+            "train_or_bus_trip_standard", "travel_transfer_standard",
         }
         for profile_key in elapsed_profiles:
             entries = []
@@ -783,7 +907,10 @@ class PackManifestContractTests(unittest.TestCase):
 
         # Same-time calendar reminders use 23 hours per calendar-day step as
         # a conservative local-clock-change interval.
-        for profile_key in ("birthday_standard", "school_deadline_standard"):
+        for profile_key in (
+            "birthday_standard", "school_deadline_standard",
+            "travel_preparation_standard",
+        ):
             entries = []
             for template in profiles[profile_key]["revision"]["templates"]:
                 at = template["schedule"]["at"]
@@ -799,14 +926,32 @@ class PackManifestContractTests(unittest.TestCase):
                 with self.subTest(profile=profile_key, template=template_key):
                     self.assertLessEqual(grace, (conservative_gap * 3) // 4)
 
-        # The shortest target-time cases for the two mixed-basis profiles are
-        # pinned explicitly: midnight camp start and midnight visitor arrival.
+        # Mixed-basis profiles and packing's exact target relationship use
+        # conservative early-target gaps, including a midnight target.
         mixed_gaps = {
             "camp_or_program_standard": [
-                ("thirty_days_before_at_noon", 23 * 24 * 3600),
-                ("seven_days_before_at_noon", 6 * 24 * 3600),
+                ("thirty_days_before_at_noon", 23 * 23 * 3600),
+                ("seven_days_before_at_noon", 6 * 23 * 3600),
                 ("one_day_before_at_noon", 10 * 3600),
                 ("two_hours_before", 2 * 3600),
+            ],
+            "lodging_checkin_standard": [
+                ("seven_days_before_at_noon", 6 * 23 * 3600),
+                ("one_day_before_at_noon", 10 * 3600),
+                ("two_hours_before", 2 * 3600),
+            ],
+            "lodging_checkout_standard": [
+                ("one_day_before_at_six_pm", 5 * 3600),
+                ("one_hour_before", 3600),
+            ],
+            "packing_standard": [
+                ("two_days_before_at_nine", 23 * 3600),
+                ("one_day_before_at_nine", 15 * 3600),
+            ],
+            "trip_departure_standard": [
+                ("seven_days_before_at_noon", 6 * 23 * 3600),
+                ("one_day_before_at_noon", 11 * 3600 + 45 * 60),
+                ("fifteen_minutes_before", 15 * 60),
             ],
             "visitor_arrival_standard": [
                 ("one_day_before_at_noon", 11 * 3600),
