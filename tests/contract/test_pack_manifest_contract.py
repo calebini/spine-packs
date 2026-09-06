@@ -15,10 +15,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = ROOT / "contracts/schemas/spine-pack-manifest.v1.schema.json"
 FIXTURE_MANIFEST_PATH = ROOT / "contracts/pack-fixture-manifest.v1.json"
 DRAFT_MANIFEST_PATH = (
-    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.7.json"
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.8.json"
 )
 POSITIVE_FIXTURE_PATH = (
-    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_7.json"
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_8.json"
 )
 EXACT_TARGET_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/exact_target_elapsed_offset.json"
@@ -59,6 +59,12 @@ SIXTH_DRAFT_MANIFEST_PATH = (
 SIXTH_POSITIVE_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_6.json"
 )
+SEVENTH_DRAFT_MANIFEST_PATH = (
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.7.json"
+)
+SEVENTH_POSITIVE_FIXTURE_PATH = (
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_7.json"
+)
 DRAFT_FIXTURE_PAIRS = (
     (FIRST_DRAFT_MANIFEST_PATH, FIRST_POSITIVE_FIXTURE_PATH),
     (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH),
@@ -66,6 +72,7 @@ DRAFT_FIXTURE_PAIRS = (
     (FOURTH_DRAFT_MANIFEST_PATH, FOURTH_POSITIVE_FIXTURE_PATH),
     (FIFTH_DRAFT_MANIFEST_PATH, FIFTH_POSITIVE_FIXTURE_PATH),
     (SIXTH_DRAFT_MANIFEST_PATH, SIXTH_POSITIVE_FIXTURE_PATH),
+    (SEVENTH_DRAFT_MANIFEST_PATH, SEVENTH_POSITIVE_FIXTURE_PATH),
     (DRAFT_MANIFEST_PATH, POSITIVE_FIXTURE_PATH),
 )
 
@@ -484,11 +491,15 @@ class PackManifestContractTests(unittest.TestCase):
         for path in (SIXTH_DRAFT_MANIFEST_PATH, SIXTH_POSITIVE_FIXTURE_PATH):
             with self.subTest(path=path.name):
                 self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
+        reviewed_hash = "4817b4c8ad9b56e017f9ef498e0067c6c0931afdbad07294a9b848adf3bfecb6"
+        for path in (SEVENTH_DRAFT_MANIFEST_PATH, SEVENTH_POSITIVE_FIXTURE_PATH):
+            with self.subTest(path=path.name):
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
 
-        previous = load_json(SIXTH_DRAFT_MANIFEST_PATH)
+        previous = load_json(SEVENTH_DRAFT_MANIFEST_PATH)
         current = load_json(DRAFT_MANIFEST_PATH)
         self.assertEqual(current["pack"], {
-            "pack_id": "kinflow-starter", "version": "1.0.0-draft.7", "status": "draft",
+            "pack_id": "kinflow-starter", "version": "1.0.0-draft.8", "status": "draft",
         })
         for field in ("manifest_schema", "compatibility", "dependencies"):
             self.assertEqual(current[field], previous[field])
@@ -1021,7 +1032,7 @@ class PackManifestContractTests(unittest.TestCase):
         )
 
     def test_draft_seven_matches_approved_health_content(self) -> None:
-        manifest = load_json(DRAFT_MANIFEST_PATH)
+        manifest = load_json(SEVENTH_DRAFT_MANIFEST_PATH)
         archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
         profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
         bindings = {v["archetype_key"]: v for v in manifest["binding_intents"]}
@@ -1109,6 +1120,127 @@ class PackManifestContractTests(unittest.TestCase):
                     "notification_profile_key": key + "_standard",
                 })
 
+    def test_draft_eight_matches_approved_home_vehicle_and_logistics_content(self) -> None:
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
+        profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
+        bindings = {v["archetype_key"]: v for v in manifest["binding_intents"]}
+        self.assertEqual((len(archetypes), len(profiles), len(bindings)), (43, 43, 43))
+
+        expected_archetypes = {
+            "delivery_window": (
+                "Delivery window", "Scheduled windows for an expected delivery.", "event",
+            ),
+            "dropoff": (
+                "Drop-off", "Scheduled drop-offs of people or items at a stated time.", "event",
+            ),
+            "home_maintenance": (
+                "Home maintenance", "Home maintenance tasks due by a selected completion date.", "task",
+            ),
+            "home_service_appointment": (
+                "Home service appointment", "Scheduled appointments for service work at a home.", "event",
+            ),
+            "pet_appointment": (
+                "Pet appointment", "Scheduled veterinary, grooming, and other pet appointments.", "event",
+            ),
+            "pickup": (
+                "Pickup", "Scheduled pickups of people or items at a stated time.", "event",
+            ),
+            "vehicle_service": (
+                "Vehicle service", "Scheduled appointments for vehicle servicing or repair.", "event",
+            ),
+        }
+        expected_profiles = {
+            "delivery_window": (
+                "Delivery window standard", "Preparation reminders before a delivery window begins.",
+            ),
+            "dropoff": (
+                "Drop-off standard", "Preparation and time-now reminders for a scheduled drop-off.",
+            ),
+            "home_maintenance": (
+                "Home maintenance standard", "Progressive reminders for completing home maintenance.",
+            ),
+            "home_service_appointment": (
+                "Home service appointment standard", "Preparation and arrival reminders for a home service appointment.",
+            ),
+            "pet_appointment": (
+                "Pet appointment standard", "Preparation and arrival reminders for a pet appointment.",
+            ),
+            "pickup": (
+                "Pickup standard", "Preparation and time-now reminders for a scheduled pickup.",
+            ),
+            "vehicle_service": (
+                "Vehicle service standard", "Preparation and drop-off reminders for a booked vehicle service.",
+            ),
+        }
+        expected_schedules = {
+            "delivery_window": [
+                ("one_day_before_at_noon", "calendar_days", "-1", "12:00:00", "21600"),
+                ("one_hour_before", "elapsed", "-3600", None, "1800"),
+            ],
+            "dropoff": [
+                ("at_dropoff_time", "elapsed", "0", None, "900"),
+                ("one_hour_before", "elapsed", "-3600", None, "1800"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+            ],
+            "home_maintenance": [
+                ("due_day_at_nine", "calendar_days", "0", "09:00:00", "21600"),
+                ("one_day_before_at_nine", "calendar_days", "-1", "09:00:00", "43200"),
+                ("seven_days_before_at_nine", "calendar_days", "-7", "09:00:00", "86400"),
+            ],
+            "home_service_appointment": [
+                ("one_hour_before", "elapsed", "-3600", None, "1800"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+            ],
+            "pet_appointment": [
+                ("thirty_minutes_before", "elapsed", "-1800", None, "900"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+            "pickup": [
+                ("at_pickup_time", "elapsed", "0", None, "900"),
+                ("one_hour_before", "elapsed", "-3600", None, "1800"),
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+            ],
+            "vehicle_service": [
+                ("twenty_four_hours_before", "elapsed", "-86400", None, "21600"),
+                ("two_hours_before", "elapsed", "-7200", None, "3600"),
+            ],
+        }
+
+        for key, (display_name, description, item_type) in expected_archetypes.items():
+            with self.subTest(archetype=key):
+                self.assertEqual(archetypes[key], {
+                    "archetype_key": key,
+                    "intended_status": "active",
+                    "revision": {
+                        "display_name": display_name,
+                        "description": description,
+                        "compatible_item_types": [item_type],
+                    },
+                })
+                profile = profiles[key + "_standard"]
+                profile_display, profile_description = expected_profiles[key]
+                self.assertEqual(profile["display_name"], profile_display)
+                self.assertEqual(profile["description"], profile_description)
+                self.assertEqual(profile["intended_status"], "active")
+                self.assertEqual(profile["revision"]["compatible_item_types"], [item_type])
+                actual_schedules = []
+                for template in profile["revision"]["templates"]:
+                    at = template["schedule"]["at"]
+                    actual_schedules.append((
+                        template["template_key"], at["offset_basis"],
+                        at.get("offset_seconds", at.get("offset_days")),
+                        at.get("local_time"),
+                        template["late_handling"]["grace_seconds"],
+                    ))
+                self.assertEqual(actual_schedules, expected_schedules[key])
+                self.assertEqual(bindings[key], {
+                    "binding_kind": "archetype_default",
+                    "archetype_key": key,
+                    "notification_profile_key": key + "_standard",
+                })
+
     def test_late_windows_obey_seventy_five_percent_spacing_policy(self) -> None:
         manifest = load_json(DRAFT_MANIFEST_PATH)
         profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
@@ -1117,12 +1249,15 @@ class PackManifestContractTests(unittest.TestCase):
         # chronological reminder, using the target as the final boundary.
         elapsed_profiles = {
             "check_in_required_standard", "community_event_standard",
-            "dinner_reservation_standard",
+            "dinner_reservation_standard", "dropoff_standard",
             "flight_standard", "game_or_competition_standard", "lesson_standard",
-            "medical_appointment_standard", "parent_teacher_meeting_standard",
-            "party_standard", "performance_standard", "playdate_standard",
+            "home_service_appointment_standard", "medical_appointment_standard",
+            "parent_teacher_meeting_standard", "party_standard",
+            "performance_standard", "pet_appointment_standard",
+            "pickup_standard", "playdate_standard",
             "school_event_standard", "social_gathering_standard",
             "train_or_bus_trip_standard", "travel_transfer_standard",
+            "vehicle_service_standard",
         }
         for profile_key in elapsed_profiles:
             entries = []
@@ -1148,7 +1283,8 @@ class PackManifestContractTests(unittest.TestCase):
         for profile_key in (
             "application_deadline_standard", "birthday_standard",
             "document_renewal_standard", "insurance_renewal_standard",
-            "license_renewal_standard", "passport_renewal_standard",
+            "home_maintenance_standard", "license_renewal_standard",
+            "passport_renewal_standard",
             "medication_refill_standard", "payment_due_standard",
             "prescription_pickup_standard", "registration_deadline_standard",
             "school_deadline_standard", "subscription_renewal_standard",
@@ -1195,6 +1331,10 @@ class PackManifestContractTests(unittest.TestCase):
                 ("seven_days_before_at_noon", 6 * 23 * 3600),
                 ("one_day_before_at_noon", 10 * 3600),
                 ("two_hours_before", 2 * 3600),
+            ],
+            "delivery_window_standard": [
+                ("one_day_before_at_noon", 11 * 3600),
+                ("one_hour_before", 3600),
             ],
             "lodging_checkin_standard": [
                 ("seven_days_before_at_noon", 6 * 23 * 3600),

@@ -65,6 +65,11 @@ only the existing calendar-day target-offset form. The 365-day and 180-day
 vaccination boundaries do not claim calendar-year or calendar-month
 arithmetic, recurrence, or clinical-guidance semantics.
 
+Draft `1.0.0-draft.8` retains those exact allowlists. Its Home, vehicle, and
+logistics profiles use only the existing elapsed and calendar-day target-offset
+forms, including the already-supported exact-target elapsed form. The delivery
+window definition does not claim range-scheduling semantics.
+
 The v1 pack contract's exact-target elapsed form, `offset_seconds=0`, is within
 the signed elapsed-offset semantics accepted by the inspected Spine runtime
 `0.3.0` under `spine.notification-profiles.v1`. Supporting that form does not

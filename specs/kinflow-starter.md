@@ -7,7 +7,7 @@ installation. General format and authority rules remain in `pack-format.md`,
 
 ## Draft lineage
 
-`1.0.0-draft.7` is the current draft. It MUST contain exactly these archetypes,
+`1.0.0-draft.8` is the current draft. It MUST contain exactly these archetypes,
 their respective same-named `_standard` profiles, and one local default-binding
 intent per archetype:
 
@@ -16,10 +16,14 @@ intent per archetype:
 - `camp_or_program`;
 - `check_in_required`;
 - `community_event`;
+- `delivery_window`;
 - `dinner_reservation`;
 - `document_renewal`;
+- `dropoff`;
 - `flight`;
 - `game_or_competition`;
+- `home_maintenance`;
+- `home_service_appointment`;
 - `insurance_renewal`;
 - `lesson`;
 - `license_renewal`;
@@ -33,6 +37,8 @@ intent per archetype:
 - `passport_renewal`;
 - `payment_due`;
 - `performance`;
+- `pet_appointment`;
+- `pickup`;
 - `playdate`;
 - `prescription_pickup`;
 - `registration_deadline`;
@@ -46,14 +52,15 @@ intent per archetype:
 - `travel_transfer`;
 - `trip_departure`;
 - `vaccination_due`;
+- `vehicle_service`;
 - `visitor_arrival`.
 
 The medical-only `1.0.0-draft.1`, medical-and-lesson `1.0.0-draft.2`, expanded
 event `1.0.0-draft.3`, Education-and-Social `1.0.0-draft.4`, Travel
-`1.0.0-draft.5`, Renewals-and-administration `1.0.0-draft.6`, and their
-positive fixtures MUST remain byte-for-byte unchanged as review evidence.
-Every predecessor definition and binding MUST be preserved without semantic
-change in draft 7. Draft 7 MUST retain the exact
+`1.0.0-draft.5`, Renewals-and-administration `1.0.0-draft.6`, Health
+`1.0.0-draft.7`, and their positive fixtures MUST remain byte-for-byte
+unchanged as review evidence. Every predecessor definition and binding MUST be
+preserved without semantic change in draft 8. Draft 8 MUST retain the exact
 compatibility declarations and empty dependencies and MUST have a newly
 computed content digest. All artifacts remain drafts, not releases or evidence
 of installation.
@@ -108,13 +115,13 @@ The lesson binding intent MUST contain exactly
 `notification_profile_key=lesson_standard`. It references definitions in this
 pack, not installed Spine IDs or an owner.
 
-Draft 7 archetypes, profiles, and bindings MUST use the lexicographic ordering
+Draft 8 archetypes, profiles, and bindings MUST use the lexicographic ordering
 required by `specs/pack-format.md`. Template ordering is by key, not reminder
 time. Historical draft 3 remains unchanged in its earlier canonical order.
 
 ## Late-delivery spacing policy
 
-Draft 7 profiles MUST leave a quiet interval before the next scheduled
+Draft 8 profiles MUST leave a quiet interval before the next scheduled
 notification. For two templates whose resolved nominal notification instants
 are `A` and `B`, where `A` occurs before `B`, the positive delivery grace for
 `A` MUST be no greater than the smaller of:
@@ -563,9 +570,82 @@ clinical instructions, and medical records MUST NOT appear in reusable pack
 content. Every approved grace window in this section satisfies the 75-percent
 spacing policy.
 
+## Home, vehicle, and logistics
+
+Every definition in this section MUST use `intended_status=active` and have an
+owner-neutral same-named `_standard` profile. `home_maintenance` and its
+profile MUST be compatible with exactly `task`; every other definition in this
+section MUST be compatible with exactly `event`.
+
+The archetypes MUST be exactly:
+
+| Archetype key | Display name | Description | Compatible item types |
+| --- | --- | --- | --- |
+| `delivery_window` | `Delivery window` | `Scheduled windows for an expected delivery.` | `event` |
+| `dropoff` | `Drop-off` | `Scheduled drop-offs of people or items at a stated time.` | `event` |
+| `home_maintenance` | `Home maintenance` | `Home maintenance tasks due by a selected completion date.` | `task` |
+| `home_service_appointment` | `Home service appointment` | `Scheduled appointments for service work at a home.` | `event` |
+| `pet_appointment` | `Pet appointment` | `Scheduled veterinary, grooming, and other pet appointments.` | `event` |
+| `pickup` | `Pickup` | `Scheduled pickups of people or items at a stated time.` | `event` |
+| `vehicle_service` | `Vehicle service` | `Scheduled appointments for vehicle servicing or repair.` | `event` |
+
+The corresponding profiles MUST be exactly:
+
+| Profile key | Display name | Description | Compatible item types |
+| --- | --- | --- | --- |
+| `delivery_window_standard` | `Delivery window standard` | `Preparation reminders before a delivery window begins.` | `event` |
+| `dropoff_standard` | `Drop-off standard` | `Preparation and time-now reminders for a scheduled drop-off.` | `event` |
+| `home_maintenance_standard` | `Home maintenance standard` | `Progressive reminders for completing home maintenance.` | `task` |
+| `home_service_appointment_standard` | `Home service appointment standard` | `Preparation and arrival reminders for a home service appointment.` | `event` |
+| `pet_appointment_standard` | `Pet appointment standard` | `Preparation and arrival reminders for a pet appointment.` | `event` |
+| `pickup_standard` | `Pickup standard` | `Preparation and time-now reminders for a scheduled pickup.` | `event` |
+| `vehicle_service_standard` | `Vehicle service standard` | `Preparation and drop-off reminders for a booked vehicle service.` | `event` |
+
+Their templates MUST be exactly:
+
+| Profile | Template key | Basis | Offset | Local time | Grace |
+| --- | --- | --- | --- | --- | --- |
+| `delivery_window_standard` | `one_day_before_at_noon` | `calendar_days` | `-1` day | `12:00:00` | `21600` seconds |
+| `delivery_window_standard` | `one_hour_before` | `elapsed` | `-3600` seconds | — | `1800` seconds |
+| `dropoff_standard` | `at_dropoff_time` | `elapsed` | `0` seconds | — | `900` seconds |
+| `dropoff_standard` | `one_hour_before` | `elapsed` | `-3600` seconds | — | `1800` seconds |
+| `dropoff_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `home_maintenance_standard` | `due_day_at_nine` | `calendar_days` | `0` days | `09:00:00` | `21600` seconds |
+| `home_maintenance_standard` | `one_day_before_at_nine` | `calendar_days` | `-1` day | `09:00:00` | `43200` seconds |
+| `home_maintenance_standard` | `seven_days_before_at_nine` | `calendar_days` | `-7` days | `09:00:00` | `86400` seconds |
+| `home_service_appointment_standard` | `one_hour_before` | `elapsed` | `-3600` seconds | — | `1800` seconds |
+| `home_service_appointment_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `pet_appointment_standard` | `thirty_minutes_before` | `elapsed` | `-1800` seconds | — | `900` seconds |
+| `pet_appointment_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `pet_appointment_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+| `pickup_standard` | `at_pickup_time` | `elapsed` | `0` seconds | — | `900` seconds |
+| `pickup_standard` | `one_hour_before` | `elapsed` | `-3600` seconds | — | `1800` seconds |
+| `pickup_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `vehicle_service_standard` | `twenty_four_hours_before` | `elapsed` | `-86400` seconds | — | `21600` seconds |
+| `vehicle_service_standard` | `two_hours_before` | `elapsed` | `-7200` seconds | — | `3600` seconds |
+
+`home_service_appointment` is anchored to the beginning of the stated service
+window. `vehicle_service` represents an already-booked appointment and does
+not imply a separate vehicle-maintenance-due task. `home_maintenance` is
+anchored to its selected completion date; maintenance recurrence and future
+task creation remain Spine-owned item state.
+
+`delivery_window` is anchored to the beginning of the stated window. The pack
+does not define range semantics or assert an exact delivery instant. Its
+day-before reminder inherits timezone facts from the applicable item target
+and MUST fail closed if those facts are unavailable.
+
+`pickup` and `dropoff` represent scheduled handoffs and intentionally include
+short exact-target reminders. Those reminders do not assert that a person or
+item was actually collected or delivered. Addresses, providers, recipients,
+contents, vehicle details, and pet or medical information remain item-,
+operator-, or external-system-owned facts and MUST NOT appear in reusable pack
+content. Every approved grace window in this section satisfies the 75-percent
+spacing policy.
+
 ## Default bindings
 
-Draft 7 MUST bind every included archetype to its same-named `_standard`
+Draft 8 MUST bind every included archetype to its same-named `_standard`
 profile using exactly one owner-neutral `archetype_default` intent. These
 bindings contain only pack-local keys. Historical drafts retain the binding
 sets specified by their own content.

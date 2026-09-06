@@ -1,0 +1,3362 @@
+{
+  "manifest_schema": "spine.pack-manifest.v1",
+  "pack": {
+    "pack_id": "kinflow-starter",
+    "version": "1.0.0-draft.8",
+    "status": "draft"
+  },
+  "compatibility": {
+    "spine_runtime_versions": [
+      "0.3.0"
+    ],
+    "spine_content_contracts": [
+      "spine.item-archetypes.v1",
+      "spine.notification-profile-bindings.v1",
+      "spine.notification-profiles.v1"
+    ]
+  },
+  "dependencies": [],
+  "archetypes": [
+    {
+      "archetype_key": "application_deadline",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Application deadline",
+        "description": "Deadlines for completing and submitting applications.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "birthday",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Birthday",
+        "description": "Annual birthday occasions for advance planning and day-of recognition.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "camp_or_program",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Camp or program",
+        "description": "Scheduled camps and bounded programs represented by their overall start.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "check_in_required",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Check-in required",
+        "description": "Required check-in actions with a specific completion deadline.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "community_event",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Community event",
+        "description": "Scheduled community, neighborhood, civic, and local public events.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "delivery_window",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Delivery window",
+        "description": "Scheduled windows for an expected delivery.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "dinner_reservation",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Dinner reservation",
+        "description": "Scheduled restaurant dinner reservations.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "document_renewal",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Document renewal",
+        "description": "Renewal tasks for documents without a more specific archetype.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "dropoff",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Drop-off",
+        "description": "Scheduled drop-offs of people or items at a stated time.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "flight",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Flight",
+        "description": "Scheduled flight departures.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "game_or_competition",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Game or competition",
+        "description": "Scheduled sports games, tournaments, and competitions.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "home_maintenance",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Home maintenance",
+        "description": "Home maintenance tasks due by a selected completion date.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "home_service_appointment",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Home service appointment",
+        "description": "Scheduled appointments for service work at a home.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "insurance_renewal",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Insurance renewal",
+        "description": "Scheduled insurance policy renewal occurrences.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "lesson",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Lesson",
+        "description": "Scheduled instructional sessions such as classes, tutoring, coaching, or private lessons.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "license_renewal",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "License renewal",
+        "description": "Tasks to renew licenses by a selected completion deadline.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "lodging_checkin",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Lodging check-in",
+        "description": "Scheduled lodging check-in times.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "lodging_checkout",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Lodging checkout",
+        "description": "Scheduled lodging checkout deadlines.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "medical_appointment",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Medical appointment",
+        "description": "Medical, dental, vision, therapy, diagnostic, and other scheduled healthcare appointments.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "medication_refill",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Medication refill",
+        "description": "Tasks to arrange medication refills by a selected refill-by date.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "packing",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Packing",
+        "description": "Packing tasks completed before a related trip starts.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "parent_teacher_meeting",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Parent-teacher meeting",
+        "description": "Scheduled meetings between parents or guardians and teachers.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "party",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Party",
+        "description": "Scheduled parties and celebrations.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "passport_renewal",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Passport renewal",
+        "description": "Tasks to renew passports by a selected completion deadline.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "payment_due",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Payment due",
+        "description": "Payment obligations with a specified due date.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "performance",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Performance",
+        "description": "Scheduled recitals, concerts, plays, and similar events in which the participant is performing.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "pet_appointment",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Pet appointment",
+        "description": "Scheduled veterinary, grooming, and other pet appointments.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "pickup",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Pickup",
+        "description": "Scheduled pickups of people or items at a stated time.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "playdate",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Playdate",
+        "description": "Scheduled playdates for children and their caregivers.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "prescription_pickup",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Prescription pickup",
+        "description": "Tasks to collect prescriptions by a selected pickup deadline.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "registration_deadline",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Registration deadline",
+        "description": "Deadlines for completing registrations.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "school_deadline",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "School deadline",
+        "description": "School-related completion and submission deadlines.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "school_event",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "School event",
+        "description": "Scheduled school carnivals, fairs, concerts, open houses, and similar events.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "social_gathering",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Social gathering",
+        "description": "Scheduled informal social gatherings.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "subscription_renewal",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Subscription renewal",
+        "description": "Scheduled subscription renewal occurrences.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "tax_deadline",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Tax deadline",
+        "description": "Tax filing or payment obligations with a specified due date.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "train_or_bus_trip",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Train or bus trip",
+        "description": "Scheduled train and bus departures.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "travel_preparation",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Travel preparation",
+        "description": "Travel preparation tasks with a specific completion deadline.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "travel_transfer",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Travel transfer",
+        "description": "Scheduled transfers between travel legs or locations.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "trip_departure",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Trip departure",
+        "description": "Scheduled departures for general or otherwise unspecified trips.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "vaccination_due",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Vaccination due",
+        "description": "Vaccination tasks due by a future date, distinct from scheduled appointments.",
+        "compatible_item_types": [
+          "task"
+        ]
+      }
+    },
+    {
+      "archetype_key": "vehicle_service",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Vehicle service",
+        "description": "Scheduled appointments for vehicle servicing or repair.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    },
+    {
+      "archetype_key": "visitor_arrival",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Visitor arrival",
+        "description": "Expected arrivals of visitors at a scheduled time.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    }
+  ],
+  "notification_profiles": [
+    {
+      "profile_key": "application_deadline_standard",
+      "display_name": "Application deadline standard",
+      "description": "Progressive reminders leading up to and on an application deadline.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-30",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "birthday_standard",
+      "display_name": "Birthday standard",
+      "description": "Advance planning and day-of reminders for a birthday.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "birthday_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-30",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "camp_or_program_standard",
+      "display_name": "Camp or program standard",
+      "description": "Preparation and start reminders for an upcoming camp or program.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "one_day_before_at_noon",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "12:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_noon",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "12:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_days_before_at_noon",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-30",
+                "local_time": "12:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "check_in_required_standard",
+      "display_name": "Check-in required standard",
+      "description": "Progressive reminders before a required check-in deadline.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-14400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          },
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1800"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "community_event_standard",
+      "display_name": "Community event standard",
+      "description": "Preparation and arrival reminders for a community event.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "delivery_window_standard",
+      "display_name": "Delivery window standard",
+      "description": "Preparation reminders before a delivery window begins.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "one_day_before_at_noon",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "12:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1800"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "dinner_reservation_standard",
+      "display_name": "Dinner reservation standard",
+      "description": "Arrival reminders for a dinner reservation, including a time-now reminder.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "at_reservation_time",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "0"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "document_renewal_standard",
+      "display_name": "Document renewal standard",
+      "description": "Progressive reminders leading up to and on a document renewal deadline.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "ninety_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-90",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "604800"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-30",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "dropoff_standard",
+      "display_name": "Drop-off standard",
+      "description": "Preparation and time-now reminders for a scheduled drop-off.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "at_dropoff_time",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "0"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1800"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "flight_standard",
+      "display_name": "Flight standard",
+      "description": "Booking, travel-document, packing, check-in, gate, and boarding reminders for a scheduled flight.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-14400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          },
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "seven_days_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-604800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "game_or_competition_standard",
+      "display_name": "Game or competition standard",
+      "description": "Preparation and arrival reminders for a scheduled game or competition.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "home_maintenance_standard",
+      "display_name": "Home maintenance standard",
+      "description": "Progressive reminders for completing home maintenance.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "home_service_appointment_standard",
+      "display_name": "Home service appointment standard",
+      "description": "Preparation and arrival reminders for a home service appointment.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1800"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "insurance_renewal_standard",
+      "display_name": "Insurance renewal standard",
+      "description": "Advance reminders before an insurance renewal.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-30",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "lesson_standard",
+      "display_name": "Lesson standard",
+      "description": "Default reminders for an upcoming lesson.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1800"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "license_renewal_standard",
+      "display_name": "License renewal standard",
+      "description": "Progressive reminders leading up to and on a license renewal deadline.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "sixty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-60",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          },
+          {
+            "template_key": "thirty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-30",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "lodging_checkin_standard",
+      "display_name": "Lodging check-in standard",
+      "description": "Preparation and arrival reminders for lodging check-in.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "one_day_before_at_noon",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "12:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_noon",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "12:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "lodging_checkout_standard",
+      "display_name": "Lodging checkout standard",
+      "description": "Preparation and departure reminders before a lodging checkout deadline.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "one_day_before_at_six_pm",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "18:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "10800"
+            }
+          },
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1800"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "medical_appointment_standard",
+      "display_name": "Medical appointment standard",
+      "description": null,
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "seven_days_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-604800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_minutes_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-1800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "medication_refill_standard",
+      "display_name": "Medication refill standard",
+      "description": "Pre-due reminders to arrange a medication refill.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "three_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-3",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "packing_standard",
+      "display_name": "Packing standard",
+      "description": "Advance reminders for packing before a trip starts.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-2",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "parent_teacher_meeting_standard",
+      "display_name": "Parent-teacher meeting standard",
+      "description": "Preparation and attendance reminders for a parent-teacher meeting.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1800"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "party_standard",
+      "display_name": "Party standard",
+      "description": "Planning, preparation, and arrival reminders for a party.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "seven_days_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-604800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "passport_renewal_standard",
+      "display_name": "Passport renewal standard",
+      "description": "Long-horizon reminders before a passport renewal deadline.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "ninety_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-90",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "604800"
+            }
+          },
+          {
+            "template_key": "one_hundred_eighty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-180",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "604800"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-30",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          },
+          {
+            "template_key": "three_hundred_sixty_five_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-365",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1209600"
+            }
+          },
+          {
+            "template_key": "two_hundred_seventy_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-270",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1209600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "payment_due_standard",
+      "display_name": "Payment due standard",
+      "description": "Progressive reminders leading up to and on a payment due date.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "three_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-3",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "performance_standard",
+      "display_name": "Performance standard",
+      "description": "Preparation and arrival reminders for a scheduled performance.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "seven_days_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-604800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "pet_appointment_standard",
+      "display_name": "Pet appointment standard",
+      "description": "Preparation and arrival reminders for a pet appointment.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "thirty_minutes_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-1800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "pickup_standard",
+      "display_name": "Pickup standard",
+      "description": "Preparation and time-now reminders for a scheduled pickup.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "at_pickup_time",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "0"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1800"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "playdate_standard",
+      "display_name": "Playdate standard",
+      "description": "Coordination and arrival reminders for a playdate.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1800"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "prescription_pickup_standard",
+      "display_name": "Prescription pickup standard",
+      "description": "Pre-due reminders to collect a prescription.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "three_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-3",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "registration_deadline_standard",
+      "display_name": "Registration deadline standard",
+      "description": "Progressive reminders leading up to and on a registration deadline.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-30",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "school_deadline_standard",
+      "display_name": "School deadline standard",
+      "description": "Progressive reminders leading up to and on a school deadline.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "two_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-2",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "school_event_standard",
+      "display_name": "School event standard",
+      "description": "Preparation and arrival reminders for a school event.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "social_gathering_standard",
+      "display_name": "Social gathering standard",
+      "description": "Preparation and arrival reminders for a social gathering.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "subscription_renewal_standard",
+      "display_name": "Subscription renewal standard",
+      "description": "A single advance reminder before a subscription renewal.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "three_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-3",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "tax_deadline_standard",
+      "display_name": "Tax deadline standard",
+      "description": "Progressive reminders leading up to and on a tax deadline.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "ninety_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-90",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "604800"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-30",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "train_or_bus_trip_standard",
+      "display_name": "Train or bus trip standard",
+      "description": "Preparation and boarding reminders for a scheduled train or bus trip.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "thirty_minutes_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-1800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "travel_preparation_standard",
+      "display_name": "Travel preparation standard",
+      "description": "Progressive reminders for completing travel preparation.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "two_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-2",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "43200"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "travel_transfer_standard",
+      "display_name": "Travel transfer standard",
+      "description": "Preparation and arrival reminders for a scheduled travel transfer.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "thirty_minutes_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-1800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "trip_departure_standard",
+      "display_name": "Trip departure standard",
+      "description": "Advance preparation and departure reminders for a trip.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "fifteen_minutes_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-900"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "600"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_noon",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "12:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_noon",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "12:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "vaccination_due_standard",
+      "display_name": "Vaccination due standard",
+      "description": "Long-horizon reminders leading up to a vaccination due date.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "task"
+        ],
+        "templates": [
+          {
+            "template_key": "due_day_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "0",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "one_hundred_eighty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-180",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "604800"
+            }
+          },
+          {
+            "template_key": "seven_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-7",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            }
+          },
+          {
+            "template_key": "thirty_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-30",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "259200"
+            }
+          },
+          {
+            "template_key": "three_hundred_sixty_five_days_before_at_nine",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-365",
+                "local_time": "09:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1209600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "vehicle_service_standard",
+      "display_name": "Vehicle service standard",
+      "description": "Preparation and drop-off reminders for a booked vehicle service.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "two_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-7200"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "visitor_arrival_standard",
+      "display_name": "Visitor arrival standard",
+      "description": "Preparation and arrival-time reminders for an expected visitor.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "at_arrival_time",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "0"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            }
+          },
+          {
+            "template_key": "one_day_before_at_noon",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "calendar_days",
+                "offset_days": "-1",
+                "local_time": "12:00:00"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            }
+          },
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "1800"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "binding_intents": [
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "application_deadline",
+      "notification_profile_key": "application_deadline_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "birthday",
+      "notification_profile_key": "birthday_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "camp_or_program",
+      "notification_profile_key": "camp_or_program_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "check_in_required",
+      "notification_profile_key": "check_in_required_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "community_event",
+      "notification_profile_key": "community_event_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "delivery_window",
+      "notification_profile_key": "delivery_window_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "dinner_reservation",
+      "notification_profile_key": "dinner_reservation_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "document_renewal",
+      "notification_profile_key": "document_renewal_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "dropoff",
+      "notification_profile_key": "dropoff_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "flight",
+      "notification_profile_key": "flight_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "game_or_competition",
+      "notification_profile_key": "game_or_competition_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "home_maintenance",
+      "notification_profile_key": "home_maintenance_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "home_service_appointment",
+      "notification_profile_key": "home_service_appointment_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "insurance_renewal",
+      "notification_profile_key": "insurance_renewal_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "lesson",
+      "notification_profile_key": "lesson_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "license_renewal",
+      "notification_profile_key": "license_renewal_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "lodging_checkin",
+      "notification_profile_key": "lodging_checkin_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "lodging_checkout",
+      "notification_profile_key": "lodging_checkout_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "medical_appointment",
+      "notification_profile_key": "medical_appointment_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "medication_refill",
+      "notification_profile_key": "medication_refill_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "packing",
+      "notification_profile_key": "packing_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "parent_teacher_meeting",
+      "notification_profile_key": "parent_teacher_meeting_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "party",
+      "notification_profile_key": "party_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "passport_renewal",
+      "notification_profile_key": "passport_renewal_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "payment_due",
+      "notification_profile_key": "payment_due_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "performance",
+      "notification_profile_key": "performance_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "pet_appointment",
+      "notification_profile_key": "pet_appointment_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "pickup",
+      "notification_profile_key": "pickup_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "playdate",
+      "notification_profile_key": "playdate_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "prescription_pickup",
+      "notification_profile_key": "prescription_pickup_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "registration_deadline",
+      "notification_profile_key": "registration_deadline_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "school_deadline",
+      "notification_profile_key": "school_deadline_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "school_event",
+      "notification_profile_key": "school_event_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "social_gathering",
+      "notification_profile_key": "social_gathering_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "subscription_renewal",
+      "notification_profile_key": "subscription_renewal_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "tax_deadline",
+      "notification_profile_key": "tax_deadline_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "train_or_bus_trip",
+      "notification_profile_key": "train_or_bus_trip_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "travel_preparation",
+      "notification_profile_key": "travel_preparation_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "travel_transfer",
+      "notification_profile_key": "travel_transfer_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "trip_departure",
+      "notification_profile_key": "trip_departure_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "vaccination_due",
+      "notification_profile_key": "vaccination_due_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "vehicle_service",
+      "notification_profile_key": "vehicle_service_standard"
+    },
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "visitor_arrival",
+      "notification_profile_key": "visitor_arrival_standard"
+    }
+  ],
+  "content_identity": {
+    "algorithm": "sha256",
+    "canonical_json_version": "spine.canonical-json.v1",
+    "digest": "49cb4ac4da7e173adfebc9d9e60f19959cc2d60e426e50002bd0d6fbf13a8f2f"
+  }
+}
