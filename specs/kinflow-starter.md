@@ -7,29 +7,38 @@ installation. General format and authority rules remain in `pack-format.md`,
 
 ## Draft lineage
 
-`1.0.0-draft.5` is the current draft. It MUST contain exactly these archetypes,
+`1.0.0-draft.6` is the current draft. It MUST contain exactly these archetypes,
 their respective same-named `_standard` profiles, and one local default-binding
 intent per archetype:
 
+- `application_deadline`;
 - `birthday`;
 - `camp_or_program`;
 - `check_in_required`;
 - `community_event`;
 - `dinner_reservation`;
+- `document_renewal`;
 - `flight`;
 - `game_or_competition`;
+- `insurance_renewal`;
 - `lesson`;
+- `license_renewal`;
 - `lodging_checkin`;
 - `lodging_checkout`;
 - `medical_appointment`;
 - `packing`;
 - `parent_teacher_meeting`;
 - `party`;
+- `passport_renewal`;
+- `payment_due`;
 - `performance`;
 - `playdate`;
+- `registration_deadline`;
 - `school_deadline`;
 - `school_event`;
 - `social_gathering`;
+- `subscription_renewal`;
+- `tax_deadline`;
 - `train_or_bus_trip`;
 - `travel_preparation`;
 - `travel_transfer`;
@@ -37,12 +46,13 @@ intent per archetype:
 - `visitor_arrival`.
 
 The medical-only `1.0.0-draft.1`, medical-and-lesson `1.0.0-draft.2`, expanded
-event `1.0.0-draft.3`, Education-and-Social `1.0.0-draft.4`, and their positive
-fixtures MUST remain byte-for-byte unchanged as review evidence. Every
-predecessor definition and binding MUST be preserved without semantic change
-in draft 5. Draft 5 MUST retain the exact compatibility declarations and empty
-dependencies and MUST have a newly computed content digest. All artifacts
-remain drafts, not releases or evidence of installation.
+event `1.0.0-draft.3`, Education-and-Social `1.0.0-draft.4`, Travel
+`1.0.0-draft.5`, and their positive fixtures MUST remain byte-for-byte
+unchanged as review evidence. Every predecessor definition and binding MUST be
+preserved without semantic change in draft 6. Draft 6 MUST retain the exact
+compatibility declarations and empty dependencies and MUST have a newly
+computed content digest. All artifacts remain drafts, not releases or evidence
+of installation.
 
 ## Lesson meaning and display text
 
@@ -94,13 +104,13 @@ The lesson binding intent MUST contain exactly
 `notification_profile_key=lesson_standard`. It references definitions in this
 pack, not installed Spine IDs or an owner.
 
-Draft 5 archetypes, profiles, and bindings MUST use the lexicographic ordering
+Draft 6 archetypes, profiles, and bindings MUST use the lexicographic ordering
 required by `specs/pack-format.md`. Template ordering is by key, not reminder
 time. Historical draft 3 remains unchanged in its earlier canonical order.
 
 ## Late-delivery spacing policy
 
-Draft 5 profiles MUST leave a quiet interval before the next scheduled
+Draft 6 profiles MUST leave a quiet interval before the next scheduled
 notification. For two templates whose resolved nominal notification instants
 are `A` and `B`, where `A` occurs before `B`, the positive delivery grace for
 `A` MUST be no greater than the smaller of:
@@ -391,9 +401,109 @@ the 75% cap of eleven minutes and fifteen seconds before the departure target.
 The checkout evening reminder and all mixed calendar/elapsed profiles are
 bounded against their shortest early-target intervals.
 
+## Renewals and administration
+
+Every definition in this section MUST use `intended_status=active`. All
+templates use `offset_basis=calendar_days`, inherit timezone facts from the
+applicable item target, and resolve at `09:00:00` local time. Profiles remain
+archetype-specific even when their cadence repeats another profile.
+
+The archetypes MUST be exactly:
+
+| Archetype key | Display name | Description | Compatible item types |
+| --- | --- | --- | --- |
+| `application_deadline` | `Application deadline` | `Deadlines for completing and submitting applications.` | `task` |
+| `document_renewal` | `Document renewal` | `Renewal tasks for documents without a more specific archetype.` | `task` |
+| `insurance_renewal` | `Insurance renewal` | `Scheduled insurance policy renewal occurrences.` | `event` |
+| `license_renewal` | `License renewal` | `Tasks to renew licenses by a selected completion deadline.` | `task` |
+| `passport_renewal` | `Passport renewal` | `Tasks to renew passports by a selected completion deadline.` | `task` |
+| `payment_due` | `Payment due` | `Payment obligations with a specified due date.` | `task` |
+| `registration_deadline` | `Registration deadline` | `Deadlines for completing registrations.` | `task` |
+| `subscription_renewal` | `Subscription renewal` | `Scheduled subscription renewal occurrences.` | `event` |
+| `tax_deadline` | `Tax deadline` | `Tax filing or payment obligations with a specified due date.` | `task` |
+
+The corresponding profiles MUST be exactly:
+
+| Profile key | Display name | Description | Compatible item types |
+| --- | --- | --- | --- |
+| `application_deadline_standard` | `Application deadline standard` | `Progressive reminders leading up to and on an application deadline.` | `task` |
+| `document_renewal_standard` | `Document renewal standard` | `Progressive reminders leading up to and on a document renewal deadline.` | `task` |
+| `insurance_renewal_standard` | `Insurance renewal standard` | `Advance reminders before an insurance renewal.` | `event` |
+| `license_renewal_standard` | `License renewal standard` | `Progressive reminders leading up to and on a license renewal deadline.` | `task` |
+| `passport_renewal_standard` | `Passport renewal standard` | `Long-horizon reminders before a passport renewal deadline.` | `task` |
+| `payment_due_standard` | `Payment due standard` | `Progressive reminders leading up to and on a payment due date.` | `task` |
+| `registration_deadline_standard` | `Registration deadline standard` | `Progressive reminders leading up to and on a registration deadline.` | `task` |
+| `subscription_renewal_standard` | `Subscription renewal standard` | `A single advance reminder before a subscription renewal.` | `event` |
+| `tax_deadline_standard` | `Tax deadline standard` | `Progressive reminders leading up to and on a tax deadline.` | `task` |
+
+Their templates MUST be exactly:
+
+| Profile | Template key | Calendar-day offset | Grace |
+| --- | --- | --- | --- |
+| `application_deadline_standard` | `due_day_at_nine` | `0` | `21600` seconds |
+| `application_deadline_standard` | `one_day_before_at_nine` | `-1` | `43200` seconds |
+| `application_deadline_standard` | `seven_days_before_at_nine` | `-7` | `86400` seconds |
+| `application_deadline_standard` | `thirty_days_before_at_nine` | `-30` | `259200` seconds |
+| `document_renewal_standard` | `due_day_at_nine` | `0` | `21600` seconds |
+| `document_renewal_standard` | `ninety_days_before_at_nine` | `-90` | `604800` seconds |
+| `document_renewal_standard` | `one_day_before_at_nine` | `-1` | `43200` seconds |
+| `document_renewal_standard` | `seven_days_before_at_nine` | `-7` | `86400` seconds |
+| `document_renewal_standard` | `thirty_days_before_at_nine` | `-30` | `259200` seconds |
+| `insurance_renewal_standard` | `one_day_before_at_nine` | `-1` | `21600` seconds |
+| `insurance_renewal_standard` | `seven_days_before_at_nine` | `-7` | `86400` seconds |
+| `insurance_renewal_standard` | `thirty_days_before_at_nine` | `-30` | `259200` seconds |
+| `license_renewal_standard` | `due_day_at_nine` | `0` | `21600` seconds |
+| `license_renewal_standard` | `one_day_before_at_nine` | `-1` | `43200` seconds |
+| `license_renewal_standard` | `seven_days_before_at_nine` | `-7` | `86400` seconds |
+| `license_renewal_standard` | `sixty_days_before_at_nine` | `-60` | `259200` seconds |
+| `license_renewal_standard` | `thirty_days_before_at_nine` | `-30` | `259200` seconds |
+| `passport_renewal_standard` | `ninety_days_before_at_nine` | `-90` | `604800` seconds |
+| `passport_renewal_standard` | `one_hundred_eighty_days_before_at_nine` | `-180` | `604800` seconds |
+| `passport_renewal_standard` | `seven_days_before_at_nine` | `-7` | `86400` seconds |
+| `passport_renewal_standard` | `thirty_days_before_at_nine` | `-30` | `259200` seconds |
+| `passport_renewal_standard` | `three_hundred_sixty_five_days_before_at_nine` | `-365` | `1209600` seconds |
+| `passport_renewal_standard` | `two_hundred_seventy_days_before_at_nine` | `-270` | `1209600` seconds |
+| `payment_due_standard` | `due_day_at_nine` | `0` | `21600` seconds |
+| `payment_due_standard` | `one_day_before_at_nine` | `-1` | `43200` seconds |
+| `payment_due_standard` | `seven_days_before_at_nine` | `-7` | `86400` seconds |
+| `payment_due_standard` | `three_days_before_at_nine` | `-3` | `43200` seconds |
+| `registration_deadline_standard` | `due_day_at_nine` | `0` | `21600` seconds |
+| `registration_deadline_standard` | `one_day_before_at_nine` | `-1` | `43200` seconds |
+| `registration_deadline_standard` | `seven_days_before_at_nine` | `-7` | `86400` seconds |
+| `registration_deadline_standard` | `thirty_days_before_at_nine` | `-30` | `259200` seconds |
+| `subscription_renewal_standard` | `three_days_before_at_nine` | `-3` | `86400` seconds |
+| `tax_deadline_standard` | `due_day_at_nine` | `0` | `21600` seconds |
+| `tax_deadline_standard` | `ninety_days_before_at_nine` | `-90` | `604800` seconds |
+| `tax_deadline_standard` | `one_day_before_at_nine` | `-1` | `43200` seconds |
+| `tax_deadline_standard` | `seven_days_before_at_nine` | `-7` | `86400` seconds |
+| `tax_deadline_standard` | `thirty_days_before_at_nine` | `-30` | `259200` seconds |
+
+`document_renewal` is the general choice when neither passport nor license
+semantics fit; it is not an automatic runtime fallback. A passport target is
+the operator-selected date by which renewal should be completed, not
+necessarily the document's printed expiration date. Issuer processing times,
+travel-validity rules, document numbers, jurisdictions, and legal requirements
+remain item-, operator-, or external-authority facts.
+
+The passport profile's 365-day and 270-day offsets intentionally use exact
+calendar-day counts. They approximate one year and nine months without
+claiming calendar-year or calendar-month arithmetic, which v1 does not define.
+
+Subscription renewal deliberately has one reminder, three calendar days
+before the event. Insurance renewal deliberately has only the approved
+30-day, 7-day, and 1-day reminders. Both are scheduled renewal events rather
+than claims that an operator must perform a renewal action.
+
+Due-day-at-nine templates are intended for date-based deadlines. When an
+application, payment, registration, license, document, or tax deadline has an
+earlier exact time, the operator MUST use an appropriate item-level schedule
+rather than rely on a reminder that could resolve after the deadline. Amounts,
+accounts, vendors, policy identifiers, tax authorities, filing details, and
+payment routes MUST NOT appear in reusable pack content.
+
 ## Default bindings
 
-Draft 5 MUST bind every included archetype to its same-named `_standard`
+Draft 6 MUST bind every included archetype to its same-named `_standard`
 profile using exactly one owner-neutral `archetype_default` intent. These
 bindings contain only pack-local keys. Historical drafts retain the binding
 sets specified by their own content.

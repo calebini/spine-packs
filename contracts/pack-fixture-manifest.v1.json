@@ -53,6 +53,16 @@
       "valid": true
     },
     {
+      "case_id": "published_kinflow_starter_draft_6",
+      "fixture": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.6.json",
+      "valid": true
+    },
+    {
+      "case_id": "positive_kinflow_starter_draft_6",
+      "fixture": "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_6.json",
+      "valid": true
+    },
+    {
       "case_id": "positive_exact_target_elapsed_offset",
       "fixture": "tests/fixtures/pack-manifest/positive/exact_target_elapsed_offset.json",
       "valid": true

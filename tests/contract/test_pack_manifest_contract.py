@@ -15,10 +15,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_PATH = ROOT / "contracts/schemas/spine-pack-manifest.v1.schema.json"
 FIXTURE_MANIFEST_PATH = ROOT / "contracts/pack-fixture-manifest.v1.json"
 DRAFT_MANIFEST_PATH = (
-    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.5.json"
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.6.json"
 )
 POSITIVE_FIXTURE_PATH = (
-    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_5.json"
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_6.json"
 )
 EXACT_TARGET_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/exact_target_elapsed_offset.json"
@@ -47,11 +47,18 @@ FOURTH_DRAFT_MANIFEST_PATH = (
 FOURTH_POSITIVE_FIXTURE_PATH = (
     ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_4.json"
 )
+FIFTH_DRAFT_MANIFEST_PATH = (
+    ROOT / "packs/kinflow-starter/kinflow-starter.1.0.0-draft.5.json"
+)
+FIFTH_POSITIVE_FIXTURE_PATH = (
+    ROOT / "tests/fixtures/pack-manifest/positive/kinflow_starter_draft_5.json"
+)
 DRAFT_FIXTURE_PAIRS = (
     (FIRST_DRAFT_MANIFEST_PATH, FIRST_POSITIVE_FIXTURE_PATH),
     (PREVIOUS_DRAFT_MANIFEST_PATH, PREVIOUS_POSITIVE_FIXTURE_PATH),
     (THIRD_DRAFT_MANIFEST_PATH, THIRD_POSITIVE_FIXTURE_PATH),
     (FOURTH_DRAFT_MANIFEST_PATH, FOURTH_POSITIVE_FIXTURE_PATH),
+    (FIFTH_DRAFT_MANIFEST_PATH, FIFTH_POSITIVE_FIXTURE_PATH),
     (DRAFT_MANIFEST_PATH, POSITIVE_FIXTURE_PATH),
 )
 
@@ -462,11 +469,15 @@ class PackManifestContractTests(unittest.TestCase):
         for path in (FOURTH_DRAFT_MANIFEST_PATH, FOURTH_POSITIVE_FIXTURE_PATH):
             with self.subTest(path=path.name):
                 self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
+        reviewed_hash = "32e3a65d3b10a90136d6b5dea063233ff7b81d9dc4624727d8f65c1101140496"
+        for path in (FIFTH_DRAFT_MANIFEST_PATH, FIFTH_POSITIVE_FIXTURE_PATH):
+            with self.subTest(path=path.name):
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), reviewed_hash)
 
-        previous = load_json(FOURTH_DRAFT_MANIFEST_PATH)
+        previous = load_json(FIFTH_DRAFT_MANIFEST_PATH)
         current = load_json(DRAFT_MANIFEST_PATH)
         self.assertEqual(current["pack"], {
-            "pack_id": "kinflow-starter", "version": "1.0.0-draft.5", "status": "draft",
+            "pack_id": "kinflow-starter", "version": "1.0.0-draft.6", "status": "draft",
         })
         for field in ("manifest_schema", "compatibility", "dependencies"):
             self.assertEqual(current[field], previous[field])
@@ -761,7 +772,7 @@ class PackManifestContractTests(unittest.TestCase):
                 })
 
     def test_draft_five_matches_approved_travel_content(self) -> None:
-        manifest = load_json(DRAFT_MANIFEST_PATH)
+        manifest = load_json(FIFTH_DRAFT_MANIFEST_PATH)
         archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
         profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
         bindings = {v["archetype_key"]: v for v in manifest["binding_intents"]}
@@ -871,6 +882,133 @@ class PackManifestContractTests(unittest.TestCase):
             "two_hours_before", {template["template_key"] for template in trip_templates}
         )
 
+    def test_draft_six_matches_approved_renewal_and_administration_content(self) -> None:
+        manifest = load_json(DRAFT_MANIFEST_PATH)
+        archetypes = {v["archetype_key"]: v for v in manifest["archetypes"]}
+        profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
+        bindings = {v["archetype_key"]: v for v in manifest["binding_intents"]}
+        self.assertEqual((len(archetypes), len(profiles), len(bindings)), (33, 33, 33))
+
+        expected_archetypes = {
+            "application_deadline": ("Application deadline", "Deadlines for completing and submitting applications.", "task"),
+            "document_renewal": ("Document renewal", "Renewal tasks for documents without a more specific archetype.", "task"),
+            "insurance_renewal": ("Insurance renewal", "Scheduled insurance policy renewal occurrences.", "event"),
+            "license_renewal": ("License renewal", "Tasks to renew licenses by a selected completion deadline.", "task"),
+            "passport_renewal": ("Passport renewal", "Tasks to renew passports by a selected completion deadline.", "task"),
+            "payment_due": ("Payment due", "Payment obligations with a specified due date.", "task"),
+            "registration_deadline": ("Registration deadline", "Deadlines for completing registrations.", "task"),
+            "subscription_renewal": ("Subscription renewal", "Scheduled subscription renewal occurrences.", "event"),
+            "tax_deadline": ("Tax deadline", "Tax filing or payment obligations with a specified due date.", "task"),
+        }
+        expected_profiles = {
+            "application_deadline": ("Application deadline standard", "Progressive reminders leading up to and on an application deadline."),
+            "document_renewal": ("Document renewal standard", "Progressive reminders leading up to and on a document renewal deadline."),
+            "insurance_renewal": ("Insurance renewal standard", "Advance reminders before an insurance renewal."),
+            "license_renewal": ("License renewal standard", "Progressive reminders leading up to and on a license renewal deadline."),
+            "passport_renewal": ("Passport renewal standard", "Long-horizon reminders before a passport renewal deadline."),
+            "payment_due": ("Payment due standard", "Progressive reminders leading up to and on a payment due date."),
+            "registration_deadline": ("Registration deadline standard", "Progressive reminders leading up to and on a registration deadline."),
+            "subscription_renewal": ("Subscription renewal standard", "A single advance reminder before a subscription renewal."),
+            "tax_deadline": ("Tax deadline standard", "Progressive reminders leading up to and on a tax deadline."),
+        }
+        expected_schedules = {
+            "application_deadline": [
+                ("due_day_at_nine", "0", "21600"),
+                ("one_day_before_at_nine", "-1", "43200"),
+                ("seven_days_before_at_nine", "-7", "86400"),
+                ("thirty_days_before_at_nine", "-30", "259200"),
+            ],
+            "document_renewal": [
+                ("due_day_at_nine", "0", "21600"),
+                ("ninety_days_before_at_nine", "-90", "604800"),
+                ("one_day_before_at_nine", "-1", "43200"),
+                ("seven_days_before_at_nine", "-7", "86400"),
+                ("thirty_days_before_at_nine", "-30", "259200"),
+            ],
+            "insurance_renewal": [
+                ("one_day_before_at_nine", "-1", "21600"),
+                ("seven_days_before_at_nine", "-7", "86400"),
+                ("thirty_days_before_at_nine", "-30", "259200"),
+            ],
+            "license_renewal": [
+                ("due_day_at_nine", "0", "21600"),
+                ("one_day_before_at_nine", "-1", "43200"),
+                ("seven_days_before_at_nine", "-7", "86400"),
+                ("sixty_days_before_at_nine", "-60", "259200"),
+                ("thirty_days_before_at_nine", "-30", "259200"),
+            ],
+            "passport_renewal": [
+                ("ninety_days_before_at_nine", "-90", "604800"),
+                ("one_hundred_eighty_days_before_at_nine", "-180", "604800"),
+                ("seven_days_before_at_nine", "-7", "86400"),
+                ("thirty_days_before_at_nine", "-30", "259200"),
+                ("three_hundred_sixty_five_days_before_at_nine", "-365", "1209600"),
+                ("two_hundred_seventy_days_before_at_nine", "-270", "1209600"),
+            ],
+            "payment_due": [
+                ("due_day_at_nine", "0", "21600"),
+                ("one_day_before_at_nine", "-1", "43200"),
+                ("seven_days_before_at_nine", "-7", "86400"),
+                ("three_days_before_at_nine", "-3", "43200"),
+            ],
+            "registration_deadline": [
+                ("due_day_at_nine", "0", "21600"),
+                ("one_day_before_at_nine", "-1", "43200"),
+                ("seven_days_before_at_nine", "-7", "86400"),
+                ("thirty_days_before_at_nine", "-30", "259200"),
+            ],
+            "subscription_renewal": [
+                ("three_days_before_at_nine", "-3", "86400"),
+            ],
+            "tax_deadline": [
+                ("due_day_at_nine", "0", "21600"),
+                ("ninety_days_before_at_nine", "-90", "604800"),
+                ("one_day_before_at_nine", "-1", "43200"),
+                ("seven_days_before_at_nine", "-7", "86400"),
+                ("thirty_days_before_at_nine", "-30", "259200"),
+            ],
+        }
+
+        for key, (display_name, description, item_type) in expected_archetypes.items():
+            with self.subTest(archetype=key):
+                self.assertEqual(archetypes[key], {
+                    "archetype_key": key,
+                    "intended_status": "active",
+                    "revision": {
+                        "display_name": display_name,
+                        "description": description,
+                        "compatible_item_types": [item_type],
+                    },
+                })
+                profile = profiles[key + "_standard"]
+                profile_display, profile_description = expected_profiles[key]
+                self.assertEqual(profile["display_name"], profile_display)
+                self.assertEqual(profile["description"], profile_description)
+                self.assertEqual(profile["intended_status"], "active")
+                self.assertEqual(profile["revision"]["compatible_item_types"], [item_type])
+                actual_schedules = []
+                for template in profile["revision"]["templates"]:
+                    at = template["schedule"]["at"]
+                    self.assertEqual(at["offset_basis"], "calendar_days")
+                    self.assertEqual(at["local_time"], "09:00:00")
+                    actual_schedules.append((
+                        template["template_key"], at["offset_days"],
+                        template["late_handling"]["grace_seconds"],
+                    ))
+                self.assertEqual(actual_schedules, expected_schedules[key])
+                self.assertEqual(bindings[key], {
+                    "binding_kind": "archetype_default",
+                    "archetype_key": key,
+                    "notification_profile_key": key + "_standard",
+                })
+
+        self.assertEqual(
+            len(profiles["subscription_renewal_standard"]["revision"]["templates"]), 1
+        )
+        self.assertEqual(
+            len(profiles["insurance_renewal_standard"]["revision"]["templates"]), 3
+        )
+
     def test_late_windows_obey_seventy_five_percent_spacing_policy(self) -> None:
         manifest = load_json(DRAFT_MANIFEST_PATH)
         profiles = {v["profile_key"]: v for v in manifest["notification_profiles"]}
@@ -908,7 +1046,12 @@ class PackManifestContractTests(unittest.TestCase):
         # Same-time calendar reminders use 23 hours per calendar-day step as
         # a conservative local-clock-change interval.
         for profile_key in (
-            "birthday_standard", "school_deadline_standard",
+            "application_deadline_standard", "birthday_standard",
+            "document_renewal_standard", "insurance_renewal_standard",
+            "license_renewal_standard", "passport_renewal_standard",
+            "payment_due_standard", "registration_deadline_standard",
+            "school_deadline_standard", "subscription_renewal_standard",
+            "tax_deadline_standard",
             "travel_preparation_standard",
         ):
             entries = []
@@ -925,6 +1068,23 @@ class PackManifestContractTests(unittest.TestCase):
                 conservative_gap = (next_day - day) * 23 * 3600
                 with self.subTest(profile=profile_key, template=template_key):
                     self.assertLessEqual(grace, (conservative_gap * 3) // 4)
+
+        calendar_target_gaps = {
+            "insurance_renewal_standard": ("one_day_before_at_nine", 15 * 3600),
+            "passport_renewal_standard": (
+                "seven_days_before_at_nine", (6 * 23 + 15) * 3600,
+            ),
+            "subscription_renewal_standard": (
+                "three_days_before_at_nine", (2 * 23 + 15) * 3600,
+            ),
+        }
+        for profile_key, (template_key, gap) in calendar_target_gaps.items():
+            templates = {
+                v["template_key"]: v for v in profiles[profile_key]["revision"]["templates"]
+            }
+            grace = int(templates[template_key]["late_handling"]["grace_seconds"])
+            with self.subTest(profile=profile_key, template=template_key):
+                self.assertLessEqual(grace, (gap * 3) // 4)
 
         # Mixed-basis profiles and packing's exact target relationship use
         # conservative early-target gaps, including a midnight target.
