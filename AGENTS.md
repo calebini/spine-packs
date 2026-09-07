@@ -12,6 +12,7 @@ Before changing pack behavior or format, read:
 4. `specs/pack-format.md`
 
 Before changing `kinflow-starter` content, also read `specs/kinflow-starter.md`.
+Before changing installer behavior, also read `specs/installer.md`.
 
 The files in `specs/` are the normative source of truth. `README.md` is
 orientation, pack-local READMEs describe pack status, and code must implement
@@ -35,14 +36,17 @@ rather than redefine the specs.
 ## Stage discipline
 
 This is a draft-contract repository. The current scope is limited to
-`spine.pack-manifest.v1` and the medical-appointment, lesson,
+`spine.pack-manifest.v1`, the draft installer behavior in
+`specs/installer.md`, and the medical-appointment, lesson,
 game-or-competition, flight, birthday, Education, Social, Travel, and Renewals
 and administration, Health, and Home, vehicle, and logistics vertical slices
 plus the General commitments vertical slice specified for `kinflow-starter`
 draft 9.
 Do not broaden the schema or pack semantics without matching normative spec,
-fixture, and contract-test changes. Do not add an installer implementation,
-package runtime, or speculative service/adapter/model/package directories.
+fixture, and contract-test changes. Do not add an installer implementation or
+machine-readable installer contracts before the draft installer specification
+has been reviewed. Do not add a package runtime or speculative
+service/adapter/model/package directories.
 Mark unresolved design details explicitly instead of silently choosing them.
 
 When the repository advances, add only the smallest structure required by real

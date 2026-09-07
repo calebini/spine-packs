@@ -29,17 +29,20 @@ A future installer is expected to expose three phases:
    surface and produces a deterministic, reviewable change plan.
 2. `apply` creates missing definitions, retains equivalent definitions, and
    refuses semantic drift unless the operator explicitly authorizes an update.
-3. `verify` confirms through the public command surface that the intended
-   definitions and resulting Spine receipts agree with the approved plan.
+3. `verify` confirms resulting catalog state through the public command surface
+   and correlates the Spine command responses preserved during `apply` with the
+   approved plan.
 
-This workflow is a design target, not an implemented command. This repository
-contains a first-pass manifest contract and draft content, but no
-installer or package runtime.
+This workflow is a design target, not an implemented command. Its first
+normative draft is [specs/installer.md](specs/installer.md). This repository
+contains a first-pass manifest contract and draft content, but no installer or
+package runtime.
 
 ## Repository map
 
 - `specs/` is the normative source of truth for purpose, architecture,
-  compatibility, pack-format requirements, and approved pack content.
+  compatibility, pack-format requirements, installer behavior, and approved
+  pack content.
 - `contracts/schemas/` contains the machine-readable manifest contract.
 - `packs/` contains independently versioned pack source material, including
   the draft `kinflow-starter` vertical slices.
@@ -62,6 +65,13 @@ Approved content is specified in [specs/kinflow-starter.md](specs/kinflow-starte
 The drafts are not released or installable, and additional archetypes may be
 added before a future immutable `1.0.0` release. The recorded Whetstone audit
 covers the earlier medical-only slice, not later draft content.
+
+The installer contract is at draft v0.2. It defines the intended agent-oriented
+CLI, granular archetype selection, reconciliation classifications, approval,
+partial-apply, and verification posture for a local single-operator v1. It has
+no machine-readable installer schemas or implementation yet. Stable Spine
+instance identity, binding compare-and-set, and public receipt readback are
+recorded as future hardening rather than v1 blockers.
 
 Run the local structural check with:
 

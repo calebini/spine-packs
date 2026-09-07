@@ -41,8 +41,9 @@ The installer is expected to provide:
 - `plan`: resolve the selected pack and dependencies, query Spine through
   public commands, classify definitions, and emit a deterministic plan;
 - `apply`: execute an explicitly approved plan through public commands; and
-- `verify`: query Spine through public commands and compare authoritative state
-  and receipts with the approved plan.
+- `verify`: query Spine through public commands, compare authoritative state
+  with the approved plan, and correlate the Spine command responses preserved
+  by apply without claiming a second receipt authority.
 
 For each definition, planning must distinguish at least:
 
@@ -51,8 +52,10 @@ For each definition, planning must distinguish at least:
 - **semantic drift**: reported as a failure unless the operator explicitly
   authorizes an update.
 
-The exact equivalence algorithm and update-authorization representation remain
-unsettled and belong to pack-format and installer contract review.
+The draft equivalence algorithm, granular selection boundary, and
+update-authorization requirements are specified in `specs/installer.md`. Their
+machine-readable representations remain unsettled pending installer contract
+review.
 
 ### Public command mapping
 
@@ -76,10 +79,10 @@ authorize installation.
 
 The manifest's `spine_content_contracts` declaration identifies only the Spine
 contracts needed to interpret pack definitions. It is not a complete execution
-dependency set. A future installer specification MUST derive and verify the
-full per-command contract union advertised by Spine, including canonical JSON,
-readback, cursor, response, and receipt contracts required by the commands it
-actually invokes.
+dependency set. `specs/installer.md` derives the draft command set and complete
+execution-contract union from the inspected Spine runtime. A future installer
+MUST verify that union independently of manifest content compatibility before
+it interprets catalog state or emits an applicable plan.
 
 ## Input boundary
 

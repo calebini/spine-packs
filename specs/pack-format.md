@@ -274,4 +274,6 @@ The following remain outside `spine.pack-manifest.v1`:
 - update-authorization and receipt-correlation forms;
 - installer version compatibility;
 - signing, publisher identity, registries, and release transport; and
-- the `plan`, `apply`, and `verify` command contracts and implementation.
+- the machine-readable `plan`, `apply`, and `verify` contracts and installer
+  implementation; their draft behavioral requirements are specified in
+  `specs/installer.md`.

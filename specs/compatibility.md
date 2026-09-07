@@ -89,10 +89,11 @@ complete contract union required to execute `plan`, `apply`, or `verify`.
 
 Spine's command registry may require additional contracts for a concrete
 command, including `spine.canonical-json.v1`, notification-profile readback,
-catalog cursor, response, or receipt contracts. A future installer contract
-MUST name its command set, derive the complete per-command requirement union
-from the supported Spine public surface, and verify that union independently.
-The v1 pack manifest makes no execution-readiness claim.
+catalog cursor, response, or receipt contracts. The draft installer contract
+in `specs/installer.md` names its Spine `0.3.0` command set and derives the
+complete per-command requirement union. A future implementation MUST verify
+that union independently. The v1 pack manifest makes no execution-readiness
+claim.
 
 ## Fail-closed behavior
 
@@ -122,6 +123,7 @@ The following remain intentionally unresolved:
 - version-range syntax;
 - prerelease and development runtime policy;
 - minimum installer-version declarations;
-- evidence required to widen compatibility; and
+- evidence required to widen compatibility;
 - compatibility declarations for dependency packs; and
-- the full execution-contract union for a future installer.
+- evidence and review required to support installer execution against an
+  additional Spine runtime.
