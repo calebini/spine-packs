@@ -510,8 +510,19 @@ preimage. Owner-local create uniqueness prevents silent duplicate creation.
 Spine `0.3.0` `notification_profile.binding.set` does not accept an expected
 current binding ID or explicit absent precondition. Immediately before each
 binding mutation, the installer MUST re-read that archetype's binding and
-compare it with the state expected after the already accepted plan prefix. A
-mismatch aborts the remaining suffix without submitting the binding command.
+compare it with the state expected after the already accepted plan prefix.
+This accepted-prefix comparison applies to initial execution and to every
+continuation binding except the bounded uncertain-action case below. A mismatch
+aborts the remaining suffix without submitting the binding command.
+
+When the binding set is the first unresolved action and continuation preflight
+validated Section 11 case 2, the immediate re-read MUST instead match the exact
+post-action binding state already validated by that preflight. The installer
+may then submit only a compatible replay using the original command ID and
+exact request. If the immediate re-read no longer matches that post-action
+state, it MUST abort without replaying. This exception recovers the missing
+response evidence; it does not authorize a new binding mutation against an
+unexpected state.
 
 That re-read is sufficient for the declared local single-operator v1 posture;
 it is not atomic compare-and-set and MUST NOT be represented as safe
