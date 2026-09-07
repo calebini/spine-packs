@@ -22,10 +22,11 @@ Spine remains authoritative for every installed object and receipt.
 
 ## Declarative packs
 
-A pack describes owner-neutral desired definitions, dependency references,
-compatibility requirements, and deterministic content identity. It contains no
-execution loop, database client, delivery integration, scheduler, or Spine
-runtime code.
+A v1 pack describes owner-neutral desired definitions, compatibility
+requirements, and deterministic content identity. Its required `dependencies`
+field is reserved and MUST be empty. Dependency references require a future
+manifest-contract version. A pack contains no execution loop, database client,
+delivery integration, scheduler, or Spine runtime code.
 
 Pack content is the installer's input. It is not evidence that an installation
 occurred and cannot substitute for a Spine receipt.
@@ -38,8 +39,9 @@ used for planning or verification.
 
 The installer is expected to provide:
 
-- `plan`: resolve the selected pack and dependencies, query Spine through
-  public commands, classify definitions, and emit a deterministic plan;
+- `plan`: validate the selected v1 pack, including `dependencies=[]`, query
+  Spine through public commands, classify definitions, and emit a
+  deterministic plan; v1 performs no dependency resolution;
 - `apply`: execute an explicitly approved plan through public commands; and
 - `verify`: query Spine through public commands, compare authoritative state
   with the approved plan, and correlate the Spine command responses preserved
@@ -56,6 +58,9 @@ The draft equivalence algorithm, granular selection boundary, and
 update-authorization requirements are specified in `specs/installer.md`. Their
 machine-readable representations remain unsettled pending installer contract
 review.
+
+Dependency references and resolution remain attached to a future manifest and
+installer contract. They are not implied by the v1 `plan` operation.
 
 ### Public command mapping
 

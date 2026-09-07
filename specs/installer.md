@@ -1,6 +1,6 @@
 # Installer contract
 
-Status: Draft v0.2; review required before machine contracts or implementation
+Status: Draft v0.3; review required before machine contracts or implementation
 
 ## 1. Purpose and authority
 
@@ -380,7 +380,14 @@ unless a later reviewed integration provides that evidence.
 
 ## 11. Apply behavior
 
-Before the first write, `apply` MUST:
+An apply invocation is either an initial execution or a continuation of the
+same execution identity. A continuation MUST retain the exact plan digest,
+approval digest, execution identity, actor, action timestamp, ordered requests,
+and derived command IDs. Changing any of those facts starts a different
+execution and MUST NOT inherit an accepted prefix or preserved response
+evidence.
+
+On an initial execution, before the first write, `apply` MUST:
 
 1. validate the plan and approval contracts and digests;
 2. reload and validate the complete manifest and require its identity to match
@@ -396,9 +403,10 @@ Before the first write, `apply` MUST:
    authorized; and
 8. materialize the exact ordered Spine command requests.
 
-This preflight is all-or-nothing: no planned write may occur if any selected
-target fact, catalog snapshot, or object precondition has changed. The final
-preflight observation MUST occur immediately before the write sequence begins.
+The initial preflight is all-or-nothing: no planned write may occur if any
+selected target fact, original catalog snapshot, or object precondition has
+changed. The final initial-preflight observation MUST occur immediately before
+the write sequence begins.
 
 Each apply invocation requires a stable execution identity, exact
 `actor_subject_id`, and exact `action_timestamp_utc`. Every planned action MUST
@@ -418,6 +426,46 @@ before the installer advances to the next action. If the process stops after
 Spine accepted a command but before that response was durably recorded, retry
 uses the same stable command ID and exact semantic request so Spine can return
 the compatible replay response.
+
+A continuation MUST load the most recent preserved apply result or recovery
+checkpoint for the same execution identity before submitting a command. The
+machine-contract pass will fix its transport and field shape. The continuation
+MUST validate its digest and exact correlation to the plan, approval, execution
+identity, ordered action prefix, requests, command IDs, actor, timestamps,
+response contracts, effects, generated IDs, and receipt facts. Missing,
+non-contiguous, contradictory, or invalid preserved evidence fails closed.
+
+The longest contiguous sequence of actions with validated successful or
+compatible-replay responses is the **accepted prefix**. Using the original
+planned catalog and the validated Spine responses for that prefix, the
+installer MUST derive the exact catalog state and snapshot expected after the
+prefix. Generated Spine IDs and revision IDs used by later actions MUST come
+from those validated responses or matching public readback; they MUST NOT be
+guessed.
+
+Before resuming, `apply` MUST repeat the target, manifest, approval, and
+`system.info` checks required by initial preflight, then re-read the complete
+relevant owner-scoped catalogs. That observation MUST match exactly one of:
+
+1. the derived state after the accepted prefix, with the first unresolved
+   action not reflected; or
+2. when the first unresolved action lacks a durably recorded validated success
+   response, the exact state that would result from that one action succeeding.
+
+Case 2 represents an uncertain response-recording boundary, not proof of a
+receipt. In either case, the installer MUST submit the first unresolved action
+with its original command ID and exact request. Spine's compatible replay or
+new acceptance response MUST be validated and durably recorded before the
+remaining suffix can proceed. A previously recorded validated rejection is not
+an accepted action; replaying its unchanged request may reproduce the rejection
+and the installer then stops again.
+
+The continuation preflight MUST also require every remaining suffix
+precondition against the derived expected state. Any catalog difference not
+explained exactly by the accepted prefix and, at most, the first unresolved
+action makes continuation stale and aborts before another command is
+submitted. Preserved local evidence is not installation authority: Spine
+public readback and compatible command replay remain authoritative.
 
 Spine makes each command atomic, but the command family provides no
 whole-pack transaction. An apply result therefore has one of these states:
@@ -442,9 +490,18 @@ approval MUST acknowledge this operating condition. If an operator cannot
 provide it, v1 apply is unsupported and MUST NOT run.
 
 The plan pins the observable target binding, complete relevant owner-scoped
-catalog snapshot hashes, semantic preimages, and current revision IDs. Any
-catalog snapshot change before the first write makes the plan stale, including
-an unrelated catalog change. The agent must produce and approve a new plan.
+catalog snapshot hashes, semantic preimages, and current revision IDs. Before
+the first submitted command of an initial execution, any catalog snapshot
+change makes the plan stale, including an unrelated catalog change. The agent
+must produce and approve a new plan.
+
+For a continuation of the same execution identity, changes caused by its
+validated accepted prefix do not by themselves make the plan stale. The
+continuation instead requires the exact derived prefix-aware state defined in
+Section 11. Any unrelated change, unexplained selected-object change, response
+evidence gap, or mismatch from that derived state makes the continuation stale
+and requires a new plan. A new plan is a new execution and cannot reuse the old
+execution's accepted-prefix claim.
 
 Archetype and profile revisions use Spine's expected-current-revision
 preconditions. Profile metadata updates use Spine's complete expected-metadata
@@ -556,8 +613,10 @@ Contract tests must cover at least full-pack and granular selection, inferred
 closure, draft apply refusal, incompatible runtime and execution contracts,
 missing/equivalent/drifted/blocked classifications, metadata-only and
 behavioral profile drift, unauthorized updates, stale plan refusal, stable
-command replay identity, partial apply, verification mismatch, and receipt
-readback disclosure.
+command replay identity, prefix-aware continuation from a recorded partial
+result, accepted-before-response replay, rejection of an unexplained catalog
+change during continuation, verification mismatch, and receipt readback
+disclosure.
 
 No installer package, service, adapter directory, example installation file,
 or executable CLI should be added before those contracts and fixtures are
