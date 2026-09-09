@@ -1,0 +1,5 @@
+{
+  "scenario": "uncertain_first_action",
+  "mutation": "replace_unresolved_command_id",
+  "expected_error": "command_id_mismatch"
+}

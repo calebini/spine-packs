@@ -1,0 +1,5 @@
+{
+  "scenario": "two_action_apply",
+  "mutation": "retain_only_second_action_response",
+  "expected_error": "accepted_prefix_not_contiguous"
+}

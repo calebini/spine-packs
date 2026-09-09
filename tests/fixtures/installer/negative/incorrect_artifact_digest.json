@@ -1,0 +1,5 @@
+{
+  "base": "../positive/granular_request.json",
+  "mutation": "replace_content_digest_with_zeros",
+  "expected_error": "content_digest_mismatch"
+}

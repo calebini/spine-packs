@@ -41,9 +41,10 @@ package runtime.
 ## Repository map
 
 - `specs/` is the normative source of truth for purpose, architecture,
-  compatibility, pack-format requirements, installer behavior, and approved
-  pack content.
-- `contracts/schemas/` contains the machine-readable manifest contract.
+  compatibility, pack-format requirements, installer behavior and artifacts,
+  and approved pack content.
+- `contracts/schemas/` contains the machine-readable manifest and draft
+  installer-artifact contracts.
 - `packs/` contains independently versioned pack source material, including
   the draft `kinflow-starter` vertical slices.
 - `tests/contract/` and `tests/fixtures/` contain dependency-free contract
@@ -63,15 +64,21 @@ notification profiles.
 Earlier drafts remain preserved byte-for-byte.
 Approved content is specified in [specs/kinflow-starter.md](specs/kinflow-starter.md).
 The drafts are not released or installable, and additional archetypes may be
-added before a future immutable `1.0.0` release. The recorded Whetstone audit
-covers the earlier medical-only slice, not later draft content.
+added before a future immutable `1.0.0` release. The recorded content audit
+covers the earlier medical-only slice, not later draft content. A separate
+bounded Whetstone audit passed installer prose draft v0.3 with its
+public-command and single-operator boundaries preserved.
 
-The installer contract is at draft v0.2. It defines the intended agent-oriented
-CLI, granular archetype selection, reconciliation classifications, approval,
-partial-apply, and verification posture for a local single-operator v1. It has
-no machine-readable installer schemas or implementation yet. Stable Spine
-instance identity, binding compare-and-set, and public receipt readback are
-recorded as future hardening rather than v1 blockers.
+The installer prose contract is at draft v0.4. It defines the intended
+agent-oriented CLI, granular archetype selection, reconciliation
+classifications, approval, partial-apply, and verification posture for a local
+single-operator v1. It has a draft machine-artifact companion with closed
+request, plan, approval,
+checkpoint, apply-result, verification-result, and CLI-result schemas and
+focused contract vectors. That layer still requires bounded review, and there
+is no installer implementation. Stable Spine instance identity, binding
+compare-and-set, and public receipt readback remain future hardening rather
+than v1 blockers.
 
 Run the local structural check with:
 

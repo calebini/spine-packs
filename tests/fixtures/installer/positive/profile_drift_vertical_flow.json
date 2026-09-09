@@ -1,0 +1,25 @@
+{
+  "fixture_contract": "spine.pack-installer-scenario.v1",
+  "scenario": "profile_drift",
+  "request": "granular_request.json",
+  "expected_closure": {
+    "archetype_keys": ["lesson", "medical_appointment"],
+    "profile_keys": ["lesson_standard", "medical_appointment_standard"],
+    "binding_archetype_keys": ["lesson", "medical_appointment"]
+  },
+  "expected_classifications": [
+    "archetype:lesson=equivalent",
+    "archetype:medical_appointment=equivalent",
+    "profile:lesson_standard=equivalent",
+    "profile:medical_appointment_standard=drifted",
+    "binding:lesson=equivalent",
+    "binding:medical_appointment=missing"
+  ],
+  "expected_actions": [
+    "notification_profile.revise",
+    "notification_profile.binding.set"
+  ],
+  "expected_decision_action_ids": ["action-000000"],
+  "expected_terminal_states": ["applied", "partial"],
+  "expected_verification_state": "verified"
+}

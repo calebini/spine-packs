@@ -1,0 +1,5 @@
+{
+  "scenario": "draft_plan",
+  "mutation": "set_apply_eligible_true",
+  "expected_error": "draft_plan_apply_eligible"
+}

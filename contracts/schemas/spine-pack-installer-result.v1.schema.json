@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spine-packs.local/contracts/schemas/spine-pack-installer-result.v1.schema.json",
+  "title": "Spine Pack Installer CLI Result v1",
+  "$ref": "spine-pack-installer-types.v1.schema.json#/$defs/installerResult"
+}

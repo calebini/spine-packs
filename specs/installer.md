@@ -1,6 +1,6 @@
 # Installer contract
 
-Status: Draft v0.3; review required before machine contracts or implementation
+Status: Draft v0.4; machine-artifact review required before implementation
 
 ## 1. Purpose and authority
 
@@ -72,7 +72,7 @@ NOT use an internal Spine Python API as a substitute for the public command
 surface. The v1 implementation uses the local `spine-command` CLI transport
 and MUST submit and validate the same closed public request and response objects
 used by every Spine transport. The exact local transport configuration fields
-belong to the next machine-contract pass.
+and normalization rules are defined in `specs/installer-artifacts.md`.
 
 The complete execution-contract union derived from the Spine `0.3.0` compiled
 command registry for the commands above is:
@@ -126,9 +126,10 @@ spine-packs plan --manifest PATH --archetype KEY --archetype KEY --request REQUE
 ```
 
 A request file is the durable control surface. Repeated CLI selection flags are
-convenience input that MUST compile to the same normalized request. The exact
-flag spellings and JSON field layouts remain provisional until the
-machine-contract pass, but the two routes MUST NOT have different semantics.
+convenience input that MUST compile to the same normalized request. The
+artifact field layouts are fixed by `specs/installer-artifacts.md`. Final flag
+parsing mechanics remain an implementation choice, but the two routes MUST NOT
+have different semantics.
 
 `apply` MUST consume a saved plan and an explicit approval. It MUST NOT accept
 fresh pack-selection flags:
@@ -151,8 +152,9 @@ Passing a database path to `spine-command` does not authorize the installer to
 open that database itself.
 
 The local v1 request MUST name an observable target binding containing the
-local host, configured Spine command executable, and configured ledger path or
-reference. These facts are recorded in the plan and checked again by `apply`.
+normalized local host, resolved Spine command executable path and hash, and
+resolved ledger path. These facts are recorded in the plan and checked again
+by `apply`.
 They do not become pack content and do not claim a globally stable Spine ledger
 identity.
 
@@ -240,7 +242,8 @@ pages from different catalog snapshots.
 
 The completed owner-scoped archetype, profile, and binding catalog snapshot
 hashes are observable target facts. They MUST be included in the plan together
-with the configured host and ledger path or reference, exact owner scope,
+with the normalized host, resolved executable path and hash, resolved ledger
+path, exact owner scope,
 runtime version, implemented and current ledger schema versions, and required
 contract evidence.
 
@@ -328,8 +331,8 @@ selection, owner scope, Spine target, and observed state. It MUST include:
 - the pack schema, ID, version, status, and content digest;
 - the normalized selection and inferred closure;
 - the exact owner scope;
-- the configured local host, Spine command executable, ledger path or
-  reference, and environment compatibility evidence;
+- the normalized local host, resolved Spine command executable path and hash,
+  resolved ledger path, and environment compatibility evidence;
 - the closed installer command set and required execution-contract union;
 - observed catalog identities, current revision IDs, semantic preimages, and
   relevant snapshot hashes;
@@ -340,11 +343,12 @@ selection, owner scope, Spine target, and observed state. It MUST include:
 - a content identity under `spine.canonical-json.v1`.
 
 The plan digest preimage MUST omit only its own digest field. Its exact
-derivation identifier and JSON Schema belong to the machine-contract pass.
+derivation identifier and JSON Schema are defined in
+`specs/installer-artifacts.md` and `contracts/schemas/`.
 Ambient timestamps, manifest source and output paths, random IDs, terminal
 formatting, and catalog page size MUST NOT affect plan identity. The configured
-target host and ledger path or reference are target-binding facts and MUST
-affect plan identity.
+target host, executable path and hash, and ledger path are target-binding facts
+and MUST affect plan identity.
 
 Actions MUST be deterministically ordered:
 
@@ -392,8 +396,8 @@ On an initial execution, before the first write, `apply` MUST:
 1. validate the plan and approval contracts and digests;
 2. reload and validate the complete manifest and require its identity to match
    the plan;
-3. confirm the exact planned local host, Spine command executable, and
-   configured ledger path or reference;
+3. confirm the exact planned local host, Spine command executable path and
+   hash, and configured ledger path;
 4. reconnect through `spine-command` to that configured target;
 5. repeat `system.info` and require the planned runtime, implemented and
    current schema, and contract facts;
@@ -410,27 +414,30 @@ the write sequence begins.
 
 Each apply invocation requires a stable execution identity, exact
 `actor_subject_id`, and exact `action_timestamp_utc`. Every planned action MUST
-receive a stable, globally unique Spine `command_id` derived reproducibly from
-the execution identity and action identity. Retrying the same execution MUST
+receive a stable, globally unique Spine `command_id` derived reproducibly as
+defined in `specs/installer-artifacts.md`. Retrying the same execution MUST
 reuse the exact command ID, actor, timestamp, and semantic request so Spine's
-compatible replay returns the original command receipt. The derivation shape
-will be fixed in the machine contracts.
+compatible replay returns the original command receipt.
 
 The installer MUST validate each Spine response before proceeding and record
 its command, effect, generated IDs, and command-receipt facts. It stops at the
 first rejected or malformed response. It MUST NOT compensate by retiring,
 removing, or reversing an already accepted earlier action.
 
-Each validated command response MUST be preserved in the local apply result
-before the installer advances to the next action. If the process stops after
-Spine accepted a command but before that response was durably recorded, retry
+Each validated command response MUST be preserved in the local recovery
+checkpoint before the installer advances to the next action. If the process
+stops after Spine accepted a command but before that response was durably
+recorded, retry
 uses the same stable command ID and exact semantic request so Spine can return
-the compatible replay response.
+the compatible replay response. Checkpoint replacement and durability follow
+`specs/installer-artifacts.md` Section 9.
 
-A continuation MUST load the most recent preserved apply result or recovery
-checkpoint for the same execution identity before submitting a command. The
-machine-contract pass will fix its transport and field shape. The continuation
-MUST validate its digest and exact correlation to the plan, approval, execution
+A continuation MUST load the most recent preserved recovery checkpoint for the
+same execution identity, or derive the equivalent checkpoint from a validated
+terminal partial result, before submitting a command. When a terminal result is
+the source, continuation persists the derived checkpoint before any retry. The
+continuation MUST validate its digest and exact correlation to the plan,
+approval, execution
 identity, ordered action prefix, requests, command IDs, actor, timestamps,
 response contracts, effects, generated IDs, and receipt facts. Missing,
 non-contiguous, contradictory, or invalid preserved evidence fails closed.
@@ -589,8 +596,8 @@ status and error category. At minimum the categories distinguish:
 - success.
 
 The numeric exit mapping, exact result objects, byte limits, and artifact
-contract identifiers will be fixed with the machine-readable schemas. Until
-then, implementations MUST NOT invent an unstable mapping and call it v1.
+contract identifiers are fixed in `specs/installer-artifacts.md`. An
+implementation MUST use that mapping rather than inventing another v1 surface.
 
 Plan generation that successfully discovers drift still produces the complete
 plan artifact. Its structured status must distinguish a reviewable
@@ -609,10 +616,11 @@ configuration rather than a reusable request file or command-line value likely
 to be retained in shell history. JSON output and error messages MUST not echo
 credentials or unrelated environment variables.
 
-## 16. Next machine-contract pass
+## 16. Machine-contract layer
 
-After this prose contract is reviewed, the next pass should define closed JSON
-Schemas and positive and negative fixtures for:
+The reviewed prose contract now has a draft machine layer in
+`specs/installer-artifacts.md`. Closed JSON Schemas and positive and negative
+fixtures cover:
 
 - installation request;
 - deterministic plan and plan identity;
@@ -630,22 +638,24 @@ result, accepted-before-response replay, rejection of an unexplained catalog
 change during continuation, verification mismatch, and receipt readback
 disclosure.
 
-No installer package, service, adapter directory, example installation file,
-or executable CLI should be added before those contracts and fixtures are
-reviewed.
+The initial executable vectors cover one complete granular drift flow plus
+focused failures for draft eligibility, digest mismatch, authorization,
+staleness, prefix continuity, uncertain-response command identity, and target
+binding. The remaining cases named above are required before implementation
+can claim full behavioral coverage.
 
-## 17. Next contract-authoring work and future hardening
+No installer package, service, adapter directory, example installation file,
+or executable CLI should be added before the machine contracts and fixtures
+receive bounded review.
+
+## 17. Review gate and future hardening
 
 The product decisions for the first implementation are settled: it is a local,
 single-operator, non-interactive CLI using Spine's public `spine-command`
-transport. The next contract-authoring pass MUST fix:
-
-1. **Artifact shapes.** Exact contract identifiers, JSON fields, digest
-   derivations, size limits, command-ID derivation, and numeric exit codes must
-   be reviewed together in the machine-contract pass.
-2. **Local transport binding.** The exact protected configuration fields and
-   normalization rules for host, `spine-command` executable, and ledger path or
-   reference must be specified and tested.
+transport. Exact artifact shapes, digest and command-ID derivations, size
+limits, exit codes, checkpoint durability, and local target normalization are
+specified in `specs/installer-artifacts.md`. They require bounded review before
+runtime scaffolding begins.
 
 The following are useful general Spine hardening, but are not blockers under
 the explicit local single-operator v1 assumptions:

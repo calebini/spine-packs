@@ -1,0 +1,5 @@
+{
+  "scenario": "verified_apply",
+  "mutation": "replace_verification_target_host",
+  "expected_error": "target_binding_mismatch"
+}

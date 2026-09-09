@@ -1,0 +1,5 @@
+{
+  "scenario": "profile_drift",
+  "mutation": "replace_approval_plan_digest",
+  "expected_error": "approval_plan_digest_mismatch"
+}

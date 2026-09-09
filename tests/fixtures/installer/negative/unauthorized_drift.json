@@ -1,0 +1,5 @@
+{
+  "scenario": "profile_drift",
+  "mutation": "clear_authorized_update_action_ids",
+  "expected_error": "update_authorization_incomplete"
+}

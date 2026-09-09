@@ -1,0 +1,5 @@
+{
+  "base": "../positive/granular_request.json",
+  "mutation": "reverse_archetype_keys",
+  "expected_error": "selection_not_sorted"
+}

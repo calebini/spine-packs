@@ -1,0 +1,31 @@
+{
+  "artifact_schema": "spine.pack-install-request.v1",
+  "request": {
+    "selection": {
+      "mode": "archetypes",
+      "archetype_keys": ["lesson", "medical_appointment"]
+    },
+    "owner": {
+      "owner_kind": "subject",
+      "owner_subject_id": "subject_caleb"
+    },
+    "target": {
+      "host_name": "spine.local",
+      "spine_command": {
+        "path": "/opt/spine/bin/spine-command",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "ledger": {
+        "kind": "path",
+        "path": "/var/lib/spine/ledger.sqlite3"
+      }
+    },
+    "draft_posture": "reject"
+  },
+  "content_identity": {
+    "algorithm": "sha256",
+    "canonical_json_version": "spine.canonical-json.v1",
+    "derivation_version": "spine.pack-install-request-digest.v1",
+    "digest": "82c150c2861c76934ed230732ed490d8264f03d5bb22ba9fd624e12f8614286a"
+  }
+}

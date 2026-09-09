@@ -1,0 +1,478 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spine-packs.local/contracts/schemas/spine-pack-installer-types.v1.schema.json",
+  "title": "Spine Pack Installer Shared Types v1",
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "key": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,63}$" },
+    "decimal": { "type": "string", "pattern": "^(0|[1-9][0-9]*)$" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "utc": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" },
+    "uuid4": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+    "absolutePath": { "type": "string", "minLength": 2, "maxLength": 4096, "pattern": "^/.*[^/]$" },
+    "nullableString": {
+      "oneOf": [
+        { "type": "string", "minLength": 1, "maxLength": 4096 },
+        { "type": "null" }
+      ]
+    },
+    "contentIdentity": {
+      "type": "object",
+      "required": ["algorithm", "canonical_json_version", "derivation_version", "digest"],
+      "properties": {
+        "algorithm": { "const": "sha256" },
+        "canonical_json_version": { "const": "spine.canonical-json.v1" },
+        "derivation_version": {
+          "enum": [
+            "spine.pack-install-request-digest.v1",
+            "spine.pack-install-plan-digest.v1",
+            "spine.pack-install-approval-digest.v1",
+            "spine.pack-apply-checkpoint-digest.v1",
+            "spine.pack-apply-result-digest.v1",
+            "spine.pack-verification-result-digest.v1"
+          ]
+        },
+        "digest": { "$ref": "#/$defs/sha256" }
+      },
+      "additionalProperties": false
+    },
+    "canonicalValue": {
+      "type": "object",
+      "required": ["contract", "canonical_json", "digest"],
+      "properties": {
+        "contract": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "canonical_json": { "type": "string", "minLength": 2, "maxLength": 8388608 },
+        "digest": { "$ref": "#/$defs/sha256" }
+      },
+      "additionalProperties": false
+    },
+    "selection": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["mode"],
+          "properties": { "mode": { "const": "all" } },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["mode", "archetype_keys"],
+          "properties": {
+            "mode": { "const": "archetypes" },
+            "archetype_keys": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 256,
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/key" }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "owner": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["owner_kind", "owner_subject_id"],
+          "properties": {
+            "owner_kind": { "const": "subject" },
+            "owner_subject_id": { "$ref": "#/$defs/id" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["owner_kind", "owner_group_id"],
+          "properties": {
+            "owner_kind": { "const": "subject_group" },
+            "owner_group_id": { "$ref": "#/$defs/id" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "target": {
+      "type": "object",
+      "required": ["host_name", "spine_command", "ledger"],
+      "properties": {
+        "host_name": { "type": "string", "minLength": 1, "maxLength": 253, "pattern": "^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$" },
+        "spine_command": {
+          "type": "object",
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": { "$ref": "#/$defs/absolutePath" },
+            "sha256": { "$ref": "#/$defs/sha256" }
+          },
+          "additionalProperties": false
+        },
+        "ledger": {
+          "type": "object",
+          "required": ["kind", "path"],
+          "properties": {
+            "kind": { "const": "path" },
+            "path": { "$ref": "#/$defs/absolutePath" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "requestBody": {
+      "type": "object",
+      "required": ["selection", "owner", "target", "draft_posture"],
+      "properties": {
+        "selection": { "$ref": "#/$defs/selection" },
+        "owner": { "$ref": "#/$defs/owner" },
+        "target": { "$ref": "#/$defs/target" },
+        "draft_posture": { "enum": ["reject", "inspect_only"] }
+      },
+      "additionalProperties": false
+    },
+    "packIdentity": {
+      "type": "object",
+      "required": ["manifest_schema", "pack_id", "version", "status", "manifest_digest"],
+      "properties": {
+        "manifest_schema": { "const": "spine.pack-manifest.v1" },
+        "pack_id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$", "maxLength": 64 },
+        "version": { "type": "string", "minLength": 5, "maxLength": 64 },
+        "status": { "enum": ["draft", "released"] },
+        "manifest_digest": { "$ref": "#/$defs/sha256" }
+      },
+      "additionalProperties": false
+    },
+    "closure": {
+      "type": "object",
+      "required": ["archetype_keys", "profile_keys", "binding_archetype_keys"],
+      "properties": {
+        "archetype_keys": { "type": "array", "maxItems": 256, "uniqueItems": true, "items": { "$ref": "#/$defs/key" } },
+        "profile_keys": { "type": "array", "maxItems": 256, "uniqueItems": true, "items": { "$ref": "#/$defs/key" } },
+        "binding_archetype_keys": { "type": "array", "maxItems": 256, "uniqueItems": true, "items": { "$ref": "#/$defs/key" } }
+      },
+      "additionalProperties": false
+    },
+    "environment": {
+      "type": "object",
+      "required": ["runtime_version", "ledger_schema_implemented", "ledger_schema_current", "advertised_contracts"],
+      "properties": {
+        "runtime_version": { "const": "0.3.0" },
+        "ledger_schema_implemented": { "const": "12" },
+        "ledger_schema_current": { "const": "12" },
+        "advertised_contracts": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 512,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 160 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "catalogSnapshot": {
+      "type": "object",
+      "required": ["catalog", "digest"],
+      "properties": {
+        "catalog": { "enum": ["archetypes", "profiles", "bindings"] },
+        "digest": { "$ref": "#/$defs/sha256" }
+      },
+      "additionalProperties": false
+    },
+    "classification": {
+      "type": "object",
+      "required": ["object_kind", "object_key", "classification", "desired", "observed", "blocked_reason"],
+      "properties": {
+        "object_kind": { "enum": ["archetype", "profile", "binding"] },
+        "object_key": { "type": "string", "minLength": 11, "maxLength": 96 },
+        "classification": { "enum": ["missing", "equivalent", "drifted", "blocked"] },
+        "desired": { "$ref": "#/$defs/canonicalValue" },
+        "observed": {
+          "oneOf": [
+            { "$ref": "#/$defs/canonicalValue" },
+            { "type": "null" }
+          ]
+        },
+        "blocked_reason": { "$ref": "#/$defs/nullableString" }
+      },
+      "additionalProperties": false
+    },
+    "action": {
+      "type": "object",
+      "required": ["ordinal", "action_id", "command", "object_key", "change_kind", "desired", "expected", "request_template"],
+      "properties": {
+        "ordinal": { "$ref": "#/$defs/decimal" },
+        "action_id": { "type": "string", "pattern": "^action-[0-9]{6}$" },
+        "command": {
+          "enum": [
+            "item_archetype.create",
+            "item_archetype.revise",
+            "notification_profile.create",
+            "notification_profile.metadata.update",
+            "notification_profile.revise",
+            "notification_profile.binding.set"
+          ]
+        },
+        "object_key": { "type": "string", "minLength": 11, "maxLength": 96 },
+        "change_kind": { "enum": ["create", "update"] },
+        "desired": { "$ref": "#/$defs/canonicalValue" },
+        "expected": {
+          "oneOf": [
+            { "$ref": "#/$defs/canonicalValue" },
+            { "type": "null" }
+          ]
+        },
+        "request_template": { "$ref": "#/$defs/canonicalValue" }
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": ["execution_id", "actor_subject_id", "action_timestamp_utc"],
+      "properties": {
+        "execution_id": { "$ref": "#/$defs/uuid4" },
+        "actor_subject_id": { "$ref": "#/$defs/id" },
+        "action_timestamp_utc": { "$ref": "#/$defs/utc" }
+      },
+      "additionalProperties": false
+    },
+    "generatedId": {
+      "type": "object",
+      "required": ["name", "value"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "value": { "$ref": "#/$defs/id" }
+      },
+      "additionalProperties": false
+    },
+    "responseEvidence": {
+      "type": "object",
+      "required": ["action_id", "command", "command_id", "outcome", "response_contract", "effect", "generated_ids", "command_receipt_id", "semantic_facts_hash", "response"],
+      "properties": {
+        "action_id": { "type": "string", "pattern": "^action-[0-9]{6}$" },
+        "command": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "command_id": { "type": "string", "pattern": "^spack_[0-9a-f]{64}$" },
+        "outcome": { "enum": ["accepted", "compatible_replay"] },
+        "response_contract": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "effect": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "generated_ids": { "type": "array", "maxItems": 16, "items": { "$ref": "#/$defs/generatedId" } },
+        "command_receipt_id": { "$ref": "#/$defs/id" },
+        "semantic_facts_hash": { "$ref": "#/$defs/sha256" },
+        "response": { "$ref": "#/$defs/canonicalValue" }
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "required": ["category", "code", "message", "facts"],
+      "properties": {
+        "category": {
+          "enum": [
+            "invalid_cli_or_artifact_input",
+            "invalid_pack_contract_or_digest",
+            "incompatible_spine_runtime_or_contracts",
+            "decision_required_for_drift",
+            "blocked_desired_state",
+            "stale_plan_or_target_mismatch",
+            "spine_command_rejection",
+            "partial_apply",
+            "verification_mismatch",
+            "transport_or_environment_failure"
+          ]
+        },
+        "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,95}$" },
+        "message": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "facts": { "type": "array", "maxItems": 64, "items": { "$ref": "#/$defs/generatedId" } }
+      },
+      "additionalProperties": false
+    },
+    "installationRequest": {
+      "type": "object",
+      "required": ["artifact_schema", "request", "content_identity"],
+      "properties": {
+        "artifact_schema": { "const": "spine.pack-install-request.v1" },
+        "request": { "$ref": "#/$defs/requestBody" },
+        "content_identity": { "$ref": "#/$defs/contentIdentity" }
+      },
+      "additionalProperties": false
+    },
+    "installationPlan": {
+      "type": "object",
+      "required": ["artifact_schema", "request_digest", "request", "pack", "closure", "environment", "required_execution_contracts", "catalog_snapshots", "classifications", "actions", "decision_action_ids", "blocked_object_keys", "apply_eligible", "content_identity"],
+      "properties": {
+        "artifact_schema": { "const": "spine.pack-install-plan.v1" },
+        "request_digest": { "$ref": "#/$defs/sha256" },
+        "request": { "$ref": "#/$defs/requestBody" },
+        "pack": { "$ref": "#/$defs/packIdentity" },
+        "closure": { "$ref": "#/$defs/closure" },
+        "environment": { "$ref": "#/$defs/environment" },
+        "required_execution_contracts": { "type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 160 } },
+        "catalog_snapshots": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/catalogSnapshot" } },
+        "classifications": { "type": "array", "maxItems": 768, "items": { "$ref": "#/$defs/classification" } },
+        "actions": { "type": "array", "maxItems": 1024, "items": { "$ref": "#/$defs/action" } },
+        "decision_action_ids": { "type": "array", "maxItems": 1024, "uniqueItems": true, "items": { "type": "string", "pattern": "^action-[0-9]{6}$" } },
+        "blocked_object_keys": { "type": "array", "maxItems": 768, "uniqueItems": true, "items": { "type": "string", "minLength": 11, "maxLength": 96 } },
+        "apply_eligible": { "type": "boolean" },
+        "content_identity": { "$ref": "#/$defs/contentIdentity" }
+      },
+      "additionalProperties": false
+    },
+    "installationApproval": {
+      "type": "object",
+      "required": ["artifact_schema", "plan_digest", "approve_complete_plan", "acknowledge_single_operator", "authorized_update_action_ids", "execution", "content_identity"],
+      "properties": {
+        "artifact_schema": { "const": "spine.pack-install-approval.v1" },
+        "plan_digest": { "$ref": "#/$defs/sha256" },
+        "approve_complete_plan": { "const": true },
+        "acknowledge_single_operator": { "const": true },
+        "authorized_update_action_ids": { "type": "array", "maxItems": 1024, "uniqueItems": true, "items": { "type": "string", "pattern": "^action-[0-9]{6}$" } },
+        "execution": { "$ref": "#/$defs/execution" },
+        "content_identity": { "$ref": "#/$defs/contentIdentity" }
+      },
+      "additionalProperties": false
+    },
+    "unresolvedSubmission": {
+      "type": "object",
+      "required": ["action_id", "command_id", "submission_state", "request"],
+      "properties": {
+        "action_id": { "type": "string", "pattern": "^action-[0-9]{6}$" },
+        "command_id": { "type": "string", "pattern": "^spack_[0-9a-f]{64}$" },
+        "submission_state": { "const": "prepared_or_submitted" },
+        "request": { "$ref": "#/$defs/canonicalValue" }
+      },
+      "additionalProperties": false
+    },
+    "applyCheckpoint": {
+      "type": "object",
+      "required": ["artifact_schema", "plan_digest", "approval_digest", "execution", "accepted_responses", "unresolved_submission", "next_action_id", "content_identity"],
+      "properties": {
+        "artifact_schema": { "const": "spine.pack-apply-checkpoint.v1" },
+        "plan_digest": { "$ref": "#/$defs/sha256" },
+        "approval_digest": { "$ref": "#/$defs/sha256" },
+        "execution": { "$ref": "#/$defs/execution" },
+        "accepted_responses": { "type": "array", "maxItems": 1024, "items": { "$ref": "#/$defs/responseEvidence" } },
+        "unresolved_submission": {
+          "oneOf": [
+            { "$ref": "#/$defs/unresolvedSubmission" },
+            { "type": "null" }
+          ]
+        },
+        "next_action_id": {
+          "oneOf": [
+            { "type": "string", "pattern": "^action-[0-9]{6}$" },
+            { "type": "null" }
+          ]
+        },
+        "content_identity": { "$ref": "#/$defs/contentIdentity" }
+      },
+      "additionalProperties": false
+    },
+    "applyFailure": {
+      "type": "object",
+      "required": ["action_id", "error"],
+      "properties": {
+        "action_id": {
+          "oneOf": [
+            { "type": "string", "pattern": "^action-[0-9]{6}$" },
+            { "type": "null" }
+          ]
+        },
+        "error": { "$ref": "#/$defs/error" }
+      },
+      "additionalProperties": false
+    },
+    "applyResult": {
+      "type": "object",
+      "required": ["artifact_schema", "plan_digest", "approval_digest", "execution", "state", "accepted_responses", "failure", "unattempted_action_ids", "content_identity"],
+      "properties": {
+        "artifact_schema": { "const": "spine.pack-apply-result.v1" },
+        "plan_digest": { "$ref": "#/$defs/sha256" },
+        "approval_digest": { "$ref": "#/$defs/sha256" },
+        "execution": { "$ref": "#/$defs/execution" },
+        "state": { "enum": ["applied", "partial", "not_applied"] },
+        "accepted_responses": { "type": "array", "maxItems": 1024, "items": { "$ref": "#/$defs/responseEvidence" } },
+        "failure": {
+          "oneOf": [
+            { "$ref": "#/$defs/applyFailure" },
+            { "type": "null" }
+          ]
+        },
+        "unattempted_action_ids": { "type": "array", "maxItems": 1024, "uniqueItems": true, "items": { "type": "string", "pattern": "^action-[0-9]{6}$" } },
+        "content_identity": { "$ref": "#/$defs/contentIdentity" }
+      },
+      "additionalProperties": false
+    },
+    "verificationObject": {
+      "type": "object",
+      "required": ["object_kind", "object_key", "state", "observed"],
+      "properties": {
+        "object_kind": { "enum": ["archetype", "profile", "binding"] },
+        "object_key": { "type": "string", "minLength": 11, "maxLength": 96 },
+        "state": { "enum": ["equivalent", "missing", "drifted", "blocked", "ambiguous"] },
+        "observed": {
+          "oneOf": [
+            { "$ref": "#/$defs/canonicalValue" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "verificationResult": {
+      "type": "object",
+      "required": ["artifact_schema", "plan_digest", "apply_result_digest", "pack", "target", "environment", "catalog_snapshots", "closure", "object_results", "response_evidence", "receipt_readback", "state", "content_identity"],
+      "properties": {
+        "artifact_schema": { "const": "spine.pack-verification-result.v1" },
+        "plan_digest": { "$ref": "#/$defs/sha256" },
+        "apply_result_digest": {
+          "oneOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        },
+        "pack": { "$ref": "#/$defs/packIdentity" },
+        "target": { "$ref": "#/$defs/target" },
+        "environment": { "$ref": "#/$defs/environment" },
+        "catalog_snapshots": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/catalogSnapshot" } },
+        "closure": { "$ref": "#/$defs/closure" },
+        "object_results": { "type": "array", "maxItems": 768, "items": { "$ref": "#/$defs/verificationObject" } },
+        "response_evidence": { "enum": ["not_required", "complete", "missing", "invalid"] },
+        "receipt_readback": { "const": "captured_responses_only_spine_0.3.0" },
+        "state": { "enum": ["verified", "mismatch"] },
+        "content_identity": { "$ref": "#/$defs/contentIdentity" }
+      },
+      "additionalProperties": false
+    },
+    "artifactReference": {
+      "type": "object",
+      "required": ["path", "digest"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "digest": { "$ref": "#/$defs/sha256" }
+      },
+      "additionalProperties": false
+    },
+    "installerResult": {
+      "type": "object",
+      "required": ["artifact_schema", "operation", "status", "exit_code", "artifact", "error"],
+      "properties": {
+        "artifact_schema": { "const": "spine.pack-installer-result.v1" },
+        "operation": { "enum": ["plan", "apply", "verify"] },
+        "status": { "enum": ["success", "failed", "decision_required", "blocked", "partial", "mismatch"] },
+        "exit_code": { "enum": ["0", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"] },
+        "artifact": {
+          "oneOf": [
+            { "$ref": "#/$defs/artifactReference" },
+            { "type": "null" }
+          ]
+        },
+        "error": {
+          "oneOf": [
+            { "$ref": "#/$defs/error" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -89,6 +89,10 @@ execution-contract union from the inspected Spine runtime. A future installer
 MUST verify that union independently of manifest content compatibility before
 it interprets catalog state or emits an applicable plan.
 
+The exact portable artifact family, local target binding, and recovery
+checkpoint are specified in `specs/installer-artifacts.md`. These remain
+client evidence and never become an alternate Spine ledger.
+
 ## Input boundary
 
 Owner IDs, delivery targets, subjects, routes, and environment-specific facts

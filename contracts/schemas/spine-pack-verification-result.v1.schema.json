@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spine-packs.local/contracts/schemas/spine-pack-verification-result.v1.schema.json",
+  "title": "Spine Pack Verification Result v1",
+  "$ref": "spine-pack-installer-types.v1.schema.json#/$defs/verificationResult"
+}
