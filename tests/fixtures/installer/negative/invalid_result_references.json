@@ -1,0 +1,20 @@
+{
+  "scenario": "create_binding_flow",
+  "unresolved_request": {
+    "field": "notification_profile_id",
+    "value": "${spine-pack.result:action-000001:notification_profile_id}",
+    "expected_error": "result_reference_context_forbidden"
+  },
+  "mutations": [
+    {"case": "nonexistent", "action_index": "3", "path": ["item_archetype_id"], "value": "${spine-pack.result:action-999999:item_archetype_id}", "expected_error": "result_reference_producer_missing"},
+    {"case": "forward", "action_index": "3", "path": ["item_archetype_id"], "value": "${spine-pack.result:action-000004:item_archetype_id}", "expected_error": "result_reference_not_earlier"},
+    {"case": "self", "action_index": "3", "path": ["item_archetype_id"], "value": "${spine-pack.result:action-000003:item_archetype_id}", "expected_error": "result_reference_not_earlier"},
+    {"case": "wrong_field", "action_index": "3", "path": ["item_archetype_id"], "value": "${spine-pack.result:action-000000:item_archetype_revision_id}", "expected_error": "result_reference_field_invalid"},
+    {"case": "wrong_producer_command", "action_index": "3", "path": ["item_archetype_id"], "value": "${spine-pack.result:action-000001:item_archetype_id}", "expected_error": "result_reference_producer_mismatch"},
+    {"case": "wrong_consumer_command", "action_index": "2", "path": ["notification_profile_id"], "value": "${spine-pack.result:action-999999:notification_profile_id}", "expected_error": "result_reference_context_forbidden"},
+    {"case": "already_resolved", "action_index": "4", "path": ["notification_profile_id"], "value": "${spine-pack.result:action-000001:notification_profile_id}", "expected_error": "result_reference_root_not_missing"},
+    {"case": "nested_owner", "action_index": "3", "path": ["owner", "owner_subject_id"], "value": "${spine-pack.result:action-000000:item_archetype_id}", "expected_error": "result_reference_context_forbidden"},
+    {"case": "malformed", "action_index": "3", "path": ["item_archetype_id"], "value": "${spine-pack.result:action-000000:item_archetype_id", "expected_error": "result_reference_syntax_invalid"},
+    {"case": "concatenated", "action_index": "3", "path": ["item_archetype_id"], "value": "prefix${spine-pack.result:action-000000:item_archetype_id}", "expected_error": "result_reference_syntax_invalid"}
+  ]
+}

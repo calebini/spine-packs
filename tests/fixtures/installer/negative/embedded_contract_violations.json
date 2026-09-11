@@ -1,0 +1,14 @@
+{
+  "scenario": "profile_drift",
+  "cases": [
+    {"artifact": "plan", "path": ["classifications", "0", "desired"], "remove": ["description"]},
+    {"artifact": "plan", "path": ["classifications", "2", "observed"], "remove": ["metadata"]},
+    {"artifact": "plan", "path": ["actions", "0", "desired"], "remove": ["metadata", "display_name"]},
+    {"artifact": "plan", "path": ["actions", "0", "expected"], "remove": ["revision", "templates"]},
+    {"artifact": "plan", "path": ["actions", "0", "request_template"], "remove": ["expected_current_revision_id"]},
+    {"artifact": "checkpoint", "path": ["unresolved_submission", "request"], "remove": ["actor_subject_id"]},
+    {"artifact": "applied", "path": ["accepted_responses", "0", "response"], "remove": ["normalized_revision_hash"]},
+    {"artifact": "verification", "path": ["object_results", "0", "observed"], "remove": ["compatible_item_types"]}
+  ],
+  "expected_error": "embedded_contract_invalid"
+}

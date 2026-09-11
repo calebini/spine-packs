@@ -1,0 +1,26 @@
+{
+  "scenario": "profile_drift_vertical_flow",
+  "description": "Matching semantic keys and valid digests cannot hide inconsistent resolved Spine IDs.",
+  "mutations": [
+    {
+      "path": ["classifications", "4", "identity", "observed_binding", "notification_profile_id"],
+      "value": "different_spine_profile",
+      "expected_error": "binding_profile_identity_mismatch"
+    },
+    {
+      "path": ["classifications", "4", "identity", "observed_binding", "item_archetype_id"],
+      "value": "different_spine_archetype",
+      "expected_error": "binding_archetype_identity_mismatch"
+    },
+    {
+      "path": ["classifications", "4", "identity", "notification_profile_id"],
+      "value": "different_resolution",
+      "expected_error": "binding_resolution_mismatch"
+    },
+    {
+      "path": ["classifications", "4", "identity", "notification_profile_id"],
+      "value": null,
+      "expected_error": "binding_resolution_mismatch"
+    }
+  ]
+}

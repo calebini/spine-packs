@@ -1,0 +1,1607 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spine-packs.local/contracts/schemas/spine-pack-embedded-values.v1.schema.json",
+  "title": "Spine pack embedded semantic projections and public command values",
+  "$comment": "Source: Spine 0.3.0 commit 72203f092de191a7633b1884bf0d61836a25abe4. Archetype semantics derive from contracts/schemas/notification-profile-types.schema.json#/$defs/archetypeRevision; archetype requests derive from contracts/schemas/notification-profile-commands.schema.json#/$defs/archetypeCreate and #/$defs/archetypeRevise, including writeIdentity. Archetype responses derive from src/spine/commands/notification_profiles.py functions _archetype_create, _archetype_revise, and _success. That pinned runtime defines archetypes in these shared notification-profile files, not a separate item-archetype schema or command module. Profile/binding definitions also derive from contracts/schemas/notification-profile-types.schema.json, contracts/schemas/notification-profile-commands.schema.json, contracts/schemas/notification-types.schema.json, and src/spine/commands/notification_profiles.py facts and _success. Reachable definitions copied with local references; six write commands flattened. Semantics are installer projections, not full Spine readback envelopes.",
+  "$defs": {
+    "notifications_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "notifications_utcTimestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "notifications_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "types_archetypeRevision": {
+      "type": "object",
+      "required": [
+        "display_name",
+        "description",
+        "compatible_item_types"
+      ],
+      "properties": {
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "compatible_item_types": {
+          "$ref": "#/$defs/types_itemTypes"
+        }
+      },
+      "additionalProperties": false
+    },
+    "types_itemTypes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "event",
+          "task"
+        ]
+      }
+    },
+    "archetypeSemantics": {
+      "$ref": "#/$defs/types_archetypeRevision"
+    },
+    "commands_profileMetadata": {
+      "type": "object",
+      "required": [
+        "display_name",
+        "description"
+      ],
+      "properties": {
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "types_profileRevision": {
+      "type": "object",
+      "required": [
+        "compatible_item_types",
+        "templates"
+      ],
+      "properties": {
+        "compatible_item_types": {
+          "$ref": "#/$defs/types_itemTypes"
+        },
+        "templates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/types_template"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "types_template": {
+      "type": "object",
+      "required": [
+        "template_key",
+        "schedule",
+        "late_handling"
+      ],
+      "properties": {
+        "template_key": {
+          "$ref": "#/$defs/types_key"
+        },
+        "schedule": {
+          "$ref": "#/$defs/notifications_schedule"
+        },
+        "late_handling": {
+          "$ref": "#/$defs/notifications_lateHandling"
+        }
+      },
+      "additionalProperties": false
+    },
+    "types_key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+    },
+    "notifications_schedule": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/notifications_onceSchedule"
+        },
+        {
+          "$ref": "#/$defs/notifications_offsetsSchedule"
+        },
+        {
+          "$ref": "#/$defs/notifications_repeatWindowSchedule"
+        }
+      ]
+    },
+    "notifications_onceSchedule": {
+      "type": "object",
+      "required": [
+        "kind",
+        "at"
+      ],
+      "properties": {
+        "kind": {
+          "const": "once"
+        },
+        "at": {
+          "$ref": "#/$defs/notifications_boundary"
+        }
+      },
+      "additionalProperties": false
+    },
+    "notifications_boundary": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/notifications_absoluteBoundary"
+        },
+        {
+          "$ref": "#/$defs/notifications_targetOffset"
+        }
+      ]
+    },
+    "notifications_absoluteBoundary": {
+      "type": "object",
+      "required": [
+        "kind",
+        "at_utc"
+      ],
+      "properties": {
+        "kind": {
+          "const": "absolute_utc"
+        },
+        "at_utc": {
+          "$ref": "#/$defs/notifications_utcTimestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "notifications_targetOffset": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/notifications_elapsedTargetOffset"
+        },
+        {
+          "$ref": "#/$defs/notifications_calendarTargetOffset"
+        }
+      ]
+    },
+    "notifications_elapsedTargetOffset": {
+      "type": "object",
+      "required": [
+        "kind",
+        "offset_basis",
+        "offset_seconds"
+      ],
+      "properties": {
+        "kind": {
+          "const": "target_offset"
+        },
+        "offset_basis": {
+          "const": "elapsed"
+        },
+        "offset_seconds": {
+          "$ref": "#/$defs/notifications_signedDecimal"
+        }
+      },
+      "additionalProperties": false
+    },
+    "notifications_signedDecimal": {
+      "type": "string",
+      "pattern": "^(0|-?[1-9][0-9]*)$"
+    },
+    "notifications_calendarTargetOffset": {
+      "type": "object",
+      "required": [
+        "kind",
+        "offset_basis",
+        "offset_days",
+        "local_time"
+      ],
+      "properties": {
+        "kind": {
+          "const": "target_offset"
+        },
+        "offset_basis": {
+          "const": "calendar_days"
+        },
+        "offset_days": {
+          "$ref": "#/$defs/notifications_signedDecimal"
+        },
+        "local_time": {
+          "$ref": "#/$defs/notifications_localTime"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timezone_database_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "notifications_localTime": {
+      "type": "string",
+      "pattern": "^[0-9]{2}:[0-9]{2}:[0-9]{2}$"
+    },
+    "notifications_offsetsSchedule": {
+      "type": "object",
+      "required": [
+        "kind",
+        "at"
+      ],
+      "properties": {
+        "kind": {
+          "const": "offsets"
+        },
+        "at": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/notifications_targetOffset"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "notifications_repeatWindowSchedule": {
+      "type": "object",
+      "required": [
+        "kind",
+        "start",
+        "stop",
+        "stop_inclusive",
+        "cadence"
+      ],
+      "properties": {
+        "kind": {
+          "const": "repeat_window"
+        },
+        "start": {
+          "$ref": "#/$defs/notifications_boundary"
+        },
+        "stop": {
+          "$ref": "#/$defs/notifications_boundary"
+        },
+        "stop_inclusive": {
+          "type": "boolean"
+        },
+        "cadence": {
+          "$ref": "#/$defs/notifications_cadence"
+        }
+      },
+      "additionalProperties": false
+    },
+    "notifications_cadence": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/notifications_fixedElapsedCadence"
+        },
+        {
+          "$ref": "#/$defs/notifications_localCalendarCadence"
+        }
+      ]
+    },
+    "notifications_fixedElapsedCadence": {
+      "type": "object",
+      "required": [
+        "kind",
+        "interval_seconds"
+      ],
+      "properties": {
+        "kind": {
+          "const": "fixed_elapsed"
+        },
+        "interval_seconds": {
+          "$ref": "#/$defs/notifications_decimalPositive"
+        }
+      },
+      "additionalProperties": false
+    },
+    "notifications_decimalPositive": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*$"
+    },
+    "notifications_localCalendarCadence": {
+      "type": "object",
+      "required": [
+        "kind",
+        "frequency",
+        "seed_local_date",
+        "local_time",
+        "timezone",
+        "timezone_database_version"
+      ],
+      "properties": {
+        "kind": {
+          "const": "local_calendar"
+        },
+        "frequency": {
+          "enum": [
+            "DAILY",
+            "WEEKLY",
+            "MONTHLY",
+            "YEARLY"
+          ]
+        },
+        "interval": {
+          "$ref": "#/$defs/notifications_decimalPositive"
+        },
+        "seed_local_date": {
+          "$ref": "#/$defs/notifications_localDate"
+        },
+        "local_time": {
+          "$ref": "#/$defs/notifications_localTime"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timezone_database_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "by_month": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^([1-9]|1[0-2])$"
+          }
+        },
+        "by_month_day": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^-?([1-9]|[12][0-9]|3[01])$"
+          }
+        },
+        "by_weekday": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/notifications_weekday"
+          }
+        },
+        "by_set_position": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^-?([1-9]|[1-9][0-9]|[12][0-9]{2}|3[0-5][0-9]|36[0-6])$"
+          }
+        },
+        "week_start": {
+          "$ref": "#/$defs/notifications_weekday"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "enum": [
+                  "MONTHLY",
+                  "YEARLY"
+                ]
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "by_month_day",
+                "by_weekday"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "by_set_position"
+            ]
+          },
+          "then": {
+            "required": [
+              "by_weekday"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "DAILY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "by_month"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_month_day"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_weekday"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_set_position"
+                  ]
+                },
+                {
+                  "required": [
+                    "week_start"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "WEEKLY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "by_month"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_month_day"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_set_position"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "MONTHLY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "by_month"
+                  ]
+                },
+                {
+                  "required": [
+                    "week_start"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "YEARLY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "week_start"
+              ]
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "notifications_localDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "notifications_weekday": {
+      "enum": [
+        "MO",
+        "TU",
+        "WE",
+        "TH",
+        "FR",
+        "SA",
+        "SU"
+      ]
+    },
+    "notifications_lateHandling": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "skip"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "grace_seconds"
+          ],
+          "properties": {
+            "kind": {
+              "const": "deliver_within"
+            },
+            "grace_seconds": {
+              "$ref": "#/$defs/notifications_decimalNonNegative"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "notifications_decimalNonNegative": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
+    "profileSemantics": {
+      "type": "object",
+      "required": [
+        "metadata",
+        "revision"
+      ],
+      "properties": {
+        "metadata": {
+          "$ref": "#/$defs/commands_profileMetadata"
+        },
+        "revision": {
+          "$ref": "#/$defs/types_profileRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "bindingSemantics": {
+      "type": "object",
+      "required": [
+        "binding_kind",
+        "notification_profile_key"
+      ],
+      "properties": {
+        "binding_kind": {
+          "const": "archetype_default"
+        },
+        "notification_profile_key": {
+          "$ref": "#/$defs/types_key"
+        }
+      },
+      "additionalProperties": false
+    },
+    "commands_writeIdentity": {
+      "type": "object",
+      "required": [
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc"
+      ],
+      "properties": {
+        "command_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/notifications_utcTimestamp"
+        }
+      }
+    },
+    "types_owner": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "owner_kind"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "system"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "owner_kind",
+            "owner_subject_id"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "subject"
+            },
+            "owner_subject_id": {
+              "$ref": "#/$defs/notifications_id"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "owner_kind",
+            "owner_group_id"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "subject_group"
+            },
+            "owner_group_id": {
+              "$ref": "#/$defs/notifications_id"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "archetypeCreateTemplate": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "owner",
+        "archetype_key",
+        "revision"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "owner": {
+          "$ref": "#/$defs/types_owner"
+        },
+        "archetype_key": {
+          "$ref": "#/$defs/types_key"
+        },
+        "revision": {
+          "$ref": "#/$defs/types_archetypeRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "archetypeCreateRequest": {
+      "type": "object",
+      "required": [
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc",
+        "contract_version",
+        "owner",
+        "archetype_key",
+        "revision"
+      ],
+      "properties": {
+        "command_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/notifications_utcTimestamp"
+        },
+        "contract_version": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "owner": {
+          "$ref": "#/$defs/types_owner"
+        },
+        "archetype_key": {
+          "$ref": "#/$defs/types_key"
+        },
+        "revision": {
+          "$ref": "#/$defs/types_archetypeRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "archetypeCreateResponse": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "item_archetype_id",
+        "item_archetype_revision_id",
+        "revision_number",
+        "status",
+        "archetype_key",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "item_archetype.create"
+        },
+        "response_contract": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "effect": {
+          "enum": [
+            "item_archetype_created"
+          ]
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "item_archetype_revision_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "revision_number": {
+          "$ref": "#/$defs/notifications_decimalPositive"
+        },
+        "status": {
+          "const": "active"
+        },
+        "archetype_key": {
+          "$ref": "#/$defs/types_key"
+        },
+        "receipt": {
+          "type": "object",
+          "required": [
+            "command_receipt_id",
+            "command_id",
+            "effect",
+            "semantic_facts_hash",
+            "created_at_utc"
+          ],
+          "properties": {
+            "command_receipt_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "command_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "effect": {
+              "enum": [
+                "item_archetype_created"
+              ]
+            },
+            "semantic_facts_hash": {
+              "$ref": "#/$defs/notifications_sha256"
+            },
+            "created_at_utc": {
+              "$ref": "#/$defs/notifications_utcTimestamp"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "archetypeReviseTemplate": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "item_archetype_id",
+        "expected_current_revision_id",
+        "revision"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "expected_current_revision_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "revision": {
+          "$ref": "#/$defs/types_archetypeRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "archetypeReviseRequest": {
+      "type": "object",
+      "required": [
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc",
+        "contract_version",
+        "item_archetype_id",
+        "expected_current_revision_id",
+        "revision"
+      ],
+      "properties": {
+        "command_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/notifications_utcTimestamp"
+        },
+        "contract_version": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "expected_current_revision_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "revision": {
+          "$ref": "#/$defs/types_archetypeRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "archetypeReviseResponse": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "item_archetype_id",
+        "item_archetype_revision_id",
+        "revision_number",
+        "status",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "item_archetype.revise"
+        },
+        "response_contract": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "effect": {
+          "enum": [
+            "item_archetype_revised"
+          ]
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "item_archetype_revision_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "revision_number": {
+          "$ref": "#/$defs/notifications_decimalPositive"
+        },
+        "status": {
+          "const": "active"
+        },
+        "receipt": {
+          "type": "object",
+          "required": [
+            "command_receipt_id",
+            "command_id",
+            "effect",
+            "semantic_facts_hash",
+            "created_at_utc"
+          ],
+          "properties": {
+            "command_receipt_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "command_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "effect": {
+              "enum": [
+                "item_archetype_revised"
+              ]
+            },
+            "semantic_facts_hash": {
+              "$ref": "#/$defs/notifications_sha256"
+            },
+            "created_at_utc": {
+              "$ref": "#/$defs/notifications_utcTimestamp"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileCreateTemplate": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "owner",
+        "profile_key",
+        "display_name",
+        "description",
+        "revision"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-profiles.v1"
+        },
+        "owner": {
+          "$ref": "#/$defs/types_owner"
+        },
+        "profile_key": {
+          "$ref": "#/$defs/types_key"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "$ref": "#/$defs/types_profileRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileCreateRequest": {
+      "type": "object",
+      "required": [
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc",
+        "contract_version",
+        "owner",
+        "profile_key",
+        "display_name",
+        "description",
+        "revision"
+      ],
+      "properties": {
+        "command_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/notifications_utcTimestamp"
+        },
+        "contract_version": {
+          "const": "spine.notification-profiles.v1"
+        },
+        "owner": {
+          "$ref": "#/$defs/types_owner"
+        },
+        "profile_key": {
+          "$ref": "#/$defs/types_key"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "$ref": "#/$defs/types_profileRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileCreateResponse": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "notification_profile_id",
+        "notification_profile_revision_id",
+        "status",
+        "revision_number",
+        "normalized_revision_hash",
+        "profile_key",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.create"
+        },
+        "response_contract": {
+          "const": "spine.notification-profiles.v1"
+        },
+        "effect": {
+          "enum": [
+            "notification_profile_created"
+          ]
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "notification_profile_revision_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "status": {
+          "const": "active"
+        },
+        "revision_number": {
+          "$ref": "#/$defs/notifications_decimalPositive"
+        },
+        "normalized_revision_hash": {
+          "$ref": "#/$defs/notifications_sha256"
+        },
+        "profile_key": {
+          "$ref": "#/$defs/types_key"
+        },
+        "receipt": {
+          "type": "object",
+          "required": [
+            "command_receipt_id",
+            "command_id",
+            "effect",
+            "semantic_facts_hash",
+            "created_at_utc"
+          ],
+          "properties": {
+            "command_receipt_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "command_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "effect": {
+              "enum": [
+                "notification_profile_created"
+              ]
+            },
+            "semantic_facts_hash": {
+              "$ref": "#/$defs/notifications_sha256"
+            },
+            "created_at_utc": {
+              "$ref": "#/$defs/notifications_utcTimestamp"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileMetadataUpdateTemplate": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "notification_profile_id",
+        "expected_metadata",
+        "metadata"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-profile-metadata-update.v1"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "expected_metadata": {
+          "$ref": "#/$defs/commands_profileMetadata"
+        },
+        "metadata": {
+          "$ref": "#/$defs/commands_profileMetadata"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileMetadataUpdateRequest": {
+      "type": "object",
+      "required": [
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc",
+        "contract_version",
+        "notification_profile_id",
+        "expected_metadata",
+        "metadata"
+      ],
+      "properties": {
+        "command_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/notifications_utcTimestamp"
+        },
+        "contract_version": {
+          "const": "spine.notification-profile-metadata-update.v1"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "expected_metadata": {
+          "$ref": "#/$defs/commands_profileMetadata"
+        },
+        "metadata": {
+          "$ref": "#/$defs/commands_profileMetadata"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileMetadataUpdateResponse": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "notification_profile_id",
+        "notification_profile_revision_id",
+        "status",
+        "display_name",
+        "description",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.metadata.update"
+        },
+        "response_contract": {
+          "const": "spine.notification-profile-metadata-update.v1"
+        },
+        "effect": {
+          "enum": [
+            "notification_profile_metadata_updated",
+            "notification_profile_metadata_update_noop"
+          ]
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "notification_profile_revision_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "status": {
+          "const": "active"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "receipt": {
+          "type": "object",
+          "required": [
+            "command_receipt_id",
+            "command_id",
+            "effect",
+            "semantic_facts_hash",
+            "created_at_utc"
+          ],
+          "properties": {
+            "command_receipt_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "command_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "effect": {
+              "enum": [
+                "notification_profile_metadata_updated",
+                "notification_profile_metadata_update_noop"
+              ]
+            },
+            "semantic_facts_hash": {
+              "$ref": "#/$defs/notifications_sha256"
+            },
+            "created_at_utc": {
+              "$ref": "#/$defs/notifications_utcTimestamp"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileReviseTemplate": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "notification_profile_id",
+        "expected_current_revision_id",
+        "revision"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-profiles.v1"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "expected_current_revision_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "revision": {
+          "$ref": "#/$defs/types_profileRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileReviseRequest": {
+      "type": "object",
+      "required": [
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc",
+        "contract_version",
+        "notification_profile_id",
+        "expected_current_revision_id",
+        "revision"
+      ],
+      "properties": {
+        "command_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/notifications_utcTimestamp"
+        },
+        "contract_version": {
+          "const": "spine.notification-profiles.v1"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "expected_current_revision_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "revision": {
+          "$ref": "#/$defs/types_profileRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileReviseResponse": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "notification_profile_id",
+        "notification_profile_revision_id",
+        "status",
+        "revision_number",
+        "normalized_revision_hash",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.revise"
+        },
+        "response_contract": {
+          "const": "spine.notification-profiles.v1"
+        },
+        "effect": {
+          "enum": [
+            "notification_profile_revised"
+          ]
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "notification_profile_revision_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "status": {
+          "const": "active"
+        },
+        "revision_number": {
+          "$ref": "#/$defs/notifications_decimalPositive"
+        },
+        "normalized_revision_hash": {
+          "$ref": "#/$defs/notifications_sha256"
+        },
+        "receipt": {
+          "type": "object",
+          "required": [
+            "command_receipt_id",
+            "command_id",
+            "effect",
+            "semantic_facts_hash",
+            "created_at_utc"
+          ],
+          "properties": {
+            "command_receipt_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "command_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "effect": {
+              "enum": [
+                "notification_profile_revised"
+              ]
+            },
+            "semantic_facts_hash": {
+              "$ref": "#/$defs/notifications_sha256"
+            },
+            "created_at_utc": {
+              "$ref": "#/$defs/notifications_utcTimestamp"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "bindingSetTemplate": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "owner",
+        "item_archetype_id",
+        "notification_profile_id"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-profile-bindings.v1"
+        },
+        "owner": {
+          "$ref": "#/$defs/types_owner"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/notifications_id"
+        }
+      },
+      "additionalProperties": false
+    },
+    "bindingSetRequest": {
+      "type": "object",
+      "required": [
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc",
+        "contract_version",
+        "owner",
+        "item_archetype_id",
+        "notification_profile_id"
+      ],
+      "properties": {
+        "command_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/notifications_utcTimestamp"
+        },
+        "contract_version": {
+          "const": "spine.notification-profile-bindings.v1"
+        },
+        "owner": {
+          "$ref": "#/$defs/types_owner"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/notifications_id"
+        }
+      },
+      "additionalProperties": false
+    },
+    "bindingSetResponse": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "notification_profile_binding_id",
+        "item_archetype_id",
+        "notification_profile_id",
+        "status",
+        "compatible_item_types",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.binding.set"
+        },
+        "response_contract": {
+          "const": "spine.notification-profile-bindings.v1"
+        },
+        "effect": {
+          "enum": [
+            "notification_profile_binding_set",
+            "notification_profile_binding_set_noop"
+          ]
+        },
+        "notification_profile_binding_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/notifications_id"
+        },
+        "status": {
+          "const": "active"
+        },
+        "compatible_item_types": {
+          "$ref": "#/$defs/types_itemTypes"
+        },
+        "receipt": {
+          "type": "object",
+          "required": [
+            "command_receipt_id",
+            "command_id",
+            "effect",
+            "semantic_facts_hash",
+            "created_at_utc"
+          ],
+          "properties": {
+            "command_receipt_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "command_id": {
+              "$ref": "#/$defs/notifications_id"
+            },
+            "effect": {
+              "enum": [
+                "notification_profile_binding_set",
+                "notification_profile_binding_set_noop"
+              ]
+            },
+            "semantic_facts_hash": {
+              "$ref": "#/$defs/notifications_sha256"
+            },
+            "created_at_utc": {
+              "$ref": "#/$defs/notifications_utcTimestamp"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

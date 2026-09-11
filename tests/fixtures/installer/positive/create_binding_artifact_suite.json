@@ -1,0 +1,641 @@
+{
+  "fixture_contract": "spine.pack-installer-create-flow.v1",
+  "request": {
+    "artifact_schema": "spine.pack-install-request.v1",
+    "request": {
+      "selection": {
+        "mode": "archetypes",
+        "archetype_keys": [
+          "lesson",
+          "medical_appointment"
+        ]
+      },
+      "owner": {
+        "owner_kind": "subject",
+        "owner_subject_id": "subject_caleb"
+      },
+      "target": {
+        "host_name": "spine.local",
+        "spine_command": {
+          "path": "/opt/spine/bin/spine-command",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "ledger": {
+          "kind": "path",
+          "path": "/var/lib/spine/ledger.sqlite3"
+        }
+      },
+      "draft_posture": "reject"
+    },
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-install-request-digest.v1",
+      "digest": "82c150c2861c76934ed230732ed490d8264f03d5bb22ba9fd624e12f8614286a"
+    }
+  },
+  "plan": {
+    "artifact_schema": "spine.pack-install-plan.v1",
+    "request_digest": "82c150c2861c76934ed230732ed490d8264f03d5bb22ba9fd624e12f8614286a",
+    "request": {
+      "selection": {
+        "mode": "archetypes",
+        "archetype_keys": [
+          "lesson",
+          "medical_appointment"
+        ]
+      },
+      "owner": {
+        "owner_kind": "subject",
+        "owner_subject_id": "subject_caleb"
+      },
+      "target": {
+        "host_name": "spine.local",
+        "spine_command": {
+          "path": "/opt/spine/bin/spine-command",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "ledger": {
+          "kind": "path",
+          "path": "/var/lib/spine/ledger.sqlite3"
+        }
+      },
+      "draft_posture": "reject"
+    },
+    "pack": {
+      "manifest_schema": "spine.pack-manifest.v1",
+      "pack_id": "kinflow-starter",
+      "version": "1.0.0",
+      "status": "released",
+      "manifest_digest": "1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "closure": {
+      "archetype_keys": [
+        "lesson",
+        "medical_appointment"
+      ],
+      "profile_keys": [
+        "lesson_standard",
+        "medical_appointment_standard"
+      ],
+      "binding_archetype_keys": [
+        "lesson",
+        "medical_appointment"
+      ]
+    },
+    "environment": {
+      "runtime_version": "0.3.0",
+      "ledger_schema_implemented": "12",
+      "ledger_schema_current": "12",
+      "advertised_contracts": [
+        "spine.canonical-json.v1",
+        "spine.item-archetypes.v1",
+        "spine.notification-profile-bindings.v1",
+        "spine.notification-profile-catalog-cursor.v1",
+        "spine.notification-profile-metadata-update.v1",
+        "spine.notification-profile-readback.v1",
+        "spine.notification-profiles.v1",
+        "spine.system-info.v2",
+        "spine.tickerd-compatibility.v1"
+      ]
+    },
+    "required_execution_contracts": [
+      "spine.canonical-json.v1",
+      "spine.item-archetypes.v1",
+      "spine.notification-profile-bindings.v1",
+      "spine.notification-profile-catalog-cursor.v1",
+      "spine.notification-profile-metadata-update.v1",
+      "spine.notification-profile-readback.v1",
+      "spine.notification-profiles.v1",
+      "spine.system-info.v2",
+      "spine.tickerd-compatibility.v1"
+    ],
+    "catalog_snapshots": [
+      {
+        "catalog": "archetypes",
+        "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      {
+        "catalog": "profiles",
+        "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+      },
+      {
+        "catalog": "bindings",
+        "digest": "4444444444444444444444444444444444444444444444444444444444444444"
+      }
+    ],
+    "classifications": [
+      {
+        "object_kind": "archetype",
+        "object_key": "archetype:lesson",
+        "classification": "missing",
+        "desired": {
+          "contract": "spine.item-archetypes.v1",
+          "shape": "archetypeSemantics",
+          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled instructional session.\",\"display_name\":\"Lesson\"}",
+          "digest": "2a37dbc7c1306f95fb483ebe24e9610800ed6a899d9f462c1138da88b4ddb40e"
+        },
+        "observed": null,
+        "blocked_reason": null,
+        "identity": null
+      },
+      {
+        "object_kind": "archetype",
+        "object_key": "archetype:medical_appointment",
+        "classification": "equivalent",
+        "desired": {
+          "contract": "spine.item-archetypes.v1",
+          "shape": "archetypeSemantics",
+          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled health appointment.\",\"display_name\":\"Medical appointment\"}",
+          "digest": "57e064093ddfe44f39852db9646e59b174be0d6564a9f179a0cb40892e0453ad"
+        },
+        "observed": {
+          "contract": "spine.item-archetypes.v1",
+          "shape": "archetypeSemantics",
+          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled health appointment.\",\"display_name\":\"Medical appointment\"}",
+          "digest": "57e064093ddfe44f39852db9646e59b174be0d6564a9f179a0cb40892e0453ad"
+        },
+        "blocked_reason": null,
+        "identity": {
+          "catalog_id": "archetype_medical"
+        }
+      },
+      {
+        "object_kind": "profile",
+        "object_key": "profile:lesson_standard",
+        "classification": "missing",
+        "desired": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a lesson.\",\"display_name\":\"Lesson standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "3491f7f210cc832c8a458afbaa483a75533c1c8e414e068674d25a784d7f878e"
+        },
+        "observed": null,
+        "blocked_reason": null,
+        "identity": null
+      },
+      {
+        "object_kind": "profile",
+        "object_key": "profile:medical_appointment_standard",
+        "classification": "drifted",
+        "desired": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "2730a76b06eb2177a31f15ddfb71a66b0fef544d46be6635cdc9e6c12c537c57"
+        },
+        "observed": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-10800\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "13bf40b8b264ea213aaa2ce8444c7308eaf25b2103f55beb9197d39b5d81005c"
+        },
+        "blocked_reason": null,
+        "identity": {
+          "catalog_id": "profile_medical"
+        }
+      },
+      {
+        "object_kind": "binding",
+        "object_key": "binding:lesson",
+        "classification": "missing",
+        "desired": {
+          "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSemantics",
+          "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"lesson_standard\"}",
+          "digest": "0ea793dbe2abdde6814f0a5653c72a3b5292148c3f33676ebe0c0ae367c16238"
+        },
+        "observed": null,
+        "blocked_reason": null,
+        "identity": {
+          "item_archetype_id": null,
+          "notification_profile_id": null,
+          "observed_binding": null
+        }
+      },
+      {
+        "object_kind": "binding",
+        "object_key": "binding:medical_appointment",
+        "classification": "missing",
+        "desired": {
+          "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSemantics",
+          "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"medical_appointment_standard\"}",
+          "digest": "d0b1caec0a9c6136fae265750d70d0000cae9b4b82cf256f8fe2de11d1e66661"
+        },
+        "observed": null,
+        "blocked_reason": null,
+        "identity": {
+          "item_archetype_id": "archetype_medical",
+          "notification_profile_id": "profile_medical",
+          "observed_binding": null
+        }
+      }
+    ],
+    "actions": [
+      {
+        "command": "item_archetype.create",
+        "object_key": "archetype:lesson",
+        "change_kind": "create",
+        "desired": {
+          "contract": "spine.item-archetypes.v1",
+          "shape": "archetypeSemantics",
+          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled instructional session.\",\"display_name\":\"Lesson\"}",
+          "digest": "2a37dbc7c1306f95fb483ebe24e9610800ed6a899d9f462c1138da88b4ddb40e"
+        },
+        "expected": null,
+        "request_template": {
+          "contract": "spine.item-archetypes.v1",
+          "shape": "archetypeCreateTemplate",
+          "canonical_json": "{\"archetype_key\":\"lesson\",\"contract_version\":\"spine.item-archetypes.v1\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"subject_caleb\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled instructional session.\",\"display_name\":\"Lesson\"}}",
+          "digest": "724d955fd6c21fee9961a03e23703ff9bf8d09e5f2743fc7bd19c0b73955a2f5"
+        },
+        "ordinal": "0",
+        "action_id": "action-000000"
+      },
+      {
+        "command": "notification_profile.create",
+        "object_key": "profile:lesson_standard",
+        "change_kind": "create",
+        "desired": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a lesson.\",\"display_name\":\"Lesson standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "3491f7f210cc832c8a458afbaa483a75533c1c8e414e068674d25a784d7f878e"
+        },
+        "expected": null,
+        "request_template": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileCreateTemplate",
+          "canonical_json": "{\"contract_version\":\"spine.notification-profiles.v1\",\"description\":\"Preparation for a lesson.\",\"display_name\":\"Lesson standard\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"subject_caleb\"},\"profile_key\":\"lesson_standard\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "05c29eb625a8940e0659d214a1b0f6b27c92a551fd254f54e1a70627069de0e4"
+        },
+        "ordinal": "1",
+        "action_id": "action-000001"
+      },
+      {
+        "ordinal": "2",
+        "action_id": "action-000002",
+        "command": "notification_profile.revise",
+        "object_key": "profile:medical_appointment_standard",
+        "change_kind": "update",
+        "desired": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "2730a76b06eb2177a31f15ddfb71a66b0fef544d46be6635cdc9e6c12c537c57"
+        },
+        "expected": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-10800\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "13bf40b8b264ea213aaa2ce8444c7308eaf25b2103f55beb9197d39b5d81005c"
+        },
+        "request_template": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileReviseTemplate",
+          "canonical_json": "{\"contract_version\":\"spine.notification-profiles.v1\",\"expected_current_revision_id\":\"profile_revision_old\",\"notification_profile_id\":\"profile_medical\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "4db0022a5619d95952c3ee0ca4b6fe431cf3aeb9b3ba8e8ff3579b33743822f1"
+        }
+      },
+      {
+        "command": "notification_profile.binding.set",
+        "object_key": "binding:lesson",
+        "change_kind": "create",
+        "desired": {
+          "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSemantics",
+          "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"lesson_standard\"}",
+          "digest": "0ea793dbe2abdde6814f0a5653c72a3b5292148c3f33676ebe0c0ae367c16238"
+        },
+        "expected": null,
+        "request_template": {
+          "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSetTemplate",
+          "canonical_json": "{\"contract_version\":\"spine.notification-profile-bindings.v1\",\"item_archetype_id\":\"${spine-pack.result:action-000000:item_archetype_id}\",\"notification_profile_id\":\"${spine-pack.result:action-000001:notification_profile_id}\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"subject_caleb\"}}",
+          "digest": "e1b28dec0818a14e4c3f7a19aea4ab1cdea9425940716159e132fb43146358b5"
+        },
+        "ordinal": "3",
+        "action_id": "action-000003"
+      },
+      {
+        "ordinal": "4",
+        "action_id": "action-000004",
+        "command": "notification_profile.binding.set",
+        "object_key": "binding:medical_appointment",
+        "change_kind": "create",
+        "desired": {
+          "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSemantics",
+          "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"medical_appointment_standard\"}",
+          "digest": "d0b1caec0a9c6136fae265750d70d0000cae9b4b82cf256f8fe2de11d1e66661"
+        },
+        "expected": null,
+        "request_template": {
+          "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSetTemplate",
+          "canonical_json": "{\"contract_version\":\"spine.notification-profile-bindings.v1\",\"item_archetype_id\":\"archetype_medical\",\"notification_profile_id\":\"profile_medical\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"subject_caleb\"}}",
+          "digest": "3f877067f398c79288cbbb57e6757a605fd4e09a3e921052a20c9bde2c02705a"
+        }
+      }
+    ],
+    "decision_action_ids": [
+      "action-000002"
+    ],
+    "blocked_object_keys": [],
+    "apply_eligible": true,
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-install-plan-digest.v1",
+      "digest": "8e6991e7395d951cc2a3244b1fe20feb0557a93697b21c841458ebff0ce4fd4a"
+    }
+  },
+  "approval": {
+    "artifact_schema": "spine.pack-install-approval.v1",
+    "plan_digest": "8e6991e7395d951cc2a3244b1fe20feb0557a93697b21c841458ebff0ce4fd4a",
+    "approve_complete_plan": true,
+    "acknowledge_single_operator": true,
+    "authorized_update_action_ids": [
+      "action-000002"
+    ],
+    "execution": {
+      "execution_id": "123e4567-e89b-42d3-a456-426614174000",
+      "actor_subject_id": "subject_caleb",
+      "action_timestamp_utc": "2026-09-09T08:00:00Z"
+    },
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-install-approval-digest.v1",
+      "digest": "3fa91c7a93e38c5b03aee182646a0de1ad6e2f8bf44b63d058cd3780110489d0"
+    }
+  },
+  "binding_checkpoint": {
+    "artifact_schema": "spine.pack-apply-checkpoint.v1",
+    "plan_digest": "8e6991e7395d951cc2a3244b1fe20feb0557a93697b21c841458ebff0ce4fd4a",
+    "approval_digest": "3fa91c7a93e38c5b03aee182646a0de1ad6e2f8bf44b63d058cd3780110489d0",
+    "execution": {
+      "execution_id": "123e4567-e89b-42d3-a456-426614174000",
+      "actor_subject_id": "subject_caleb",
+      "action_timestamp_utc": "2026-09-09T08:00:00Z"
+    },
+    "accepted_responses": [
+      {
+        "action_id": "action-000000",
+        "command": "item_archetype.create",
+        "command_id": "spack_cf4612236f3e9b54b9b7c6fc79b6738c7c3f61eb222db3271b7ca7c9eb56fe5b",
+        "outcome": "accepted",
+        "response_contract": "spine.item-archetypes.v1",
+        "effect": "item_archetype_created",
+        "generated_ids": [
+          {
+            "name": "item_archetype_id",
+            "value": "created_archetype_lesson"
+          },
+          {
+            "name": "item_archetype_revision_id",
+            "value": "created_archetype_revision_lesson"
+          }
+        ],
+        "command_receipt_id": "receipt_0",
+        "semantic_facts_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+        "response": {
+          "contract": "spine.item-archetypes.v1",
+          "shape": "archetypeCreateResponse",
+          "canonical_json": "{\"archetype_key\":\"lesson\",\"command\":\"item_archetype.create\",\"effect\":\"item_archetype_created\",\"item_archetype_id\":\"created_archetype_lesson\",\"item_archetype_revision_id\":\"created_archetype_revision_lesson\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_cf4612236f3e9b54b9b7c6fc79b6738c7c3f61eb222db3271b7ca7c9eb56fe5b\",\"command_receipt_id\":\"receipt_0\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"item_archetype_created\",\"semantic_facts_hash\":\"5555555555555555555555555555555555555555555555555555555555555555\"},\"response_contract\":\"spine.item-archetypes.v1\",\"revision_number\":\"1\",\"status\":\"active\"}",
+          "digest": "3eba206cc85cb9c0b02fe85d355dbcf41b023462adf1f3b84e38bdd44656111c"
+        }
+      },
+      {
+        "action_id": "action-000001",
+        "command": "notification_profile.create",
+        "command_id": "spack_8e9a1620a31da36054f6d57b0ebacc4c6c4dfa2bcca68112df94c58bceba1f17",
+        "outcome": "accepted",
+        "response_contract": "spine.notification-profiles.v1",
+        "effect": "notification_profile_created",
+        "generated_ids": [
+          {
+            "name": "notification_profile_id",
+            "value": "created_profile_lesson_standard"
+          },
+          {
+            "name": "notification_profile_revision_id",
+            "value": "created_profile_revision_lesson_standard"
+          }
+        ],
+        "command_receipt_id": "receipt_1",
+        "semantic_facts_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+        "response": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileCreateResponse",
+          "canonical_json": "{\"command\":\"notification_profile.create\",\"effect\":\"notification_profile_created\",\"normalized_revision_hash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"notification_profile_id\":\"created_profile_lesson_standard\",\"notification_profile_revision_id\":\"created_profile_revision_lesson_standard\",\"ok\":true,\"profile_key\":\"lesson_standard\",\"receipt\":{\"command_id\":\"spack_8e9a1620a31da36054f6d57b0ebacc4c6c4dfa2bcca68112df94c58bceba1f17\",\"command_receipt_id\":\"receipt_1\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"notification_profile_created\",\"semantic_facts_hash\":\"6666666666666666666666666666666666666666666666666666666666666666\"},\"response_contract\":\"spine.notification-profiles.v1\",\"revision_number\":\"1\",\"status\":\"active\"}",
+          "digest": "709d3762ebdda7a54fdde0ae9bc6a565a12862c57ae9649009e9d7c99e415925"
+        }
+      },
+      {
+        "action_id": "action-000002",
+        "command": "notification_profile.revise",
+        "command_id": "spack_dafb637565133947221a6d3b09063e8555ce492b326a7b4ca58c596597c4a7a1",
+        "outcome": "accepted",
+        "response_contract": "spine.notification-profiles.v1",
+        "effect": "notification_profile_revised",
+        "generated_ids": [
+          {
+            "name": "notification_profile_id",
+            "value": "profile_medical"
+          },
+          {
+            "name": "notification_profile_revision_id",
+            "value": "profile_revision_new"
+          }
+        ],
+        "command_receipt_id": "receipt_2",
+        "semantic_facts_hash": "7777777777777777777777777777777777777777777777777777777777777777",
+        "response": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileReviseResponse",
+          "canonical_json": "{\"command\":\"notification_profile.revise\",\"effect\":\"notification_profile_revised\",\"normalized_revision_hash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"notification_profile_id\":\"profile_medical\",\"notification_profile_revision_id\":\"profile_revision_new\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_dafb637565133947221a6d3b09063e8555ce492b326a7b4ca58c596597c4a7a1\",\"command_receipt_id\":\"receipt_2\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"notification_profile_revised\",\"semantic_facts_hash\":\"7777777777777777777777777777777777777777777777777777777777777777\"},\"response_contract\":\"spine.notification-profiles.v1\",\"revision_number\":\"2\",\"status\":\"active\"}",
+          "digest": "bf85c86a107a11213815a862dbf1e8e4a1c904b886a6a99572b1957bbba41b7f"
+        }
+      }
+    ],
+    "unresolved_submission": {
+      "action_id": "action-000003",
+      "command_id": "spack_5b3020156bbd4d7b2a82122769bb44fe588dcf0fd1ccbcaff7f6bafadad978bc",
+      "submission_state": "prepared_or_submitted",
+      "request": {
+        "contract": "spine.notification-profile-bindings.v1",
+        "shape": "bindingSetRequest",
+        "canonical_json": "{\"action_timestamp_utc\":\"2026-09-09T08:00:00Z\",\"actor_subject_id\":\"subject_caleb\",\"command_id\":\"spack_5b3020156bbd4d7b2a82122769bb44fe588dcf0fd1ccbcaff7f6bafadad978bc\",\"contract_version\":\"spine.notification-profile-bindings.v1\",\"item_archetype_id\":\"created_archetype_lesson\",\"notification_profile_id\":\"created_profile_lesson_standard\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"subject_caleb\"}}",
+        "digest": "50cb1859cb9766d5d71660cd7e1620693a950c3c81f5772a79ded1bf92f102ab"
+      }
+    },
+    "next_action_id": "action-000003",
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-apply-checkpoint-digest.v1",
+      "digest": "34588e2568e5aecefd4d2c8162499af7e21b8405bc5e0a4759e5998c38d484ae"
+    }
+  },
+  "applied_result": {
+    "artifact_schema": "spine.pack-apply-result.v1",
+    "plan_digest": "8e6991e7395d951cc2a3244b1fe20feb0557a93697b21c841458ebff0ce4fd4a",
+    "approval_digest": "3fa91c7a93e38c5b03aee182646a0de1ad6e2f8bf44b63d058cd3780110489d0",
+    "execution": {
+      "execution_id": "123e4567-e89b-42d3-a456-426614174000",
+      "actor_subject_id": "subject_caleb",
+      "action_timestamp_utc": "2026-09-09T08:00:00Z"
+    },
+    "state": "applied",
+    "accepted_responses": [
+      {
+        "action_id": "action-000000",
+        "command": "item_archetype.create",
+        "command_id": "spack_cf4612236f3e9b54b9b7c6fc79b6738c7c3f61eb222db3271b7ca7c9eb56fe5b",
+        "outcome": "accepted",
+        "response_contract": "spine.item-archetypes.v1",
+        "effect": "item_archetype_created",
+        "generated_ids": [
+          {
+            "name": "item_archetype_id",
+            "value": "created_archetype_lesson"
+          },
+          {
+            "name": "item_archetype_revision_id",
+            "value": "created_archetype_revision_lesson"
+          }
+        ],
+        "command_receipt_id": "receipt_0",
+        "semantic_facts_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+        "response": {
+          "contract": "spine.item-archetypes.v1",
+          "shape": "archetypeCreateResponse",
+          "canonical_json": "{\"archetype_key\":\"lesson\",\"command\":\"item_archetype.create\",\"effect\":\"item_archetype_created\",\"item_archetype_id\":\"created_archetype_lesson\",\"item_archetype_revision_id\":\"created_archetype_revision_lesson\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_cf4612236f3e9b54b9b7c6fc79b6738c7c3f61eb222db3271b7ca7c9eb56fe5b\",\"command_receipt_id\":\"receipt_0\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"item_archetype_created\",\"semantic_facts_hash\":\"5555555555555555555555555555555555555555555555555555555555555555\"},\"response_contract\":\"spine.item-archetypes.v1\",\"revision_number\":\"1\",\"status\":\"active\"}",
+          "digest": "3eba206cc85cb9c0b02fe85d355dbcf41b023462adf1f3b84e38bdd44656111c"
+        }
+      },
+      {
+        "action_id": "action-000001",
+        "command": "notification_profile.create",
+        "command_id": "spack_8e9a1620a31da36054f6d57b0ebacc4c6c4dfa2bcca68112df94c58bceba1f17",
+        "outcome": "accepted",
+        "response_contract": "spine.notification-profiles.v1",
+        "effect": "notification_profile_created",
+        "generated_ids": [
+          {
+            "name": "notification_profile_id",
+            "value": "created_profile_lesson_standard"
+          },
+          {
+            "name": "notification_profile_revision_id",
+            "value": "created_profile_revision_lesson_standard"
+          }
+        ],
+        "command_receipt_id": "receipt_1",
+        "semantic_facts_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+        "response": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileCreateResponse",
+          "canonical_json": "{\"command\":\"notification_profile.create\",\"effect\":\"notification_profile_created\",\"normalized_revision_hash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"notification_profile_id\":\"created_profile_lesson_standard\",\"notification_profile_revision_id\":\"created_profile_revision_lesson_standard\",\"ok\":true,\"profile_key\":\"lesson_standard\",\"receipt\":{\"command_id\":\"spack_8e9a1620a31da36054f6d57b0ebacc4c6c4dfa2bcca68112df94c58bceba1f17\",\"command_receipt_id\":\"receipt_1\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"notification_profile_created\",\"semantic_facts_hash\":\"6666666666666666666666666666666666666666666666666666666666666666\"},\"response_contract\":\"spine.notification-profiles.v1\",\"revision_number\":\"1\",\"status\":\"active\"}",
+          "digest": "709d3762ebdda7a54fdde0ae9bc6a565a12862c57ae9649009e9d7c99e415925"
+        }
+      },
+      {
+        "action_id": "action-000002",
+        "command": "notification_profile.revise",
+        "command_id": "spack_dafb637565133947221a6d3b09063e8555ce492b326a7b4ca58c596597c4a7a1",
+        "outcome": "accepted",
+        "response_contract": "spine.notification-profiles.v1",
+        "effect": "notification_profile_revised",
+        "generated_ids": [
+          {
+            "name": "notification_profile_id",
+            "value": "profile_medical"
+          },
+          {
+            "name": "notification_profile_revision_id",
+            "value": "profile_revision_new"
+          }
+        ],
+        "command_receipt_id": "receipt_2",
+        "semantic_facts_hash": "7777777777777777777777777777777777777777777777777777777777777777",
+        "response": {
+          "contract": "spine.notification-profiles.v1",
+          "shape": "profileReviseResponse",
+          "canonical_json": "{\"command\":\"notification_profile.revise\",\"effect\":\"notification_profile_revised\",\"normalized_revision_hash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"notification_profile_id\":\"profile_medical\",\"notification_profile_revision_id\":\"profile_revision_new\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_dafb637565133947221a6d3b09063e8555ce492b326a7b4ca58c596597c4a7a1\",\"command_receipt_id\":\"receipt_2\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"notification_profile_revised\",\"semantic_facts_hash\":\"7777777777777777777777777777777777777777777777777777777777777777\"},\"response_contract\":\"spine.notification-profiles.v1\",\"revision_number\":\"2\",\"status\":\"active\"}",
+          "digest": "bf85c86a107a11213815a862dbf1e8e4a1c904b886a6a99572b1957bbba41b7f"
+        }
+      },
+      {
+        "action_id": "action-000003",
+        "command": "notification_profile.binding.set",
+        "command_id": "spack_5b3020156bbd4d7b2a82122769bb44fe588dcf0fd1ccbcaff7f6bafadad978bc",
+        "outcome": "accepted",
+        "response_contract": "spine.notification-profile-bindings.v1",
+        "effect": "notification_profile_binding_set",
+        "generated_ids": [
+          {
+            "name": "item_archetype_id",
+            "value": "created_archetype_lesson"
+          },
+          {
+            "name": "notification_profile_binding_id",
+            "value": "binding_lesson"
+          },
+          {
+            "name": "notification_profile_id",
+            "value": "created_profile_lesson_standard"
+          }
+        ],
+        "command_receipt_id": "receipt_3",
+        "semantic_facts_hash": "8888888888888888888888888888888888888888888888888888888888888888",
+        "response": {
+          "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSetResponse",
+          "canonical_json": "{\"command\":\"notification_profile.binding.set\",\"compatible_item_types\":[\"event\"],\"effect\":\"notification_profile_binding_set\",\"item_archetype_id\":\"created_archetype_lesson\",\"notification_profile_binding_id\":\"binding_lesson\",\"notification_profile_id\":\"created_profile_lesson_standard\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_5b3020156bbd4d7b2a82122769bb44fe588dcf0fd1ccbcaff7f6bafadad978bc\",\"command_receipt_id\":\"receipt_3\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"notification_profile_binding_set\",\"semantic_facts_hash\":\"8888888888888888888888888888888888888888888888888888888888888888\"},\"response_contract\":\"spine.notification-profile-bindings.v1\",\"status\":\"active\"}",
+          "digest": "44d24a85bd180da3154500c4df1df41ce7599d99754c413145bd9baabba720a0"
+        }
+      },
+      {
+        "action_id": "action-000004",
+        "command": "notification_profile.binding.set",
+        "command_id": "spack_64237ab9b5e87227e2d0402c6a5cbfaaf204e80707cbe574fe25d470419074e0",
+        "outcome": "accepted",
+        "response_contract": "spine.notification-profile-bindings.v1",
+        "effect": "notification_profile_binding_set",
+        "generated_ids": [
+          {
+            "name": "item_archetype_id",
+            "value": "archetype_medical"
+          },
+          {
+            "name": "notification_profile_binding_id",
+            "value": "binding_medical"
+          },
+          {
+            "name": "notification_profile_id",
+            "value": "profile_medical"
+          }
+        ],
+        "command_receipt_id": "receipt_4",
+        "semantic_facts_hash": "9999999999999999999999999999999999999999999999999999999999999999",
+        "response": {
+          "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSetResponse",
+          "canonical_json": "{\"command\":\"notification_profile.binding.set\",\"compatible_item_types\":[\"event\"],\"effect\":\"notification_profile_binding_set\",\"item_archetype_id\":\"archetype_medical\",\"notification_profile_binding_id\":\"binding_medical\",\"notification_profile_id\":\"profile_medical\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_64237ab9b5e87227e2d0402c6a5cbfaaf204e80707cbe574fe25d470419074e0\",\"command_receipt_id\":\"receipt_4\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"notification_profile_binding_set\",\"semantic_facts_hash\":\"9999999999999999999999999999999999999999999999999999999999999999\"},\"response_contract\":\"spine.notification-profile-bindings.v1\",\"status\":\"active\"}",
+          "digest": "ad7c9f7e97b824436c03920dc13ff80bf576073ba81d2186ec11625c4541351c"
+        }
+      }
+    ],
+    "failure": null,
+    "unattempted_action_ids": [],
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-apply-result-digest.v1",
+      "digest": "bbfb208344b3dbeb3782eff82babc60d4ff6b318fbfcf5dd31684e9928bbec64"
+    }
+  }
+}

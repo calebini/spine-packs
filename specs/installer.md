@@ -118,18 +118,18 @@ MAY be offered explicitly; JSON remains the automation contract.
 No operation may prompt. Missing choices fail closed. Full-pack selection MUST
 be explicit rather than a default.
 
-The intended planning forms are conceptually:
+The request file is the authoritative input, including selection:
 
 ```sh
-spine-packs plan --manifest PATH --all --request REQUEST --output PLAN
-spine-packs plan --manifest PATH --archetype KEY --archetype KEY --request REQUEST --output PLAN
+spine-packs plan --manifest PATH --request REQUEST --output PLAN
 ```
 
-A request file is the durable control surface. Repeated CLI selection flags are
-convenience input that MUST compile to the same normalized request. The
-artifact field layouts are fixed by `specs/installer-artifacts.md`. Final flag
-parsing mechanics remain an implementation choice, but the two routes MUST NOT
-have different semantics.
+Optional `--all` or repeated `--archetype KEY` flags are assertions about that
+input. They MUST normalize to exactly its selection. Repeated archetype flags
+are sorted and deduplicated before comparison; supplying both flag modes, an
+empty key, or a mismatch fails as `invalid_cli_or_artifact_input` before
+catalog reads. Flags never override or repair the saved request or its digest.
+With no selection flags, the validated request alone supplies selection.
 
 `apply` MUST consume a saved plan and an explicit approval. It MUST NOT accept
 fresh pack-selection flags:
@@ -307,6 +307,13 @@ A selected binding intent is:
   ID; or
 - **drifted** when it points to another profile ID.
 
+The plan MUST preserve the desired keys' resolved owner-local root IDs and
+the observed active binding's ID, archetype ID, and profile ID separately from
+semantic key projections, using the closed identity evidence in
+`specs/installer-artifacts.md` Section 7. Matching projected keys alone MUST NOT
+establish equivalence. Missing roots have no generated ID until Spine creates
+them; their binding requests reference the earlier create action's result.
+
 An authorized missing or drifted binding maps to
 `notification_profile.binding.set`. Historical retired bindings do not cause
 drift. Replacing a binding affects future default resolution only and MUST NOT
@@ -405,7 +412,14 @@ On an initial execution, before the first write, `apply` MUST:
    hashes and every selected precondition;
 7. fail if the plan is stale, blocked, draft-based, or incompletely
    authorized; and
-8. materialize the exact ordered Spine command requests.
+8. validate every ordered command template and its generated-ID references.
+
+Requests whose IDs are already known can be materialized at initial preflight.
+A request consuming an earlier create result MUST be materialized only after
+the required response prefix has been validated, and before its own durable
+pre-submit checkpoint. The shared validation and materialization rules in
+`specs/installer-artifacts.md` Section 7 apply to every command; initial
+preflight MUST NOT guess future generated IDs.
 
 The initial preflight is all-or-nothing: no planned write may occur if any
 selected target fact, original catalog snapshot, or object precondition has

@@ -131,15 +131,20 @@
         "classification": "equivalent",
         "desired": {
           "contract": "spine.item-archetypes.v1",
-          "canonical_json": "{\"key\":\"lesson\"}",
-          "digest": "a5afd0ebee28a5e799eb77c12dbd04ea9ffde5e60652250a6f5541460976065b"
+          "shape": "archetypeSemantics",
+          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled instructional session.\",\"display_name\":\"Lesson\"}",
+          "digest": "2a37dbc7c1306f95fb483ebe24e9610800ed6a899d9f462c1138da88b4ddb40e"
         },
         "observed": {
           "contract": "spine.item-archetypes.v1",
-          "canonical_json": "{\"key\":\"lesson\"}",
-          "digest": "a5afd0ebee28a5e799eb77c12dbd04ea9ffde5e60652250a6f5541460976065b"
+          "shape": "archetypeSemantics",
+          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled instructional session.\",\"display_name\":\"Lesson\"}",
+          "digest": "2a37dbc7c1306f95fb483ebe24e9610800ed6a899d9f462c1138da88b4ddb40e"
         },
-        "blocked_reason": null
+        "blocked_reason": null,
+        "identity": {
+          "catalog_id": "archetype_lesson"
+        }
       },
       {
         "object_kind": "archetype",
@@ -147,15 +152,20 @@
         "classification": "equivalent",
         "desired": {
           "contract": "spine.item-archetypes.v1",
+          "shape": "archetypeSemantics",
           "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled health appointment.\",\"display_name\":\"Medical appointment\"}",
           "digest": "57e064093ddfe44f39852db9646e59b174be0d6564a9f179a0cb40892e0453ad"
         },
         "observed": {
           "contract": "spine.item-archetypes.v1",
+          "shape": "archetypeSemantics",
           "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled health appointment.\",\"display_name\":\"Medical appointment\"}",
           "digest": "57e064093ddfe44f39852db9646e59b174be0d6564a9f179a0cb40892e0453ad"
         },
-        "blocked_reason": null
+        "blocked_reason": null,
+        "identity": {
+          "catalog_id": "archetype_medical"
+        }
       },
       {
         "object_kind": "profile",
@@ -163,15 +173,20 @@
         "classification": "equivalent",
         "desired": {
           "contract": "spine.notification-profiles.v1",
-          "canonical_json": "{\"key\":\"lesson_standard\"}",
-          "digest": "b3b925f486efd75b57bd76603d6518f7595760cd0377f4015ee8160bb610e124"
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a lesson.\",\"display_name\":\"Lesson standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "3491f7f210cc832c8a458afbaa483a75533c1c8e414e068674d25a784d7f878e"
         },
         "observed": {
           "contract": "spine.notification-profiles.v1",
-          "canonical_json": "{\"key\":\"lesson_standard\"}",
-          "digest": "b3b925f486efd75b57bd76603d6518f7595760cd0377f4015ee8160bb610e124"
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a lesson.\",\"display_name\":\"Lesson standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "3491f7f210cc832c8a458afbaa483a75533c1c8e414e068674d25a784d7f878e"
         },
-        "blocked_reason": null
+        "blocked_reason": null,
+        "identity": {
+          "catalog_id": "profile_lesson"
+        }
       },
       {
         "object_kind": "profile",
@@ -179,15 +194,20 @@
         "classification": "drifted",
         "desired": {
           "contract": "spine.notification-profiles.v1",
-          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}",
-          "digest": "133fdbb373c912345280ebda43c92c7e23af3f579f87d49565a876af88ca7851"
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "2730a76b06eb2177a31f15ddfb71a66b0fef544d46be6635cdc9e6c12c537c57"
         },
         "observed": {
           "contract": "spine.notification-profiles.v1",
-          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"templates\":[]}",
-          "digest": "4976d7552cad733dbbf603f6d39a4f4fbc27f383c34eef8ea6eab4cdaede5b4f"
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-10800\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "13bf40b8b264ea213aaa2ce8444c7308eaf25b2103f55beb9197d39b5d81005c"
         },
-        "blocked_reason": null
+        "blocked_reason": null,
+        "identity": {
+          "catalog_id": "profile_medical"
+        }
       },
       {
         "object_kind": "binding",
@@ -195,15 +215,26 @@
         "classification": "equivalent",
         "desired": {
           "contract": "spine.notification-profile-bindings.v1",
-          "canonical_json": "{\"profile_id\":\"profile_lesson\"}",
-          "digest": "d18ae9c6426165c9f5d50ff5060bd231c55a955057e917d7986cd4d673a01810"
+          "shape": "bindingSemantics",
+          "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"lesson_standard\"}",
+          "digest": "0ea793dbe2abdde6814f0a5653c72a3b5292148c3f33676ebe0c0ae367c16238"
         },
         "observed": {
           "contract": "spine.notification-profile-bindings.v1",
-          "canonical_json": "{\"profile_id\":\"profile_lesson\"}",
-          "digest": "d18ae9c6426165c9f5d50ff5060bd231c55a955057e917d7986cd4d673a01810"
+          "shape": "bindingSemantics",
+          "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"lesson_standard\"}",
+          "digest": "0ea793dbe2abdde6814f0a5653c72a3b5292148c3f33676ebe0c0ae367c16238"
         },
-        "blocked_reason": null
+        "blocked_reason": null,
+        "identity": {
+          "item_archetype_id": "archetype_lesson",
+          "notification_profile_id": "profile_lesson",
+          "observed_binding": {
+            "notification_profile_binding_id": "binding_lesson",
+            "item_archetype_id": "archetype_lesson",
+            "notification_profile_id": "profile_lesson"
+          }
+        }
       },
       {
         "object_kind": "binding",
@@ -211,11 +242,17 @@
         "classification": "missing",
         "desired": {
           "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSemantics",
           "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"medical_appointment_standard\"}",
           "digest": "d0b1caec0a9c6136fae265750d70d0000cae9b4b82cf256f8fe2de11d1e66661"
         },
         "observed": null,
-        "blocked_reason": null
+        "blocked_reason": null,
+        "identity": {
+          "item_archetype_id": "archetype_medical",
+          "notification_profile_id": "profile_medical",
+          "observed_binding": null
+        }
       }
     ],
     "actions": [
@@ -227,16 +264,19 @@
         "change_kind": "update",
         "desired": {
           "contract": "spine.notification-profiles.v1",
-          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}",
-          "digest": "133fdbb373c912345280ebda43c92c7e23af3f579f87d49565a876af88ca7851"
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "2730a76b06eb2177a31f15ddfb71a66b0fef544d46be6635cdc9e6c12c537c57"
         },
         "expected": {
           "contract": "spine.notification-profiles.v1",
-          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"templates\":[]}",
-          "digest": "4976d7552cad733dbbf603f6d39a4f4fbc27f383c34eef8ea6eab4cdaede5b4f"
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-10800\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "13bf40b8b264ea213aaa2ce8444c7308eaf25b2103f55beb9197d39b5d81005c"
         },
         "request_template": {
           "contract": "spine.notification-profiles.v1",
+          "shape": "profileReviseTemplate",
           "canonical_json": "{\"contract_version\":\"spine.notification-profiles.v1\",\"expected_current_revision_id\":\"profile_revision_old\",\"notification_profile_id\":\"profile_medical\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
           "digest": "4db0022a5619d95952c3ee0ca4b6fe431cf3aeb9b3ba8e8ff3579b33743822f1"
         }
@@ -249,12 +289,14 @@
         "change_kind": "create",
         "desired": {
           "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSemantics",
           "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"medical_appointment_standard\"}",
           "digest": "d0b1caec0a9c6136fae265750d70d0000cae9b4b82cf256f8fe2de11d1e66661"
         },
         "expected": null,
         "request_template": {
           "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSetTemplate",
           "canonical_json": "{\"contract_version\":\"spine.notification-profile-bindings.v1\",\"item_archetype_id\":\"archetype_medical\",\"notification_profile_id\":\"profile_medical\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"subject_caleb\"}}",
           "digest": "3f877067f398c79288cbbb57e6757a605fd4e09a3e921052a20c9bde2c02705a"
         }
@@ -269,12 +311,12 @@
       "algorithm": "sha256",
       "canonical_json_version": "spine.canonical-json.v1",
       "derivation_version": "spine.pack-install-plan-digest.v1",
-      "digest": "9b4c67add023aa9661ca56a00075fd2a02ea1862ac5d2bd422349ba48047c203"
+      "digest": "354fa28d1313e1edb4809a79e4367b499aa71c77cebf0e6c7f8f2a16cefa27b9"
     }
   },
   "approval": {
     "artifact_schema": "spine.pack-install-approval.v1",
-    "plan_digest": "9b4c67add023aa9661ca56a00075fd2a02ea1862ac5d2bd422349ba48047c203",
+    "plan_digest": "354fa28d1313e1edb4809a79e4367b499aa71c77cebf0e6c7f8f2a16cefa27b9",
     "approve_complete_plan": true,
     "acknowledge_single_operator": true,
     "authorized_update_action_ids": [
@@ -289,13 +331,13 @@
       "algorithm": "sha256",
       "canonical_json_version": "spine.canonical-json.v1",
       "derivation_version": "spine.pack-install-approval-digest.v1",
-      "digest": "44599d04bb4f66c9644468baaf92c0bdfc46b1734c02a8899e47c9682415794c"
+      "digest": "b612edb71ac2598db4eeab8e1e7e16d83e88ef2235585ffd56e20a709b7aca53"
     }
   },
   "uncertain_checkpoint": {
     "artifact_schema": "spine.pack-apply-checkpoint.v1",
-    "plan_digest": "9b4c67add023aa9661ca56a00075fd2a02ea1862ac5d2bd422349ba48047c203",
-    "approval_digest": "44599d04bb4f66c9644468baaf92c0bdfc46b1734c02a8899e47c9682415794c",
+    "plan_digest": "354fa28d1313e1edb4809a79e4367b499aa71c77cebf0e6c7f8f2a16cefa27b9",
+    "approval_digest": "b612edb71ac2598db4eeab8e1e7e16d83e88ef2235585ffd56e20a709b7aca53",
     "execution": {
       "execution_id": "123e4567-e89b-42d3-a456-426614174000",
       "actor_subject_id": "subject_caleb",
@@ -304,12 +346,13 @@
     "accepted_responses": [],
     "unresolved_submission": {
       "action_id": "action-000000",
-      "command_id": "spack_64b098f4b2c145868347d89072079112113df249c5279c5a63404f82afafcb25",
+      "command_id": "spack_eb567e86518848ba3c846359b75df18e6bf4752719b60de5358d770d25143aca",
       "submission_state": "prepared_or_submitted",
       "request": {
         "contract": "spine.notification-profiles.v1",
-        "canonical_json": "{\"action_timestamp_utc\":\"2026-09-09T08:00:00Z\",\"actor_subject_id\":\"subject_caleb\",\"command_id\":\"spack_64b098f4b2c145868347d89072079112113df249c5279c5a63404f82afafcb25\",\"contract_version\":\"spine.notification-profiles.v1\",\"expected_current_revision_id\":\"profile_revision_old\",\"notification_profile_id\":\"profile_medical\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
-        "digest": "1f104fefe03557b202512e5a9e2d1172bef048a9ae2a6aaf4f9cb429c6a7fc1b"
+        "shape": "profileReviseRequest",
+        "canonical_json": "{\"action_timestamp_utc\":\"2026-09-09T08:00:00Z\",\"actor_subject_id\":\"subject_caleb\",\"command_id\":\"spack_eb567e86518848ba3c846359b75df18e6bf4752719b60de5358d770d25143aca\",\"contract_version\":\"spine.notification-profiles.v1\",\"expected_current_revision_id\":\"profile_revision_old\",\"notification_profile_id\":\"profile_medical\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+        "digest": "a03bd02ebfabf792acf5f2291be55de7c7b266ce45a792c96c73df0438d4eab2"
       }
     },
     "next_action_id": "action-000000",
@@ -317,13 +360,13 @@
       "algorithm": "sha256",
       "canonical_json_version": "spine.canonical-json.v1",
       "derivation_version": "spine.pack-apply-checkpoint-digest.v1",
-      "digest": "93648e37cd8f01334abfcce810070ca36469a1b09064ff22729bfc320c4b9e4a"
+      "digest": "609085822d4b86dbbfbf13421d4569ce5bbc07c7138bc6bdce6077d62208f41a"
     }
   },
   "applied_result": {
     "artifact_schema": "spine.pack-apply-result.v1",
-    "plan_digest": "9b4c67add023aa9661ca56a00075fd2a02ea1862ac5d2bd422349ba48047c203",
-    "approval_digest": "44599d04bb4f66c9644468baaf92c0bdfc46b1734c02a8899e47c9682415794c",
+    "plan_digest": "354fa28d1313e1edb4809a79e4367b499aa71c77cebf0e6c7f8f2a16cefa27b9",
+    "approval_digest": "b612edb71ac2598db4eeab8e1e7e16d83e88ef2235585ffd56e20a709b7aca53",
     "execution": {
       "execution_id": "123e4567-e89b-42d3-a456-426614174000",
       "actor_subject_id": "subject_caleb",
@@ -334,11 +377,15 @@
       {
         "action_id": "action-000000",
         "command": "notification_profile.revise",
-        "command_id": "spack_64b098f4b2c145868347d89072079112113df249c5279c5a63404f82afafcb25",
+        "command_id": "spack_eb567e86518848ba3c846359b75df18e6bf4752719b60de5358d770d25143aca",
         "outcome": "compatible_replay",
         "response_contract": "spine.notification-profiles.v1",
-        "effect": "revised",
+        "effect": "notification_profile_revised",
         "generated_ids": [
+          {
+            "name": "notification_profile_id",
+            "value": "profile_medical"
+          },
           {
             "name": "notification_profile_revision_id",
             "value": "profile_revision_new"
@@ -348,29 +395,39 @@
         "semantic_facts_hash": "5555555555555555555555555555555555555555555555555555555555555555",
         "response": {
           "contract": "spine.notification-profiles.v1",
-          "canonical_json": "{\"command\":\"notification_profile.revise\",\"effect\":\"revised\",\"notification_profile_revision_id\":\"profile_revision_new\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_64b098f4b2c145868347d89072079112113df249c5279c5a63404f82afafcb25\",\"command_receipt_id\":\"receipt_0\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"revised\",\"semantic_facts_hash\":\"5555555555555555555555555555555555555555555555555555555555555555\"},\"response_contract\":\"spine.notification-profiles.v1\"}",
-          "digest": "51b304dd017bc06a634b75fb937b3cc1294bcc7dce07216d15490e2f17aceb9b"
+          "shape": "profileReviseResponse",
+          "canonical_json": "{\"command\":\"notification_profile.revise\",\"effect\":\"notification_profile_revised\",\"normalized_revision_hash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"notification_profile_id\":\"profile_medical\",\"notification_profile_revision_id\":\"profile_revision_new\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_eb567e86518848ba3c846359b75df18e6bf4752719b60de5358d770d25143aca\",\"command_receipt_id\":\"receipt_0\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"notification_profile_revised\",\"semantic_facts_hash\":\"5555555555555555555555555555555555555555555555555555555555555555\"},\"response_contract\":\"spine.notification-profiles.v1\",\"revision_number\":\"2\",\"status\":\"active\"}",
+          "digest": "a4b9a1e2f6ba57ef86276dd0bb02c1ef9e2e13ca594890589c2f1a2b7b999dfd"
         }
       },
       {
         "action_id": "action-000001",
         "command": "notification_profile.binding.set",
-        "command_id": "spack_b56dd88ac2668acc5be70aef7fb3fc0561f143cc29a81178c52a0d4c3f4e7582",
+        "command_id": "spack_d4e46a94b98051e6536a18a4faecc87d49c05c5ec662524e38d73acaeefcf49f",
         "outcome": "accepted",
         "response_contract": "spine.notification-profile-bindings.v1",
-        "effect": "created",
+        "effect": "notification_profile_binding_set",
         "generated_ids": [
+          {
+            "name": "item_archetype_id",
+            "value": "archetype_medical"
+          },
           {
             "name": "notification_profile_binding_id",
             "value": "binding_medical"
+          },
+          {
+            "name": "notification_profile_id",
+            "value": "profile_medical"
           }
         ],
         "command_receipt_id": "receipt_1",
         "semantic_facts_hash": "6666666666666666666666666666666666666666666666666666666666666666",
         "response": {
           "contract": "spine.notification-profile-bindings.v1",
-          "canonical_json": "{\"command\":\"notification_profile.binding.set\",\"effect\":\"created\",\"notification_profile_binding_id\":\"binding_medical\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_b56dd88ac2668acc5be70aef7fb3fc0561f143cc29a81178c52a0d4c3f4e7582\",\"command_receipt_id\":\"receipt_1\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"created\",\"semantic_facts_hash\":\"6666666666666666666666666666666666666666666666666666666666666666\"},\"response_contract\":\"spine.notification-profile-bindings.v1\"}",
-          "digest": "f962acbfa1d6cd06ca15e2f1f37829141357560c914901a09b122179f58e0d9e"
+          "shape": "bindingSetResponse",
+          "canonical_json": "{\"command\":\"notification_profile.binding.set\",\"compatible_item_types\":[\"event\"],\"effect\":\"notification_profile_binding_set\",\"item_archetype_id\":\"archetype_medical\",\"notification_profile_binding_id\":\"binding_medical\",\"notification_profile_id\":\"profile_medical\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_d4e46a94b98051e6536a18a4faecc87d49c05c5ec662524e38d73acaeefcf49f\",\"command_receipt_id\":\"receipt_1\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"notification_profile_binding_set\",\"semantic_facts_hash\":\"6666666666666666666666666666666666666666666666666666666666666666\"},\"response_contract\":\"spine.notification-profile-bindings.v1\",\"status\":\"active\"}",
+          "digest": "cc73e0c89dfa6d2344768b09bc53869775f3fbc8de23ba9bc42b73c57d1fb51c"
         }
       }
     ],
@@ -380,13 +437,13 @@
       "algorithm": "sha256",
       "canonical_json_version": "spine.canonical-json.v1",
       "derivation_version": "spine.pack-apply-result-digest.v1",
-      "digest": "7538d9162d959713dbc9a57919a3e2e074c26496b07cfa0d5ce75974458f70ca"
+      "digest": "b2854dd4715ecb93564aef182318f0fb4b59178433b3f6c289ecba0d79d134de"
     }
   },
   "partial_result": {
     "artifact_schema": "spine.pack-apply-result.v1",
-    "plan_digest": "9b4c67add023aa9661ca56a00075fd2a02ea1862ac5d2bd422349ba48047c203",
-    "approval_digest": "44599d04bb4f66c9644468baaf92c0bdfc46b1734c02a8899e47c9682415794c",
+    "plan_digest": "354fa28d1313e1edb4809a79e4367b499aa71c77cebf0e6c7f8f2a16cefa27b9",
+    "approval_digest": "b612edb71ac2598db4eeab8e1e7e16d83e88ef2235585ffd56e20a709b7aca53",
     "execution": {
       "execution_id": "123e4567-e89b-42d3-a456-426614174000",
       "actor_subject_id": "subject_caleb",
@@ -397,11 +454,15 @@
       {
         "action_id": "action-000000",
         "command": "notification_profile.revise",
-        "command_id": "spack_64b098f4b2c145868347d89072079112113df249c5279c5a63404f82afafcb25",
+        "command_id": "spack_eb567e86518848ba3c846359b75df18e6bf4752719b60de5358d770d25143aca",
         "outcome": "compatible_replay",
         "response_contract": "spine.notification-profiles.v1",
-        "effect": "revised",
+        "effect": "notification_profile_revised",
         "generated_ids": [
+          {
+            "name": "notification_profile_id",
+            "value": "profile_medical"
+          },
           {
             "name": "notification_profile_revision_id",
             "value": "profile_revision_new"
@@ -411,8 +472,9 @@
         "semantic_facts_hash": "5555555555555555555555555555555555555555555555555555555555555555",
         "response": {
           "contract": "spine.notification-profiles.v1",
-          "canonical_json": "{\"command\":\"notification_profile.revise\",\"effect\":\"revised\",\"notification_profile_revision_id\":\"profile_revision_new\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_64b098f4b2c145868347d89072079112113df249c5279c5a63404f82afafcb25\",\"command_receipt_id\":\"receipt_0\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"revised\",\"semantic_facts_hash\":\"5555555555555555555555555555555555555555555555555555555555555555\"},\"response_contract\":\"spine.notification-profiles.v1\"}",
-          "digest": "51b304dd017bc06a634b75fb937b3cc1294bcc7dce07216d15490e2f17aceb9b"
+          "shape": "profileReviseResponse",
+          "canonical_json": "{\"command\":\"notification_profile.revise\",\"effect\":\"notification_profile_revised\",\"normalized_revision_hash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"notification_profile_id\":\"profile_medical\",\"notification_profile_revision_id\":\"profile_revision_new\",\"ok\":true,\"receipt\":{\"command_id\":\"spack_eb567e86518848ba3c846359b75df18e6bf4752719b60de5358d770d25143aca\",\"command_receipt_id\":\"receipt_0\",\"created_at_utc\":\"2026-09-09T08:00:00Z\",\"effect\":\"notification_profile_revised\",\"semantic_facts_hash\":\"5555555555555555555555555555555555555555555555555555555555555555\"},\"response_contract\":\"spine.notification-profiles.v1\",\"revision_number\":\"2\",\"status\":\"active\"}",
+          "digest": "a4b9a1e2f6ba57ef86276dd0bb02c1ef9e2e13ca594890589c2f1a2b7b999dfd"
         }
       }
     ],
@@ -435,13 +497,13 @@
       "algorithm": "sha256",
       "canonical_json_version": "spine.canonical-json.v1",
       "derivation_version": "spine.pack-apply-result-digest.v1",
-      "digest": "3eef7ff8862e7ea63e85358318209449fd7229af96097c8cddd7b6f6557f8a75"
+      "digest": "e216a18a1c7c6118879aa3994744284725ffc77c6961363b0cc600b575658524"
     }
   },
   "verification": {
     "artifact_schema": "spine.pack-verification-result.v1",
-    "plan_digest": "9b4c67add023aa9661ca56a00075fd2a02ea1862ac5d2bd422349ba48047c203",
-    "apply_result_digest": "7538d9162d959713dbc9a57919a3e2e074c26496b07cfa0d5ce75974458f70ca",
+    "plan_digest": "354fa28d1313e1edb4809a79e4367b499aa71c77cebf0e6c7f8f2a16cefa27b9",
+    "apply_result_digest": "b2854dd4715ecb93564aef182318f0fb4b59178433b3f6c289ecba0d79d134de",
     "pack": {
       "manifest_schema": "spine.pack-manifest.v1",
       "pack_id": "kinflow-starter",
@@ -511,8 +573,9 @@
         "state": "equivalent",
         "observed": {
           "contract": "spine.item-archetypes.v1",
-          "canonical_json": "{\"key\":\"lesson\"}",
-          "digest": "a5afd0ebee28a5e799eb77c12dbd04ea9ffde5e60652250a6f5541460976065b"
+          "shape": "archetypeSemantics",
+          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled instructional session.\",\"display_name\":\"Lesson\"}",
+          "digest": "2a37dbc7c1306f95fb483ebe24e9610800ed6a899d9f462c1138da88b4ddb40e"
         }
       },
       {
@@ -521,6 +584,7 @@
         "state": "equivalent",
         "observed": {
           "contract": "spine.item-archetypes.v1",
+          "shape": "archetypeSemantics",
           "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled health appointment.\",\"display_name\":\"Medical appointment\"}",
           "digest": "57e064093ddfe44f39852db9646e59b174be0d6564a9f179a0cb40892e0453ad"
         }
@@ -531,8 +595,9 @@
         "state": "equivalent",
         "observed": {
           "contract": "spine.notification-profiles.v1",
-          "canonical_json": "{\"key\":\"lesson_standard\"}",
-          "digest": "b3b925f486efd75b57bd76603d6518f7595760cd0377f4015ee8160bb610e124"
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a lesson.\",\"display_name\":\"Lesson standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "3491f7f210cc832c8a458afbaa483a75533c1c8e414e068674d25a784d7f878e"
         }
       },
       {
@@ -541,8 +606,9 @@
         "state": "equivalent",
         "observed": {
           "contract": "spine.notification-profiles.v1",
-          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}",
-          "digest": "133fdbb373c912345280ebda43c92c7e23af3f579f87d49565a876af88ca7851"
+          "shape": "profileSemantics",
+          "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+          "digest": "2730a76b06eb2177a31f15ddfb71a66b0fef544d46be6635cdc9e6c12c537c57"
         }
       },
       {
@@ -551,8 +617,9 @@
         "state": "equivalent",
         "observed": {
           "contract": "spine.notification-profile-bindings.v1",
-          "canonical_json": "{\"profile_id\":\"profile_lesson\"}",
-          "digest": "d18ae9c6426165c9f5d50ff5060bd231c55a955057e917d7986cd4d673a01810"
+          "shape": "bindingSemantics",
+          "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"lesson_standard\"}",
+          "digest": "0ea793dbe2abdde6814f0a5653c72a3b5292148c3f33676ebe0c0ae367c16238"
         }
       },
       {
@@ -561,6 +628,7 @@
         "state": "equivalent",
         "observed": {
           "contract": "spine.notification-profile-bindings.v1",
+          "shape": "bindingSemantics",
           "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"medical_appointment_standard\"}",
           "digest": "d0b1caec0a9c6136fae265750d70d0000cae9b4b82cf256f8fe2de11d1e66661"
         }
@@ -573,7 +641,7 @@
       "algorithm": "sha256",
       "canonical_json_version": "spine.canonical-json.v1",
       "derivation_version": "spine.pack-verification-result-digest.v1",
-      "digest": "08df32459dbe3b318ba69f4839127dca95aa433f4275018c5d299f53aef1fdc5"
+      "digest": "363b841e2f7a95313a14080afbecb867db89022b83f7b48ac097b9a46a0f2316"
     }
   },
   "success_envelope": {
@@ -583,7 +651,7 @@
     "exit_code": "0",
     "artifact": {
       "path": "/tmp/apply-result.json",
-      "digest": "7538d9162d959713dbc9a57919a3e2e074c26496b07cfa0d5ce75974458f70ca"
+      "digest": "b2854dd4715ecb93564aef182318f0fb4b59178433b3f6c289ecba0d79d134de"
     },
     "error": null
   }

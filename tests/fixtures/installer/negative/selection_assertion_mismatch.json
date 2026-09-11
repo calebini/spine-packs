@@ -1,0 +1,5 @@
+{
+  "scenario": "granular_request",
+  "all_flag": true,
+  "expected_error": "selection_assertion_mismatch"
+}

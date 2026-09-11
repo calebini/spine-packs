@@ -1,14 +1,20 @@
 {
   "fixture_contract": "spine.pack-installer-fixtures.v1",
   "positive": [
+    "tests/fixtures/installer/positive/create_binding_artifact_suite.json",
     "tests/fixtures/installer/positive/granular_request.json",
     "tests/fixtures/installer/positive/profile_drift_artifact_suite.json",
     "tests/fixtures/installer/positive/profile_drift_vertical_flow.json"
   ],
   "negative": [
+    "tests/fixtures/installer/negative/apply_target_mismatch.json",
+    "tests/fixtures/installer/negative/binding_identity_mismatch.json",
     "tests/fixtures/installer/negative/draft_apply_eligible.json",
+    "tests/fixtures/installer/negative/embedded_contract_violations.json",
     "tests/fixtures/installer/negative/incorrect_artifact_digest.json",
+    "tests/fixtures/installer/negative/invalid_result_references.json",
     "tests/fixtures/installer/negative/noncontiguous_partial_apply.json",
+    "tests/fixtures/installer/negative/selection_assertion_mismatch.json",
     "tests/fixtures/installer/negative/stale_catalog_snapshot.json",
     "tests/fixtures/installer/negative/stale_plan_approval.json",
     "tests/fixtures/installer/negative/target_mismatch.json",

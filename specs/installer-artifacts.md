@@ -53,8 +53,20 @@ intentionally embedded open data is Spine public data represented as a
 `canonical_value`: its `canonical_json` member is a string containing one
 complete `spine.canonical-json.v1` value. The installer MUST parse that string,
 reject duplicate members and numbers, require byte-for-byte canonical form,
-validate it against the named Spine public contract when a contract applies,
-and verify its SHA-256 digest before use.
+validate it against the named contract AND its required `shape`, and verify
+its SHA-256 digest before use. `shape` names a definition in
+`spine-pack-embedded-values.v1.schema.json`. Unknown contracts, unknown shapes,
+and a shape inappropriate for the containing field fail closed. The contract
+identifier alone identifies a family, not a unique request/response shape.
+
+The embedded schema pins reachable public definitions from Spine commit
+`72203f092de191a7633b1884bf0d61836a25abe4`; command templates omit only the
+three execution fields, and materialized requests require them. Response
+definitions preserve the six public commands' actual fields and effects.
+Semantic projections below are installer comparison values extracted only
+after public readback validation; they are not full Spine response envelopes.
+The schema's source comment records the derivation. No Spine code is imported
+or executed by these repository checks.
 
 Limits apply to the complete compact canonical UTF-8 encoding of an artifact:
 
@@ -124,6 +136,10 @@ draft posture. `selection` is either `{ "mode": "all" }` or
 `draft_posture` is `reject` or `inspect_only`; draft-based plans are never
 apply-eligible under either posture.
 
+The saved request is authoritative. Optional CLI selection flags are matching
+assertions only, following `specs/installer.md` Section 4. Conflicting flags or
+flags that disagree with the request fail before catalog reads.
+
 Owner shape is exactly one of:
 
 - `owner_kind=subject` and `owner_subject_id`; or
@@ -170,11 +186,68 @@ are sorted and unique. `required_execution_contracts` is exactly the closed
 union in `specs/installer.md` Section 3.
 
 Each classification names its object kind, canonical object key,
-classification, desired semantic value, nullable observed semantic value, and
-nullable blocked reason. Archetype keys are encoded as `archetype:<key>`,
+classification, desired semantic value, nullable observed semantic value,
+identity evidence, and nullable blocked reason. Archetype keys are encoded as `archetype:<key>`,
 profile keys as `profile:<key>`, and bindings as `binding:<archetype-key>`.
 `missing` has `observed=null`; `blocked` has a non-null reason; every other
 classification has observed data and no blocked reason.
+
+Every non-null desired, observed, or expected comparison value has the same
+closed projection shape for its object kind, independent of classification:
+
+| Object | Shape | Complete comparison value |
+| --- | --- | --- |
+| archetype | `archetypeSemantics` | `display_name`, `description`, `compatible_item_types` |
+| profile | `profileSemantics` | `metadata: {display_name, description}` and `revision: {compatible_item_types, templates}` |
+| binding | `bindingSemantics` | `binding_kind=archetype_default`, `notification_profile_key` |
+
+These use `spine.item-archetypes.v1`, `spine.notification-profiles.v1`, and
+`spine.notification-profile-bindings.v1`, respectively. Profile action
+preimages retain BOTH metadata and revision even if only one is being changed.
+Action requests project the appropriate fields into the public command.
+Binding profile keys are resolved through the exact owner-local catalog;
+equivalence additionally requires the resolved Spine IDs to match as specified
+in installer Section 8.3. A key projection does not replace ID preconditions.
+Incomplete or ambiguous readback yields a blocked classification with
+`observed=null`, never a fabricated partial projection.
+
+`identity` is required and separate from the owner-neutral semantic projection:
+
+- An existing archetype or profile has `{catalog_id}` containing its exact
+  Spine root ID resolved by that key under the plan's owner. A missing root has
+  `identity=null`. Blocked roots MAY use null when identity cannot be resolved
+  unambiguously. Two keys of the same object kind MUST NOT claim the same ID.
+- A non-blocked binding has `{item_archetype_id, notification_profile_id,
+  observed_binding}`. The first two fields resolve its archetype key and desired
+  profile key and MUST match the corresponding root classifications' catalog
+  IDs. A field is null only when that root is missing; IDs MUST NOT be guessed
+  before creation. A blocked dependency requires a blocked binding.
+- `observed_binding` is null for missing bindings; otherwise it contains exactly
+  `notification_profile_binding_id`, `item_archetype_id`, and
+  `notification_profile_id` from validated active-binding readback under the
+  exact plan owner. Its archetype ID MUST match the resolved archetype ID.
+  An equivalent binding requires a non-null resolved desired profile ID equal
+  to its observed profile ID, as well as equal semantic projections. Drift
+  requires a different observed profile ID (including when the desired profile
+  is missing). Contradictory key and ID evidence fails closed; a matching key
+  cannot hide an ID mismatch. A blocked binding uses `identity=null` rather
+  than partial or ambiguous evidence.
+
+Identity evidence participates in the plan digest. Binding-set templates MUST
+use those resolved IDs and the exact plan owner. For a missing dependency,
+the ID-valued field MUST instead reference the corresponding earlier create
+action's returned root ID using the reference syntax below. Existing IDs and
+observed binding identities are never result-reference strings. Initial apply
+preflight rechecks this evidence through Spine public readback; stored evidence
+does not replace authoritative observation.
+
+Command-specific shapes use the prefixes `archetypeCreate`, `archetypeRevise`,
+`profileCreate`, `profileMetadataUpdate`, `profileRevise`, and `bindingSet`,
+followed by `Template`, `Request`, or `Response`. The surrounding action's
+command determines the required prefix and contract; the containing field
+determines the suffix. The data cannot choose a weaker shape. All semantic
+preimages, templates, checkpoint requests, captured responses, and verification
+observations MUST pass their contextual shape checks.
 
 Each action has a zero-based ordinal, an `action-NNNNNN` ID where the numeric
 portion equals the ordinal, exact Spine command, catalog object key,
@@ -191,11 +264,44 @@ ${spine-pack.result:<earlier-action-id>:<field-name>}
 ```
 
 The referenced action MUST precede the consumer, and `<field-name>` MUST be an
-ID returned by that action's validated public response. No other interpolation
-syntax is allowed. Materialization replaces references, then injects the three
-execution members, then validates the complete request against the public Spine
-command contract. The template digest uses derivation
-`spine.pack-command-template-digest.v1` over the parsed canonical value.
+ID returned by that action's validated public response. The closed v1 reference
+mapping is:
+
+| Consumer command | Top-level field | Required producer | Returned field |
+| --- | --- | --- | --- |
+| `notification_profile.binding.set` | `item_archetype_id` | `item_archetype.create` for that binding's archetype key | `item_archetype_id` |
+| `notification_profile.binding.set` | `notification_profile_id` | `notification_profile.create` for that binding's desired profile key | `notification_profile_id` |
+
+The root classification MUST be missing with null identity. The producer MUST
+be its unique create action, with the same owner, key, and complete desired
+definition. A root with a resolved catalog ID MUST use that literal ID, never
+a result reference. No other command, field, nested member, or returned field
+permits a reference in v1; in particular, revisions and metadata updates target
+already-existing roots and use literal observed IDs and preconditions.
+
+One shared validation rule MUST inspect all command templates. `${` is reserved
+for interpolation in command values and member names; malformed, partial,
+concatenated, unknown, self, forward, missing-producer, or contextually forbidden
+references fail closed. A reference must occupy the entire allowed field value.
+This installer rule is additional to Spine's public non-empty-string ID shapes.
+
+Materialization MUST revalidate the plan, approval, template, and reference
+mapping. For a referenced action, it requires a contiguous validated accepted
+response prefix through the action immediately before the consumer. Each
+producer response MUST match its action, derived command ID, public response
+shape, effect, receipt facts, generated-ID evidence, and requested create key.
+Values come from the decoded validated public response, not an uncorrelated ID
+map. Rejected, missing, malformed, or contradictory evidence fails closed.
+
+Materialization replaces references exactly once, injects the three execution
+members, rejects any remaining interpolation syntax anywhere in the request,
+then validates the complete public command shape. Captured responses MUST NOT
+contain interpolation syntax either; a returned reference is never evaluated
+recursively. The resulting canonical bytes and digest are preserved in the
+checkpoint before submission. Continuation re-derives them from the same
+validated prefix and MUST match those bytes, including on compatible replay.
+Like every embedded canonical value, the template digest is SHA-256 of its
+exact canonical UTF-8 bytes, as specified in Section 5.
 
 `decision_action_ids` contains exactly every update action and no create.
 `blocked_object_keys` contains exactly every blocked classification. A plan is
@@ -346,8 +452,9 @@ Exit 5 MUST reference the complete reviewable plan. Exit 9 MUST reference the
 terminal partial result. A successful draft inspection may exit 0 with a plan
 whose `apply_eligible` is false; attempting to apply it fails at exit 3.
 
-Errors contain only category, stable code, bounded human message, and a sorted
-array of string facts. They MUST NOT contain credentials, environment dumps,
+Errors contain only category, stable code, bounded human message, and an array
+of closed `{name, value}` objects with string members, strictly sorted by unique
+`name`. They MUST NOT contain credentials, environment dumps,
 or raw command output. One failure chooses one primary category; additional
 facts do not change the process exit code.
 

@@ -38,8 +38,9 @@
     },
     "canonicalValue": {
       "type": "object",
-      "required": ["contract", "canonical_json", "digest"],
+      "required": ["contract", "shape", "canonical_json", "digest"],
       "properties": {
+        "shape": { "enum": ["archetypeSemantics","profileSemantics","bindingSemantics","archetypeCreateTemplate","archetypeCreateRequest","archetypeCreateResponse","archetypeReviseTemplate","archetypeReviseRequest","archetypeReviseResponse","profileCreateTemplate","profileCreateRequest","profileCreateResponse","profileMetadataUpdateTemplate","profileMetadataUpdateRequest","profileMetadataUpdateResponse","profileReviseTemplate","profileReviseRequest","profileReviseResponse","bindingSetTemplate","bindingSetRequest","bindingSetResponse"] },
         "contract": { "type": "string", "minLength": 1, "maxLength": 160 },
         "canonical_json": { "type": "string", "minLength": 2, "maxLength": 8388608 },
         "digest": { "$ref": "#/$defs/sha256" }
@@ -178,9 +179,35 @@
       },
       "additionalProperties": false
     },
+    "catalogIdentity": {
+      "type": "object",
+      "required": ["catalog_id"],
+      "properties": { "catalog_id": { "$ref": "#/$defs/id" } },
+      "additionalProperties": false
+    },
+    "observedBindingIdentity": {
+      "type": "object",
+      "required": ["notification_profile_binding_id", "item_archetype_id", "notification_profile_id"],
+      "properties": {
+        "notification_profile_binding_id": { "$ref": "#/$defs/id" },
+        "item_archetype_id": { "$ref": "#/$defs/id" },
+        "notification_profile_id": { "$ref": "#/$defs/id" }
+      },
+      "additionalProperties": false
+    },
+    "bindingIdentity": {
+      "type": "object",
+      "required": ["item_archetype_id", "notification_profile_id", "observed_binding"],
+      "properties": {
+        "item_archetype_id": { "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] },
+        "notification_profile_id": { "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] },
+        "observed_binding": { "oneOf": [{ "$ref": "#/$defs/observedBindingIdentity" }, { "type": "null" }] }
+      },
+      "additionalProperties": false
+    },
     "classification": {
       "type": "object",
-      "required": ["object_kind", "object_key", "classification", "desired", "observed", "blocked_reason"],
+      "required": ["object_kind", "object_key", "classification", "desired", "observed", "identity", "blocked_reason"],
       "properties": {
         "object_kind": { "enum": ["archetype", "profile", "binding"] },
         "object_key": { "type": "string", "minLength": 11, "maxLength": 96 },
@@ -189,6 +216,13 @@
         "observed": {
           "oneOf": [
             { "$ref": "#/$defs/canonicalValue" },
+            { "type": "null" }
+          ]
+        },
+        "identity": {
+          "oneOf": [
+            { "$ref": "#/$defs/catalogIdentity" },
+            { "$ref": "#/$defs/bindingIdentity" },
             { "type": "null" }
           ]
         },

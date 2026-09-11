@@ -17,6 +17,22 @@ SCHEMA_ROOT = ROOT / "contracts/schemas"
 FIXTURE_MANIFEST = ROOT / "contracts/installer-fixture-manifest.v1.json"
 POSITIVE_ROOT = ROOT / "tests/fixtures/installer/positive"
 NEGATIVE_ROOT = ROOT / "tests/fixtures/installer/negative"
+EMBEDDED_SCHEMA = SCHEMA_ROOT / "spine-pack-embedded-values.v1.schema.json"
+COMMAND_SHAPES = {
+    "item_archetype.create": ("archetypeCreate", "spine.item-archetypes.v1"),
+    "item_archetype.revise": ("archetypeRevise", "spine.item-archetypes.v1"),
+    "notification_profile.create": ("profileCreate", "spine.notification-profiles.v1"),
+    "notification_profile.revise": ("profileRevise", "spine.notification-profiles.v1"),
+    "notification_profile.metadata.update": (
+        "profileMetadataUpdate", "spine.notification-profile-metadata-update.v1"
+    ),
+    "notification_profile.binding.set": ("bindingSet", "spine.notification-profile-bindings.v1"),
+}
+SEMANTIC_CONTRACTS = {
+    "archetypeSemantics": "spine.item-archetypes.v1",
+    "profileSemantics": "spine.notification-profiles.v1",
+    "bindingSemantics": "spine.notification-profile-bindings.v1",
+}
 
 ENTRYPOINTS = {
     "spine.pack-install-request.v1": "spine-pack-install-request.v1.schema.json",
@@ -130,10 +146,13 @@ def digest(value: Any) -> str:
     return hashlib.sha256(canonical_text(value).encode("utf-8")).hexdigest()
 
 
-def canonical_value(contract: str, value: Any) -> dict[str, Any]:
+def canonical_value(contract: str, value: Any, shape: str | None = None) -> dict[str, Any]:
     text = canonical_text(value)
+    if shape is None:
+        shape = next(name for name, family in SEMANTIC_CONTRACTS.items() if family == contract)
     return {
         "contract": contract,
+        "shape": shape,
         "canonical_json": text,
         "digest": hashlib.sha256(text.encode("utf-8")).hexdigest(),
     }
@@ -230,6 +249,21 @@ def schema_errors(
     expected_type = schema.get("type")
     if expected_type and not _is_type(value, expected_type):
         return [f"{path}: expected {expected_type}"]
+    for branch in schema.get("allOf", []):
+        errors.extend(schema_errors(value, branch, schema_path, root_schema, path))
+    if "anyOf" in schema and all(
+        schema_errors(value, branch, schema_path, root_schema, path)
+        for branch in schema["anyOf"]
+    ):
+        errors.append(f"{path}: anyOf")
+    if "not" in schema and not schema_errors(
+        value, schema["not"], schema_path, root_schema, path
+    ):
+        errors.append(f"{path}: not")
+    if "if" in schema:
+        match = not schema_errors(value, schema["if"], schema_path, root_schema, path)
+        branch = schema.get("then" if match else "else", {})
+        errors.extend(schema_errors(value, branch, schema_path, root_schema, path))
     if isinstance(value, str):
         if len(value) < schema.get("minLength", 0):
             errors.append(f"{path}: minLength")
@@ -285,7 +319,86 @@ def validate_schema(artifact: dict[str, Any]) -> list[str]:
     return schema_errors(artifact, schema, path, schema)
 
 
-def canonical_value_errors(value: dict[str, Any]) -> list[str]:
+RESULT_REFERENCE = re.compile(r"\$\{spine-pack\.result:(action-[0-9]{6}):([a-z_]+)\}")
+REFERENCE_PRODUCERS = {
+    "item_archetype_id": ("item_archetype.create", "archetype", "archetype_key"),
+    "notification_profile_id": ("notification_profile.create", "profile", "profile_key"),
+}
+
+
+def _reference_slots(value: Any, path: tuple = ()) -> list[tuple]:
+    """Find reserved interpolation syntax, including nested values/member names."""
+    if isinstance(value, str):
+        return [(path, value)] if "${" in value else []
+    found = []
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if "${" in key:
+                found.append(((*path, key, "<member-name>"), key))
+            found.extend(_reference_slots(child, (*path, key)))
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            found.extend(_reference_slots(child, (*path, index)))
+    return found
+
+
+def result_reference_errors(
+    value: Any, shape: str, plan: dict[str, Any] | None = None,
+    index: int | None = None,
+) -> list[str]:
+    errors = []
+    for path, text in _reference_slots(value):
+        match = RESULT_REFERENCE.fullmatch(text)
+        if not match:
+            errors.append("result_reference_syntax_invalid")
+            continue
+        if shape != "bindingSetTemplate" or len(path) != 1 or path[0] not in REFERENCE_PRODUCERS:
+            errors.append("result_reference_context_forbidden")
+            continue
+        producer_id, returned_field = match.groups()
+        field = path[0]
+        if returned_field != field:
+            errors.append("result_reference_field_invalid")
+            continue
+        if plan is None:
+            continue  # The containing plan supplies the mandatory correlation stage.
+        consumer = plan["actions"][index]
+        producers = [(i, a) for i, a in enumerate(plan["actions"]) if a["action_id"] == producer_id]
+        if len(producers) != 1:
+            errors.append("result_reference_producer_missing")
+            continue
+        producer_index, producer = producers[0]
+        if producer_index >= index:
+            errors.append("result_reference_not_earlier")
+            continue
+        command, kind, key_field = REFERENCE_PRODUCERS[field]
+        desired_binding = json.loads(consumer["desired"]["canonical_json"])
+        key = (consumer["object_key"].split(":", 1)[1] if kind == "archetype"
+               else desired_binding["notification_profile_key"])
+        object_key = kind + ":" + key
+        roots = [c for c in plan["classifications"] if c["object_key"] == object_key]
+        creates = [a for a in plan["actions"] if a["object_key"] == object_key and a["command"] == command]
+        if len(roots) != 1 or roots[0]["classification"] != "missing" or roots[0]["identity"] is not None:
+            errors.append("result_reference_root_not_missing")
+            continue
+        if producer["command"] != command or producer["object_key"] != object_key or len(creates) != 1:
+            errors.append("result_reference_producer_mismatch")
+            continue
+        body = json.loads(producer["request_template"]["canonical_json"])
+        root_value = json.loads(roots[0]["desired"]["canonical_json"])
+        actual_value = (body["revision"] if kind == "archetype" else {
+            "metadata": {"display_name": body["display_name"], "description": body["description"]},
+            "revision": body["revision"],
+        })
+        if (body.get(key_field) != key or body.get("owner") != plan["request"]["owner"]
+                or producer["desired"] != roots[0]["desired"] or actual_value != root_value):
+            errors.append("result_reference_producer_mismatch")
+    return errors
+
+
+def canonical_value_errors(
+    value: dict[str, Any], expected_shape: str | None = None
+) -> list[str]:
     try:
         parsed = json.loads(value["canonical_json"], object_pairs_hook=_closed_object)
         canonical = canonical_text(parsed)
@@ -294,7 +407,39 @@ def canonical_value_errors(value: dict[str, Any]) -> list[str]:
     if canonical != value["canonical_json"]:
         return ["canonical_value_not_canonical"]
     actual = hashlib.sha256(value["canonical_json"].encode("utf-8")).hexdigest()
-    return [] if actual == value["digest"] else ["canonical_value_digest_mismatch"]
+    if actual != value["digest"]:
+        return ["canonical_value_digest_mismatch"]
+    shape = value.get("shape")
+    allowed = dict(SEMANTIC_CONTRACTS)
+    for prefix, contract in COMMAND_SHAPES.values():
+        for suffix in ("Template", "Request", "Response"):
+            allowed[prefix + suffix] = contract
+    if shape not in allowed or value.get("contract") != allowed.get(shape):
+        return ["embedded_contract_or_shape_mismatch"]
+    if expected_shape is not None and shape != expected_shape:
+        return ["embedded_context_shape_mismatch"]
+    root = _schema_document(EMBEDDED_SCHEMA)
+    errors = schema_errors(parsed, root["$defs"][shape], EMBEDDED_SCHEMA, root)
+    if errors:
+        return ["embedded_contract_invalid", *errors]
+    if shape.endswith(("Template", "Request", "Response")):
+        return result_reference_errors(parsed, shape)
+    return []
+
+
+def selection_assertion_errors(
+    request: dict[str, Any], *, all_flag: bool = False,
+    archetype_flags: list[str] | None = None,
+) -> list[str]:
+    if all_flag and archetype_flags is not None:
+        return ["selection_flags_conflict"]
+    if archetype_flags is not None and (not archetype_flags or any(not k for k in archetype_flags)):
+        return ["selection_flags_empty"]
+    if not all_flag and archetype_flags is None:
+        return []
+    assertion = ({"mode": "all"} if all_flag else
+                 {"mode": "archetypes", "archetype_keys": sorted(set(archetype_flags))})
+    return [] if assertion == request["request"]["selection"] else ["selection_assertion_mismatch"]
 
 
 def artifact_size_errors(artifact: dict[str, Any]) -> list[str]:
@@ -347,8 +492,104 @@ def command_id(plan_digest: str, execution_id: str, action_id: str) -> str:
     )
 
 
+def binding_identity_errors(plan: dict[str, Any]) -> list[str]:
+    """Correlate owner-scoped key resolutions, binding readback, and requests."""
+    errors = []
+    roots = {}
+    seen_ids = set()
+    for entry in plan["classifications"]:
+        if entry["object_kind"] == "binding":
+            continue
+        identity = entry["identity"]
+        state = entry["classification"]
+        if identity is not None and set(identity) != {"catalog_id"}:
+            errors.append("catalog_identity_shape_mismatch")
+            continue
+        if (state == "missing" and identity is not None) or (
+            state in ("equivalent", "drifted") and identity is None
+        ):
+            errors.append("catalog_identity_state_mismatch")
+        catalog_id = identity["catalog_id"] if identity is not None else None
+        if catalog_id is not None:
+            marker = (entry["object_kind"], catalog_id)
+            if marker in seen_ids or catalog_id.startswith("${"):
+                errors.append("catalog_identity_invalid")
+            seen_ids.add(marker)
+        roots[entry["object_key"]] = (state, catalog_id)
+
+    for entry in plan["classifications"]:
+        if entry["object_kind"] != "binding":
+            continue
+        identity = entry["identity"]
+        state = entry["classification"]
+        if state == "blocked":
+            if identity is not None:
+                errors.append("blocked_binding_has_identity")
+            continue
+        if identity is None or set(identity) != {
+            "item_archetype_id", "notification_profile_id", "observed_binding"
+        }:
+            errors.append("binding_identity_missing_or_invalid")
+            continue
+        desired = json.loads(entry["desired"]["canonical_json"])
+        root_keys = {
+            "item_archetype_id": "archetype:" + entry["object_key"].split(":", 1)[1],
+            "notification_profile_id": "profile:" + desired["notification_profile_key"],
+        }
+        for field, key in root_keys.items():
+            root = roots.get(key)
+            if root is None or root[0] == "blocked" or identity[field] != root[1]:
+                errors.append("binding_resolution_mismatch")
+        observed = identity["observed_binding"]
+        if (state == "missing") != (observed is None):
+            errors.append("binding_observation_state_mismatch")
+        if observed is not None:
+            if any(value.startswith("${") for value in observed.values()):
+                errors.append("binding_identity_invalid")
+            if identity["item_archetype_id"] is None or (
+                observed["item_archetype_id"] != identity["item_archetype_id"]
+            ):
+                errors.append("binding_archetype_identity_mismatch")
+            same_profile = (
+                identity["notification_profile_id"] is not None
+                and observed["notification_profile_id"] == identity["notification_profile_id"]
+            )
+            if (state == "equivalent") != same_profile:
+                errors.append("binding_profile_identity_mismatch")
+            observed_value = entry["observed"]
+            if observed_value is not None:
+                observed_key = json.loads(observed_value["canonical_json"])["notification_profile_key"]
+                observed_root = roots.get("profile:" + observed_key)
+                if observed_root is not None and observed_root[1] != observed["notification_profile_id"]:
+                    errors.append("binding_observed_key_identity_mismatch")
+
+        for action in plan["actions"]:
+            if action["object_key"] != entry["object_key"]:
+                continue
+            if action["command"] != "notification_profile.binding.set":
+                errors.append("binding_action_command_mismatch")
+                continue
+            request = json.loads(action["request_template"]["canonical_json"])
+            if request.get("owner") != plan["request"]["owner"]:
+                errors.append("binding_action_owner_mismatch")
+            for field, key in root_keys.items():
+                expected = identity[field]
+                if expected is None:
+                    command = "item_archetype.create" if field == "item_archetype_id" else "notification_profile.create"
+                    creates = [a for a in plan["actions"] if a["object_key"] == key and a["command"] == command]
+                    if len(creates) != 1 or int(creates[0]["ordinal"]) >= int(action["ordinal"]):
+                        errors.append("binding_create_reference_missing")
+                        continue
+                    expected = "${spine-pack.result:" + creates[0]["action_id"] + ":" + field + "}"
+                if request.get(field) != expected:
+                    errors.append("binding_action_identity_mismatch")
+    return errors
+
+
 def plan_errors(plan: dict[str, Any]) -> list[str]:
     errors = validate_schema(plan) + content_digest_errors(plan)
+    if validate_schema(plan):
+        return errors
     request = plan["request"]
     embedded_request = seal(
         {
@@ -439,9 +680,17 @@ def plan_errors(plan: dict[str, Any]) -> list[str]:
             errors.append("blocked_without_reason")
         if classification["classification"] != "blocked" and reason is not None:
             errors.append("unexpected_blocked_reason")
-        errors.extend(canonical_value_errors(classification["desired"]))
+        if classification["classification"] in ("equivalent", "drifted") and observed is None:
+            errors.append("classification_observation_missing")
+        shape = classification["object_kind"] + "Semantics"
+        errors.extend(canonical_value_errors(classification["desired"], shape))
         if observed is not None:
-            errors.extend(canonical_value_errors(observed))
+            errors.extend(canonical_value_errors(observed, shape))
+            equal = classification["desired"]["canonical_json"] == observed["canonical_json"]
+            if classification["classification"] == "equivalent" and not equal:
+                errors.append("equivalence_preimage_mismatch")
+            if classification["classification"] == "drifted" and equal:
+                errors.append("drift_preimages_equal")
     class_rank = {"archetype": 0, "profile": 1, "binding": 2}
     classification_order = [
         (class_rank[entry["object_kind"]], entry["object_key"])
@@ -450,14 +699,24 @@ def plan_errors(plan: dict[str, Any]) -> list[str]:
     if classification_order != sorted(classification_order):
         errors.append("classification_order")
     for action in plan["actions"]:
-        errors.extend(canonical_value_errors(action["desired"]))
-        errors.extend(canonical_value_errors(action["request_template"]))
+        shape = action["object_key"].split(":")[0] + "Semantics"
+        errors.extend(canonical_value_errors(action["desired"], shape))
+        prefix = COMMAND_SHAPES[action["command"]][0]
+        errors.extend(canonical_value_errors(action["request_template"], prefix + "Template"))
         if action["expected"] is not None:
-            errors.extend(canonical_value_errors(action["expected"]))
+            errors.extend(canonical_value_errors(action["expected"], shape))
         if action["change_kind"] == "create" and action["expected"] is not None:
             errors.append("create_has_expected")
         if action["change_kind"] == "update" and action["expected"] is None:
             errors.append("update_without_expected")
+    # Embedded data must be valid before the identity correlator decodes it.
+    if not errors:
+        errors.extend(binding_identity_errors(plan))
+        for index, action in enumerate(plan["actions"]):
+            errors.extend(result_reference_errors(
+                json.loads(action["request_template"]["canonical_json"]),
+                COMMAND_SHAPES[action["command"]][0] + "Template", plan, index,
+            ))
     return errors
 
 
@@ -490,6 +749,12 @@ def _response_prefix_errors(
     responses: list[dict[str, Any]], plan: dict[str, Any], execution: dict[str, Any]
 ) -> list[str]:
     errors: list[str] = []
+    schema_path = SCHEMA_ROOT / "spine-pack-installer-types.v1.schema.json"
+    schema = _schema_document(schema_path)
+    for response in responses:
+        errors.extend(schema_errors(response, schema["$defs"]["responseEvidence"], schema_path, schema))
+    if errors:
+        return ["response_evidence_invalid", *errors]
     expected_actions = plan["actions"][: len(responses)]
     if [entry["action_id"] for entry in responses] != [
         entry["action_id"] for entry in expected_actions
@@ -505,7 +770,30 @@ def _response_prefix_errors(
             errors.append("command_id_mismatch")
         if response["command"] != action["command"]:
             errors.append("response_command_mismatch")
-        errors.extend(canonical_value_errors(response["response"]))
+        shape = COMMAND_SHAPES[action["command"]][0] + "Response"
+        embedded_errors = canonical_value_errors(response["response"], shape)
+        errors.extend(embedded_errors)
+        if not embedded_errors:
+            body = json.loads(response["response"]["canonical_json"])
+            template = json.loads(action["request_template"]["canonical_json"])
+            if action["command"] in ("item_archetype.create", "notification_profile.create"):
+                key = "archetype_key" if action["command"] == "item_archetype.create" else "profile_key"
+                if body[key] != template[key]:
+                    errors.append("response_create_key_mismatch")
+            for field in ("command", "response_contract", "effect"):
+                if response[field] != body[field]:
+                    errors.append("response_evidence_mismatch")
+            for field in ("command_id", "command_receipt_id", "semantic_facts_hash", "effect"):
+                if response[field] != body["receipt"][field]:
+                    errors.append("receipt_evidence_mismatch")
+            if body["receipt"]["created_at_utc"] != execution["action_timestamp_utc"]:
+                errors.append("receipt_timestamp_mismatch")
+            returned_ids = [
+                {"name": key, "value": body[key]}
+                for key in sorted(body) if key.endswith("_id")
+            ]
+            if response["generated_ids"] != returned_ids:
+                errors.append("response_generated_ids_mismatch")
         names = [item["name"] for item in response["generated_ids"]]
         if not _sorted_unique(names):
             errors.append("generated_ids_not_sorted")
@@ -515,7 +803,8 @@ def _response_prefix_errors(
 def checkpoint_errors(
     checkpoint: dict[str, Any], plan: dict[str, Any], approval: dict[str, Any]
 ) -> list[str]:
-    errors = validate_schema(checkpoint) + content_digest_errors(checkpoint)
+    errors = (validate_schema(checkpoint) + content_digest_errors(checkpoint)
+              + plan_errors(plan) + approval_errors(approval, plan))
     if checkpoint["plan_digest"] != plan["content_identity"]["digest"]:
         errors.append("checkpoint_plan_digest_mismatch")
     if checkpoint["approval_digest"] != approval["content_identity"]["digest"]:
@@ -543,14 +832,25 @@ def checkpoint_errors(
         )
         if unresolved["command_id"] != expected_command_id:
             errors.append("command_id_mismatch")
-        errors.extend(canonical_value_errors(unresolved["request"]))
+        if next_index < len(plan["actions"]):
+            action = plan["actions"][next_index]
+            prefix = COMMAND_SHAPES[action["command"]][0]
+            errors.extend(canonical_value_errors(unresolved["request"], prefix + "Request"))
+            try:
+                expected_request = _materialized_request(plan, approval, next_index, responses)
+            except ValueError as exc:
+                errors.append(str(exc))
+            else:
+                if unresolved["request"]["canonical_json"] != canonical_text(expected_request):
+                    errors.append("unresolved_request_mismatch")
     return errors
 
 
 def apply_result_errors(
     result: dict[str, Any], plan: dict[str, Any], approval: dict[str, Any]
 ) -> list[str]:
-    errors = validate_schema(result) + content_digest_errors(result)
+    errors = (validate_schema(result) + content_digest_errors(result)
+              + plan_errors(plan) + approval_errors(approval, plan))
     if result["plan_digest"] != plan["content_identity"]["digest"]:
         errors.append("apply_plan_digest_mismatch")
     if result["approval_digest"] != approval["content_identity"]["digest"]:
@@ -591,6 +891,11 @@ def verification_errors(
     if verification["pack"] != plan["pack"] or verification["closure"] != plan["closure"]:
         errors.append("verification_scope_mismatch")
     object_states = [entry["state"] for entry in verification["object_results"]]
+    for entry in verification["object_results"]:
+        if entry["observed"] is not None:
+            errors.extend(canonical_value_errors(
+                entry["observed"], entry["object_kind"] + "Semantics"
+            ))
     should_verify = (
         all(state == "equivalent" for state in object_states)
         and verification["response_evidence"] == "complete"
@@ -634,8 +939,13 @@ def _desired_values() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     profile = canonical_value(
         "spine.notification-profiles.v1",
         {
-            "compatible_item_types": ["event"],
-            "templates": [
+            "metadata": {
+                "display_name": "Medical appointment standard",
+                "description": "Preparation for a medical appointment.",
+            },
+            "revision": {
+                "compatible_item_types": ["event"],
+                "templates": [
                 {
                     "late_handling": {"grace_seconds": "3600", "kind": "deliver_within"},
                     "schedule": {
@@ -648,7 +958,8 @@ def _desired_values() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
                     },
                     "template_key": "two_hours_before",
                 }
-            ],
+                ],
+            },
         },
     )
     binding = canonical_value(
@@ -663,16 +974,23 @@ def _desired_values() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
 
 def make_plan(request: dict[str, Any], *, draft: bool = False) -> dict[str, Any]:
     archetype, profile, binding = _desired_values()
-    old_profile = canonical_value(
-        "spine.notification-profiles.v1",
-        {"compatible_item_types": ["event"], "templates": []},
-    )
-    equivalent_lesson = canonical_value("spine.item-archetypes.v1", {"key": "lesson"})
+    old_profile_value = json.loads(profile["canonical_json"])
+    old_profile_value["revision"]["templates"][0]["schedule"]["at"]["offset_seconds"] = "-10800"
+    old_profile = canonical_value("spine.notification-profiles.v1", old_profile_value)
+    equivalent_lesson = canonical_value("spine.item-archetypes.v1", {
+        "display_name": "Lesson", "description": "A scheduled instructional session.",
+        "compatible_item_types": ["event"],
+    })
+    lesson_profile = json.loads(profile["canonical_json"])
+    lesson_profile["metadata"] = {
+        "display_name": "Lesson standard", "description": "Preparation for a lesson."
+    }
     equivalent_lesson_profile = canonical_value(
-        "spine.notification-profiles.v1", {"key": "lesson_standard"}
+        "spine.notification-profiles.v1", lesson_profile
     )
     equivalent_lesson_binding = canonical_value(
-        "spine.notification-profile-bindings.v1", {"profile_id": "profile_lesson"}
+        "spine.notification-profile-bindings.v1",
+        {"binding_kind": "archetype_default", "notification_profile_key": "lesson_standard"}
     )
     plan = {
         "artifact_schema": "spine.pack-install-plan.v1",
@@ -725,8 +1043,9 @@ def make_plan(request: dict[str, Any], *, draft: bool = False) -> dict[str, Any]
                         "contract_version": "spine.notification-profiles.v1",
                         "expected_current_revision_id": "profile_revision_old",
                         "notification_profile_id": "profile_medical",
-                        "revision": json.loads(profile["canonical_json"]),
+                        "revision": json.loads(profile["canonical_json"])["revision"],
                     },
+                    "profileReviseTemplate",
                 ),
             },
             {
@@ -748,6 +1067,7 @@ def make_plan(request: dict[str, Any], *, draft: bool = False) -> dict[str, Any]
                             "owner_subject_id": "subject_caleb",
                         },
                     },
+                    "bindingSetTemplate",
                 ),
             },
         ],
@@ -755,7 +1075,69 @@ def make_plan(request: dict[str, Any], *, draft: bool = False) -> dict[str, Any]
         "blocked_object_keys": [],
         "apply_eligible": not draft,
     }
+    identities = [
+        {"catalog_id": "archetype_lesson"},
+        {"catalog_id": "archetype_medical"},
+        {"catalog_id": "profile_lesson"},
+        {"catalog_id": "profile_medical"},
+        {
+            "item_archetype_id": "archetype_lesson",
+            "notification_profile_id": "profile_lesson",
+            "observed_binding": {
+                "notification_profile_binding_id": "binding_lesson",
+                "item_archetype_id": "archetype_lesson",
+                "notification_profile_id": "profile_lesson",
+            },
+        },
+        {
+            "item_archetype_id": "archetype_medical",
+            "notification_profile_id": "profile_medical",
+            "observed_binding": None,
+        },
+    ]
+    for entry, identity in zip(plan["classifications"], identities):
+        entry["identity"] = identity
     return seal(plan)
+
+
+def make_create_plan(request: dict[str, Any]) -> dict[str, Any]:
+    candidate = make_plan(request)
+    archetype, profile, binding = [candidate["classifications"][i] for i in (0, 2, 4)]
+    for root in (archetype, profile):
+        root.update(classification="missing", observed=None, identity=None)
+    binding.update(classification="missing", observed=None, identity={
+        "item_archetype_id": None, "notification_profile_id": None, "observed_binding": None,
+    })
+    metadata = json.loads(profile["desired"]["canonical_json"])
+    owner = candidate["request"]["owner"]
+    creates = []
+    for entry, command, contract, shape, body in (
+        (archetype, "item_archetype.create", "spine.item-archetypes.v1", "archetypeCreateTemplate", {
+            "archetype_key": "lesson", "revision": json.loads(archetype["desired"]["canonical_json"]),
+        }),
+        (profile, "notification_profile.create", "spine.notification-profiles.v1", "profileCreateTemplate", {
+            "profile_key": "lesson_standard", **metadata["metadata"], "revision": metadata["revision"],
+        }),
+    ):
+        creates.append({
+            "command": command, "object_key": entry["object_key"], "change_kind": "create",
+            "desired": entry["desired"], "expected": None,
+            "request_template": canonical_value(contract, {"contract_version": contract, "owner": owner, **body}, shape),
+        })
+    binding_action = {
+        "command": "notification_profile.binding.set", "object_key": binding["object_key"],
+        "change_kind": "create", "desired": binding["desired"], "expected": None,
+        "request_template": canonical_value("spine.notification-profile-bindings.v1", {
+            "contract_version": "spine.notification-profile-bindings.v1", "owner": owner,
+            "item_archetype_id": "${spine-pack.result:action-000000:item_archetype_id}",
+            "notification_profile_id": "${spine-pack.result:action-000001:notification_profile_id}",
+        }, "bindingSetTemplate"),
+    }
+    candidate["actions"] = [*creates, candidate["actions"][0], binding_action, candidate["actions"][1]]
+    for index, action in enumerate(candidate["actions"]):
+        action.update(ordinal=str(index), action_id=f"action-{index:06d}")
+    candidate["decision_action_ids"] = ["action-000002"]
+    return seal(candidate)
 
 
 def make_approval(plan: dict[str, Any]) -> dict[str, Any]:
@@ -776,11 +1158,29 @@ def make_approval(plan: dict[str, Any]) -> dict[str, Any]:
 
 
 def _materialized_request(
-    plan: dict[str, Any], approval: dict[str, Any], index: int
+    plan: dict[str, Any], approval: dict[str, Any], index: int,
+    accepted_responses: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
+    errors = plan_errors(plan) + approval_errors(approval, plan)
+    if errors:
+        raise ValueError("result_reference_invalid_plan_or_approval")
     action = plan["actions"][index]
     value = json.loads(action["request_template"]["canonical_json"])
     execution = approval["execution"]
+    responses = accepted_responses if accepted_responses is not None else []
+    slots = _reference_slots(value)
+    if len(responses) > index or (slots and len(responses) != index):
+        raise ValueError("result_reference_response_missing")
+    errors = _response_prefix_errors(responses, plan, execution)
+    if errors:
+        raise ValueError("result_reference_response_invalid")
+    for path, text in slots:
+        producer_id, field = RESULT_REFERENCE.fullmatch(text).groups()
+        producer = next((r for r in responses if r["action_id"] == producer_id), None)
+        if producer is None:
+            raise ValueError("result_reference_response_missing")
+        # The exact field and the response are already contextually validated.
+        value[path[0]] = json.loads(producer["response"]["canonical_json"])[field]
     value.update(
         {
             "command_id": command_id(
@@ -792,31 +1192,42 @@ def _materialized_request(
             "action_timestamp_utc": execution["action_timestamp_utc"],
         }
     )
+    prefix, contract = COMMAND_SHAPES[action["command"]]
+    if canonical_value_errors(canonical_value(contract, value, prefix + "Request"), prefix + "Request"):
+        raise ValueError("materialized_request_invalid")
     return value
 
 
-def make_checkpoint(plan: dict[str, Any], approval: dict[str, Any]) -> dict[str, Any]:
-    request = _materialized_request(plan, approval, 0)
+def make_checkpoint(
+    plan: dict[str, Any], approval: dict[str, Any],
+    accepted_responses: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    responses = accepted_responses if accepted_responses is not None else []
+    index = len(responses)
+    action = plan["actions"][index]
+    prefix, contract = COMMAND_SHAPES[action["command"]]
+    request = _materialized_request(plan, approval, index, responses)
     return seal(
         {
             "artifact_schema": "spine.pack-apply-checkpoint.v1",
             "plan_digest": plan["content_identity"]["digest"],
             "approval_digest": approval["content_identity"]["digest"],
             "execution": approval["execution"],
-            "accepted_responses": [],
+            "accepted_responses": deepcopy(responses),
             "unresolved_submission": {
-                "action_id": "action-000000",
+                "action_id": action["action_id"],
                 "command_id": request["command_id"],
                 "submission_state": "prepared_or_submitted",
-                "request": canonical_value("spine.notification-profiles.v1", request),
+                "request": canonical_value(contract, request, prefix + "Request"),
             },
-            "next_action_id": "action-000000",
+            "next_action_id": action["action_id"],
         }
     )
 
 
 def _response(
-    plan: dict[str, Any], approval: dict[str, Any], index: int, *, replay: bool = False
+    plan: dict[str, Any], approval: dict[str, Any], index: int, *, replay: bool = False,
+    accepted_responses: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     action = plan["actions"][index]
     cmd_id = command_id(
@@ -824,28 +1235,59 @@ def _response(
         approval["execution"]["execution_id"],
         action["action_id"],
     )
-    contract = (
-        "spine.notification-profiles.v1"
-        if index == 0
-        else "spine.notification-profile-bindings.v1"
-    )
-    generated = (
-        [{"name": "notification_profile_revision_id", "value": "profile_revision_new"}]
-        if index == 0
-        else [{"name": "notification_profile_binding_id", "value": "binding_medical"}]
-    )
+    contract = COMMAND_SHAPES[action["command"]][1]
+    request = _materialized_request(plan, approval, index, accepted_responses)
+    if action["command"] == "item_archetype.create":
+        facts = {
+            "item_archetype_id": "created_archetype_" + request["archetype_key"],
+            "item_archetype_revision_id": "created_archetype_revision_" + request["archetype_key"],
+            "archetype_key": request["archetype_key"], "revision_number": "1", "status": "active",
+        }
+        effect = "item_archetype_created"
+    elif action["command"] == "notification_profile.create":
+        facts = {
+            "notification_profile_id": "created_profile_" + request["profile_key"],
+            "notification_profile_revision_id": "created_profile_revision_" + request["profile_key"],
+            "profile_key": request["profile_key"], "revision_number": "1",
+            "normalized_revision_hash": "b" * 64, "status": "active",
+        }
+        effect = "notification_profile_created"
+    elif action["command"] == "notification_profile.revise":
+        facts = {
+        "notification_profile_id": "profile_medical",
+        "notification_profile_revision_id": "profile_revision_new",
+        "revision_number": "2",
+        "normalized_revision_hash": "b" * 64,
+        "status": "active",
+        }
+        effect = "notification_profile_revised"
+    elif action["command"] == "notification_profile.binding.set":
+        facts = {
+        "notification_profile_binding_id": "binding_lesson" if action["object_key"] == "binding:lesson" else "binding_medical",
+        "item_archetype_id": request["item_archetype_id"],
+        "notification_profile_id": request["notification_profile_id"],
+        "status": "active",
+        "compatible_item_types": ["event"],
+        }
+        effect = "notification_profile_binding_set"
+    else:
+        raise ValueError("fixture_response_command_unsupported")
+    generated = [
+        {"name": key, "value": facts[key]}
+        for key in sorted(facts) if key.endswith("_id")
+    ]
     receipt_id = f"receipt_{index}"
     semantic_hash = str(index + 5) * 64
     response_value = {
         "command": action["command"],
-        "effect": "revised" if index == 0 else "created",
-        **{entry["name"]: entry["value"] for entry in generated},
+        "effect": effect,
+        **facts,
         "ok": True,
         "receipt": {
             "command_id": cmd_id,
             "command_receipt_id": receipt_id,
             "created_at_utc": approval["execution"]["action_timestamp_utc"],
-            "effect": "revised" if index == 0 else "created",
+            "effect": effect,
             "semantic_facts_hash": semantic_hash,
         },
         "response_contract": contract,
@@ -856,11 +1298,13 @@ def _response(
         "command_id": cmd_id,
         "outcome": "compatible_replay" if replay else "accepted",
         "response_contract": contract,
-        "effect": "revised" if index == 0 else "created",
+        "effect": effect,
         "generated_ids": generated,
         "command_receipt_id": receipt_id,
         "semantic_facts_hash": semantic_hash,
-        "response": canonical_value(contract, response_value),
+        "response": canonical_value(
+            contract, response_value, COMMAND_SHAPES[action["command"]][0] + "Response"
+        ),
     }
 
 
@@ -929,6 +1373,31 @@ def make_verification(
     )
 
 
+def make_create_flow() -> dict[str, Any]:
+    """Synthetic command evidence only; never contacts or mutates Spine."""
+    request = _fixture_request()
+    plan = make_create_plan(request)
+    approval = make_approval(plan)
+    responses = []
+    binding_checkpoint = None
+    for index in range(len(plan["actions"])):
+        if index == 3:
+            binding_checkpoint = make_checkpoint(plan, approval, responses)
+        responses.append(_response(plan, approval, index, accepted_responses=responses))
+    applied = seal({
+        "artifact_schema": "spine.pack-apply-result.v1",
+        "plan_digest": plan["content_identity"]["digest"],
+        "approval_digest": approval["content_identity"]["digest"],
+        "execution": approval["execution"], "state": "applied",
+        "accepted_responses": responses, "failure": None, "unattempted_action_ids": [],
+    })
+    return {
+        "fixture_contract": "spine.pack-installer-create-flow.v1",
+        "request": request, "plan": plan, "approval": approval,
+        "binding_checkpoint": binding_checkpoint, "applied_result": applied,
+    }
+
+
 def make_envelope(result: dict[str, Any]) -> dict[str, Any]:
     return {
         "artifact_schema": "spine.pack-installer-result.v1",
@@ -959,6 +1428,40 @@ class InstallerArtifactContractTests(unittest.TestCase):
             schema = _schema_document(SCHEMA_ROOT / filename)
             self.assertEqual(schema["$schema"], "https://json-schema.org/draft/2020-12/schema")
             self.assertIn("$ref", schema)
+
+    def test_embedded_schema_uses_only_supported_validation_keywords(self) -> None:
+        supported = {
+            "$schema", "$id", "$comment", "title", "$defs", "$ref", "type",
+            "required", "properties", "additionalProperties", "const", "enum",
+            "minLength", "maxLength", "pattern", "minItems", "maxItems",
+            "uniqueItems", "items", "oneOf", "anyOf", "allOf", "not", "if",
+            "then", "else",
+        }
+        def visit(node):
+            self.assertFalse(set(node) - supported, set(node) - supported)
+            for key in ("$defs", "properties"):
+                for child in node.get(key, {}).values():
+                    visit(child)
+            for key in ("oneOf", "anyOf", "allOf"):
+                for child in node.get(key, []):
+                    visit(child)
+            for key in ("items", "not", "if", "then", "else"):
+                if key in node:
+                    visit(node[key])
+        visit(_schema_document(EMBEDDED_SCHEMA))
+
+    def test_materialized_requests_require_execution_identity(self) -> None:
+        for index, action in enumerate(self.plan["actions"]):
+            with self.subTest(command=action["command"]):
+                prefix, contract = COMMAND_SHAPES[action["command"]]
+                request = _materialized_request(self.plan, self.approval, index)
+                self.assertEqual(canonical_value_errors(
+                    canonical_value(contract, request, prefix + "Request"), prefix + "Request"
+                ), [])
+                del request["command_id"]
+                self.assertIn("embedded_contract_invalid", canonical_value_errors(
+                    canonical_value(contract, request, prefix + "Request"), prefix + "Request"
+                ))
 
     def test_positive_artifact_family(self) -> None:
         self.assertEqual(request_errors(self.request), [])
@@ -1036,6 +1539,7 @@ class InstallerArtifactContractTests(unittest.TestCase):
 
     def test_negative_semantic_vectors(self) -> None:
         expected_files = {
+            "apply_target_mismatch.json": "target_binding_mismatch",
             "draft_apply_eligible.json": "draft_plan_apply_eligible",
             "incorrect_artifact_digest.json": "content_digest_mismatch",
             "noncontiguous_partial_apply.json": "accepted_prefix_not_contiguous",
@@ -1048,7 +1552,9 @@ class InstallerArtifactContractTests(unittest.TestCase):
         }
         self.assertEqual(
             [path.name for path in sorted(NEGATIVE_ROOT.glob("*.json"))],
-            sorted(expected_files),
+            sorted([*expected_files, "embedded_contract_violations.json",
+                    "selection_assertion_mismatch.json", "binding_identity_mismatch.json",
+                    "invalid_result_references.json"]),
         )
         for filename, expected in expected_files.items():
             vector = load_json(NEGATIVE_ROOT / filename)
@@ -1086,13 +1592,14 @@ class InstallerArtifactContractTests(unittest.TestCase):
                     candidate = seal(candidate)
                     errors = approval_errors(candidate, self.plan)
                 elif filename == "target_mismatch.json":
+                    candidate = deepcopy(self.verification)
+                    candidate["target"]["host_name"] = "other.local"
+                    errors = verification_errors(seal(candidate), self.plan, self.applied)
+                elif filename == "apply_target_mismatch.json":
                     target = deepcopy(self.plan["request"]["target"])
                     target["host_name"] = "other.local"
                     errors = apply_preflight_errors(
-                        self.plan,
-                        target,
-                        self.plan["environment"],
-                        self.plan["catalog_snapshots"],
+                        self.plan, target, self.plan["environment"], self.plan["catalog_snapshots"]
                     )
                 elif filename == "unauthorized_drift.json":
                     candidate = deepcopy(self.approval)
@@ -1115,6 +1622,265 @@ class InstallerArtifactContractTests(unittest.TestCase):
         candidate = deepcopy(self.approval)
         candidate["allow_updates"] = True
         self.assertTrue(any("unknown" in error for error in validate_schema(candidate)))
+
+    def test_embedded_contracts_reject_validly_hashed_bad_content(self) -> None:
+        vector = load_json(NEGATIVE_ROOT / "embedded_contract_violations.json")
+        validators = {
+            "plan": plan_errors,
+            "checkpoint": lambda a: checkpoint_errors(a, self.plan, self.approval),
+            "applied": lambda a: apply_result_errors(a, self.plan, self.approval),
+            "verification": lambda a: verification_errors(a, self.plan, self.applied),
+        }
+        for case in vector["cases"]:
+            with self.subTest(case=case):
+                artifact = deepcopy(getattr(self, case["artifact"]))
+                wrapper = artifact
+                for token in case["path"]:
+                    wrapper = wrapper[int(token)] if isinstance(wrapper, list) else wrapper[token]
+                parsed = json.loads(wrapper["canonical_json"])
+                parent = parsed
+                for token in case["remove"][:-1]:
+                    parent = parent[token]
+                del parent[case["remove"][-1]]
+                wrapper.update(canonical_value(wrapper["contract"], parsed, wrapper["shape"]))
+                artifact = seal(artifact)
+                self.assertEqual(content_digest_errors(artifact), [])
+                self.assertIn(vector["expected_error"], validators[case["artifact"]](artifact))
+
+    def test_contract_and_context_cannot_be_spoofed(self) -> None:
+        candidate = deepcopy(self.plan)
+        candidate["classifications"][0]["desired"]["contract"] = "spine.unknown.v1"
+        self.assertIn("embedded_contract_or_shape_mismatch", plan_errors(seal(candidate)))
+        candidate = deepcopy(self.plan)
+        candidate["actions"][0]["request_template"] = candidate["actions"][0]["desired"]
+        self.assertIn("embedded_context_shape_mismatch", plan_errors(seal(candidate)))
+        candidate = deepcopy(self.applied)
+        candidate["accepted_responses"][0]["effect"] = "fabricated"
+        self.assertIn("response_evidence_mismatch",
+                      apply_result_errors(seal(candidate), self.plan, self.approval))
+
+    def test_request_selection_is_authoritative(self) -> None:
+        vector = load_json(NEGATIVE_ROOT / "selection_assertion_mismatch.json")
+        self.assertIn(vector["expected_error"], selection_assertion_errors(
+            self.request, all_flag=vector["all_flag"]
+        ))
+        self.assertEqual(selection_assertion_errors(self.request), [])
+        self.assertEqual(selection_assertion_errors(
+            self.request, archetype_flags=["medical_appointment", "lesson", "lesson"]
+        ), [])
+        self.assertEqual(selection_assertion_errors(
+            self.request, all_flag=True, archetype_flags=["lesson"]
+        ), ["selection_flags_conflict"])
+        full = deepcopy(self.request)
+        full["request"]["selection"] = {"mode": "all"}
+        full = seal(full)
+        self.assertEqual(selection_assertion_errors(full, all_flag=True), [])
+        self.assertEqual(selection_assertion_errors(full, archetype_flags=[]), ["selection_flags_empty"])
+
+    def test_metadata_and_behavior_comparisons_are_independent(self) -> None:
+        original = self.plan["classifications"][2]["observed"]
+        for section, field, replacement in (
+            ("metadata", "description", "Different presentation"),
+            ("revision", "compatible_item_types", ["event", "task"]),
+        ):
+            with self.subTest(section=section):
+                candidate = deepcopy(self.plan)
+                parsed = json.loads(original["canonical_json"])
+                parsed[section][field] = replacement
+                candidate["classifications"][2]["observed"] = canonical_value(
+                    original["contract"], parsed, original["shape"]
+                )
+                self.assertIn("equivalence_preimage_mismatch", plan_errors(seal(candidate)))
+
+    def test_binding_identity_vectors(self) -> None:
+        vector = load_json(NEGATIVE_ROOT / "binding_identity_mismatch.json")
+        for mutation in vector["mutations"]:
+            with self.subTest(path=mutation["path"]):
+                candidate = deepcopy(self.plan)
+                target = candidate
+                for part in mutation["path"][:-1]:
+                    target = target[int(part)] if isinstance(target, list) else target[part]
+                target[mutation["path"][-1]] = mutation["value"]
+                candidate = seal(candidate)
+                self.assertEqual(validate_schema(candidate), [])
+                self.assertEqual(content_digest_errors(candidate), [])
+                self.assertIn(mutation["expected_error"], plan_errors(candidate))
+
+    def test_binding_identity_closure_and_state(self) -> None:
+        for index in range(len(self.plan["classifications"])):
+            candidate = deepcopy(self.plan)
+            del candidate["classifications"][index]["identity"]
+            self.assertTrue(validate_schema(seal(candidate)))
+        candidate = deepcopy(self.plan)
+        candidate["classifications"][4]["identity"]["unexpected"] = "extra"
+        self.assertTrue(validate_schema(seal(candidate)))
+        candidate = deepcopy(self.plan)
+        candidate["classifications"][4]["identity"]["observed_binding"] = None
+        self.assertIn("binding_observation_state_mismatch", plan_errors(seal(candidate)))
+        candidate = deepcopy(self.plan)
+        candidate["classifications"][0]["identity"] = None
+        self.assertIn("catalog_identity_state_mismatch", plan_errors(seal(candidate)))
+        candidate = deepcopy(self.plan)
+        binding = candidate["classifications"][4]
+        binding.update(classification="blocked", observed=None, identity=None, blocked_reason="ambiguous_readback")
+        candidate["blocked_object_keys"] = [binding["object_key"]]
+        candidate["apply_eligible"] = False
+        self.assertEqual(plan_errors(seal(candidate)), [])
+
+    def test_binding_requests_match_resolved_identity_and_owner(self) -> None:
+        for field, value, expected in (
+            ("item_archetype_id", "wrong_archetype", "binding_action_identity_mismatch"),
+            ("notification_profile_id", "wrong_profile", "binding_action_identity_mismatch"),
+            ("owner", {"owner_kind": "subject", "owner_subject_id": "other_owner"}, "binding_action_owner_mismatch"),
+        ):
+            candidate = deepcopy(self.plan)
+            action = candidate["actions"][1]
+            request = json.loads(action["request_template"]["canonical_json"])
+            request[field] = value
+            action["request_template"] = canonical_value(
+                "spine.notification-profile-bindings.v1", request, "bindingSetTemplate"
+            )
+            self.assertIn(expected, plan_errors(seal(candidate)))
+
+    def test_binding_drift_requires_different_observed_profile_id(self) -> None:
+        candidate = deepcopy(self.plan)
+        binding = candidate["classifications"][4]
+        binding["classification"] = "drifted"
+        binding["observed"] = canonical_value("spine.notification-profile-bindings.v1", {
+            "binding_kind": "archetype_default", "notification_profile_key": "medical_appointment_standard",
+        })
+        binding["identity"]["observed_binding"]["notification_profile_id"] = "profile_medical"
+        candidate["actions"].insert(1, {
+            "command": "notification_profile.binding.set", "object_key": binding["object_key"],
+            "change_kind": "update", "desired": binding["desired"], "expected": binding["observed"],
+            "request_template": canonical_value("spine.notification-profile-bindings.v1", {
+                "contract_version": "spine.notification-profile-bindings.v1",
+                "owner": candidate["request"]["owner"],
+                "item_archetype_id": "archetype_lesson", "notification_profile_id": "profile_lesson",
+            }, "bindingSetTemplate"),
+        })
+        for index, action in enumerate(candidate["actions"]):
+            action.update(ordinal=str(index), action_id=f"action-{index:06d}")
+        candidate["decision_action_ids"] = ["action-000000", "action-000001"]
+        self.assertEqual(plan_errors(seal(candidate)), [])
+        binding["identity"]["observed_binding"]["notification_profile_id"] = "profile_lesson"
+        self.assertIn("binding_profile_identity_mismatch", plan_errors(seal(candidate)))
+
+    def test_binding_missing_dependencies_use_create_result_references(self) -> None:
+        candidate = make_create_plan(self.request)
+        self.assertEqual(plan_errors(candidate), [])
+        binding_action = candidate["actions"][3]
+        body = json.loads(binding_action["request_template"]["canonical_json"])
+        body["notification_profile_id"] = "guessed_profile_id"
+        binding_action["request_template"] = canonical_value(
+            "spine.notification-profile-bindings.v1", body, "bindingSetTemplate"
+        )
+        self.assertIn("binding_action_identity_mismatch", plan_errors(seal(candidate)))
+
+    def test_archetype_source_provenance_is_explicit(self) -> None:
+        source = _schema_document(EMBEDDED_SCHEMA)["$comment"]
+        for reference in (
+            "notification-profile-types.schema.json#/$defs/archetypeRevision",
+            "notification-profile-commands.schema.json#/$defs/archetypeCreate",
+            "#/$defs/archetypeRevise", "src/spine/commands/notification_profiles.py",
+            "_archetype_create", "_archetype_revise", "72203f092de191a7633b1884bf0d61836a25abe4",
+        ):
+            self.assertIn(reference, source)
+
+    def test_create_flow_materializes_and_replays_binding_checkpoint(self) -> None:
+        flow = make_create_flow()
+        self.assertEqual(flow, load_json(POSITIVE_ROOT / "create_binding_artifact_suite.json"))
+        plan, approval = flow["plan"], flow["approval"]
+        checkpoint = flow["binding_checkpoint"]
+        self.assertEqual(plan_errors(plan), [])
+        self.assertEqual(approval_errors(approval, plan), [])
+        self.assertEqual(checkpoint_errors(checkpoint, plan, approval), [])
+        self.assertEqual(apply_result_errors(flow["applied_result"], plan, approval), [])
+        request = json.loads(checkpoint["unresolved_submission"]["request"]["canonical_json"])
+        self.assertEqual(request["item_archetype_id"], "created_archetype_lesson")
+        self.assertEqual(request["notification_profile_id"], "created_profile_lesson_standard")
+        self.assertEqual(_reference_slots(request), [])
+        # Compatible replay must produce exactly the same request bytes/command ID.
+        replayed = deepcopy(checkpoint["accepted_responses"])
+        for response in replayed:
+            response["outcome"] = "compatible_replay"
+        self.assertEqual(canonical_text(_materialized_request(plan, approval, 3, replayed)),
+                         checkpoint["unresolved_submission"]["request"]["canonical_json"])
+        candidate = deepcopy(checkpoint)
+        unresolved = candidate["unresolved_submission"]["request"]
+        vector = load_json(NEGATIVE_ROOT / "invalid_result_references.json")["unresolved_request"]
+        request[vector["field"]] = vector["value"]
+        candidate["unresolved_submission"]["request"] = canonical_value(
+            unresolved["contract"], request, unresolved["shape"]
+        )
+        self.assertIn(vector["expected_error"], checkpoint_errors(seal(candidate), plan, approval))
+
+    def test_invalid_result_reference_vectors(self) -> None:
+        vector = load_json(NEGATIVE_ROOT / "invalid_result_references.json")
+        for mutation in vector["mutations"]:
+            with self.subTest(case=mutation["case"]):
+                plan = make_create_plan(self.request)
+                action = plan["actions"][int(mutation["action_index"])]
+                template = action["request_template"]
+                value = json.loads(template["canonical_json"])
+                target = value
+                for key in mutation["path"][:-1]:
+                    target = target[key]
+                target[mutation["path"][-1]] = mutation["value"]
+                action["request_template"] = canonical_value(template["contract"], value, template["shape"])
+                plan = seal(plan)
+                self.assertEqual(validate_schema(plan), [])
+                self.assertEqual(content_digest_errors(plan), [])
+                self.assertIn(mutation["expected_error"], plan_errors(plan))
+                with self.assertRaisesRegex(ValueError, "invalid_plan_or_approval"):
+                    _materialized_request(plan, make_approval(plan), int(mutation["action_index"]))
+
+    def test_reference_materialization_rejects_bad_producer_evidence(self) -> None:
+        flow = make_create_flow()
+        plan, approval = flow["plan"], flow["approval"]
+        prefix = flow["binding_checkpoint"]["accepted_responses"]
+        for responses in ([], prefix[:1], prefix[:2]):
+            with self.assertRaisesRegex(ValueError, "result_reference_response_missing"):
+                _materialized_request(plan, approval, 3, responses)
+        for field, value in (
+            ("command_id", "wrong_command"), ("outcome", "rejected"),
+            ("generated_ids", []), ("command_receipt_id", "wrong_receipt"),
+        ):
+            responses = deepcopy(prefix)
+            responses[0][field] = value
+            with self.assertRaisesRegex(ValueError, "result_reference_response_invalid"):
+                _materialized_request(plan, approval, 3, responses)
+        for field, value in (
+            ("archetype_key", "another_key"),
+            ("item_archetype_id", "${spine-pack.result:action-000001:notification_profile_id}"),
+        ):
+            responses = deepcopy(prefix)
+            embedded = responses[0]["response"]
+            body = json.loads(embedded["canonical_json"])
+            body[field] = value
+            responses[0]["response"] = canonical_value(embedded["contract"], body, embedded["shape"])
+            responses[0]["generated_ids"] = [
+                {"name": key, "value": body[key]} for key in sorted(body) if key.endswith("_id")
+            ]
+            with self.assertRaisesRegex(ValueError, "result_reference_response_invalid"):
+                _materialized_request(plan, approval, 3, responses)
+        responses = deepcopy(prefix)
+        responses[0], responses[1] = responses[1], responses[0]
+        with self.assertRaisesRegex(ValueError, "result_reference_response_invalid"):
+            _materialized_request(plan, approval, 3, responses)
+
+    def test_reference_scan_covers_all_commands_and_nested_members(self) -> None:
+        reference = "${spine-pack.result:action-000000:item_archetype_id}"
+        for prefix, contract in COMMAND_SHAPES.values():
+            for suffix in ("Template", "Request", "Response"):
+                with self.subTest(shape=prefix + suffix):
+                    self.assertIn("result_reference_context_forbidden", result_reference_errors(
+                        {"owner": {"owner_subject_id": reference}}, prefix + suffix
+                    ))
+                    self.assertTrue(result_reference_errors({reference: "value"}, prefix + suffix))
+        self.assertIn("result_reference_syntax_invalid", result_reference_errors(
+            {"item_archetype_id": "prefix" + reference}, "bindingSetTemplate"
+        ))
 
     def test_command_identity_changes_with_plan_execution_or_action(self) -> None:
         plan_digest = self.plan["content_identity"]["digest"]

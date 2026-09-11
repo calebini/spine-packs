@@ -1,0 +1,5 @@
+{
+  "scenario": "apply_preflight",
+  "mutation": "replace_observed_target_host",
+  "expected_error": "target_binding_mismatch"
+}
