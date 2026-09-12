@@ -33,8 +33,9 @@ A future installer is expected to expose three phases:
    and correlates the Spine command responses preserved during `apply` with the
    approved plan.
 
-Only read-only `plan` is implemented, as a bounded source-tree runtime slice.
-`apply`, `verify`, and recovery remain design targets, not available commands.
+Read-only `plan` and the internal non-mutating apply preflight are implemented
+as bounded source-tree runtime slices. Public `apply`, Spine writes, `verify`,
+and recovery remain design targets, not available commands.
 The normative contract is [specs/installer.md](specs/installer.md).
 The ordered delivery slices and their completion gates are recorded in
 [specs/implementation-plan.md](specs/implementation-plan.md).

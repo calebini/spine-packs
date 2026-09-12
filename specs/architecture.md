@@ -57,8 +57,10 @@ For each definition, planning must distinguish at least:
 The draft equivalence algorithm, granular selection boundary, and
 update-authorization requirements are specified in `specs/installer.md`. Their
 machine-readable representations are specified in `specs/installer-artifacts.md`.
-Only the bounded read-only planning slice is implemented; the remaining
-workflow is still a reviewed design target, not executable functionality.
+The bounded read-only planning slice and an internal, non-mutating apply
+preflight service are implemented. Public `apply`, Spine writes, checkpointing,
+continuation, and verification remain reviewed design targets, not executable
+functionality.
 
 Dependency references and resolution remain attached to a future manifest and
 installer contract. They are not implied by the v1 `plan` operation.

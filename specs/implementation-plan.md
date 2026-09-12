@@ -27,7 +27,7 @@ Implemented in `src/spine_packs/`:
 This slice has synthetic runtime and independent contract coverage. It has not
 been qualified against a live operator target.
 
-### Slice 2: apply preflight without writes — next
+### Slice 2: apply preflight without writes — implemented locally
 
 Add the `apply` entry boundary while keeping all Spine writes disabled:
 

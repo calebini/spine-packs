@@ -519,6 +519,18 @@ def request_errors(request_artifact: dict[str, Any]) -> list[str]:
     return errors
 
 
+def approval_errors(approval: dict[str, Any], plan: dict[str, Any]) -> list[str]:
+    """Validate an approval and bind it to one complete immutable plan."""
+    errors = validate_schema(approval) + content_digest_errors(approval)
+    if errors:
+        return errors
+    if approval["plan_digest"] != plan.get("content_identity", {}).get("digest"):
+        errors.append("approval_plan_digest_mismatch")
+    if approval["authorized_update_action_ids"] != plan.get("decision_action_ids"):
+        errors.append("update_authorization_incomplete")
+    return errors
+
+
 def binding_identity_errors(plan: dict[str, Any]) -> list[str]:
     """Correlate owner-scoped key resolutions, binding readback, and requests."""
     errors = []
