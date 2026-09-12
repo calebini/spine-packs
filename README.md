@@ -36,6 +36,8 @@ A future installer is expected to expose three phases:
 Only read-only `plan` is implemented, as a bounded source-tree runtime slice.
 `apply`, `verify`, and recovery remain design targets, not available commands.
 The normative contract is [specs/installer.md](specs/installer.md).
+The ordered delivery slices and their completion gates are recorded in
+[specs/implementation-plan.md](specs/implementation-plan.md).
 
 ## Read-only planner
 
@@ -77,7 +79,7 @@ does not authorize execution, and this slice cannot execute any plan.
 
 - `specs/` is the normative source of truth for purpose, architecture,
   compatibility, pack-format requirements, installer behavior and artifacts,
-  and approved pack content.
+  the installer implementation plan, and approved pack content.
 - `contracts/schemas/` contains the machine-readable manifest and draft
   installer-artifact contracts.
 - `packs/` contains independently versioned pack source material, including
