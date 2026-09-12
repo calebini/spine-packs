@@ -29,7 +29,8 @@ been qualified against a live operator target.
 
 ### Slice 2: apply preflight without writes — implemented locally
 
-Add the `apply` entry boundary while keeping all Spine writes disabled:
+Add the internal apply-preflight service boundary while keeping all Spine writes
+disabled. Do not expose the public `apply` CLI command until Slice 3:
 
 - validate and correlate the saved plan, approval, and complete manifest;
 - require an apply-eligible released plan and complete action authorization;
