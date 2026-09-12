@@ -33,10 +33,45 @@ A future installer is expected to expose three phases:
    and correlates the Spine command responses preserved during `apply` with the
    approved plan.
 
-This workflow is a design target, not an implemented command. Its first
-normative draft is [specs/installer.md](specs/installer.md). This repository
-contains a first-pass manifest contract and draft content, but no installer or
-package runtime.
+Only read-only `plan` is implemented, as a bounded source-tree runtime slice.
+`apply`, `verify`, and recovery remain design targets, not available commands.
+The normative contract is [specs/installer.md](specs/installer.md).
+
+## Read-only planner
+
+From this checkout, using Python 3.11 or newer:
+
+```sh
+PYTHONPATH=src python3 -m spine_packs plan \
+  --manifest packs/kinflow-starter/kinflow-starter.1.0.0-draft.9.json \
+  --request /absolute/operator/path/request.json \
+  --output /absolute/operator/path/new-plan.json
+```
+
+Supply your own sealed `spine.pack-install-request.v1` artifact with explicit
+owner, resolved target, selection, and digest; the request contract and hashing
+rules are in [specs/installer-artifacts.md](specs/installer-artifacts.md).
+There is no request wizard or environment discovery command in this slice.
+Keep environment-specific operator artifacts outside `packs/` and source control.
+Existing fixture targets and owner IDs are test data, not usable configuration.
+
+The saved request selects `all` or an exact sorted list of archetype keys.
+Optional `--all` or repeated `--archetype KEY` flags only assert that same
+selection; they never override it. The current draft pack requires
+`draft_posture=inspect_only` and can never produce an apply-eligible plan.
+
+The target must already expose the pinned compatible Spine `0.3.0` public
+surface and ledger schema 12. The planner will not downgrade or modify Spine,
+open its database, or issue write commands. An incompatible newer runtime is
+rejected, not assumed compatible. Run against an operator-selected local
+target without concurrent catalog writers.
+
+The command emits one compact JSON result envelope to stdout and publishes a
+private plan at a new output path. The parent directory must exist; existing
+files and symlinks are never overwritten. Blocked plans exit 6. Unblocked draft
+inspection exits 0 even with drift. Released drift exits 5 for a decision;
+released no-drift plans exit 0. All four return a reviewable plan. Eligibility
+does not authorize execution, and this slice cannot execute any plan.
 
 ## Repository map
 
@@ -49,6 +84,8 @@ package runtime.
   the draft `kinflow-starter` vertical slices.
 - `tests/contract/` and `tests/fixtures/` contain dependency-free contract
   checks and positive/negative manifest fixtures.
+- `src/spine_packs/` contains the read-only planner and local command adapter;
+  `tests/runtime/` exercises them with synthetic public readbacks and subprocesses.
 - `scripts/verify_repo.py` checks repository shape and high-level boundary
   markers without third-party dependencies.
 - `AGENTS.md` gives repository-specific instructions to automated contributors.
@@ -75,8 +112,10 @@ classifications, approval, partial-apply, and verification posture for a local
 single-operator v1. It has a draft machine-artifact companion with closed
 request, plan, approval,
 checkpoint, apply-result, verification-result, and CLI-result schemas and
-focused contract vectors. That layer still requires bounded review, and there
-is no installer implementation. Stable Spine instance identity, binding
+focused contract vectors. The authorized first runtime slice implements only
+read-only planning. It has not been validated against a live operator target;
+the local tests use synthetic responses pinned to the inspected public surface.
+The wider workflow remains unimplemented. Stable Spine instance identity, binding
 compare-and-set, and public receipt readback remain future hardening rather
 than v1 blockers.
 
@@ -85,4 +124,5 @@ Run the local structural check with:
 ```sh
 python3 scripts/verify_repo.py
 python3 -m unittest discover -s tests/contract -p 'test_*.py'
+python3 -m unittest discover -s tests/runtime -p 'test_*.py'
 ```

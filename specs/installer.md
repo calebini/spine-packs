@@ -1,6 +1,6 @@
 # Installer contract
 
-Status: Draft v0.4; machine-artifact review required before implementation
+Status: Draft v0.4; bounded read-only `plan` implementation authorized
 
 ## 1. Purpose and authority
 
@@ -17,9 +17,11 @@ approval, result, and verification artifacts are portable evidence and
 operator intent; none is a second ledger or proof that Spine still has a given
 state.
 
-The terms **MUST**, **MUST NOT**, **SHOULD**, and **MAY** describe requirements
-for the future reviewed implementation. This draft does not authorize adding
-an installer runtime.
+The terms **MUST**, **MUST NOT**, **SHOULD**, and **MAY** describe implementation
+requirements. The first authorized runtime slice is read-only `plan`, using
+the source-tree layout in `specs/architecture.md`. `apply`, `verify`, recovery,
+remote transports, and release packaging remain outside that slice and require
+separate review and authorization. No Spine runtime change is authorized.
 
 ## 2. Inputs and non-goals
 
@@ -325,10 +327,19 @@ Every selected object receives one classification. The plan MUST expose both
 desired and observed semantic preimages for every drift and enough identity to
 review the proposed Spine command.
 
-Blocked objects make the plan ineligible for application. Drift makes a plan
-decision-bearing: it is ineligible until every proposed update is individually
-authorized. The installer MUST NOT apply only the missing portion of a selected
-scope while silently skipping blocked or unauthorized drift.
+Blocked objects make the plan intrinsically ineligible for application.
+Drift makes a plan decision-bearing, but does not by itself make the stored
+`apply_eligible` value false. A released, compatible, unblocked plan remains
+intrinsically eligible when every drift has its corresponding update action,
+as specified in `specs/installer-artifacts.md` Section 7.
+
+Eligibility is not execution authorization. The unchanged plan MUST NOT be
+executed until an explicit approval authorizes the complete plan and every
+proposed update. Approval MUST NOT change `apply_eligible` or the plan digest.
+An otherwise eligible released plan with drift produces `decision_required`
+and exit 5, not permission to execute. The installer MUST NOT apply only the
+missing portion of a selected scope while silently skipping blocked or
+unauthorized drift.
 
 ## 9. Deterministic plan
 
@@ -616,6 +627,23 @@ implementation MUST use that mapping rather than inventing another v1 surface.
 Plan generation that successfully discovers drift still produces the complete
 plan artifact. Its structured status must distinguish a reviewable
 decision-required plan from malformed input or environment failure.
+
+For a successfully observed, compatible plan, the following precedence is
+normative. The first matching row wins; drift does not override blocked state
+or permitted draft inspection.
+
+| Condition | Status / exit | `apply_eligible` |
+| --- | --- | --- |
+| Any blocked selected object, with or without drift | `blocked` / 6 | false |
+| Draft with `inspect_only`, no blocked objects, with or without drift | `success` / 0 | false |
+| Released, no blocked objects, with drift | `decision_required` / 5 | true |
+| Released, no blocked objects or drift | `success` / 0 | true |
+
+All four outcomes MUST include the complete plan artifact. Draft inspection
+MUST preserve drift classifications and proposed update actions for review.
+Drafts with `draft_posture=reject` fail before observation with exit 3.
+Neither success nor intrinsic eligibility authorizes execution: a future
+`apply` still requires approval of the exact immutable plan and every update.
 
 ## 15. Sensitive data and output discipline
 

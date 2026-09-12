@@ -45,10 +45,12 @@ and administration, Health, and Home, vehicle, and logistics vertical slices
 plus the General commitments vertical slice specified for `kinflow-starter`
 draft 9.
 Do not broaden the schema or pack semantics without matching normative spec,
-fixture, and contract-test changes. The draft machine-readable installer
-contracts require bounded review before an installer implementation is added.
-Do not add a package runtime or speculative
-service/adapter/model/package directories.
+fixture, and contract-test changes. The authorized runtime scope is the bounded
+read-only `plan` slice in `src/spine_packs/`, described in
+`specs/architecture.md`. Do not add `apply`, `verify`, recovery, remote transport,
+release packaging, or speculative service/adapter/model directories without
+separate review and authorization. Proposed write templates are data only:
+the process adapter must enforce its read-command allowlist.
 Mark unresolved design details explicitly instead of silently choosing them.
 
 When the repository advances, add only the smallest structure required by real
@@ -58,11 +60,12 @@ material belongs in `docs/` only when the README is insufficient.
 
 ## Change checks
 
-For documentation-only and seed-structure changes, run:
+For documentation, contract, and planner changes, run:
 
 ```sh
 python3 scripts/verify_repo.py
 python3 -m unittest discover -s tests/contract -p 'test_*.py'
+python3 -m unittest discover -s tests/runtime -p 'test_*.py'
 git diff --check
 ```
 

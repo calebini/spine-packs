@@ -31,9 +31,9 @@ delivery integration, scheduler, or Spine runtime code.
 Pack content is the installer's input. It is not evidence that an installation
 occurred and cannot substitute for a Spine receipt.
 
-## Future installer boundary
+## Installer boundary
 
-The future installer will be a client of Spine's existing public command
+The installer is a client of Spine's existing public command
 surface only. Direct database access is forbidden, including read-only access
 used for planning or verification.
 
@@ -56,8 +56,9 @@ For each definition, planning must distinguish at least:
 
 The draft equivalence algorithm, granular selection boundary, and
 update-authorization requirements are specified in `specs/installer.md`. Their
-machine-readable representations remain unsettled pending installer contract
-review.
+machine-readable representations are specified in `specs/installer-artifacts.md`.
+Only the bounded read-only planning slice is implemented; the remaining
+workflow is still a reviewed design target, not executable functionality.
 
 Dependency references and resolution remain attached to a future manifest and
 installer contract. They are not implied by the v1 `plan` operation.
@@ -92,6 +93,66 @@ it interprets catalog state or emits an applicable plan.
 The exact portable artifact family, local target binding, and recovery
 checkpoint are specified in `specs/installer-artifacts.md`. These remain
 client evidence and never become an alternate Spine ledger.
+
+## First runtime slice: read-only planning
+
+The source-tree package `src/spine_packs/` is the smallest authorized runtime
+layout. It requires Python 3.11 or newer and the standard library only:
+
+- `manifest.py` validates the complete pack, not merely its selected objects.
+- `artifacts.py` validates requests, canonical embedded values, and plans
+  against the checked-in contract vocabulary and semantic rules.
+- `planning.py` resolves selection and compares public observations, then
+  constructs deterministic classifications and proposed command templates.
+- `spine_command.py` is the sole subprocess boundary. Its allowlist contains
+  only `system.info`, archetype/profile list and show, and binding list.
+- `__main__.py` handles explicit files, matching selection assertions, one JSON
+  result envelope, and private no-clobber plan publication.
+
+The adapter MUST reject write commands before launching a subprocess, even
+when a caller asks for dry-run execution. Proposed writes inside a plan are
+data only. There is no apply, verify, recovery, remote transport, install-state
+registry, or release packaging in this slice. Runtime code MUST NOT import
+test helpers or Spine internals. Existing contract-test validators are kept
+independent and cross-check generated plans.
+
+Public readbacks and the emitted read-request subset are pinned in
+`contracts/schemas/spine-readback-0.3.0.schema.json` to inspected Spine commit
+`72203f092de191a7633b1884bf0d61836a25abe4`. That file is a client-side validator,
+not a new Spine contract. Its source provenance is recorded in `$comment`.
+Spine's raw JSON readbacks contain native integer revision numbers and template
+indices; the adapter MAY parse these fields only in public responses and MUST
+validate their pinned shape. Installer artifacts still forbid JSON numbers.
+Only semantic fields enter embedded comparison values; source integer fields
+are not silently rewritten into a different public contract.
+
+The planner MUST preserve the public `catalog_snapshot_hash` returned by Spine,
+not invent a local substitute. It exhausts owner-scoped root catalogs (active
+and retired), observes active bindings, checks current show results against
+listed definitions, and rechecks each first page and snapshot after collection.
+These checks detect observed changes; they do not provide an atomic multi-catalog
+snapshot or replace the single-operator/no-concurrent-writer requirement.
+
+Local target resolution uses `socket.getfqdn()` and resolved existing file
+paths. The adapter hashes the executable and repeats target checks around
+observations. It MUST NOT open the ledger; it passes the validated path only
+to the public CLI. A path/hash match is not a stable Spine instance identity
+or protection against arbitrary concurrent filesystem replacement.
+
+Operational bounds are 30 seconds and 16 MiB of stdout per public command,
+16 MiB raw manifest input, and 1 MiB raw request-file input. Canonical artifact
+byte limits remain those in `specs/installer-artifacts.md`; whitespace allowance
+does not relax them. Process stderr and raw responses MUST NOT be echoed in
+installer errors. An explicit Spine rejection produces exit 8; malformed,
+inconsistent, timed-out, or oversized transport output fails closed at exit 11.
+This source-tree invocation does not configure or deploy Spine.
+
+The output parent MUST already exist. Plan publication uses a same-directory
+private temporary file, flush/fsync, and an atomic no-clobber hard link, followed
+by parent-directory fsync. Existing outputs, including symlinks, MUST NOT be
+replaced or reused. The operator must choose a new output path for each fresh
+observation. No result path enters the plan digest. These are POSIX-local
+implementation choices, not support for Windows paths or remote storage.
 
 ## Input boundary
 

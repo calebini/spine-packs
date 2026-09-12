@@ -1429,6 +1429,49 @@ class InstallerArtifactContractTests(unittest.TestCase):
             self.assertEqual(schema["$schema"], "https://json-schema.org/draft/2020-12/schema")
             self.assertIn("$ref", schema)
 
+    def test_drift_eligibility_does_not_depend_on_approval(self) -> None:
+        # A reviewable released drift plan is technically eligible before an
+        # approval exists. Approval authorizes its exact immutable digest.
+        plan = make_plan(self.request)
+        before = deepcopy(plan)
+        self.assertTrue(plan["decision_action_ids"])
+        self.assertTrue(plan["apply_eligible"])
+        self.assertEqual(plan_errors(plan), [])
+
+        approval = make_approval(plan)
+        self.assertEqual(approval_errors(approval, plan), [])
+        self.assertEqual(approval["plan_digest"], before["content_identity"]["digest"])
+
+        unauthorized = deepcopy(approval)
+        unauthorized["authorized_update_action_ids"] = []
+        unauthorized = seal(unauthorized)
+        self.assertIn("update_authorization_incomplete", approval_errors(unauthorized, plan))
+        self.assertEqual(plan, before)
+
+        envelope = {
+            "artifact_schema": "spine.pack-installer-result.v1",
+            "operation": "plan",
+            "status": "decision_required",
+            "exit_code": "5",
+            "artifact": {
+                "path": "/operator/review/plan.json",
+                "digest": plan["content_identity"]["digest"],
+            },
+            "error": {
+                "category": "decision_required_for_drift",
+                "code": "update_approval_required",
+                "message": "The plan requires explicit update approval.",
+                "facts": [],
+            },
+        }
+        self.assertEqual(envelope_errors(envelope), [])
+
+    def test_installer_prose_separates_eligibility_and_authorization(self) -> None:
+        prose = (ROOT / "specs/installer.md").read_text(encoding="utf-8")
+        self.assertIn("Eligibility is not execution authorization.", prose)
+        self.assertIn("Approval MUST NOT change `apply_eligible` or the plan digest.", prose)
+        self.assertNotIn("it is ineligible until every proposed update", prose)
+
     def test_embedded_schema_uses_only_supported_validation_keywords(self) -> None:
         supported = {
             "$schema", "$id", "$comment", "title", "$defs", "$ref", "type",

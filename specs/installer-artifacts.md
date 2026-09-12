@@ -1,6 +1,6 @@
 # Installer artifact contracts
 
-Status: Draft v0.1; bounded review required before implementation
+Status: Draft v0.1; bounded read-only `plan` implementation authorized
 
 ## 1. Scope and authority
 
@@ -452,6 +452,12 @@ Exit 5 MUST reference the complete reviewable plan. Exit 9 MUST reference the
 terminal partial result. A successful draft inspection may exit 0 with a plan
 whose `apply_eligible` is false; attempting to apply it fails at exit 3.
 
+For `plan`, the precedence table in `specs/installer.md` Section 14 is
+normative: blocked objects take priority, then permitted draft inspection,
+then released drift, then released no-drift success. All four outcomes
+reference a complete plan. Draft inspection preserves decision action IDs
+but does not require an approval or become intrinsically eligible.
+
 Errors contain only category, stable code, bounded human message, and an array
 of closed `{name, value}` objects with string members, strictly sorted by unique
 `name`. They MUST NOT contain credentials, environment dumps,
@@ -460,7 +466,7 @@ facts do not change the process exit code.
 
 ## 13. Required semantic vectors
 
-Before implementation, contract tests MUST demonstrate at least:
+Before the corresponding behavior is implemented, tests MUST demonstrate at least:
 
 - full-pack and granular request normalization and inferred closure;
 - closed objects, ordering, size limits, and every artifact digest;
@@ -483,8 +489,9 @@ than silently becoming implementation assumptions.
 
 ## 14. Deferred implementation details
 
-This contract does not choose a Python package name, CLI parsing library,
-filesystem configuration location, or release packaging mechanism. Those are
-implementation choices after bounded review. It does not add section bundles,
+The authorized read-only slice uses the source-tree `spine_packs` package and
+standard-library `argparse`, as recorded in `specs/architecture.md`. This does
+not authorize apply, verification, or recovery implementation. Filesystem
+configuration and release packaging remain deferred. It does not add section bundles,
 remote transports, signatures, install registries, credentials, Windows path
 semantics, or Spine runtime changes.

@@ -1,0 +1,968 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spine-packs.local/contracts/schemas/spine-readback-0.3.0.schema.json",
+  "$comment": "Pinned to Spine commit 72203f092de191a7633b1884bf0d61836a25abe4. systemInfo is copied from contracts/schemas/system-info-response-v2.schema.json. Catalog success shapes derive from src/spine/commands/notification_profiles.py _list_roots, _show_root, _binding_list and src/spine/ledger/notification_profiles.py load_archetype/load_profile; returned column shapes are pinned from migrations/0010_notification_profiles.sql. This is a public response validator, not database access. Native integer revision_number/template_index values occur only in raw public readbacks and never in installer artifacts. ListRequest/ShowRequest definitions deliberately narrow the public surface to fields emitted by this planner.",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "systemInfo": {
+      "title": "Spine System Information Response v2",
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "runtime_version",
+        "implemented_ledger_schema_version",
+        "ledger_schema_version",
+        "timezone_database_version",
+        "implemented_contract_versions",
+        "runtime_dependencies"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "system.info"
+        },
+        "response_contract": {
+          "const": "spine.system-info.v2"
+        },
+        "runtime_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implemented_ledger_schema_version": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "ledger_schema_version": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "timezone_database_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implemented_contract_versions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allOf": [
+            {
+              "contains": {
+                "const": "spine.system-info.v2"
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "const": "spine.tickerd-compatibility.v1"
+              },
+              "minContains": 1,
+              "maxContains": 1
+            }
+          ]
+        },
+        "runtime_dependencies": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "package_version",
+              "capability_id",
+              "descriptor_sha256",
+              "compatibility_contract",
+              "status"
+            ],
+            "properties": {
+              "name": {
+                "const": "tickerd"
+              },
+              "package_version": {
+                "const": "0.2.0"
+              },
+              "capability_id": {
+                "const": "tickerd.runtime-capabilities.v1"
+              },
+              "descriptor_sha256": {
+                "const": "215f9aa6b54e6c0e6186796a55d78e1c5a270adc9b3ccefb433df5a3bb87b58b"
+              },
+              "compatibility_contract": {
+                "const": "spine.tickerd-compatibility.v1"
+              },
+              "status": {
+                "const": "compatible"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "template": {
+      "type": "object",
+      "required": [
+        "notification_profile_template_id",
+        "notification_profile_revision_id",
+        "template_index",
+        "normalized_template_hash",
+        "template_key",
+        "schedule",
+        "late_handling"
+      ],
+      "properties": {
+        "notification_profile_template_id": {
+          "$ref": "#/$defs/id"
+        },
+        "notification_profile_revision_id": {
+          "$ref": "#/$defs/id"
+        },
+        "template_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "normalized_template_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "template_key": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/types_key"
+        },
+        "schedule": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/notifications_schedule"
+        },
+        "late_handling": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/notifications_lateHandling"
+        }
+      },
+      "additionalProperties": false
+    },
+    "archetypeRevision": {
+      "type": "object",
+      "required": [
+        "item_archetype_revision_id",
+        "item_archetype_id",
+        "revision_number",
+        "created_by_subject_id",
+        "created_by_command_id",
+        "created_at_utc",
+        "display_name",
+        "description",
+        "compatible_item_types",
+        "normalized_content_hash"
+      ],
+      "properties": {
+        "item_archetype_revision_id": {
+          "$ref": "#/$defs/id"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/id"
+        },
+        "revision_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_by_subject_id": {
+          "$ref": "#/$defs/id"
+        },
+        "created_by_command_id": {
+          "$ref": "#/$defs/id"
+        },
+        "created_at_utc": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/notifications_utcTimestamp"
+        },
+        "display_name": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/types_archetypeRevision/properties/display_name"
+        },
+        "description": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/types_archetypeRevision/properties/description"
+        },
+        "compatible_item_types": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/types_itemTypes"
+        },
+        "normalized_content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileRevision": {
+      "type": "object",
+      "required": [
+        "notification_profile_revision_id",
+        "notification_profile_id",
+        "revision_number",
+        "created_by_subject_id",
+        "created_by_command_id",
+        "created_at_utc",
+        "compatible_item_types",
+        "normalized_revision_hash",
+        "templates"
+      ],
+      "properties": {
+        "notification_profile_revision_id": {
+          "$ref": "#/$defs/id"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/id"
+        },
+        "revision_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_by_subject_id": {
+          "$ref": "#/$defs/id"
+        },
+        "created_by_command_id": {
+          "$ref": "#/$defs/id"
+        },
+        "created_at_utc": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/notifications_utcTimestamp"
+        },
+        "compatible_item_types": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/types_itemTypes"
+        },
+        "normalized_revision_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "templates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/template"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "archetype": {
+      "type": "object",
+      "required": [
+        "owner_kind",
+        "owner_subject_id",
+        "owner_group_id",
+        "status",
+        "created_by_subject_id",
+        "created_by_command_id",
+        "created_at_utc",
+        "retired_by_subject_id",
+        "retired_by_command_id",
+        "retired_at_utc",
+        "item_archetype_id",
+        "archetype_key",
+        "current_revision_id",
+        "retirement_reason",
+        "revision"
+      ],
+      "properties": {
+        "owner_kind": {
+          "enum": [
+            "system",
+            "subject",
+            "subject_group"
+          ]
+        },
+        "owner_subject_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner_group_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "created_by_subject_id": {
+          "$ref": "#/$defs/id"
+        },
+        "created_by_command_id": {
+          "$ref": "#/$defs/id"
+        },
+        "created_at_utc": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/notifications_utcTimestamp"
+        },
+        "retired_by_subject_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retired_by_command_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retired_at_utc": {
+          "oneOf": [
+            {
+              "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/notifications_utcTimestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/id"
+        },
+        "archetype_key": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/types_key"
+        },
+        "current_revision_id": {
+          "$ref": "#/$defs/id"
+        },
+        "retirement_reason": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "$ref": "#/$defs/archetypeRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profile": {
+      "type": "object",
+      "required": [
+        "owner_kind",
+        "owner_subject_id",
+        "owner_group_id",
+        "status",
+        "created_by_subject_id",
+        "created_by_command_id",
+        "created_at_utc",
+        "retired_by_subject_id",
+        "retired_by_command_id",
+        "retired_at_utc",
+        "notification_profile_id",
+        "profile_key",
+        "display_name",
+        "description",
+        "current_revision_id",
+        "retirement_reason",
+        "revision"
+      ],
+      "properties": {
+        "owner_kind": {
+          "enum": [
+            "system",
+            "subject",
+            "subject_group"
+          ]
+        },
+        "owner_subject_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner_group_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "created_by_subject_id": {
+          "$ref": "#/$defs/id"
+        },
+        "created_by_command_id": {
+          "$ref": "#/$defs/id"
+        },
+        "created_at_utc": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/notifications_utcTimestamp"
+        },
+        "retired_by_subject_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retired_by_command_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retired_at_utc": {
+          "oneOf": [
+            {
+              "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/notifications_utcTimestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/id"
+        },
+        "profile_key": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/types_key"
+        },
+        "display_name": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/types_archetypeRevision/properties/display_name"
+        },
+        "description": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/types_archetypeRevision/properties/description"
+        },
+        "current_revision_id": {
+          "$ref": "#/$defs/id"
+        },
+        "retirement_reason": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "$ref": "#/$defs/profileRevision"
+        }
+      },
+      "additionalProperties": false
+    },
+    "binding": {
+      "type": "object",
+      "required": [
+        "owner_kind",
+        "owner_subject_id",
+        "owner_group_id",
+        "status",
+        "created_by_subject_id",
+        "created_by_command_id",
+        "created_at_utc",
+        "retired_by_subject_id",
+        "retired_by_command_id",
+        "retired_at_utc",
+        "notification_profile_binding_id",
+        "item_archetype_id",
+        "notification_profile_id"
+      ],
+      "properties": {
+        "owner_kind": {
+          "enum": [
+            "system",
+            "subject",
+            "subject_group"
+          ]
+        },
+        "owner_subject_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner_group_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "created_by_subject_id": {
+          "$ref": "#/$defs/id"
+        },
+        "created_by_command_id": {
+          "$ref": "#/$defs/id"
+        },
+        "created_at_utc": {
+          "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/notifications_utcTimestamp"
+        },
+        "retired_by_subject_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retired_by_command_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retired_at_utc": {
+          "oneOf": [
+            {
+              "$ref": "spine-pack-embedded-values.v1.schema.json#/$defs/notifications_utcTimestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notification_profile_binding_id": {
+          "$ref": "#/$defs/id"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/id"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "additionalProperties": false
+    },
+    "archetypesPage": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "entries",
+        "count",
+        "catalog_snapshot_hash",
+        "has_more",
+        "next_cursor"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "item_archetype.list"
+        },
+        "response_contract": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "entries": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "$ref": "#/$defs/archetype"
+          }
+        },
+        "count": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "catalog_snapshot_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "archetypeShow": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "item_archetype"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "item_archetype.show"
+        },
+        "response_contract": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "item_archetype": {
+          "$ref": "#/$defs/archetype"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profilesPage": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "entries",
+        "count",
+        "catalog_snapshot_hash",
+        "has_more",
+        "next_cursor"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.list"
+        },
+        "response_contract": {
+          "const": "spine.notification-profiles.v1"
+        },
+        "entries": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "$ref": "#/$defs/profile"
+          }
+        },
+        "count": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "catalog_snapshot_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "profileShow": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "notification_profile"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.show"
+        },
+        "response_contract": {
+          "const": "spine.notification-profiles.v1"
+        },
+        "notification_profile": {
+          "$ref": "#/$defs/profile"
+        }
+      },
+      "additionalProperties": false
+    },
+    "bindingsPage": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "entries",
+        "count",
+        "catalog_snapshot_hash",
+        "has_more",
+        "next_cursor"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.binding.list"
+        },
+        "response_contract": {
+          "const": "spine.notification-profile-bindings.v1"
+        },
+        "entries": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "$ref": "#/$defs/binding"
+          }
+        },
+        "count": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "catalog_snapshot_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "archetypesListRequest": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "owner",
+        "limit"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "owner": {
+          "$ref": "spine-pack-installer-types.v1.schema.json#/$defs/owner"
+        },
+        "limit": {
+          "type": "string",
+          "pattern": "^(?:[1-9]|[1-9][0-9]|[1-4][0-9]{2}|500)$"
+        },
+        "cursor": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "archetypesShowRequest": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "item_archetype_id"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profilesListRequest": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "owner",
+        "limit"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-profiles.v1"
+        },
+        "owner": {
+          "$ref": "spine-pack-installer-types.v1.schema.json#/$defs/owner"
+        },
+        "limit": {
+          "type": "string",
+          "pattern": "^(?:[1-9]|[1-9][0-9]|[1-4][0-9]{2}|500)$"
+        },
+        "cursor": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "profilesShowRequest": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "notification_profile_id"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-profiles.v1"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "additionalProperties": false
+    },
+    "bindingsListRequest": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "owner",
+        "limit",
+        "status"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-profile-bindings.v1"
+        },
+        "owner": {
+          "$ref": "spine-pack-installer-types.v1.schema.json#/$defs/owner"
+        },
+        "limit": {
+          "type": "string",
+          "pattern": "^(?:[1-9]|[1-9][0-9]|[1-4][0-9]{2}|500)$"
+        },
+        "cursor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "active"
+        }
+      },
+      "additionalProperties": false
+    },
+    "commandFailure": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "error"
+      ],
+      "properties": {
+        "ok": {
+          "const": false
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1
+            },
+            "message": {
+              "type": "string"
+            },
+            "field": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

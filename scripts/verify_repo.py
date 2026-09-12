@@ -25,6 +25,14 @@ REQUIRED_FILES = (
     "contracts/schemas/spine-pack-installer-types.v1.schema.json",
     "contracts/schemas/spine-pack-manifest.v1.schema.json",
     "contracts/schemas/spine-pack-verification-result.v1.schema.json",
+    "contracts/schemas/spine-readback-0.3.0.schema.json",
+    "src/spine_packs/__init__.py",
+    "src/spine_packs/__main__.py",
+    "src/spine_packs/artifacts.py",
+    "src/spine_packs/manifest.py",
+    "src/spine_packs/planning.py",
+    "src/spine_packs/spine_command.py",
+    "tests/runtime/test_planning.py",
     "packs/kinflow-starter/README.md",
     "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json",
     "packs/kinflow-starter/kinflow-starter.1.0.0-draft.2.json",
@@ -244,7 +252,6 @@ FORBIDDEN_TOP_LEVEL = (
     "examples",
     "models",
     "services",
-    "src",
 )
 
 
@@ -275,6 +282,15 @@ def verify() -> list[str]:
     for name in FORBIDDEN_TOP_LEVEL:
         if (ROOT / name).exists():
             errors.append(f"draft-contract repository must not contain: {name}/")
+
+    source_root = ROOT / "src"
+    if source_root.is_dir():
+        allowed_source = {p for p in REQUIRED_FILES if p.startswith("src/")}
+        for path in source_root.rglob("*"):
+            if path.is_file() and "__pycache__" not in path.parts:
+                relative = path.relative_to(ROOT).as_posix()
+                if relative not in allowed_source:
+                    errors.append(f"outside the reviewed read-only planner layout: {relative}")
 
     packs_root = ROOT / "packs"
     if packs_root.is_dir():
