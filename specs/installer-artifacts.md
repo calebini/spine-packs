@@ -1,6 +1,6 @@
 # Installer artifact contracts
 
-Status: Draft v0.1; bounded read-only `plan` implementation authorized
+Status: Draft v0.1; planning, preflight, and initial apply implementation authorized
 
 ## 1. Scope and authority
 
@@ -400,7 +400,10 @@ success alone.
 
 `partial` has a non-null failure naming the first action outside the accepted
 prefix and `unattempted_action_ids` equal to the later suffix. `not_applied`
-has empty response evidence and a non-null failure. `applied` has null failure
+has empty response evidence and a non-null failure. Its unattempted list names
+every plan action. A `partial` prefix may be empty when the first submission
+fails or has an uncertain response; lack of evidence is not evidence that no
+command was submitted. `applied` has null failure
 and no unattempted actions. A process crash may leave only a checkpoint; it
 MUST NOT fabricate a terminal result.
 
@@ -489,9 +492,10 @@ than silently becoming implementation assumptions.
 
 ## 14. Deferred implementation details
 
-The authorized read-only slice uses the source-tree `spine_packs` package and
-standard-library `argparse`, as recorded in `specs/architecture.md`. This does
-not authorize apply, verification, or recovery implementation. Filesystem
+The authorized planning, preflight, and initial-apply slices use the source-tree
+`spine_packs` package and standard-library `argparse`, as recorded in
+`specs/architecture.md`. This does not authorize continuation, verification,
+or recovery implementation. Filesystem
 configuration and release packaging remain deferred. It does not add section bundles,
 remote transports, signatures, install registries, credentials, Windows path
 semantics, or Spine runtime changes.

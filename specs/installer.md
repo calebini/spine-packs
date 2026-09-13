@@ -1,6 +1,6 @@
 # Installer contract
 
-Status: Draft v0.4; bounded read-only `plan` implementation authorized
+Status: Draft v0.4; planning, preflight, and initial apply implementation authorized
 
 ## 1. Purpose and authority
 
@@ -18,10 +18,11 @@ operator intent; none is a second ledger or proof that Spine still has a given
 state.
 
 The terms **MUST**, **MUST NOT**, **SHOULD**, and **MAY** describe implementation
-requirements. The first authorized runtime slice is read-only `plan`, using
-the source-tree layout in `specs/architecture.md`. `apply`, `verify`, recovery,
-remote transports, and release packaging remain outside that slice and require
-separate review and authorization. No Spine runtime change is authorized.
+requirements. Authorized slices are read-only `plan`, non-mutating preflight,
+and initial approved `apply` with durable checkpointing, using the source-tree
+layout in `specs/architecture.md`. Continuation, `verify`, recovery, remote
+transports, and release packaging require separate review and authorization.
+No Spine runtime change is authorized.
 
 ## 2. Inputs and non-goals
 
@@ -137,7 +138,7 @@ With no selection flags, the validated request alone supplies selection.
 fresh pack-selection flags:
 
 ```sh
-spine-packs apply --plan PLAN --approval APPROVAL --output RESULT
+spine-packs apply --manifest MANIFEST --plan PLAN --approval APPROVAL --checkpoint CHECKPOINT --output RESULT
 ```
 
 `verify` MUST consume the approved plan, target configuration, and any apply
@@ -505,6 +506,12 @@ whole-pack transaction. An apply result therefore has one of these states:
 - `applied`: every planned action succeeded or compatibly replayed;
 - `partial`: a deterministic prefix succeeded and a later action failed; or
 - `not_applied`: preflight failed or no action was submitted.
+
+The accepted prefix may be empty: a failure after the first write transport
+invocation is still `partial`, because its commit outcome may be uncertain.
+`not_applied` MUST NOT be inferred merely from the absence of accepted response
+evidence. The initial-only implementation boundary and durability-failure
+handling are specified in `specs/architecture.md`.
 
 A partial result MUST identify the accepted prefix, failed action, exact Spine
 error, and unattempted suffix. Safe continuation uses the same execution

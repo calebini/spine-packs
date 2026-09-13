@@ -33,9 +33,9 @@ A future installer is expected to expose three phases:
    and correlates the Spine command responses preserved during `apply` with the
    approved plan.
 
-Read-only `plan` and the internal non-mutating apply preflight are implemented
-as bounded source-tree runtime slices. Public `apply`, Spine writes, `verify`,
-and recovery remain design targets, not available commands.
+Read-only `plan`, non-mutating apply preflight, and initial approved `apply`
+with durable checkpointing are implemented as bounded source-tree slices.
+Continuation, `verify`, and recovery are not available commands.
 The normative contract is [specs/installer.md](specs/installer.md).
 The ordered delivery slices and their completion gates are recorded in
 [specs/implementation-plan.md](specs/implementation-plan.md).
@@ -76,6 +76,39 @@ inspection exits 0 even with drift. Released drift exits 5 for a decision;
 released no-drift plans exit 0. All four return a reviewable plan. Eligibility
 does not authorize execution, and this slice cannot execute any plan.
 
+## Initial approved apply
+
+This is an initial-execution implementation tested with simulated Spine commands,
+not yet qualified against a real target. It requires a separately released pack;
+the checked-in `kinflow-starter` drafts remain ineligible and unchanged.
+
+```sh
+PYTHONPATH=src python3 -m spine_packs apply \
+  --manifest /absolute/operator/path/released-pack.json \
+  --plan /absolute/operator/path/approved-plan.json \
+  --approval /absolute/operator/path/approval.json \
+  --checkpoint /absolute/operator/path/new-checkpoint.json \
+  --output /absolute/operator/path/new-result.json
+```
+
+The approval must bind the exact plan digest, authorize every update action,
+acknowledge single-operator operation, and supply a stable execution UUID,
+actor, and timestamp. There are no apply selection flags or draft overrides.
+Preflight freshly rechecks the complete planned catalog before any write.
+Only the six reviewed catalog write commands can be submitted.
+
+The checkpoint is saved before each command and advanced only after its
+response is validated and durably recorded. A successful initial apply exits 0;
+a failed or uncertain submitted command exits 9 with a `partial` result,
+including when the first command's outcome is unknown. A preflight failure
+uses its specific error exit and can produce `not_applied` evidence.
+
+Checkpoint and result paths must be new, distinct, and separate from inputs
+and the target files. Checkpoints are private and atomically replaced during
+the run. Disk failure or interruption may leave only a checkpoint. Preserve it;
+do not delete it to retry under a fresh execution. Resume/recovery is Slice 4,
+not implemented here. `applied` is not independent post-install verification.
+
 ## Repository map
 
 - `specs/` is the normative source of truth for purpose, architecture,
@@ -87,7 +120,7 @@ does not authorize execution, and this slice cannot execute any plan.
   the draft `kinflow-starter` vertical slices.
 - `tests/contract/` and `tests/fixtures/` contain dependency-free contract
   checks and positive/negative manifest fixtures.
-- `src/spine_packs/` contains the read-only planner and local command adapter;
+- `src/spine_packs/` contains planning, preflight, initial apply, and the local command adapter;
   `tests/runtime/` exercises them with synthetic public readbacks and subprocesses.
 - `scripts/verify_repo.py` checks repository shape and high-level boundary
   markers without third-party dependencies.
@@ -115,10 +148,10 @@ classifications, approval, partial-apply, and verification posture for a local
 single-operator v1. It has a draft machine-artifact companion with closed
 request, plan, approval,
 checkpoint, apply-result, verification-result, and CLI-result schemas and
-focused contract vectors. The authorized first runtime slice implements only
-read-only planning. It has not been validated against a live operator target;
+focused contract vectors. Planning, preflight, and initial apply are implemented.
+They have not been validated against a live operator target;
 the local tests use synthetic responses pinned to the inspected public surface.
-The wider workflow remains unimplemented. Stable Spine instance identity, binding
+Continuation, verification, and packaging remain unimplemented. Stable Spine instance identity, binding
 compare-and-set, and public receipt readback remain future hardening rather
 than v1 blockers.
 

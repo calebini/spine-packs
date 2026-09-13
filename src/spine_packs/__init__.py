@@ -1,1 +1,1 @@
-"""Spine pack planning and non-mutating apply preflight."""
+"""Spine pack planning, non-mutating preflight, and initial approved apply."""

@@ -7,6 +7,7 @@ from copy import deepcopy
 from . import artifacts as a
 from .manifest import validate_pack
 from .planning import INVALID, PACK_INVALID, PlanError, plan_installation, require
+from .execution import validate_known_requests
 
 STALE = "stale_plan_or_target_mismatch"
 
@@ -31,6 +32,7 @@ def preflight_apply(manifest, plan, approval, transport, *, page_size=100):
     require(plan["pack"]["status"] == "released", "draft_plan_not_applicable", PACK_INVALID)
     require(plan["apply_eligible"], "plan_not_apply_eligible", PACK_INVALID)
     require(not plan["blocked_object_keys"], "blocked_plan_not_applicable", PACK_INVALID)
+    validate_known_requests(plan, approval)
 
     pack_identity = {
         "manifest_schema": manifest["manifest_schema"],

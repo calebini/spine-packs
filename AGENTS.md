@@ -46,12 +46,14 @@ plus the General commitments vertical slice specified for `kinflow-starter`
 draft 9.
 Do not broaden the schema or pack semantics without matching normative spec,
 fixture, and contract-test changes. The authorized runtime scope is the bounded
-read-only `plan` slice and internal, non-mutating apply preflight in
-`src/spine_packs/`, described in `specs/architecture.md`. Do not add the public
-`apply` command, Spine writes, checkpointing, `verify`, recovery, remote
+read-only `plan`, non-mutating apply preflight, and Slice 3 initial approved
+`apply` with durable checkpointing in `src/spine_packs/`, described in
+`specs/architecture.md`. Testing this slice uses simulated commands; executing
+an actual installation requires a separately supplied target, released pack,
+and exact approval. Do not add continuation, `verify`, recovery, remote
 transport, release packaging, or speculative service/adapter/model directories
-without separate review and authorization. Proposed write templates are data only:
-the process adapter must enforce its read-command allowlist.
+without separate review and authorization. Planning must retain its strict
+read-command allowlist; apply may use only the six reviewed write commands.
 Mark unresolved design details explicitly instead of silently choosing them.
 
 When the repository advances, add only the smallest structure required by real

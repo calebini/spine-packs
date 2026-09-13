@@ -29,11 +29,14 @@ REQUIRED_FILES = (
     "src/spine_packs/__init__.py",
     "src/spine_packs/__main__.py",
     "src/spine_packs/artifacts.py",
+    "src/spine_packs/apply.py",
+    "src/spine_packs/execution.py",
     "src/spine_packs/manifest.py",
     "src/spine_packs/planning.py",
     "src/spine_packs/preflight.py",
     "src/spine_packs/spine_command.py",
     "tests/runtime/test_apply_preflight.py",
+    "tests/runtime/test_apply.py",
     "tests/runtime/test_planning.py",
     "packs/kinflow-starter/README.md",
     "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json",
@@ -292,7 +295,7 @@ def verify() -> list[str]:
             if path.is_file() and "__pycache__" not in path.parts:
                 relative = path.relative_to(ROOT).as_posix()
                 if relative not in allowed_source:
-                    errors.append(f"outside the reviewed read-only planner layout: {relative}")
+                    errors.append(f"outside the reviewed installer layout: {relative}")
 
     packs_root = ROOT / "packs"
     if packs_root.is_dir():

@@ -57,10 +57,10 @@ For each definition, planning must distinguish at least:
 The draft equivalence algorithm, granular selection boundary, and
 update-authorization requirements are specified in `specs/installer.md`. Their
 machine-readable representations are specified in `specs/installer-artifacts.md`.
-The bounded read-only planning slice and an internal, non-mutating apply
-preflight service are implemented. Public `apply`, Spine writes, checkpointing,
-continuation, and verification remain reviewed design targets, not executable
-functionality.
+Read-only planning, non-mutating apply preflight, and initial approved apply
+with durable checkpointing are implemented. Continuation and verification
+remain reviewed design targets, not executable functionality. Tests use
+simulated commands; this is not qualification against an actual Spine target.
 
 Dependency references and resolution remain attached to a future manifest and
 installer contract. They are not implied by the v1 `plan` operation.
@@ -106,12 +106,12 @@ layout. It requires Python 3.11 or newer and the standard library only:
   against the checked-in contract vocabulary and semantic rules.
 - `planning.py` resolves selection and compares public observations, then
   constructs deterministic classifications and proposed command templates.
-- `spine_command.py` is the sole subprocess boundary. Its allowlist contains
+- `spine_command.py` is the sole subprocess boundary. Its read allowlist contains
   only `system.info`, archetype/profile list and show, and binding list.
 - `__main__.py` handles explicit files, matching selection assertions, one JSON
   result envelope, and private no-clobber plan publication.
 
-The adapter MUST reject write commands before launching a subprocess, even
+The adapter's `read` entry MUST reject write commands before launching a subprocess, even
 when a caller asks for dry-run execution. Proposed writes inside a plan are
 data only. There is no apply, verify, recovery, remote transport, install-state
 registry, or release packaging in this slice. Runtime code MUST NOT import
@@ -155,6 +155,68 @@ by parent-directory fsync. Existing outputs, including symlinks, MUST NOT be
 replaced or reused. The operator must choose a new output path for each fresh
 observation. No result path enters the plan digest. These are POSIX-local
 implementation choices, not support for Windows paths or remote storage.
+
+## Slice 3: initial approved apply
+
+`execution.py` is the pure request-materialization and execution-evidence
+boundary. `apply.py` orchestrates initial execution and owns checkpoint file
+publication. `preflight.py` remains non-mutating. No new package hierarchy or
+Spine implementation is introduced. The transport's separate `write` entry
+accepts only the six commands in installer Section 3 and validates their
+materialized request shapes; it cannot be reached through `read`.
+
+The CLI requires explicit `--manifest`, `--plan`, `--approval`, `--checkpoint`,
+and `--output` paths for initial apply. Input identities and complete approval
+are validated before target use. Output and checkpoint paths MUST be distinct
+from one another and from all inputs, the executable, and the ledger. Existing
+checkpoints are refused, including same-execution checkpoints: continuation is
+not implemented in this slice. Existing output files are never overwritten.
+
+Initial preflight revalidates the complete manifest and saved plan, materializes
+all requests whose IDs are already known, and freshly checks target and catalog
+state. Each remaining request is materialized only from a fully correlated
+accepted-response prefix. In v1 there is one binding action per archetype;
+preceding creates/revisions cannot change that archetype's binding. Immediately
+before preparing a binding write, apply exhausts the active owner-scoped binding
+catalog and requires its binding identity to match the plan's observed binding
+or explicit absence. This is not atomic compare-and-set.
+
+Before every submission, apply durably saves the exact request in a prepared
+checkpoint. Before advancing, it validates the response and durably saves the
+expanded accepted prefix. Public envelopes, effects, receipt command identity,
+receipt timestamp, requested create keys, returned target IDs, metadata, and
+complete generated-ID evidence are correlated. The receipt semantic hash MUST
+equal the canonical materialized request hash, as specified by the pinned
+Spine 0.3.0 handlers. All top-level returned `*_id` fields are retained, including
+the archetype and profile IDs of binding responses.
+
+Spine 0.3.0 returns the same success shape for initial acceptance and compatible
+replay. This initial-only slice records `outcome=accepted` after receipt
+correlation; this means validated command acceptance, not proof of a fresh
+mutation. It MUST NOT invent a replay flag or later receipt-row readback.
+
+Checkpoint and result artifacts MUST pass schema, digest, canonical byte-limit,
+and contextual prefix validation before publication. Checkpoints use private
+same-directory temporary files, file fsync, initial no-clobber publication,
+subsequent atomic replacement, and directory fsync. A writer refuses externally
+changed checkpoint contents or a substituted symlink. The single-operator
+posture also excludes concurrent mutation of operator artifacts; this is not
+a hostile-filesystem locking protocol.
+
+Once a write transport is invoked, a rejection, timeout, or malformed response
+produces `partial`, even when the accepted prefix is empty. It never claims
+that the first write could not have committed. Failure before any submission
+may produce `not_applied`; untrusted plan/approval identities produce only an
+error envelope, not fabricated correlated artifacts. A binding precondition
+failure after earlier writes stops at that action and reports the accepted
+prefix. Error facts may retain a bounded public Spine machine error code, not
+arbitrary response messages or raw process output.
+
+Checkpoint publication failure stops immediately: no next command is submitted
+and no terminal success is fabricated. A crash or durability failure may leave
+only the previous or replacement checkpoint. Result-file publication failure
+also retains the checkpoint. Preserve these files; do not delete the checkpoint
+and rerun as a fresh installation. Resume/recovery belongs to Slice 4.
 
 ## Input boundary
 

@@ -8,9 +8,11 @@ import sys
 import tempfile
 
 from . import artifacts as a
+from .apply import apply_initial, checkpoint_writer
 from .planning import INVALID, PACK_INVALID, ENVIRONMENT, PlanError, plan_installation, plan_outcome, require
 from .spine_command import SpineCommand
 from .manifest import validate_pack
+from .execution import validate_inputs
 
 
 class Parser(argparse.ArgumentParser):
@@ -63,47 +65,74 @@ def publish(path, plan):
             temporary.unlink(missing_ok=True)
 
 
-def envelope(category, code=None, artifact=None):
+def envelope(category, code=None, artifact=None, operation="plan"):
     exit_code, status = a.EXIT_MAP[category]
-    return {"artifact_schema": "spine.pack-installer-result.v1", "operation": "plan",
+    return {"artifact_schema": "spine.pack-installer-result.v1", "operation": operation,
             "status": "success" if category == "success" else status, "exit_code": exit_code,
             "artifact": artifact, "error": None if category == "success" else {
                 "category": category, "code": code or category,
-                "message": "Planning stopped: " + (code or category) + ".", "facts": [],
+                "message": "Operation stopped: " + (code or category) + ".", "facts": [],
             }}
 
 
 def main(argv=None, *, transport_factory=SpineCommand):
     try:
-        parser = Parser(prog="spine-packs", description="Read-only local Spine pack planning.")
-        parser.add_argument("operation", choices=["plan"])
-        parser.add_argument("--manifest", required=True)
-        parser.add_argument("--request", required=True)
-        parser.add_argument("--output", required=True)
+        parser = Parser(prog="spine-packs", description="Local Spine pack plan and approved apply.")
+        parser.add_argument("operation", choices=["plan", "apply"])
+        parser.add_argument("--manifest")
+        parser.add_argument("--request")
+        parser.add_argument("--plan")
+        parser.add_argument("--approval")
+        parser.add_argument("--checkpoint")
+        parser.add_argument("--output")
         parser.add_argument("--all", action="store_true", dest="all_flag")
         parser.add_argument("--archetype", action="append")
         args = parser.parse_args(argv)
+        require(args.manifest is not None and args.output is not None, "invalid_cli_arguments", INVALID)
         manifest = load_input(args.manifest, PACK_INVALID, 16 * 1024 * 1024)
         require(not validate_pack(manifest, a._schema_document(a.SCHEMA_ROOT / "spine-pack-manifest.v1.schema.json")),
                 "invalid_manifest", PACK_INVALID)
-        request = load_input(args.request, INVALID, 1024 * 1024)
-        require(not a.validate_schema(request), "invalid_request_shape", INVALID)
-        require(not a.selection_assertion_errors(request, all_flag=args.all_flag, archetype_flags=args.archetype),
-                "selection_assertion_mismatch", INVALID)
-        target = request["request"]["target"]
-        output = output_path(args.output, [args.manifest, args.request,
-                                         target["spine_command"]["path"], target["ledger"]["path"]])
-        transport = transport_factory(target)
-        plan = plan_installation(manifest, request, transport)
-        publish(output, plan)
-        result = envelope(plan_outcome(plan), artifact={"path": args.output, "digest": plan["content_identity"]["digest"]})
+        if args.operation == "plan":
+            require(args.request is not None and args.plan is None and args.approval is None
+                    and args.checkpoint is None, "invalid_cli_arguments", INVALID)
+            request = load_input(args.request, INVALID, 1024 * 1024)
+            require(not a.validate_schema(request), "invalid_request_shape", INVALID)
+            require(not a.selection_assertion_errors(request, all_flag=args.all_flag, archetype_flags=args.archetype),
+                    "selection_assertion_mismatch", INVALID)
+            target = request["request"]["target"]
+            output = output_path(args.output, [args.manifest, args.request,
+                                             target["spine_command"]["path"], target["ledger"]["path"]])
+            transport = transport_factory(target)
+            plan = plan_installation(manifest, request, transport)
+            publish(output, plan)
+            result = envelope(plan_outcome(plan), artifact={"path": args.output, "digest": plan["content_identity"]["digest"]})
+        else:
+            require(args.plan is not None and args.approval is not None and args.checkpoint is not None
+                    and args.request is None and not args.all_flag and args.archetype is None,
+                    "invalid_cli_arguments", INVALID)
+            plan = load_input(args.plan, INVALID, a.SIZE_LIMITS["spine.pack-install-plan.v1"])
+            approval = load_input(args.approval, INVALID, a.SIZE_LIMITS["spine.pack-install-approval.v1"])
+            validate_inputs(plan, approval)
+            target = plan["request"]["target"]
+            protected = [args.manifest, args.plan, args.approval,
+                         target["spine_command"]["path"], target["ledger"]["path"]]
+            checkpoint = output_path(args.checkpoint, [*protected, args.output])
+            output = output_path(args.output, [args.manifest, args.plan, args.approval, args.checkpoint,
+                                             target["spine_command"]["path"], target["ledger"]["path"]])
+            writer = checkpoint_writer(checkpoint)
+            applied = apply_initial(manifest, plan, approval, transport_factory(target), writer)
+            publish(output, applied)
+            category = ("success" if applied["state"] == "applied" else "partial_apply"
+                        if applied["state"] == "partial" else applied["failure"]["error"]["category"])
+            result = envelope(category, artifact={"path": args.output,
+                "digest": applied["content_identity"]["digest"]}, operation="apply")
     except PlanError as exc:
-        result = envelope(exc.category, exc.code)
+        result = envelope(exc.category, exc.code, operation=(args.operation if 'args' in locals() else "plan"))
     except (ValueError, TypeError, KeyError, RecursionError) as exc:
         # Do not echo arbitrary input, process output, paths, or environment data.
-        result = envelope(INVALID, "invalid_contract_value")
+        result = envelope(INVALID, "invalid_contract_value", operation=(args.operation if 'args' in locals() else "plan"))
     except OSError:
-        result = envelope(ENVIRONMENT, "local_environment_failure")
+        result = envelope(ENVIRONMENT, "local_environment_failure", operation=(args.operation if 'args' in locals() else "plan"))
     print(a.canonical_text(result))
     return int(result["exit_code"])
 

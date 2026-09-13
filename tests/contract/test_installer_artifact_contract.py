@@ -875,6 +875,8 @@ def apply_result_errors(
                 errors.append("partial_suffix_mismatch")
     elif responses or result["failure"] is None:
         errors.append("not_applied_shape_mismatch")
+    elif result["unattempted_action_ids"] != remaining:
+        errors.append("not_applied_suffix_mismatch")
     return errors
 
 
@@ -1422,6 +1424,23 @@ class InstallerArtifactContractTests(unittest.TestCase):
         self.partial = make_apply_result(self.plan, self.approval, partial=True)
         self.verification = make_verification(self.plan, self.applied)
         self.envelope = make_envelope(self.applied)
+
+    def test_empty_prefix_partial_is_valid_uncertain_submission_evidence(self):
+        result = deepcopy(self.partial)
+        result["accepted_responses"] = []
+        result["failure"]["action_id"] = self.plan["actions"][0]["action_id"]
+        result["unattempted_action_ids"] = [x["action_id"] for x in self.plan["actions"][1:]]
+        self.assertEqual(apply_result_errors(seal(result), self.plan, self.approval), [])
+
+    def test_not_applied_preserves_complete_unattempted_scope(self):
+        result = deepcopy(self.partial)
+        result["state"] = "not_applied"
+        result["accepted_responses"] = []
+        result["failure"]["action_id"] = None
+        result["unattempted_action_ids"] = [x["action_id"] for x in self.plan["actions"]]
+        self.assertEqual(apply_result_errors(seal(result), self.plan, self.approval), [])
+        result["unattempted_action_ids"] = []
+        self.assertIn("not_applied_suffix_mismatch", apply_result_errors(seal(result), self.plan, self.approval))
 
     def test_schema_entrypoints_are_draft_2020_12(self) -> None:
         for filename in ENTRYPOINTS.values():

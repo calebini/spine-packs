@@ -1,4 +1,4 @@
-"""Local read-only process adapter for the pinned Spine 0.3.0 command surface."""
+"""Local process adapter for the pinned Spine 0.3.0 command surface."""
 from __future__ import annotations
 
 import hashlib
@@ -8,6 +8,7 @@ import selectors
 import socket
 import subprocess
 import time
+import re
 
 from . import artifacts as a
 from .planning import CATALOGS, ENVIRONMENT, PlanError, require, validate_readback
@@ -16,6 +17,7 @@ from .planning import CATALOGS, ENVIRONMENT, PlanError, require, validate_readba
 READ_COMMANDS = frozenset({"system.info", "item_archetype.list", "item_archetype.show",
                            "notification_profile.list", "notification_profile.show",
                            "notification_profile.binding.list"})
+WRITE_COMMANDS = frozenset(a.COMMAND_SHAPES)
 RESPONSE_LIMIT = 16 * 1024 * 1024
 
 
@@ -52,6 +54,36 @@ class SpineCommand:
             catalog = next(k for k, v in CATALOGS.items() if command.startswith(v[0] + ".")
                            and (k == "bindings") == command.startswith("notification_profile.binding."))
             validate_readback(request, catalog + ("ListRequest" if command.endswith(".list") else "ShowRequest"))
+        response, returncode = self._invoke(command, request)
+        if response.get("ok") is False:
+            validate_readback(response, "commandFailure")
+            require(response["command"] == command, "response_command_mismatch")
+            raise PlanError("spine_command_rejection", "spine_read_rejected")
+        # Read failure never becomes a missing/retained object or an applicable plan.
+        require(returncode == 0 and response.get("ok") is True, "spine_read_failed")
+        require(response.get("command") == command, "response_command_mismatch")
+        return response
+
+    def write(self, command, request):
+        require(command in WRITE_COMMANDS, "write_command_not_allowed")
+        prefix, contract = a.COMMAND_SHAPES[command]
+        value = a.canonical_value(contract, request, prefix + "Request")
+        require(not a.canonical_value_errors(value, prefix + "Request"), "invalid_write_request")
+        response, returncode = self._invoke(command, request)
+        if response.get("ok") is False:
+            validate_readback(response, "commandFailure")
+            require(response.get("command") == command, "response_command_mismatch")
+            # Keep only the public machine error code, never its arbitrary message.
+            code = response["error"]["code"]
+            require(re.fullmatch(r"[a-z][a-z0-9_.:-]{0,159}", code) is not None, "invalid_spine_error_code")
+            error = PlanError("spine_command_rejection", "spine_write_rejected")
+            error.facts = [{"name": "spine_error_code", "value": code}]
+            raise error
+        require(returncode == 0 and response.get("ok") is True, "spine_write_failed", ENVIRONMENT)
+        require(response.get("command") == command, "response_command_mismatch", ENVIRONMENT)
+        return response
+
+    def _invoke(self, command, request):
         self.check_target()
         argv = [self.target["spine_command"]["path"], "--db", self.target["ledger"]["path"],
                 command, "--input", "-"]
@@ -86,14 +118,7 @@ class SpineCommand:
             returncode = process.wait(timeout=max(0.01, deadline - time.monotonic()))
             response = a.parse_json(bytes(output), public_response=True)
             require(isinstance(response, dict), "invalid_public_response")
-            if response.get("ok") is False:
-                validate_readback(response, "commandFailure")
-                require(response["command"] == command, "response_command_mismatch")
-                raise PlanError("spine_command_rejection", "spine_read_rejected")
-            # Read failure never becomes a missing/retained object or an applicable plan.
-            require(returncode == 0 and response.get("ok") is True, "spine_read_failed")
-            require(response.get("command") == command, "response_command_mismatch")
-            return response
+            return response, returncode
         except (OSError, ValueError, RecursionError, subprocess.TimeoutExpired) as exc:
             raise PlanError(ENVIRONMENT, "spine_transport_failed") from exc
         finally:

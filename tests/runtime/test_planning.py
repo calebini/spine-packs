@@ -401,8 +401,8 @@ class CliAndAdapterTests(unittest.TestCase):
             self.assertEqual(transport.calls, [])
             self.assertFalse((Path(directory) / "plan.json").exists())
 
-    def test_write_operations_are_not_cli_commands(self):
-        for command in ("apply", "verify", "recover"):
+    def test_unimplemented_operations_are_not_cli_commands(self):
+        for command in ("verify", "recover"):
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
                 self.assertEqual(main([command]), 2)

@@ -27,7 +27,7 @@ Implemented in `src/spine_packs/`:
 This slice has synthetic runtime and independent contract coverage. It has not
 been qualified against a live operator target.
 
-### Slice 2: apply preflight without writes — implemented locally
+### Slice 2: apply preflight without writes — complete
 
 Add the internal apply-preflight service boundary while keeping all Spine writes
 disabled. Do not expose the public `apply` CLI command until Slice 3:
@@ -47,7 +47,7 @@ Exit gate: every preflight failure is deterministic and non-mutating, and a
 successful preflight produces only an in-memory execution-ready description.
 It does not create a checkpoint or submit a Spine write.
 
-### Slice 3: initial apply and durable checkpointing
+### Slice 3: initial apply and durable checkpointing — implemented; bounded review pending
 
 Enable an approved initial write sequence:
 
@@ -63,6 +63,16 @@ Enable an approved initial write sequence:
 
 Exit gate: fault-injection tests cover every boundary between checkpoint
 publication, command submission, response validation, and checkpoint advance.
+
+The initial-only implementation is in `apply.py` and `execution.py`, with a
+separate transport write allowlist and explicit CLI checkpoint/output paths.
+Tests cover all six write commands, exact receipt/request correlation,
+independent checkpoint/result contract validation, binding precondition changes,
+empty-prefix partial failure, preflight refusal, no-write plans, and filesystem
+publication failures. Qualification uses simulated commands only. Preserve any
+interrupted checkpoint: no continuation or uncertainty recovery is implemented.
+This slice still needs bounded review before being treated as reviewed delivery;
+no real installation, pack release, or deployment is implied.
 
 ### Slice 4: continuation and uncertain-response recovery
 
