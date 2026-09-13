@@ -752,8 +752,14 @@ def plan_errors(plan: dict[str, Any]) -> list[str]:
     if not errors:
         errors.extend(binding_identity_errors(plan))
         for index, action in enumerate(plan["actions"]):
+            template = json.loads(action["request_template"]["canonical_json"])
+            prefix = COMMAND_SHAPES[action["command"]][0]
+            # Public owner shapes are broader than the installer's exact scope.
+            # Check all owner-bearing templates, not only referenced producers.
+            if prefix in ("archetypeCreate", "profileCreate", "bindingSet"):
+                if template["owner"] != request["owner"]:
+                    errors.append("command_template_owner_mismatch")
             errors.extend(result_reference_errors(
-                json.loads(action["request_template"]["canonical_json"]),
-                COMMAND_SHAPES[action["command"]][0] + "Template", plan, index,
+                template, prefix + "Template", plan, index,
             ))
     return errors

@@ -9,6 +9,7 @@
   "negative": [
     "tests/fixtures/installer/negative/apply_target_mismatch.json",
     "tests/fixtures/installer/negative/binding_identity_mismatch.json",
+    "tests/fixtures/installer/negative/command_template_owner_mismatch.json",
     "tests/fixtures/installer/negative/draft_apply_eligible.json",
     "tests/fixtures/installer/negative/embedded_contract_violations.json",
     "tests/fixtures/installer/negative/incorrect_artifact_digest.json",

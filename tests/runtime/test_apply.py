@@ -20,6 +20,8 @@ from spine_packs.execution import materialize, validate_prefix, validate_artifac
 from spine_packs.__main__ import main
 from spine_packs.spine_command import SpineCommand
 from spine_packs.planning import ENVIRONMENT, PlanError, plan_installation
+from spine_packs.manifest import content_digest
+from spine_packs.preflight import preflight_apply
 from test_apply_preflight import approval
 from test_planning import FakeSpine, manifest, request, catalog
 import test_installer_artifact_contract as independent
@@ -77,6 +79,54 @@ class InitialApplyTests(unittest.TestCase):
         transport = transport or WritableFake()
         plan = plan_installation(pack, request(), transport)
         return pack, plan, approval(plan), transport
+
+    def test_wrong_template_owners_fail_before_observation_or_execution(self):
+        vector = a.load_json(ROOT / "tests/fixtures/installer/negative/command_template_owner_mismatch.json")
+        pack = manifest("medical_and_lesson", released=True)
+        # All-pack selection includes the now-unbound archetype and profile.
+        pack["binding_intents"] = pack["binding_intents"][1:]
+        pack["content_identity"]["digest"] = content_digest(pack)
+        for plan_owner in (
+            {"owner_kind": "subject", "owner_subject_id": "subject_operator"},
+            {"owner_kind": "subject_group", "owner_group_id": "group_operator"},
+        ):
+            req = request()
+            req["request"]["owner"] = plan_owner
+            base = plan_installation(pack, a.seal(req), FakeSpine())
+            self.assertEqual(a.plan_errors(base), [])
+            self.assertEqual(independent.plan_errors(base), [])
+            preflight_apply(pack, base, approval(base), FakeSpine())
+            for command in vector["commands"]:
+                candidates = [x for x in base["actions"] if x["command"] == command]
+                # Exercise every create, including referenced and unreferenced roots.
+                for original in candidates:
+                    for owner in vector["owners"]:
+                        with self.subTest(plan_owner=plan_owner, action=original["action_id"], owner=owner):
+                            plan = deepcopy(base)
+                            action = next(x for x in plan["actions"] if x["action_id"] == original["action_id"])
+                            template = action["request_template"]
+                            body = json.loads(template["canonical_json"])
+                            body["owner"] = owner
+                            action["request_template"] = a.canonical_value(template["contract"], body, template["shape"])
+                            plan = a.seal(plan)
+                            self.assertEqual(a.validate_schema(plan), [])
+                            self.assertEqual(a.content_digest_errors(plan), [])
+                            self.assertIn(vector["expected_error"], a.plan_errors(plan))
+                            self.assertIn(vector["expected_error"], independent.plan_errors(plan))
+                            transport, checkpoints = WritableFake(), []
+                            approved = approval(plan)
+                            for invoke in (
+                                lambda: preflight_apply(pack, plan, approved, transport),
+                                lambda: apply_initial(pack, plan, approved, transport, checkpoints.append),
+                            ):
+                                with self.assertRaises(PlanError) as caught:
+                                    invoke()
+                                self.assertEqual(caught.exception.code, "invalid_plan")
+                                self.assertEqual(caught.exception.category, "invalid_cli_or_artifact_input")
+                            self.assertEqual(transport.checks, 0)
+                            self.assertEqual(transport.calls, [])
+                            self.assertEqual(transport.writes, [])
+                            self.assertEqual(checkpoints, [])
 
     def test_command_identity_is_deterministic_and_bound(self):
         value = command_id("a" * 64, "123e4567-e89b-42d3-a456-426614174000", "action-000000")

@@ -713,9 +713,15 @@ def plan_errors(plan: dict[str, Any]) -> list[str]:
     if not errors:
         errors.extend(binding_identity_errors(plan))
         for index, action in enumerate(plan["actions"]):
+            template = json.loads(action["request_template"]["canonical_json"])
+            prefix = COMMAND_SHAPES[action["command"]][0]
+            # Public owner shapes are broader than the installer's exact scope.
+            # Check all owner-bearing templates, not only referenced producers.
+            if prefix in ("archetypeCreate", "profileCreate", "bindingSet"):
+                if template["owner"] != request["owner"]:
+                    errors.append("command_template_owner_mismatch")
             errors.extend(result_reference_errors(
-                json.loads(action["request_template"]["canonical_json"]),
-                COMMAND_SHAPES[action["command"]][0] + "Template", plan, index,
+                template, prefix + "Template", plan, index,
             ))
     return errors
 
@@ -1616,7 +1622,7 @@ class InstallerArtifactContractTests(unittest.TestCase):
             [path.name for path in sorted(NEGATIVE_ROOT.glob("*.json"))],
             sorted([*expected_files, "embedded_contract_violations.json",
                     "selection_assertion_mismatch.json", "binding_identity_mismatch.json",
-                    "invalid_result_references.json"]),
+                    "invalid_result_references.json", "command_template_owner_mismatch.json"]),
         )
         for filename, expected in expected_files.items():
             vector = load_json(NEGATIVE_ROOT / filename)
@@ -1803,6 +1809,34 @@ class InstallerArtifactContractTests(unittest.TestCase):
                 "spine.notification-profile-bindings.v1", request, "bindingSetTemplate"
             )
             self.assertIn(expected, plan_errors(seal(candidate)))
+
+    def test_all_owner_templates_match_plan_even_without_consumers(self) -> None:
+        vector = load_json(NEGATIVE_ROOT / "command_template_owner_mismatch.json")
+        base = make_create_plan(self.request)
+        # Leave both lesson creates unreferenced; retain the other binding.
+        base["closure"]["binding_archetype_keys"].remove("lesson")
+        base["classifications"] = [c for c in base["classifications"]
+                                   if c["object_key"] != "binding:lesson"]
+        base["actions"] = [a for a in base["actions"] if a["object_key"] != "binding:lesson"]
+        for index, action in enumerate(base["actions"]):
+            action.update(ordinal=str(index), action_id=f"action-{index:06d}")
+        base = seal(base)
+        self.assertEqual(plan_errors(base), [])
+        self.assertNotIn("${", canonical_text(base))
+        for command in vector["commands"]:
+            for owner in vector["owners"]:
+                with self.subTest(command=command, owner=owner):
+                    candidate = deepcopy(base)
+                    action = next(a for a in candidate["actions"] if a["command"] == command)
+                    template = action["request_template"]
+                    body = json.loads(template["canonical_json"])
+                    body["owner"] = owner
+                    action["request_template"] = canonical_value(template["contract"], body, template["shape"])
+                    candidate = seal(candidate)
+                    self.assertEqual(validate_schema(candidate), [])
+                    self.assertEqual(content_digest_errors(candidate), [])
+                    self.assertEqual(canonical_value_errors(action["request_template"], template["shape"]), [])
+                    self.assertIn(vector["expected_error"], plan_errors(candidate))
 
     def test_binding_drift_requires_different_observed_profile_id(self) -> None:
         candidate = deepcopy(self.plan)

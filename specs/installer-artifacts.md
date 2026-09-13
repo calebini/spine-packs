@@ -255,6 +255,14 @@ portion equals the ordinal, exact Spine command, catalog object key,
 and a canonical request template with its digest. Create actions have
 `expected=null`; updates have a non-null expected preimage.
 
+Every `item_archetype.create`, `notification_profile.create`, and
+`notification_profile.binding.set` template MUST carry an `owner` exactly equal
+to the plan's `request.owner`. Plan semantic validation MUST enforce this for
+every such action, including creates with no result-reference consumers.
+A system owner or a different subject/group owner fails as invalid artifact
+input before target observation. This installer restriction supplements the
+pinned public Spine owner shape; it does not narrow or redefine that schema.
+
 The request template is the exact Spine request except that it omits
 `command_id`, `actor_subject_id`, and `action_timestamp_utc`. It MAY contain a
 generated-ID reference string only in an ID-valued field:

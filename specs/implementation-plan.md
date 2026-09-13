@@ -47,7 +47,7 @@ Exit gate: every preflight failure is deterministic and non-mutating, and a
 successful preflight produces only an in-memory execution-ready description.
 It does not create a checkpoint or submit a Spine write.
 
-### Slice 3: initial apply and durable checkpointing — implemented; bounded review pending
+### Slice 3: initial apply and durable checkpointing — implemented; bounded review complete
 
 Enable an approved initial write sequence:
 
@@ -71,8 +71,11 @@ independent checkpoint/result contract validation, binding precondition changes,
 empty-prefix partial failure, preflight refusal, no-write plans, and filesystem
 publication failures. Qualification uses simulated commands only. Preserve any
 interrupted checkpoint: no continuation or uncertainty recovery is implemented.
-This slice still needs bounded review before being treated as reviewed delivery;
-no real installation, pack release, or deployment is implied.
+Bounded review returned no blockers or major findings and one minor
+owner-template validation gap. The gap is addressed by uniform exact-plan-owner
+checks and negative contract/runtime vectors, including unreferenced creates.
+The follow-up patch is regression-tested, not separately re-audited. No real
+installation, pack release, or deployment is implied.
 
 ### Slice 4: continuation and uncertain-response recovery
 

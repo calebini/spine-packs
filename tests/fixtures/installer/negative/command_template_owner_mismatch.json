@@ -1,0 +1,15 @@
+{
+  "scenario": "unreferenced_creates_and_binding",
+  "description": "Resealed public-valid owner values must still equal the exact plan owner, including creates without consumers.",
+  "commands": [
+    "item_archetype.create",
+    "notification_profile.create",
+    "notification_profile.binding.set"
+  ],
+  "owners": [
+    {"owner_kind": "system"},
+    {"owner_kind": "subject", "owner_subject_id": "different_subject"},
+    {"owner_kind": "subject_group", "owner_group_id": "different_group"}
+  ],
+  "expected_error": "command_template_owner_mismatch"
+}
