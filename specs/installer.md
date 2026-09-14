@@ -470,9 +470,13 @@ non-contiguous, contradictory, or invalid preserved evidence fails closed.
 
 The longest contiguous sequence of actions with validated successful or
 compatible-replay responses is the **accepted prefix**. Using the original
-planned catalog and the validated Spine responses for that prefix, the
-installer MUST derive the exact catalog state and snapshot expected after the
-prefix. Generated Spine IDs and revision IDs used by later actions MUST come
+plan evidence, validated Spine responses for that prefix, and fresh public
+readback, the installer MUST validate the exact catalog state expected after
+the prefix. The snapshot component MAY be checked by the inverse fingerprint
+comparison in `specs/installer-artifacts.md` Section 9.1; this does not require
+persisting complete original catalogs or deriving a new digest from an old
+digest alone. It does not replace full selected-object semantic and identity
+checks. Generated Spine IDs and revision IDs used by later actions MUST come
 from those validated responses or matching public readback; they MUST NOT be
 guessed.
 
@@ -499,6 +503,16 @@ explained exactly by the accepted prefix and, at most, the first unresolved
 action makes continuation stale and aborts before another command is
 submitted. Preserved local evidence is not installation authority: Spine
 public readback and compatible command replay remain authoritative.
+
+For case 2, IDs obtained from fresh public readback are provisional candidate
+facts, not accepted response evidence. Before retry, the installer MUST validate
+the candidate's complete relevant public definition, desired semantics, and
+available creation/revision provenance against the exact planned command and
+execution. It MUST NOT substitute those IDs into the original request or use
+them to advance the suffix. The retry response MUST additionally match the
+candidate's observed root, revision, and binding IDs wherever the public
+response exposes them before acceptance is recorded and execution advances.
+A reconstructed fingerprint match alone MUST NOT authorize recovery.
 
 Spine makes each command atomic, but the command family provides no
 whole-pack transaction. An apply result therefore has one of these states:

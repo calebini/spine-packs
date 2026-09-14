@@ -389,6 +389,71 @@ The checkpoint is local recovery evidence, not authority to skip Spine
 readback. A missing, torn, oversized, noncanonical, contradictory, or
 uncorrelated checkpoint fails closed.
 
+### 9.1 Continuation snapshot comparison
+
+For the pinned Spine 0.3.0 baseline in `specs/installer.md` Section 3, continuation
+MAY validate the snapshot component by reconstructing the original fingerprint
+from fresh public readback. This is a comparison technique, not rollback,
+receipt evidence, or an alternative installation ledger. It changes no artifact
+fields, contract identifiers, or digest derivations. Continuation implementation
+still requires separate authorization.
+
+The exact Spine snapshot preimages are ordered arrays of closed row projections:
+
+| Catalog | Row fields | Ordering / scope |
+| --- | --- | --- |
+| Archetypes | `id`, `key`, `status`, `current_revision_id` | `(key, id)`; all active and retired roots under the exact plan owner |
+| Profiles | `id`, `key`, `status`, `current_revision_id`, `display_name`, `description` | `(key, id)`; all active and retired roots under the exact plan owner |
+| Bindings | `notification_profile_binding_id`, `item_archetype_id`, `notification_profile_id`, `status` | `(item_archetype_id, notification_profile_binding_id)`; active bindings under the exact plan owner |
+
+For root projections, `id` and `key` are the public root ID and archetype/profile
+key, respectively. Each fingerprint is lowercase SHA-256 over the array's exact
+`spine.canonical-json.v1` UTF-8 bytes, with no added wrapper or owner field.
+This pins `_list_roots` and `_binding_list` in Spine's
+`src/spine/commands/notification_profiles.py` at the inspected baseline; it does
+not claim that a differently versioned runtime uses the same derivation.
+
+Before inverse comparison, the installer MUST validate and exhaust fresh public
+readbacks with the same owner scope, filters, ordering, and consistency checks
+as planning. Each unmodified projection's recomputed hash MUST equal its fresh
+Spine `catalog_snapshot_hash`. A mismatch fails closed, not by substituting a
+locally invented hash. The original plan hashes MUST remain unchanged.
+
+For each permitted candidate in installer Section 11, the installer MUST first
+validate the candidate-specific full selected-object state, prefix evidence,
+and remaining-suffix preconditions under that candidate. Then, on a private
+in-memory copy of the fresh projections, it MAY reverse only that candidate's
+explained effects, in reverse action order:
+
+- A create removes the exact validated post-create root projection.
+- A revision restores that root's `expected_current_revision_id`.
+- A metadata update restores the exact `expected_metadata`.
+- A binding set removes the exact validated post-binding projection and restores
+  the classification's original `observed_binding` with `status=active`, or
+  restores absence when `observed_binding=null`.
+
+Each inverse step MUST match the action's expected effect for that candidate
+at that reverse step. A validated no-op leaves the projection unchanged. Known
+response IDs MUST match; the single uncertain action uses only provisional validated public
+readback facts subject to installer Section 11's retry-correlation rule. No
+other unrecorded action may be explained. All untouched entries and fields,
+including unselected catalog entries, MUST be preserved exactly. Missing,
+ambiguous, contradictory, or unavailable required evidence fails closed.
+
+Re-sort and hash each reconstructed projection by the rules above. All three
+hashes MUST equal the original `plan.catalog_snapshots` digests. A mismatch
+rejects that candidate; recovery may proceed only under installer Section 11's
+bounded candidate rules and all its other gates. The calculation MUST NOT alter
+Spine, the plan, approval, checkpoint, or preserved response evidence.
+
+Fingerprint equality MUST NOT substitute for public-contract validation, full
+semantic comparison, exact replay-response correlation, or checkpoint durability.
+These hashes do not contain revision bodies, audit history, or receipt rows.
+They detect fingerprint-visible state differences, not every intervening write
+(for example, metadata changed and later restored). The single-operator posture
+and Spine's immutable revision guarantees remain required; no historical-write
+or independent receipt-readback claim is introduced.
+
 ## 10. Apply result
 
 An apply result is terminal and has state:
