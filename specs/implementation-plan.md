@@ -77,7 +77,7 @@ checks and negative contract/runtime vectors, including unreferenced creates.
 The follow-up patch is regression-tested, not separately re-audited. No real
 installation, pack release, or deployment is implied.
 
-### Slice 4: continuation and uncertain-response recovery — implemented; bounded review pending
+### Slice 4: continuation and uncertain-response recovery — implemented; bounded review complete
 
 Resume an interrupted execution without broadening its authority:
 
@@ -107,10 +107,11 @@ preserving the recovery source. Simulated tests cover all six command kinds,
 every prepared/advanced checkpoint boundary, response loss after commit,
 partial-result continuation, unrelated changes, semantic/provenance mismatch,
 replay-ID mismatch, binding changes before retry, and publication failures.
-These are synthetic tests, not real-target qualification or a completed bounded
-review. Slice 5 and Slice 6 require separate authorization.
+These are synthetic tests, not real-target qualification. The bounded review
+passed with one package-docstring nit, subsequently patched; no runtime change
+was needed. The review artifacts are in `whetstone_runs/installer-slice4-audit-001/`.
 
-### Slice 5: non-mutating verification
+### Slice 5: non-mutating verification — implemented; bounded review pending
 
 Implement `verify` independently of apply execution:
 
@@ -123,6 +124,23 @@ Implement `verify` independently of apply execution:
 
 Exit gate: verification performs no write or compatible-replay request and
 detects target, state, evidence, and correlation mismatches.
+
+`verification.py` and the source-tree `verify` CLI implement selected-state
+comparison independently of apply execution. The CLI requires an explicit
+manifest and saved plan, accepts an optional apply result, and writes a new
+sealed verification artifact. Captured response coverage is distinct from
+fresh catalog equivalence. Missing/invalid evidence cannot be repaired by a
+write or replay. No-write plans require no receipts. Whole-owner observation
+retains read validation and consistency checks without treating unrelated
+catalog changes as verification failures.
+
+Focused tests cover all six command response kinds, complete/missing/invalid
+coverage, no-write and granular plans, drift and retirement, changed root IDs,
+equivalent later revisions, malformed readback, target/compatibility failures,
+CLI exits and protected paths, and the read-only transport boundary. Independent
+contract checks cover exact ordered object coverage and evidence states.
+No real target is qualified, and no pack or installer is released. Bounded
+review is pending; Slice 6 still requires separate authorization.
 
 ### Slice 6: end-to-end qualification and supported packaging
 

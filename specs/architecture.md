@@ -57,9 +57,8 @@ For each definition, planning must distinguish at least:
 The draft equivalence algorithm, granular selection boundary, and
 update-authorization requirements are specified in `specs/installer.md`. Their
 machine-readable representations are specified in `specs/installer-artifacts.md`.
-Read-only planning, non-mutating apply preflight, and initial approved apply
-with durable checkpointing are implemented. Continuation and verification
-remain reviewed design targets, not executable functionality. Tests use
+Read-only planning, non-mutating apply preflight, initial approved apply,
+bounded continuation, and non-mutating verification are implemented. Tests use
 simulated commands; this is not qualification against an actual Spine target.
 
 Dependency references and resolution remain attached to a future manifest and
@@ -277,6 +276,54 @@ checkpoint with matching fresh state publishes `applied` without writes.
 This slice is tested using simulated public commands only. Independent `verify`,
 remote transport, release packaging, deployment changes, and actual installation
 remain outside its authorization.
+
+## Slice 5: non-mutating verification
+
+`verification.py` validates complete manifest/plan identity, selected closure,
+desired semantics, and action coverage before target use. It uses the shared
+public observation boundary and pure execution-evidence validator, never the
+apply loop, continuation admission, checkpoint writer, or transport `write`.
+
+The CLI is `verify --manifest MANIFEST --plan PLAN [--result RESULT] --output
+VERIFICATION`. The target is taken from the saved plan. Selection, approval,
+checkpoint, and continuation flags are forbidden. Supplied result paths MUST
+be distinct from the manifest, plan, executable, and ledger before they are
+opened. Output MUST be new and distinct from every input and target file; it
+uses the existing private atomic no-clobber publication rules.
+
+Fresh environment evidence MUST match the planned environment. Catalog reads
+use the same owner scoping, full pagination, public schema validation, list/show
+agreement, and final snapshot rechecks as planning. Malformed, ambiguous,
+incomplete, or changing public reads abort with an error envelope, not a
+fabricated missing object or partially observed verification artifact.
+
+All selected objects MUST be active and semantically equivalent for success.
+Existing root IDs are pinned to plan classification evidence; newly created
+root IDs are taken only from validated captured responses. A changed root ID
+is `drifted` even if its semantic projection is equal. Selected bindings MUST
+point to those planned roots. Historical revision IDs and binding IDs are not
+semantic drift by themselves: a later equivalent revision or same-target
+active binding can verify. Captured response correlation and fresh state
+comparison are separate facts; verification makes no independent historical
+receipt-readback or provenance claim.
+
+The original plan's catalog fingerprints are NOT continuation preconditions
+for verify. Fresh fingerprints are recorded; unrelated owner-catalog changes
+are not excess definitions and do not fail a valid selected-state comparison.
+No inverse reconstruction or retry is performed. Permitted draft inspection
+can compare a no-write draft plan successfully, but the result retains its
+draft pack identity and does not make that pack installable.
+
+Evidence failure behavior is fixed in installer-artifacts Section 11. Full
+valid captured coverage is required for a plan with writes. A no-write plan
+normally reports `not_required`; any invalid supplied evidence still prevents
+success. `receipt_readback` remains `captured_responses_only_spine_0.3.0`.
+Verified results exit 0; completed mismatches exit 10 with the sealed artifact.
+Input, target, compatibility, transport, and publication failures use their
+existing specific error exits and make no verification-success claim.
+
+This is a simulated-command implementation slice. Disposable-target integration,
+supported packaging, releases, and deployment remain Slice 6 or separate work.
 
 ## Input boundary
 

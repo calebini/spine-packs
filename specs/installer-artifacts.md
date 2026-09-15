@@ -1,6 +1,6 @@
 # Installer artifact contracts
 
-Status: Draft v0.1; planning, preflight, initial apply, and Slice 4 continuation authorized
+Status: Draft v0.1; implementation authorized through Slice 5 non-mutating verification
 
 ## 1. Scope and authority
 
@@ -487,11 +487,31 @@ target, fresh environment evidence, fresh catalog snapshots, selected closure,
 and one object result per classification. Its overall state is `verified` or
 `mismatch`.
 
-For a plan with writes, `apply_result_digest` is required and
-`response_evidence` must be `complete`; for a no-write plan it is null and
-response evidence is `not_required`. `missing` or `invalid` response evidence
+For successful verification of a plan with writes, `apply_result_digest` is
+required and `response_evidence` must be `complete`; for successful verification
+of a no-write plan it is null and response evidence is `not_required`.
+`missing` or `invalid` response evidence
 forces overall mismatch. Fresh object states must all be `equivalent` for
 overall verification success.
+
+A missing apply result for a plan with writes is represented by null
+`apply_result_digest` and `response_evidence=missing`. A supplied, well-formed,
+digest-valid partial/not-applied result with valid correlation also has missing
+coverage; its digest is retained for a plan with writes. A supplied artifact
+whose syntax, outer schema, digest, or size is invalid fails as invalid input
+before catalog reads, without emitting a verification artifact. A digest-valid
+artifact with invalid embedded evidence, execution/approval/plan correlation,
+ordering, or terminal-state coverage instead produces `response_evidence=invalid`
+and overall mismatch after fresh observation. Invalid supplied evidence MUST
+NOT be ignored even for a no-write plan; that mismatch retains a null result
+digest because no write result is required by that plan.
+
+Verification compares the recorded approval digest with the unique closed v1
+approval preimage determined by the plan's decision actions, the result's
+execution, and the two required true assertions. This is checksum correlation
+only: it does not issue approval, authenticate its author, or authorize writes.
+All captured requests and responses are revalidated using those execution
+facts. No additional approval file or Spine receipt-readback command is implied.
 
 `receipt_readback` is fixed to
 `captured_responses_only_spine_0.3.0`. It explicitly prevents the artifact from
@@ -565,10 +585,10 @@ than silently becoming implementation assumptions.
 
 ## 14. Deferred implementation details
 
-The authorized planning, preflight, initial-apply, and bounded continuation
+The authorized planning, preflight, initial-apply, bounded continuation, and verification
 slices use the source-tree `spine_packs` package and standard-library `argparse`,
-as recorded in `specs/architecture.md`. This does not authorize verification or
-broader recovery implementation. General filesystem configuration and release
+as recorded in `specs/architecture.md`. This does not authorize broader recovery
+implementation. General filesystem configuration and release
 packaging remain deferred. It does not add section bundles,
 remote transports, signatures, install registries, credentials, Windows path
 semantics, or Spine runtime changes.

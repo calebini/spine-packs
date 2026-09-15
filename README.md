@@ -35,7 +35,7 @@ A future installer is expected to expose three phases:
 
 Read-only `plan`, non-mutating apply preflight, initial approved `apply`, and
 same-execution continuation with bounded uncertain-response recovery are
-implemented as source-tree slices. `verify` is not implemented.
+implemented as source-tree slices, alongside non-mutating `verify`.
 The normative contract is [specs/installer.md](specs/installer.md).
 The ordered delivery slices and their completion gates are recorded in
 [specs/implementation-plan.md](specs/implementation-plan.md).
@@ -133,9 +133,37 @@ Unexplained changes, altered approvals, and evidence gaps fail closed before
 another write. Such preflight failures emit an error envelope, not a misleading
 `not_applied` result for an execution that may already have changed Spine.
 
-Slice 4 is tested with simulated public commands and fault injection; bounded
-review and real-target qualification remain pending. No current draft pack is
+Slice 4 is tested with simulated public commands and fault injection; its bounded
+review passed with a docstring nit that is now patched. Real-target qualification
+remains pending. No current draft pack is
 made installable by this feature.
+
+## Read-only verification
+
+```sh
+PYTHONPATH=src python3 -m spine_packs verify \
+  --manifest /absolute/operator/path/released-pack.json \
+  --plan /absolute/operator/path/approved-plan.json \
+  --result /absolute/operator/path/apply-result.json \
+  --output /absolute/operator/path/new-verification.json
+```
+
+`verify` checks fresh selected archetypes, profiles, and bindings, plus captured
+response evidence for every planned write. It never retries a write or creates
+a checkpoint. The exact target and selection come from the plan; the output
+path must be new. Unselected definitions are not treated as excess content.
+
+Omit `--result` for a no-write plan. For a plan with writes, a missing result or
+incomplete response coverage produces `mismatch`, even if current state matches.
+Malformed input fails before observation; validly sealed but inconsistent
+evidence is reported as invalid, not repaired. Current state and captured
+receipts are separate facts: Spine 0.3.0 cannot provide independent later
+receipt-row readback, and the result explicitly records that limitation.
+
+Success exits 0 with `state=verified`; a completed mismatch exits 10. Input,
+target, compatibility, and transport failures retain their specific error exits.
+Slice 5 uses simulated-target tests and still awaits bounded review and later
+real-target qualification. Draft inspection does not release or install a pack.
 
 ## Repository map
 
@@ -148,7 +176,7 @@ made installable by this feature.
   the draft `kinflow-starter` vertical slices.
 - `tests/contract/` and `tests/fixtures/` contain dependency-free contract
   checks and positive/negative manifest fixtures.
-- `src/spine_packs/` contains planning, preflight, initial/continued apply, and the local command adapter;
+- `src/spine_packs/` contains planning, preflight, initial/continued apply, verification, and the local command adapter;
   `tests/runtime/` exercises them with synthetic public readbacks and subprocesses.
 - `scripts/verify_repo.py` checks repository shape and high-level boundary
   markers without third-party dependencies.
@@ -176,11 +204,11 @@ classifications, approval, partial-apply, and verification posture for a local
 single-operator v1. It has a draft machine-artifact companion with closed
 request, plan, approval,
 checkpoint, apply-result, verification-result, and CLI-result schemas and
-focused contract vectors. Planning, preflight, initial apply, and bounded
-same-execution continuation are implemented.
+focused contract vectors. Planning, preflight, initial apply, bounded
+same-execution continuation, and non-mutating verification are implemented.
 They have not been validated against a live operator target;
 the local tests use synthetic responses pinned to the inspected public surface.
-Verification and packaging remain unimplemented. Stable Spine instance identity, binding
+End-to-end qualification and supported packaging remain pending. Stable Spine instance identity, binding
 compare-and-set, and public receipt readback remain future hardening rather
 than v1 blockers.
 

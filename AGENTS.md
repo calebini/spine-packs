@@ -48,10 +48,11 @@ Do not broaden the schema or pack semantics without matching normative spec,
 fixture, and contract-test changes. The authorized runtime scope is the bounded
 read-only `plan`, non-mutating apply preflight, Slice 3 initial approved
 `apply` with durable checkpointing, and Slice 4 same-execution continuation and
-bounded uncertain-response recovery in `src/spine_packs/`, described in
+bounded uncertain-response recovery, and Slice 5 non-mutating `verify` in
+`src/spine_packs/`, described in
 `specs/architecture.md`. Testing these slices uses simulated commands; executing
 an actual installation requires a separately supplied target, released pack,
-and exact approval. Do not add `verify`, broader recovery, remote
+and exact approval. Do not add broader recovery, remote
 transport, release packaging, or speculative service/adapter/model directories
 without separate review and authorization. Planning must retain its strict
 read-command allowlist; apply may use only the six reviewed write commands.

@@ -1,1 +1,1 @@
-"""Spine pack planning, apply preflight, approved apply, and bounded same-execution continuation."""
+"""Spine pack planning, approved apply, bounded continuation, and read-only verification."""

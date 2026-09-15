@@ -1,6 +1,6 @@
 # Installer contract
 
-Status: Draft v0.4; planning, preflight, initial apply, and Slice 4 continuation authorized
+Status: Draft v0.4; implementation authorized through Slice 5 non-mutating verification
 
 ## 1. Purpose and authority
 
@@ -19,9 +19,9 @@ state.
 
 The terms **MUST**, **MUST NOT**, **SHOULD**, and **MAY** describe implementation
 requirements. Authorized slices are read-only `plan`, non-mutating preflight,
-initial approved `apply` with durable checkpointing, and bounded same-execution
-continuation and uncertain-response recovery, using the source-tree layout in
-`specs/architecture.md`. `verify`, broader recovery, remote transports, and
+initial approved `apply` with durable checkpointing, bounded same-execution
+continuation and uncertain-response recovery, and non-mutating `verify`, using
+the source-tree layout in `specs/architecture.md`. Broader recovery, remote transports, and
 release packaging require separate review and authorization.
 No Spine runtime change is authorized.
 
@@ -146,8 +146,14 @@ spine-packs apply --manifest MANIFEST --plan PLAN --approval APPROVAL --checkpoi
 result whose receipt evidence is being correlated:
 
 ```sh
-spine-packs verify --plan PLAN --result RESULT --output VERIFICATION
+spine-packs verify --manifest MANIFEST --plan PLAN --result RESULT --output VERIFICATION
 ```
+
+The manifest is explicit so verification can reload the exact complete pack.
+`--result` is optional at the CLI boundary: a plan with writes and no supplied
+result produces verification mismatch, never successful receipt evidence.
+No-write plans need no result. The target and selection come only from the plan;
+verify accepts no fresh selection, approval, checkpoint, or continuation flags.
 
 Paths, executable locations, database paths passed through to the Spine CLI,
 credentials for a future transport, and similar environment facts are

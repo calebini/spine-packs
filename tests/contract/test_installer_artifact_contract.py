@@ -887,26 +887,47 @@ def apply_result_errors(
 
 
 def verification_errors(
-    verification: dict[str, Any], plan: dict[str, Any], result: dict[str, Any]
+    verification: dict[str, Any], plan: dict[str, Any], result: dict[str, Any] | None = None
 ) -> list[str]:
     errors = validate_schema(verification) + content_digest_errors(verification)
+    errors.extend(artifact_size_errors(verification))
     if verification["plan_digest"] != plan["content_identity"]["digest"]:
         errors.append("verification_plan_digest_mismatch")
-    if verification["apply_result_digest"] != result["content_identity"]["digest"]:
+    expected_digest = result["content_identity"]["digest"] if result is not None and plan["actions"] else None
+    if verification["apply_result_digest"] != expected_digest:
         errors.append("verification_apply_digest_mismatch")
     if verification["target"] != plan["request"]["target"]:
         errors.append("target_binding_mismatch")
     if verification["pack"] != plan["pack"] or verification["closure"] != plan["closure"]:
         errors.append("verification_scope_mismatch")
     object_states = [entry["state"] for entry in verification["object_results"]]
+    if [(e["object_kind"], e["object_key"]) for e in verification["object_results"]] != [
+        (c["object_kind"], c["object_key"]) for c in plan["classifications"]
+    ]:
+        errors.append("verification_object_coverage_mismatch")
+    if [s["catalog"] for s in verification["catalog_snapshots"]] != ["archetypes", "profiles", "bindings"]:
+        errors.append("verification_snapshot_order")
+    if verification["environment"] != plan["environment"]:
+        errors.append("verification_environment_mismatch")
+    evidence = verification["response_evidence"]
+    if plan["actions"]:
+        if evidence == "not_required" or (result is None and evidence != "missing"):
+            errors.append("verification_response_evidence_mismatch")
+        if evidence == "complete" and (result is None or result["state"] != "applied"
+                or [r["action_id"] for r in result["accepted_responses"]] != [a["action_id"] for a in plan["actions"]]):
+            errors.append("verification_response_coverage_mismatch")
+    elif evidence not in ("not_required", "invalid"):
+        errors.append("verification_response_evidence_mismatch")
     for entry in verification["object_results"]:
+        if entry["state"] in ("equivalent", "drifted") and entry["observed"] is None:
+            errors.append("verification_observation_missing")
         if entry["observed"] is not None:
             errors.extend(canonical_value_errors(
                 entry["observed"], entry["object_kind"] + "Semantics"
             ))
     should_verify = (
         all(state == "equivalent" for state in object_states)
-        and verification["response_evidence"] == "complete"
+        and evidence == ("complete" if plan["actions"] else "not_required")
     )
     if (verification["state"] == "verified") != should_verify:
         errors.append("verification_state_mismatch")
@@ -1551,6 +1572,60 @@ class InstallerArtifactContractTests(unittest.TestCase):
             self.envelope,
         ):
             self.assertEqual(artifact_size_errors(artifact), [])
+
+    def test_verification_requires_exact_ordered_object_coverage(self) -> None:
+        for change in ("missing", "duplicate", "reordered"):
+            value = deepcopy(self.verification)
+            if change == "missing":
+                value["object_results"].pop()
+            elif change == "duplicate":
+                value["object_results"].append(deepcopy(value["object_results"][0]))
+            else:
+                value["object_results"].reverse()
+            self.assertIn("verification_object_coverage_mismatch", verification_errors(seal(value), self.plan, self.applied))
+
+    def test_verification_missing_response_evidence_is_mismatch(self) -> None:
+        value = deepcopy(self.verification)
+        value.update(apply_result_digest=None, response_evidence="missing", state="mismatch")
+        self.assertEqual(verification_errors(seal(value), self.plan), [])
+        value["state"] = "verified"
+        self.assertIn("verification_state_mismatch", verification_errors(seal(value), self.plan))
+
+    def test_verification_no_write_plan_needs_no_response(self) -> None:
+        plan = deepcopy(self.plan)
+        plan.update(actions=[], decision_action_ids=[])
+        for c in plan["classifications"]:
+            c.update(classification="equivalent", observed=deepcopy(c["desired"]), blocked_reason=None)
+            if c["object_kind"] == "binding":
+                c["identity"]["observed_binding"] = {
+                    "notification_profile_binding_id": "binding_" + c["object_key"].split(":")[1],
+                    "item_archetype_id": c["identity"]["item_archetype_id"],
+                    "notification_profile_id": c["identity"]["notification_profile_id"],
+                }
+        plan = seal(plan)
+        self.assertEqual(plan_errors(plan), [])
+        value = deepcopy(self.verification)
+        value.update(plan_digest=plan["content_identity"]["digest"], apply_result_digest=None, response_evidence="not_required")
+        self.assertEqual(verification_errors(seal(value), plan), [])
+        value["response_evidence"] = "complete"
+        self.assertIn("verification_response_evidence_mismatch", verification_errors(seal(value), plan))
+
+    def test_verification_partial_response_coverage_cannot_be_complete(self) -> None:
+        value = deepcopy(self.verification)
+        value["apply_result_digest"] = self.partial["content_identity"]["digest"]
+        self.assertIn("verification_response_coverage_mismatch", verification_errors(seal(value), self.plan, self.partial))
+        value.update(response_evidence="missing", state="mismatch")
+        self.assertEqual(verification_errors(seal(value), self.plan, self.partial), [])
+
+    def test_verification_snapshot_environment_and_observation_checks(self) -> None:
+        for mutation, error in (
+            (lambda v: v["catalog_snapshots"].reverse(), "verification_snapshot_order"),
+            (lambda v: v["environment"].update(runtime_version="0.4.0"), "verification_environment_mismatch"),
+            (lambda v: v["object_results"][0].update(observed=None), "verification_observation_missing"),
+        ):
+            value = deepcopy(self.verification)
+            mutation(value)
+            self.assertIn(error, verification_errors(seal(value), self.plan, self.applied))
 
     def test_static_artifact_suite_matches_and_validates(self) -> None:
         suite = load_json(POSITIVE_ROOT / "profile_drift_artifact_suite.json")

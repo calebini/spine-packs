@@ -14,6 +14,7 @@ from .spine_command import SpineCommand
 from .manifest import validate_pack
 from .execution import validate_inputs
 from .recovery import continuation_checkpoint
+from .verification import validate_verification_inputs, verify_installation
 
 
 class Parser(argparse.ArgumentParser):
@@ -78,14 +79,15 @@ def envelope(category, code=None, artifact=None, operation="plan"):
 
 def main(argv=None, *, transport_factory=SpineCommand):
     try:
-        parser = Parser(prog="spine-packs", description="Local Spine pack plan and approved apply.")
-        parser.add_argument("operation", choices=["plan", "apply"])
+        parser = Parser(prog="spine-packs", description="Local Spine pack plan, approved apply, and read-only verify.")
+        parser.add_argument("operation", choices=["plan", "apply", "verify"])
         parser.add_argument("--manifest")
         parser.add_argument("--request")
         parser.add_argument("--plan")
         parser.add_argument("--approval")
         parser.add_argument("--checkpoint")
         parser.add_argument("--continue-from")
+        parser.add_argument("--result")
         parser.add_argument("--output")
         parser.add_argument("--all", action="store_true", dest="all_flag")
         parser.add_argument("--archetype", action="append")
@@ -96,7 +98,8 @@ def main(argv=None, *, transport_factory=SpineCommand):
                 "invalid_manifest", PACK_INVALID)
         if args.operation == "plan":
             require(args.request is not None and args.plan is None and args.approval is None
-                    and args.checkpoint is None and args.continue_from is None, "invalid_cli_arguments", INVALID)
+                    and args.checkpoint is None and args.continue_from is None and args.result is None,
+                    "invalid_cli_arguments", INVALID)
             request = load_input(args.request, INVALID, 1024 * 1024)
             require(not a.validate_schema(request), "invalid_request_shape", INVALID)
             require(not a.selection_assertion_errors(request, all_flag=args.all_flag, archetype_flags=args.archetype),
@@ -108,9 +111,30 @@ def main(argv=None, *, transport_factory=SpineCommand):
             plan = plan_installation(manifest, request, transport)
             publish(output, plan)
             result = envelope(plan_outcome(plan), artifact={"path": args.output, "digest": plan["content_identity"]["digest"]})
+        elif args.operation == "verify":
+            require(args.plan is not None and args.request is None and args.approval is None
+                    and args.checkpoint is None and args.continue_from is None
+                    and not args.all_flag and args.archetype is None, "invalid_cli_arguments", INVALID)
+            plan = load_input(args.plan, INVALID, a.SIZE_LIMITS["spine.pack-install-plan.v1"])
+            validate_verification_inputs(manifest, plan)
+            target = plan["request"]["target"]
+            protected = [args.manifest, args.plan, target["spine_command"]["path"], target["ledger"]["path"]]
+            applied = None
+            if args.result is not None:
+                require(Path(args.result).resolve() not in {Path(p).resolve() for p in protected},
+                        "verification_result_input_collision", INVALID)
+                applied = load_input(args.result, INVALID, a.SIZE_LIMITS["spine.pack-apply-result.v1"])
+                validate_verification_inputs(manifest, plan, applied)
+                protected.append(args.result)
+            output = output_path(args.output, protected)
+            verified = verify_installation(manifest, plan, transport_factory(target), applied)
+            publish(output, verified)
+            result = envelope("success" if verified["state"] == "verified" else "verification_mismatch",
+                              artifact={"path": args.output, "digest": verified["content_identity"]["digest"]},
+                              operation="verify")
         else:
             require(args.plan is not None and args.approval is not None and args.checkpoint is not None
-                    and args.request is None and not args.all_flag and args.archetype is None,
+                    and args.request is None and args.result is None and not args.all_flag and args.archetype is None,
                     "invalid_cli_arguments", INVALID)
             plan = load_input(args.plan, INVALID, a.SIZE_LIMITS["spine.pack-install-plan.v1"])
             approval = load_input(args.approval, INVALID, a.SIZE_LIMITS["spine.pack-install-approval.v1"])
