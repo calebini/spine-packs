@@ -1,4 +1,4 @@
-"""Initial approved apply execution with durable checkpointing; no continuation."""
+"""Approved initial and continued execution with durable checkpointing."""
 from copy import deepcopy
 import os
 from pathlib import Path
@@ -9,6 +9,7 @@ from .execution import (command_id, execution_artifact, materialize, response_ev
                         validate_artifact, validate_inputs)
 from .planning import ENVIRONMENT, INVALID, PlanError, observe_catalog, require
 from .preflight import preflight_apply
+from .recovery import preflight_continuation
 
 
 def checkpoint_writer(path):
@@ -67,7 +68,7 @@ def failure(exc, action_id=None):
     }}
 
 
-def _binding_precondition(plan, action, request, transport, page_size):
+def _binding_precondition(plan, action, request, transport, page_size, provisional=None):
     # V1 has one binding action per archetype, so earlier actions cannot change
     # this binding. Creates resolve its root IDs but still require absent binding.
     classification = next(c for c in plan["classifications"] if c["object_key"] == action["object_key"])
@@ -75,6 +76,8 @@ def _binding_precondition(plan, action, request, transport, page_size):
     entries, _ = observe_catalog(transport, "bindings", plan["request"]["owner"], page_size=page_size)
     matches = [e for e in entries if e["item_archetype_id"] == request["item_archetype_id"]]
     fields = ("notification_profile_binding_id", "item_archetype_id", "notification_profile_id")
+    if provisional is not None:
+        expected = {k: provisional[k] for k in fields}
     actual = {k: matches[0][k] for k in fields} if matches else None
     require(actual == expected, "binding_precondition_changed", "stale_plan_or_target_mismatch")
 
@@ -89,19 +92,44 @@ def apply_initial(manifest, plan, approval, transport, checkpoint_writer, *, pag
         preflight_apply(manifest, plan, approval, transport, page_size=page_size)
     except PlanError as exc:
         return execution_artifact(plan, approval, [], state="not_applied", failure=failure(exc))
-    actions = plan["actions"]
-    if not actions:
-        checkpoint_writer(execution_artifact(plan, approval, []))
-        return execution_artifact(plan, approval, [], state="applied")
+    return _execute(plan, approval, transport, checkpoint_writer, accepted, page_size=page_size)
 
-    for index, action in enumerate(actions):
+
+def apply_continuation(manifest, plan, approval, source, transport, checkpoint_writer, *, page_size=100):
+    """Resume only the same execution after complete prefix-aware admission.
+
+    Preflight failures propagate without inventing a not_applied result: prior
+    writes may already exist. Source evidence is never overwritten.
+    """
+    manifest, plan, approval, source = deepcopy((manifest, plan, approval, source))
+    checkpoint, provisional = preflight_continuation(
+        manifest, plan, approval, source, transport, page_size=page_size)
+    accepted = deepcopy(checkpoint["accepted_responses"])
+    checkpoint_writer(checkpoint)
+    return _execute(plan, approval, transport, checkpoint_writer,
+                    accepted, page_size=page_size,
+                    continuing=True, provisional=provisional)
+
+
+def _execute(plan, approval, transport, checkpoint_writer, accepted, *, page_size,
+             continuing=False, provisional=None):
+    actions = plan["actions"]
+    if len(accepted) == len(actions):
+        if not continuing:
+            checkpoint_writer(execution_artifact(plan, approval, accepted))
+        return execution_artifact(plan, approval, accepted, state="applied")
+
+    start = len(accepted)
+    for index in range(start, len(actions)):
+        action = actions[index]
+        candidate = provisional if index == start else None
         try:
             request = materialize(plan, approval, index, accepted)
             if action["command"] == "notification_profile.binding.set":
-                _binding_precondition(plan, action, request, transport, page_size)
+                _binding_precondition(plan, action, request, transport, page_size, candidate)
         except PlanError as exc:
             return execution_artifact(plan, approval, accepted,
-                state="partial" if accepted else "not_applied",
+                state="partial" if accepted or continuing else "not_applied",
                 failure=failure(exc, action["action_id"]))
         prefix, contract = a.COMMAND_SHAPES[action["command"]]
         unresolved = {"action_id": action["action_id"], "command_id": request["command_id"],
@@ -112,6 +140,9 @@ def apply_initial(manifest, plan, approval, transport, checkpoint_writer, *, pag
         try:
             response = transport.write(action["command"], deepcopy(request))
             evidence = response_evidence(action, request, response)
+            if candidate is not None:
+                require(all(response.get(k) == v for k, v in candidate.items()),
+                        "recovery_response_readback_mismatch")
             next_accepted = [*accepted, evidence]
             advanced = execution_artifact(plan, approval, next_accepted)
         except (PlanError, ValueError, TypeError, KeyError, RecursionError, OSError) as exc:

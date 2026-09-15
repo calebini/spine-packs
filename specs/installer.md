@@ -1,6 +1,6 @@
 # Installer contract
 
-Status: Draft v0.4; planning, preflight, and initial apply implementation authorized
+Status: Draft v0.4; planning, preflight, initial apply, and Slice 4 continuation authorized
 
 ## 1. Purpose and authority
 
@@ -19,9 +19,10 @@ state.
 
 The terms **MUST**, **MUST NOT**, **SHOULD**, and **MAY** describe implementation
 requirements. Authorized slices are read-only `plan`, non-mutating preflight,
-and initial approved `apply` with durable checkpointing, using the source-tree
-layout in `specs/architecture.md`. Continuation, `verify`, recovery, remote
-transports, and release packaging require separate review and authorization.
+initial approved `apply` with durable checkpointing, and bounded same-execution
+continuation and uncertain-response recovery, using the source-tree layout in
+`specs/architecture.md`. `verify`, broader recovery, remote transports, and
+release packaging require separate review and authorization.
 No Spine runtime change is authorized.
 
 ## 2. Inputs and non-goals
@@ -524,7 +525,7 @@ whole-pack transaction. An apply result therefore has one of these states:
 The accepted prefix may be empty: a failure after the first write transport
 invocation is still `partial`, because its commit outcome may be uncertain.
 `not_applied` MUST NOT be inferred merely from the absence of accepted response
-evidence. The initial-only implementation boundary and durability-failure
+evidence. The initial and continuation implementation boundaries and durability-failure
 handling are specified in `specs/architecture.md`.
 
 A partial result MUST identify the accepted prefix, failed action, exact Spine

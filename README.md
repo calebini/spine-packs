@@ -33,9 +33,9 @@ A future installer is expected to expose three phases:
    and correlates the Spine command responses preserved during `apply` with the
    approved plan.
 
-Read-only `plan`, non-mutating apply preflight, and initial approved `apply`
-with durable checkpointing are implemented as bounded source-tree slices.
-Continuation, `verify`, and recovery are not available commands.
+Read-only `plan`, non-mutating apply preflight, initial approved `apply`, and
+same-execution continuation with bounded uncertain-response recovery are
+implemented as source-tree slices. `verify` is not implemented.
 The normative contract is [specs/installer.md](specs/installer.md).
 The ordered delivery slices and their completion gates are recorded in
 [specs/implementation-plan.md](specs/implementation-plan.md).
@@ -106,8 +106,36 @@ uses its specific error exit and can produce `not_applied` evidence.
 Checkpoint and result paths must be new, distinct, and separate from inputs
 and the target files. Checkpoints are private and atomically replaced during
 the run. Disk failure or interruption may leave only a checkpoint. Preserve it;
-do not delete it to retry under a fresh execution. Resume/recovery is Slice 4,
-not implemented here. `applied` is not independent post-install verification.
+do not delete it to retry under a fresh execution.
+`applied` is not independent post-install verification.
+
+## Continue an interrupted apply
+
+Use the same manifest, plan, and approval, adding `--continue-from` with the
+most recent preserved checkpoint or terminal `partial` result:
+
+```sh
+PYTHONPATH=src python3 -m spine_packs apply \
+  --manifest /absolute/operator/path/released-pack.json \
+  --plan /absolute/operator/path/approved-plan.json \
+  --approval /absolute/operator/path/approval.json \
+  --continue-from /absolute/operator/path/preserved-checkpoint.json \
+  --checkpoint /absolute/operator/path/new-continuation-checkpoint.json \
+  --output /absolute/operator/path/new-continuation-result.json
+```
+
+Both destination paths must be new; the source is preserved. Choose the latest
+evidence for this execution yourself—there is no checkpoint discovery or registry.
+Continuation validates the complete accepted prefix and fresh public catalog
+state. It permits only that prefix or the prefix plus its first unresolved
+action, then retries that action with its original command ID and exact request.
+Unexplained changes, altered approvals, and evidence gaps fail closed before
+another write. Such preflight failures emit an error envelope, not a misleading
+`not_applied` result for an execution that may already have changed Spine.
+
+Slice 4 is tested with simulated public commands and fault injection; bounded
+review and real-target qualification remain pending. No current draft pack is
+made installable by this feature.
 
 ## Repository map
 
@@ -120,7 +148,7 @@ not implemented here. `applied` is not independent post-install verification.
   the draft `kinflow-starter` vertical slices.
 - `tests/contract/` and `tests/fixtures/` contain dependency-free contract
   checks and positive/negative manifest fixtures.
-- `src/spine_packs/` contains planning, preflight, initial apply, and the local command adapter;
+- `src/spine_packs/` contains planning, preflight, initial/continued apply, and the local command adapter;
   `tests/runtime/` exercises them with synthetic public readbacks and subprocesses.
 - `scripts/verify_repo.py` checks repository shape and high-level boundary
   markers without third-party dependencies.
@@ -148,10 +176,11 @@ classifications, approval, partial-apply, and verification posture for a local
 single-operator v1. It has a draft machine-artifact companion with closed
 request, plan, approval,
 checkpoint, apply-result, verification-result, and CLI-result schemas and
-focused contract vectors. Planning, preflight, and initial apply are implemented.
+focused contract vectors. Planning, preflight, initial apply, and bounded
+same-execution continuation are implemented.
 They have not been validated against a live operator target;
 the local tests use synthetic responses pinned to the inspected public surface.
-Continuation, verification, and packaging remain unimplemented. Stable Spine instance identity, binding
+Verification and packaging remain unimplemented. Stable Spine instance identity, binding
 compare-and-set, and public receipt readback remain future hardening rather
 than v1 blockers.
 

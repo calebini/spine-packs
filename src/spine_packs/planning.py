@@ -293,8 +293,8 @@ def plan_outcome(plan):
     return "success"
 
 
-def plan_installation(manifest, request, transport, *, page_size=100):
-    """Validate all inputs before any Spine observation; produce no writes."""
+def observe_installation(manifest, request, transport, *, page_size=100):
+    """Validate inputs and collect a complete, consistent public observation."""
     manifest_schema = a._schema_document(a.SCHEMA_ROOT / "spine-pack-manifest.v1.schema.json")
     require(not validate_pack(manifest, manifest_schema), "invalid_manifest", PACK_INVALID)
     require(not a.validate_schema(request), "invalid_request_shape", INVALID)
@@ -338,4 +338,10 @@ def plan_installation(manifest, request, transport, *, page_size=100):
                 and page["has_more"] == (page["next_cursor"] is not None),
                 "catalog_recheck_changed")
     transport.check_target()
-    return build_plan(manifest, request, environment, catalogs, snapshots)
+    return environment, catalogs, snapshots
+
+
+def plan_installation(manifest, request, transport, *, page_size=100):
+    """Validate all inputs before any Spine observation; produce no writes."""
+    observation = observe_installation(manifest, request, transport, page_size=page_size)
+    return build_plan(manifest, request, *observation)

@@ -8,11 +8,12 @@ import sys
 import tempfile
 
 from . import artifacts as a
-from .apply import apply_initial, checkpoint_writer
+from .apply import apply_continuation, apply_initial, checkpoint_writer
 from .planning import INVALID, PACK_INVALID, ENVIRONMENT, PlanError, plan_installation, plan_outcome, require
 from .spine_command import SpineCommand
 from .manifest import validate_pack
 from .execution import validate_inputs
+from .recovery import continuation_checkpoint
 
 
 class Parser(argparse.ArgumentParser):
@@ -84,6 +85,7 @@ def main(argv=None, *, transport_factory=SpineCommand):
         parser.add_argument("--plan")
         parser.add_argument("--approval")
         parser.add_argument("--checkpoint")
+        parser.add_argument("--continue-from")
         parser.add_argument("--output")
         parser.add_argument("--all", action="store_true", dest="all_flag")
         parser.add_argument("--archetype", action="append")
@@ -94,7 +96,7 @@ def main(argv=None, *, transport_factory=SpineCommand):
                 "invalid_manifest", PACK_INVALID)
         if args.operation == "plan":
             require(args.request is not None and args.plan is None and args.approval is None
-                    and args.checkpoint is None, "invalid_cli_arguments", INVALID)
+                    and args.checkpoint is None and args.continue_from is None, "invalid_cli_arguments", INVALID)
             request = load_input(args.request, INVALID, 1024 * 1024)
             require(not a.validate_schema(request), "invalid_request_shape", INVALID)
             require(not a.selection_assertion_errors(request, all_flag=args.all_flag, archetype_flags=args.archetype),
@@ -116,11 +118,19 @@ def main(argv=None, *, transport_factory=SpineCommand):
             target = plan["request"]["target"]
             protected = [args.manifest, args.plan, args.approval,
                          target["spine_command"]["path"], target["ledger"]["path"]]
+            source = None
+            if args.continue_from is not None:
+                require(Path(args.continue_from).resolve() not in {Path(p).resolve() for p in protected},
+                        "continuation_source_input_collision", INVALID)
+                source = load_input(args.continue_from, INVALID, a.SIZE_LIMITS["spine.pack-apply-checkpoint.v1"])
+                continuation_checkpoint(plan, approval, source)
+                protected.append(args.continue_from)
             checkpoint = output_path(args.checkpoint, [*protected, args.output])
-            output = output_path(args.output, [args.manifest, args.plan, args.approval, args.checkpoint,
-                                             target["spine_command"]["path"], target["ledger"]["path"]])
+            output = output_path(args.output, [*protected, args.checkpoint])
             writer = checkpoint_writer(checkpoint)
-            applied = apply_initial(manifest, plan, approval, transport_factory(target), writer)
+            transport = transport_factory(target)
+            applied = (apply_initial(manifest, plan, approval, transport, writer) if source is None else
+                       apply_continuation(manifest, plan, approval, source, transport, writer))
             publish(output, applied)
             category = ("success" if applied["state"] == "applied" else "partial_apply"
                         if applied["state"] == "partial" else applied["failure"]["error"]["category"])

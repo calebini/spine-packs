@@ -12,8 +12,8 @@ from .execution import validate_known_requests
 STALE = "stale_plan_or_target_mismatch"
 
 
-def preflight_apply(manifest, plan, approval, transport, *, page_size=100):
-    """Return execution facts after complete, fresh, read-only validation."""
+def validate_apply_inputs(manifest, plan, approval):
+    """Validate immutable inputs before initial or continuation observations."""
     manifest_schema = a._schema_document(
         a.SCHEMA_ROOT / "spine-pack-manifest.v1.schema.json"
     )
@@ -50,6 +50,12 @@ def preflight_apply(manifest, plan, approval, transport, *, page_size=100):
         "request_identity_mismatch",
         STALE,
     )
+    return request
+
+
+def preflight_apply(manifest, plan, approval, transport, *, page_size=100):
+    """Return execution facts after complete, fresh, read-only validation."""
+    request = validate_apply_inputs(manifest, plan, approval)
     observed_plan = plan_installation(manifest, request, transport, page_size=page_size)
     require(
         observed_plan["content_identity"]["digest"] == plan["content_identity"]["digest"],

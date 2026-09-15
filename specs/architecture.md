@@ -191,7 +191,7 @@ Spine 0.3.0 handlers. All top-level returned `*_id` fields are retained, includi
 the archetype and profile IDs of binding responses.
 
 Spine 0.3.0 returns the same success shape for initial acceptance and compatible
-replay. This initial-only slice records `outcome=accepted` after receipt
+replay. Both execution paths record `outcome=accepted` after receipt
 correlation; this means validated command acceptance, not proof of a fresh
 mutation. It MUST NOT invent a replay flag or later receipt-row readback.
 
@@ -217,6 +217,66 @@ and no terminal success is fabricated. A crash or durability failure may leave
 only the previous or replacement checkpoint. Result-file publication failure
 also retains the checkpoint. Preserve these files; do not delete the checkpoint
 and rerun as a fresh installation. Resume/recovery belongs to Slice 4.
+
+## Slice 4: same-execution continuation
+
+`recovery.py` owns continuation admission, using the existing public observation
+and pure execution-evidence boundaries. `apply.py` shares one durable execution
+loop between initial and continued apply. No contract schema, command family,
+Spine runtime behavior, or package hierarchy is added.
+
+Continuation uses `apply --continue-from SOURCE` with the same required manifest,
+plan, approval, checkpoint destination, and result destination as initial apply.
+SOURCE MUST be the operator-selected most recent checkpoint or terminal `partial`
+result for the execution. There is no implicit discovery, local install registry,
+or merging of competing evidence. Schema, digest, size, exact execution identity,
+ordered prefix, request derivation, and response/receipt correlation MUST pass
+before target use. `applied` and `not_applied` results are not continuation sources;
+a completed checkpoint is allowed after a crash before result publication.
+
+The checkpoint and result destinations MUST be new and distinct from SOURCE,
+all other inputs, each other, and target files. SOURCE MUST remain unchanged.
+SOURCE MUST also be distinct from other inputs and target files; target path
+collisions MUST be rejected before opening SOURCE as an artifact.
+After successful continuation preflight, the validated or derived checkpoint
+MUST be durably published at the new destination before any retry. Subsequent
+prepared/advanced publications use Slice 3's durability and no-clobber rules.
+
+Preflight repeats manifest, approval, target, environment, and complete public
+catalog checks. It MUST validate the unmodified fresh catalog hashes against
+the pinned public projections, then admit exactly one of installer Section 11's
+two candidates. On private copies only, inverse comparison validates post-action
+definitions, identities, semantics, and available creation/revision provenance
+before reversing the explained effects. Recompilation of the original plan
+from reconstructed semantic preimages and original snapshots MUST reproduce
+the exact sealed plan. This also checks unchanged selected definitions and
+remaining-suffix preconditions. Reconstructed entries are comparison inputs,
+not claimed historical public readbacks; unknown historical audit/template
+fields are neither invented as evidence nor persisted.
+
+Readback IDs for the uncertain action are provisional. They MUST NOT change its
+original request, enter accepted evidence, or feed suffix references. Its retry
+response MUST match every exposed candidate identity and correlated fact before
+the response is recorded and the next action becomes eligible. An uncertain
+binding retry uses the exact admitted post-binding identity for the immediate
+pre-submission re-read; other bindings retain the original observed-binding
+precondition. No-op responses cannot explain unrelated changes.
+
+Spine 0.3.0 has no update provenance for mutable profile metadata and no public
+receipt readback. Neither snapshot equality nor current metadata proves a past
+receipt or excludes a change-and-restore history. Exact request replay and
+validated captured responses remain required, under the single-operator posture.
+
+Continuation preflight failures emit only the specific error envelope and
+publish no checkpoint/result; they MUST NOT claim `not_applied` for the existing
+execution. After admission, a failed suffix precondition or submission produces
+`partial` with the preserved prefix, even if it is empty. Checkpoint durability
+failure stops without a fabricated terminal result. A complete accepted
+checkpoint with matching fresh state publishes `applied` without writes.
+
+This slice is tested using simulated public commands only. Independent `verify`,
+remote transport, release packaging, deployment changes, and actual installation
+remain outside its authorization.
 
 ## Input boundary
 

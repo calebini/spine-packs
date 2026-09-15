@@ -1,6 +1,6 @@
 # Installer artifact contracts
 
-Status: Draft v0.1; planning, preflight, and initial apply implementation authorized
+Status: Draft v0.1; planning, preflight, initial apply, and Slice 4 continuation authorized
 
 ## 1. Scope and authority
 
@@ -395,8 +395,8 @@ For the pinned Spine 0.3.0 baseline in `specs/installer.md` Section 3, continuat
 MAY validate the snapshot component by reconstructing the original fingerprint
 from fresh public readback. This is a comparison technique, not rollback,
 receipt evidence, or an alternative installation ledger. It changes no artifact
-fields, contract identifiers, or digest derivations. Continuation implementation
-still requires separate authorization.
+fields, contract identifiers, or digest derivations. The authorized Slice 4
+implementation boundary is recorded in `specs/architecture.md`.
 
 The exact Spine snapshot preimages are ordered arrays of closed row projections:
 
@@ -565,10 +565,10 @@ than silently becoming implementation assumptions.
 
 ## 14. Deferred implementation details
 
-The authorized planning, preflight, and initial-apply slices use the source-tree
-`spine_packs` package and standard-library `argparse`, as recorded in
-`specs/architecture.md`. This does not authorize continuation, verification,
-or recovery implementation. Filesystem
-configuration and release packaging remain deferred. It does not add section bundles,
+The authorized planning, preflight, initial-apply, and bounded continuation
+slices use the source-tree `spine_packs` package and standard-library `argparse`,
+as recorded in `specs/architecture.md`. This does not authorize verification or
+broader recovery implementation. General filesystem configuration and release
+packaging remain deferred. It does not add section bundles,
 remote transports, signatures, install registries, credentials, Windows path
 semantics, or Spine runtime changes.

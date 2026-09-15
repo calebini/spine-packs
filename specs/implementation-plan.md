@@ -70,14 +70,14 @@ Tests cover all six write commands, exact receipt/request correlation,
 independent checkpoint/result contract validation, binding precondition changes,
 empty-prefix partial failure, preflight refusal, no-write plans, and filesystem
 publication failures. Qualification uses simulated commands only. Preserve any
-interrupted checkpoint: no continuation or uncertainty recovery is implemented.
+interrupted checkpoint; same-execution continuation is implemented in Slice 4 below.
 Bounded review returned no blockers or major findings and one minor
 owner-template validation gap. The gap is addressed by uniform exact-plan-owner
 checks and negative contract/runtime vectors, including unreferenced creates.
 The follow-up patch is regression-tested, not separately re-audited. No real
 installation, pack release, or deployment is implied.
 
-### Slice 4: continuation and uncertain-response recovery
+### Slice 4: continuation and uncertain-response recovery — implemented; bounded review pending
 
 Resume an interrupted execution without broadening its authority:
 
@@ -93,6 +93,22 @@ Resume an interrupted execution without broadening its authority:
 Exit gate: restart tests cover every action boundary, including an accepted
 write whose response was not durably recorded. No failed or stale execution can
 skip, reorder, or regenerate an action.
+
+`recovery.py` validates the saved checkpoint or partial result, exhausts fresh
+public readback, checks full selected definitions and available provenance,
+and compares inverse fingerprints under Section 9.1. Recompiling the original
+plan from reconstructed semantic preimages checks the remaining suffix and
+untouched selected definitions. Only one candidate may pass. `apply.py` shares
+the durable execution loop with initial apply; provisional readback facts must
+match the retry response before acceptance is recorded.
+
+The CLI takes `apply --continue-from SOURCE` and fresh checkpoint/result paths,
+preserving the recovery source. Simulated tests cover all six command kinds,
+every prepared/advanced checkpoint boundary, response loss after commit,
+partial-result continuation, unrelated changes, semantic/provenance mismatch,
+replay-ID mismatch, binding changes before retry, and publication failures.
+These are synthetic tests, not real-target qualification or a completed bounded
+review. Slice 5 and Slice 6 require separate authorization.
 
 ### Slice 5: non-mutating verification
 

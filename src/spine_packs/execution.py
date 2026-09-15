@@ -1,4 +1,4 @@
-"""Pure initial-execution materialization and evidence validation; no transport."""
+"""Pure execution materialization and evidence validation; no transport."""
 from copy import deepcopy
 import json
 
@@ -112,6 +112,9 @@ def validate_prefix(plan, approval, accepted):
         require(not a.canonical_value_errors(evidence["response"], shape), "invalid_response_evidence", INVALID)
         body = json.loads(evidence["response"]["canonical_json"])
         expected = response_evidence(action, _request(plan, approval, index, decoded), body)
+        require(evidence.get("outcome") in ("accepted", "compatible_replay"),
+                "invalid_response_evidence", INVALID)
+        expected["outcome"] = evidence["outcome"]
         require(evidence == expected, "invalid_response_evidence", INVALID)
         require(expected["command_receipt_id"] not in receipt_ids, "duplicate_receipt_evidence", INVALID)
         receipt_ids.add(expected["command_receipt_id"])
