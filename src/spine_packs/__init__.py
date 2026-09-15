@@ -1,1 +1,1 @@
-"""Spine pack planning, non-mutating preflight, and initial approved apply."""
+"""Spine pack planning, apply preflight, approved apply, and bounded same-execution continuation."""

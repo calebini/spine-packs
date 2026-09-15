@@ -1,0 +1,37 @@
+{
+  "draft_hash": "905409eefc287c78d55af1ed9ee2f754a35e7a916c5eb7e8d7fd227a499c286c",
+  "feedback": [
+    {
+      "affected_sections": [
+        "contracts/schemas/spine-pack-embedded-values.v1.schema.json:$defs.types_owner",
+        "src/spine_packs/artifacts.py:binding_identity_errors",
+        "src/spine_packs/artifacts.py:result_reference_errors",
+        "specs/installer-artifacts.md:6",
+        "specs/installer-artifacts.md:7"
+      ],
+      "authority_impact": "minor",
+      "baseline_severity": "minor",
+      "claim": "The artifact layer is internally inconsistent about owner scope in write command templates: the installer artifact contract restricts request owner scope to subject or subject_group and requires command templates to use the exact plan owner, but the embedded public write owner shape still admits owner_kind=system and the semantic validator does not uniformly reject owner mismatches for all create actions.",
+      "determinism_impact": null,
+      "evidence": "specs/installer-artifacts.md Section 6 defines owner shape as exactly subject or subject_group, and Section 7 says binding-set templates and create-result producers must use the exact plan owner. However contracts/schemas/spine-pack-embedded-values.v1.schema.json defines $defs.types_owner with a system branch, and artifacts.py only checks binding action owner in binding_identity_errors plus referenced create producer owners in result_reference_errors. An unreferenced profile create or archetype create template can therefore be structurally valid with a non-plan owner, including system, if the artifact is resealed.",
+      "feedback_id": "fb_owner_template_consistency_001",
+      "in_scope": true,
+      "invariant_violated": "artifact_integrity",
+      "issue_fingerprint": "f40ad5e994559db921dae2da7455632e2972875e1cd65d838b48e9c543c10e25",
+      "issue_id": "iss_f40ad5e994559db9",
+      "issue_type": "artifact_reference_consistency",
+      "normalized_severity": "minor",
+      "oscillation_key": null,
+      "recommended_change": "Align the machine layer by either narrowing the embedded write-template owner shape used by installer artifacts to the v1 installer owner shape, or adding one shared plan validation pass that requires every create and binding-set request_template owner to equal plan[\"request\"][\"owner\"]. Add a focused negative contract test for an unreferenced profile create with owner_kind=system or a different subject owner.",
+      "rubric_impact": null,
+      "severity_rationale": "This is a consistency and artifact-validation gap rather than a demonstrated current write escape, because initial apply regenerates and compares the full plan during preflight. It still weakens the independent artifact contract promised by the slice and can be fixed with a small alignment check."
+    }
+  ],
+  "profile": "consistency",
+  "reviewer": {
+    "model": "gpt-5-codex",
+    "name": "Codex Consistency Reviewer",
+    "version": "1.0.0"
+  },
+  "round_number": 1
+}

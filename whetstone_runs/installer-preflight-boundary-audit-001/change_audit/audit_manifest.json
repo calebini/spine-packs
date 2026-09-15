@@ -1,0 +1,54 @@
+{
+  "audit_notes_hash": "becaf82992f55ae14c03811b2308bf7dd7283c6c2acbeb980dd4d54c56306bf2",
+  "audit_notes_path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/installer-preflight-boundary-audit-001/audit-notes.md",
+  "client": {
+    "model": "gpt-5.5",
+    "name": "codex",
+    "version": "unknown"
+  },
+  "generated_at": "2026-09-12T17:38:12.440102+00:00",
+  "profile": "consistency",
+  "schema_version": "change-audit-manifest-v1",
+  "specs": [
+    {
+      "hash": "9da39b1ef22d33c4bdacefa850aa76aa240a9e6adab47eac274dce2692b44d3a",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/architecture.md"
+    },
+    {
+      "hash": "6a0de0b154db8520cc3c33712c9232d487411a7861ea0cff224d5401b4c4e5d1",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/installer.md"
+    },
+    {
+      "hash": "15c1d9f1b835637851ff2f8368ea11642a409b7f43eea37ada0c7c23b19621e2",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/installer-artifacts.md"
+    },
+    {
+      "hash": "b8cb0b09454e3a248778d8811d70683d0cd7673c3417e9d71e79e06d39d7a4ba",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/implementation-plan.md"
+    },
+    {
+      "hash": "412e8d74072527cd319cd80082e3f6cecb79613ca13b44fe22ff52d1399fccf1",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/artifacts.py"
+    },
+    {
+      "hash": "39e7e53782e185f5ac338f2a6006947bb54d2b9974566cdd3cd816a03fd28864",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/planning.py"
+    },
+    {
+      "hash": "ac8e53b9d64b586a40cfc30aed624f9b14a73bbf6e7c5067bda4bc5f837b69bc",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/preflight.py"
+    },
+    {
+      "hash": "d245e4bac486c079f0a27066c7fb3e92a9d9b42ee2bf889f8e14979ace9c1b24",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/spine_command.py"
+    },
+    {
+      "hash": "887038261bb1976102b2c448ae55febdc4c468fbf6048b3d081785e2b985a123",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/runtime/test_planning.py"
+    },
+    {
+      "hash": "a1d447574b752a9c6577da7542ea0733db2e9e657ed0399a95e2153448d9dab1",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/runtime/test_apply_preflight.py"
+    }
+  ]
+}

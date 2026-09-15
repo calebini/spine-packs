@@ -1,0 +1,35 @@
+{
+  "draft_hash": "d6992cc60c8ab567c30939e65f3e71a4f21ac9097cd1e9881a7f112a29004f48",
+  "feedback": [
+    {
+      "affected_sections": [
+        "src/spine_packs/__init__.py",
+        "specs/architecture.md Slice 4",
+        "specs/implementation-plan.md Slice 4"
+      ],
+      "authority_impact": null,
+      "baseline_severity": "nit",
+      "claim": "The package-level description is stale after Slice 4 and still describes the runtime as only planning, preflight, and initial approved apply.",
+      "determinism_impact": null,
+      "evidence": "`src/spine_packs/__init__.py` says `\"\"\"Spine pack planning, non-mutating preflight, and initial approved apply.\"\"\"`, while the Slice 4 scope in `specs/architecture.md` and `specs/implementation-plan.md` says continuation is now implemented in `recovery.py` and shared through `apply.py`.",
+      "feedback_id": "fb_001",
+      "in_scope": true,
+      "invariant_violated": "scope_control",
+      "issue_fingerprint": "d477fce251ecf94255009a50bc02e23e3579c427fc1ce9d2cec2ca9fc5204df8",
+      "issue_id": "iss_d477fce251ecf942",
+      "issue_type": "terminology_consistency",
+      "normalized_severity": "nit",
+      "oscillation_key": null,
+      "recommended_change": "Update the package docstring to include bounded same-execution continuation, for example `Spine pack planning, apply preflight, approved apply, and bounded continuation.` Keep the wording scoped so it does not imply verify, broader recovery, or live-target qualification.",
+      "rubric_impact": "nit",
+      "severity_rationale": "This is a small but direct terminology drift in the implemented Slice 4 boundary. It does not alter behavior or artifacts, so nit severity is appropriate."
+    }
+  ],
+  "profile": "consistency",
+  "reviewer": {
+    "model": "GPT-5 Codex",
+    "name": "Codex Consistency Reviewer",
+    "version": "1.0.0"
+  },
+  "round_number": 1
+}

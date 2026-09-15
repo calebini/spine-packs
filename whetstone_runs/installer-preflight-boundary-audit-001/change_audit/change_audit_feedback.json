@@ -1,0 +1,36 @@
+{
+  "draft_hash": "31ce37e97ba0b18a182e88b763102c91d8e85e56fd97706ea1e2ccd96b60cc8b",
+  "feedback": [
+    {
+      "affected_sections": [
+        "Audit Notes > Expected boundary",
+        "specs/implementation-plan.md > Slice 2: apply preflight without writes",
+        "tests/runtime/test_planning.py > test_write_operations_are_not_cli_commands",
+        "src/spine_packs/preflight.py"
+      ],
+      "authority_impact": "minor",
+      "baseline_severity": "minor",
+      "claim": "The draft is inconsistent about whether Slice 2 adds a public `apply` entry boundary or only an internal non-mutating preflight service.",
+      "determinism_impact": null,
+      "evidence": "The audit boundary says a successful preflight \u201cdoes not publish an apply result, checkpoint, or public `apply` command.\u201d The implementation-plan Slice 2 says \u201cAdd the `apply` entry boundary,\u201d while the runtime test `test_write_operations_are_not_cli_commands` asserts `apply` is not a CLI command and `preflight.py` exposes only `preflight_apply`, not a public command surface.",
+      "feedback_id": "fb_001",
+      "in_scope": true,
+      "invariant_violated": "scope_control",
+      "issue_fingerprint": "cfd4a358bca9f996c5e5e32b6f25c3811e71e3f5f0aadb352b516caa3343a3fd",
+      "issue_id": "iss_cfd4a358bca9f996",
+      "issue_type": "command_option_consistency",
+      "normalized_severity": "minor",
+      "oscillation_key": null,
+      "recommended_change": "Align the Slice 2 wording with the implemented boundary, for example by changing \u201cAdd the `apply` entry boundary\u201d to \u201cAdd the internal apply-preflight service boundary; do not expose the public `apply` CLI command until Slice 3.\u201d",
+      "rubric_impact": null,
+      "severity_rationale": "This is a documentation and lifecycle-term inconsistency inside the audited boundary. It could lead reviewers or implementers to believe a public apply command exists or is authorized, but the implementation still preserves the non-mutating boundary."
+    }
+  ],
+  "profile": "consistency",
+  "reviewer": {
+    "model": "gpt-5-codex",
+    "name": "Codex Whetstone Consistency Reviewer",
+    "version": "1.0.0"
+  },
+  "round_number": 1
+}
