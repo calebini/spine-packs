@@ -401,12 +401,17 @@ class CliAndAdapterTests(unittest.TestCase):
             self.assertEqual(transport.calls, [])
             self.assertFalse((Path(directory) / "plan.json").exists())
 
-    def test_unimplemented_operations_are_not_cli_commands(self):
-        for command in ("verify", "recover"):
-            output = io.StringIO()
-            with contextlib.redirect_stdout(output):
-                self.assertEqual(main([command]), 2)
-            self.assertEqual(json.loads(output.getvalue())["error"]["code"], "invalid_cli_arguments")
+    def test_recover_is_not_a_supported_cli_command(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(main(["recover"]), 2)
+        self.assertEqual(json.loads(output.getvalue())["error"]["code"], "invalid_cli_arguments")
+
+    def test_verify_requires_arguments(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(main(["verify"]), 2)
+        self.assertEqual(json.loads(output.getvalue())["error"]["code"], "invalid_cli_arguments")
 
     def test_publication_race_and_symlink_never_replace_existing_output(self):
         with tempfile.TemporaryDirectory() as directory:

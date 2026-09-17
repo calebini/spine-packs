@@ -146,7 +146,7 @@ spine-packs apply --manifest MANIFEST --plan PLAN --approval APPROVAL --checkpoi
 result whose receipt evidence is being correlated:
 
 ```sh
-spine-packs verify --manifest MANIFEST --plan PLAN --result RESULT --output VERIFICATION
+spine-packs verify --manifest MANIFEST --plan PLAN [--result RESULT] --output VERIFICATION
 ```
 
 The manifest is explicit so verification can reload the exact complete pack.
