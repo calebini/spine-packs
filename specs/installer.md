@@ -21,8 +21,9 @@ The terms **MUST**, **MUST NOT**, **SHOULD**, and **MAY** describe implementatio
 requirements. Authorized slices are read-only `plan`, non-mutating preflight,
 initial approved `apply` with durable checkpointing, bounded same-execution
 continuation and uncertain-response recovery, and non-mutating `verify`, using
-the source-tree layout in `specs/architecture.md`. Broader recovery, remote transports, and
-release packaging require separate review and authorization.
+the layout in `specs/architecture.md`. Slice 6 additionally authorizes local
+installer packaging and clean-install qualification for GitHub distribution.
+Broader recovery and remote transports require separate review and authorization.
 No Spine runtime change is authorized.
 
 Slice 6 additionally permits the separate disposable test setup described in

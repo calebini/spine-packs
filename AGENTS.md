@@ -56,8 +56,11 @@ bootstrap synthetic subjects through Spine's public administrative CLIs, then
 exercise the installer with isolated synthetic manifests and exact approvals.
 It MUST NOT accept an existing ledger or change a Spine checkout. Operator
 installations still require a separately supplied target, released pack, and
-exact approval. Do not add broader recovery, remote
-transport, release packaging, or speculative service/adapter/model directories
+exact approval. Slice 6 also authorizes local wheel/sdist preparation and
+clean-install qualification for GitHub Releases as specified in
+`specs/architecture.md`; publication requires the gates in `docs/releases.md`.
+Do not add broader recovery, remote
+transport, or speculative service/adapter/model directories
 without separate review and authorization. Planning must retain its strict
 read-command allowlist; apply may use only the six reviewed write commands.
 Mark unresolved design details explicitly instead of silently choosing them.
@@ -77,6 +80,10 @@ python3 -m unittest discover -s tests/contract -p 'test_*.py'
 python3 -m unittest discover -s tests/runtime -p 'test_*.py'
 git diff --check
 ```
+
+For packaging/resource changes, also run `scripts/qualify_package.py` with
+isolated public Spine CLI paths as documented in `docs/releases.md`. Never
+substitute an existing operator ledger or publish assets as part of testing.
 
 If a future change introduces executable behavior or a contract, add focused
 tests appropriate to that behavior. The repository verifier is a handoff and

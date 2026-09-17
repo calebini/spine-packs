@@ -8,7 +8,7 @@ authoritative runtime state merely by existing here.
 ## Authority and boundaries
 
 Spine remains the sole authority for installed archetypes, notification
-profiles, bindings, receipts, and ownership. A future installer may translate a
+profiles, bindings, receipts, and ownership. The installer may translate a
 reviewed pack into operations, but it must use Spine's existing public command
 surface. Direct database access is forbidden.
 
@@ -23,7 +23,7 @@ version rather than an in-place rewrite of a released version.
 
 ## Intended workflow
 
-A future installer is expected to expose three phases:
+The installer exposes three phases:
 
 1. `plan` compares a selected pack with Spine through the public command
    surface and produces a deterministic, reviewable change plan.
@@ -35,7 +35,8 @@ A future installer is expected to expose three phases:
 
 Read-only `plan`, non-mutating apply preflight, initial approved `apply`, and
 same-execution continuation with bounded uncertain-response recovery are
-implemented as source-tree slices, alongside non-mutating `verify`.
+implemented alongside non-mutating `verify`, with source-tree and packaged
+CLI entrypoints.
 The normative contract is [specs/installer.md](specs/installer.md).
 The ordered delivery slices and their completion gates are recorded in
 [specs/implementation-plan.md](specs/implementation-plan.md).
@@ -78,8 +79,8 @@ does not authorize execution, and this slice cannot execute any plan.
 
 ## Initial approved apply
 
-This is an initial-execution implementation tested with simulated Spine commands,
-not yet qualified against a real target. It requires a separately released pack;
+Initial execution is tested with simulated commands and real public Spine CLIs
+against disposable ledgers, not an existing operator target. It requires a separately released pack;
 the checked-in `kinflow-starter` drafts remain ineligible and unchanged.
 
 ```sh
@@ -134,8 +135,9 @@ another write. Such preflight failures emit an error envelope, not a misleading
 `not_applied` result for an execution that may already have changed Spine.
 
 Slice 4 is tested with simulated public commands and fault injection; its bounded
-review passed with a docstring nit that is now patched. Real-target qualification
-remains pending. No current draft pack is
+review passed with a docstring nit that is now patched. Slice 6 adds real-CLI
+disposable-ledger recovery tests; existing operator targets remain unqualified.
+No current draft pack is
 made installable by this feature.
 
 ## Read-only verification
@@ -172,7 +174,10 @@ test ledgers, not a running service or an existing operator database. The opt-in
 harness and isolated Spine 0.3.0 setup are documented in
 [docs/local-qualification.md](docs/local-qualification.md). It retains evidence
 for inspection and does not release `kinflow-starter` or start a delivery worker.
-Packaging and clean-install qualification follow this source-tree pass.
+The installer has local wheel/sdist packaging and a `spine-packs` console
+entrypoint. See [GitHub release preparation](docs/releases.md) for clean-install
+qualification and publication gates. The `0.1.0a1` candidate is not a published
+release and does not promote any pack draft.
 
 ## Repository map
 
@@ -219,7 +224,8 @@ focused contract vectors. Planning, preflight, initial apply, bounded
 same-execution continuation, and non-mutating verification are implemented.
 They have not been validated against a live operator target. Synthetic runtime
 tests remain separate from Slice 6's opt-in real-CLI disposable-ledger tests.
-End-to-end qualification is in progress; supported packaging remains pending.
+End-to-end qualification is in progress. Local packaging targets GitHub Releases;
+the bounded Slice 6 review and exact-commit release gate remain pending.
 Stable Spine instance identity, binding
 compare-and-set, and public receipt readback remain future hardening rather
 than v1 blockers.

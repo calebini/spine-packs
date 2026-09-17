@@ -588,7 +588,8 @@ than silently becoming implementation assumptions.
 The authorized planning, preflight, initial-apply, bounded continuation, and verification
 slices use the source-tree `spine_packs` package and standard-library `argparse`,
 as recorded in `specs/architecture.md`. This does not authorize broader recovery
-implementation. General filesystem configuration and release
-packaging remain deferred. It does not add section bundles,
+implementation. Slice 6 packaging follows `specs/architecture.md` without changing
+artifact contracts; publication remains separately gated. General filesystem
+configuration remains deferred. It does not add section bundles,
 remote transports, signatures, install registries, credentials, Windows path
 semantics, or Spine runtime changes.

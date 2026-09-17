@@ -353,6 +353,37 @@ artifact destinations. Preserve failed runs for diagnosis; deletion is an
 explicit operator action. This qualification does not release software or
 authorize an installation into an operator ledger.
 
+## Slice 6 installer packaging
+
+The installer MAY be built as the independently versioned `spine-packs` Python
+distribution with the `spine-packs` console entrypoint and unchanged
+`python -m spine_packs` entrypoint. Packaging MUST NOT change command behavior,
+artifact identities, manifest compatibility, or approval requirements.
+The runtime remains standard-library-only, Python 3.11+, local POSIX; build
+dependencies are not runtime dependencies. Spine MUST remain an external public
+CLI dependency, never bundled code or a Python import.
+
+`contracts/schemas/` remains authoritative. Wheel resources MUST be
+byte-identical copies shipped inside `spine_packs/_schemas/`, including every
+sibling reference. Installed execution MUST use those resources without a
+checkout, network fetch, or fallback to adjacent source contracts. Explicit
+source-tree execution MAY continue reading `contracts/schemas/` directly.
+
+The wheel MUST contain only installer runtime, required schemas, and package
+metadata. The sdist MUST suffice to rebuild the wheel; its bounded integration
+harness and format fixture are test tooling, not a released pack. Neither
+distribution may contain curated packs, operator artifacts, ledgers, credentials,
+Spine/Tickerd code, or audit payloads. Archive membership and resource byte
+identity MUST be checked, and the installed CLI MUST pass disposable-ledger
+and recovery qualification outside the checkout with source imports disabled.
+
+GitHub Releases is the initial distribution channel. Installer versions and
+`installer-v<version>` tags MUST remain separate from pack versions. Published
+tags and asset bytes MUST NOT be replaced; changes require a new version.
+Local candidate preparation does not satisfy the pending bounded-review and
+exact-commit release gates or authorize publication. Operational steps and
+remaining release decisions are in `docs/releases.md`.
+
 ## Input boundary
 
 Owner IDs, delivery targets, subjects, routes, and environment-specific facts

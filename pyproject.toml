@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "spine-packs"
+version = "0.1.0a1"
+description = "Local, explicitly approved Spine pack installation through public commands"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Operating System :: POSIX",
+  "Programming Language :: Python :: 3",
+]
+
+[project.scripts]
+spine-packs = "spine_packs.__main__:main"
+
+[project.urls]
+Repository = "https://github.com/calebini/spine-packs"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/spine_packs"]
+
+# These are generated wheel resources, never a second checked-in source.
+[tool.hatch.build.targets.wheel.force-include]
+"contracts/schemas" = "spine_packs/_schemas"
+
+[tool.hatch.build.targets.sdist]
+only-include = [
+  ".gitignore",
+  "pyproject.toml",
+  "README.md",
+  "src/spine_packs",
+  "contracts/schemas",
+  "docs/releases.md",
+  "docs/local-qualification.md",
+  "tests/integration/test_local_spine.py",
+  "tests/fixtures/pack-manifest/positive/medical_and_lesson.json",
+]
+exclude = ["__pycache__", "*.pyc"]

@@ -1,6 +1,7 @@
 """Installer artifact validation, derived from the existing contract-test helpers.
 
-No command execution lives here. Schemas are shipped in the source checkout.
+No command execution lives here. Schemas ship with the installed package;
+source-tree execution reads the authoritative contracts directly.
 """
 
 from __future__ import annotations
@@ -15,7 +16,11 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SCHEMA_ROOT = ROOT / "contracts/schemas"
+_PACKAGE_ROOT = Path(__file__).resolve().parent
+# Only the explicit src layout may read checkout contracts. An installed wheel
+# must not fall back to a neighboring checkout if its resources are missing.
+SCHEMA_ROOT = (_PACKAGE_ROOT / "_schemas" if _PACKAGE_ROOT.parent.name != "src"
+               else ROOT / "contracts/schemas")
 EMBEDDED_SCHEMA = SCHEMA_ROOT / "spine-pack-embedded-values.v1.schema.json"
 COMMAND_SHAPES = {
     "item_archetype.create": ("archetypeCreate", "spine.item-archetypes.v1"),

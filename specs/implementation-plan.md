@@ -144,7 +144,7 @@ clarification, and one stale test-name nit. Both were patched in `490c298`;
 the follow-up passed 55 contract and 106 runtime tests, without runtime changes.
 The patch has not been separately re-audited. No pack or installer is released.
 
-### Slice 6: end-to-end qualification and supported packaging — initial integration passed; packaging pending
+### Slice 6: end-to-end qualification and supported packaging — local packaging added; review pending
 
 The operator authorized kickoff with an isolated throwaway ledger. Start with
 local integration qualification; packaging follows only after the source-tree
@@ -161,8 +161,17 @@ Setup, reproducible invocation, evidence, and limits are documented in
 `docs/local-qualification.md`. The initial pass passed four integration tests
 (including six separate uncertain-response command scenarios), 55 contract
 tests, 106 synthetic runtime tests, and repository/whitespace checks.
-Packaging, clean-install qualification, and the
-completion-gate review remain pending; this is not completion of Slice 6.
+Local wheel/sdist packaging and an installed console entrypoint are now
+authorized for GitHub distribution. `scripts/qualify_package.py` checks archive
+contents, rebuilds from the sdist, and runs the disposable suite through a
+clean installed CLI outside the checkout. See `docs/releases.md` for the
+procedure and remaining version/license/publication choices. The initial
+clean-installed candidate passed all four integration tests, including the six
+uncertain-response subcases, on macOS/Python 3.14.6. Source checks passed 55
+contract tests and 109 runtime tests. Direct and sdist-built wheels matched
+byte-for-byte. These are working-tree candidate results. The final
+clean-commit qualification and bounded completion-gate review remain pending;
+this is not completion of Slice 6 or a public release.
 
 Harden the complete local v1 workflow:
 

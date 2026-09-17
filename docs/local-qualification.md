@@ -112,4 +112,7 @@ Final initial-pass results: four real-CLI integration tests passed, including
 six uncertain-response subcases; 55 contract and 106 synthetic runtime tests
 passed; repository verification (97 required files) and whitespace checks
 passed. Ordinary integration discovery skipped all four tests as intended.
-This was a working-tree qualification, not the pending clean-install gate.
+This was a working-tree qualification, not the clean-install gate. The separate
+[package qualification](releases.md) runs this harness from an extracted sdist
+with `--installed`, using the clean venv's CLI, installed module, and bundled
+schemas. No source-tree import path is inserted in that mode.

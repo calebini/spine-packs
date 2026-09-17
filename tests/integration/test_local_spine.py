@@ -19,7 +19,8 @@ import unittest
 import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "src"))
+if "--installed" not in sys.argv:
+    sys.path.insert(0, str(ROOT / "src"))
 
 from spine_packs import artifacts as a
 from spine_packs.__main__ import main as installer_main
@@ -121,7 +122,7 @@ class LocalSpineTests(unittest.TestCase):
         for name, value in inputs.items():
             argv.extend(["--" + name.replace("_", "-"), str(value)])
         if factory is None:
-            proc = subprocess.run([sys.executable, "-m", "spine_packs", *argv], env=self.config["env"],
+            proc = subprocess.run([*self.config["installer"], *argv], env=self.config["env"],
                                   text=True, capture_output=True, timeout=180)
             code, stdout, stderr = proc.returncode, proc.stdout, proc.stderr
         else:
@@ -236,7 +237,7 @@ class LocalSpineTests(unittest.TestCase):
     def test_existing_output_and_ledger_input_are_refused(self):
         manifest, plan, result = self.install()
         preserved = plan.read_bytes()
-        args = [sys.executable, "-m", "spine_packs", "verify", "--manifest", str(manifest),
+        args = [*self.config["installer"], "verify", "--manifest", str(manifest),
                 "--plan", str(plan), "--result", str(result), "--output", str(plan)]
         proc = subprocess.run(args, env=self.config["env"], text=True, capture_output=True, timeout=30)
         save(self.path("no-clobber-envelope"), {"argv": args, "exit_code": proc.returncode,
@@ -282,6 +283,8 @@ def main():
     parser.add_argument("--spine-ledger-migrate", required=True, type=Path)
     parser.add_argument("--evidence-parent", type=Path, default=Path(tempfile.gettempdir()))
     parser.add_argument("--test", action="append", help="optional exact unittest method name")
+    parser.add_argument("--installed", action="store_true",
+                        help="test this virtual environment's installed CLI; never add checkout src")
     args = parser.parse_args()
     command = args.spine_command.resolve(strict=True)
     migrate = args.spine_ledger_migrate.resolve(strict=True)
@@ -289,11 +292,28 @@ def main():
         parser.error("use public executables from the same isolated Spine installation")
     run = Path(tempfile.mkdtemp(prefix="spine-packs-integration-", dir=args.evidence_parent)).resolve()
     env = os.environ.copy()
-    env["PYTHONPATH"] = str(ROOT / "src")
+    if args.installed:
+        prefix = Path(sys.prefix).resolve()
+        installed_cli = prefix / "bin/spine-packs"
+        if (sys.prefix == sys.base_prefix or not installed_cli.is_file()
+                or not Path(a.__file__).resolve().is_relative_to(prefix)
+                or a.SCHEMA_ROOT != Path(a.__file__).resolve().parent / "_schemas"
+                or not a.SCHEMA_ROOT.is_dir()):
+            parser.error("installed mode requires the wheel's CLI, module, and schemas in this venv")
+        env.pop("PYTHONPATH", None)
+        env.pop("PYTHONHOME", None)
+        env["PYTHONNOUSERSITE"] = "1"
+        installer = [str(installed_cli)]
+    else:
+        env["PYTHONPATH"] = str(ROOT / "src")
+        installer = [sys.executable, "-m", "spine_packs"]
     env["PYTHONDONTWRITEBYTECODE"] = "1"
-    LocalSpineTests.config = {"root": run, "command": command, "migrate": migrate, "env": env}
+    LocalSpineTests.config = {"root": run, "command": command, "migrate": migrate,
+                             "env": env, "installer": installer}
     save(run / "run.json", {"spine_command": str(command), "spine_ledger_migrate": str(migrate),
-                           "python": sys.version, "qualification": "synthetic-disposable-ledgers-only"})
+                           "python": sys.version, "qualification": "synthetic-disposable-ledgers-only",
+                           "installed": args.installed, "installer": installer,
+                           "module": a.__file__, "schemas": str(a.SCHEMA_ROOT)})
     print(f"Private disposable test evidence: {run}", file=sys.stderr)
     suite = (unittest.TestSuite(LocalSpineTests(name) for name in args.test) if args.test else
              unittest.defaultTestLoader.loadTestsFromTestCase(LocalSpineTests))
