@@ -111,7 +111,7 @@ These are synthetic tests, not real-target qualification. The bounded review
 passed with one package-docstring nit, subsequently patched; no runtime change
 was needed. The review artifacts are in `whetstone_runs/installer-slice4-audit-001/`.
 
-### Slice 5: non-mutating verification — implemented; bounded review pending
+### Slice 5: non-mutating verification — implemented; bounded review complete
 
 Implement `verify` independently of apply execution:
 
@@ -139,10 +139,30 @@ coverage, no-write and granular plans, drift and retirement, changed root IDs,
 equivalent later revisions, malformed readback, target/compatibility failures,
 CLI exits and protected paths, and the read-only transport boundary. Independent
 contract checks cover exact ordered object coverage and evidence states.
-No real target is qualified, and no pack or installer is released. Bounded
-review is pending; Slice 6 still requires separate authorization.
+The bounded review passed with no blockers or majors, one minor CLI-synopsis
+clarification, and one stale test-name nit. Both were patched in `490c298`;
+the follow-up passed 55 contract and 106 runtime tests, without runtime changes.
+The patch has not been separately re-audited. No pack or installer is released.
 
-### Slice 6: end-to-end qualification and supported packaging
+### Slice 6: end-to-end qualification and supported packaging — initial integration passed; packaging pending
+
+The operator authorized kickoff with an isolated throwaway ledger. Start with
+local integration qualification; packaging follows only after the source-tree
+workflow qualifies. No existing ledger, daemon, cloud deployment, checkout
+mutation, or public release is authorized by this test pass.
+
+The first disposable-ledger pass exercises real Spine 0.3.0 public commands
+against an isolated installation of the inspected commit. It covers normal
+installation, retain and granular planning, drift authorization/refusal,
+staleness, verification mismatch, terminal partial-result continuation, and
+uncertain-response recovery for all six write kinds. The harness retains all
+local evidence and does not modify runtime code, Spine, or curated packs.
+Setup, reproducible invocation, evidence, and limits are documented in
+`docs/local-qualification.md`. The initial pass passed four integration tests
+(including six separate uncertain-response command scenarios), 55 contract
+tests, 106 synthetic runtime tests, and repository/whitespace checks.
+Packaging, clean-install qualification, and the
+completion-gate review remain pending; this is not completion of Slice 6.
 
 Harden the complete local v1 workflow:
 

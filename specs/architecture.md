@@ -58,8 +58,9 @@ The draft equivalence algorithm, granular selection boundary, and
 update-authorization requirements are specified in `specs/installer.md`. Their
 machine-readable representations are specified in `specs/installer-artifacts.md`.
 Read-only planning, non-mutating apply preflight, initial approved apply,
-bounded continuation, and non-mutating verification are implemented. Tests use
-simulated commands; this is not qualification against an actual Spine target.
+bounded continuation, and non-mutating verification are implemented. Synthetic
+tests are supplemented by Slice 6's opt-in real-CLI disposable-ledger tests
+below; these do not qualify an existing operator target or a public release.
 
 Dependency references and resolution remain attached to a future manifest and
 installer contract. They are not implied by the v1 `plan` operation.
@@ -324,6 +325,33 @@ existing specific error exits and make no verification-success claim.
 
 This is a simulated-command implementation slice. Disposable-target integration,
 supported packaging, releases, and deployment remain Slice 6 or separate work.
+
+## Slice 6 disposable qualification boundary
+
+The opt-in harness in `tests/integration/test_local_spine.py` is test tooling,
+not an installer mode. It MUST allocate a new private temporary run directory
+and new ledgers; it MUST NOT accept an existing ledger path. Setup may invoke
+the public `spine-ledger-migrate --initialize-if-empty` administrative CLI and
+`subject.upsert` to create a synthetic owner/actor. These setup permissions do
+not broaden the installer's read or six-command write allowlists. The harness
+must never open a database or import Spine internals.
+
+Qualification uses the exact inspected Spine 0.3.0 commit and a compatible
+Tickerd distribution, installed in an isolated environment from copied source.
+The current Spine checkout is not implicitly compatible. No source checkout
+may be edited or switched by the harness. Synthetic test manifests use a
+distinct test-only pack identity and stable-version status solely to exercise
+apply eligibility; no `kinflow-starter` draft is promoted or published.
+
+Tests MUST retain exact target-bound plans, approvals, checkpoints, results,
+fresh verification artifacts, and setup evidence in the private run directory.
+Synthetic actor/owner facts belong only to those artifacts. Fault injection
+may stop immediately before a public write or discard a real successful write
+response; it MUST NOT fabricate successful Spine responses or alter the
+ledger directly. Continuation must use the same plan and approval and fresh
+artifact destinations. Preserve failed runs for diagnosis; deletion is an
+explicit operator action. This qualification does not release software or
+authorize an installation into an operator ledger.
 
 ## Input boundary
 

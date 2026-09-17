@@ -162,8 +162,17 @@ receipt-row readback, and the result explicitly records that limitation.
 
 Success exits 0 with `state=verified`; a completed mismatch exits 10. Input,
 target, compatibility, and transport failures retain their specific error exits.
-Slice 5 uses simulated-target tests and still awaits bounded review and later
-real-target qualification. Draft inspection does not release or install a pack.
+Slice 5's bounded review passed with a synopsis clarification and stale test-name
+nit, both patched. Draft inspection does not release or install a pack.
+
+## Disposable integration qualification
+
+Slice 6 starts with the real public Spine CLI against newly allocated private
+test ledgers, not a running service or an existing operator database. The opt-in
+harness and isolated Spine 0.3.0 setup are documented in
+[docs/local-qualification.md](docs/local-qualification.md). It retains evidence
+for inspection and does not release `kinflow-starter` or start a delivery worker.
+Packaging and clean-install qualification follow this source-tree pass.
 
 ## Repository map
 
@@ -180,6 +189,8 @@ real-target qualification. Draft inspection does not release or install a pack.
   `tests/runtime/` exercises them with synthetic public readbacks and subprocesses.
 - `scripts/verify_repo.py` checks repository shape and high-level boundary
   markers without third-party dependencies.
+- `tests/integration/` holds opt-in disposable-ledger public-CLI qualification;
+  setup and limitations are documented in `docs/local-qualification.md`.
 - `AGENTS.md` gives repository-specific instructions to automated contributors.
 
 ## Current maturity
@@ -206,9 +217,10 @@ request, plan, approval,
 checkpoint, apply-result, verification-result, and CLI-result schemas and
 focused contract vectors. Planning, preflight, initial apply, bounded
 same-execution continuation, and non-mutating verification are implemented.
-They have not been validated against a live operator target;
-the local tests use synthetic responses pinned to the inspected public surface.
-End-to-end qualification and supported packaging remain pending. Stable Spine instance identity, binding
+They have not been validated against a live operator target. Synthetic runtime
+tests remain separate from Slice 6's opt-in real-CLI disposable-ledger tests.
+End-to-end qualification is in progress; supported packaging remains pending.
+Stable Spine instance identity, binding
 compare-and-set, and public receipt readback remain future hardening rather
 than v1 blockers.
 

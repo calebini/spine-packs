@@ -42,6 +42,8 @@ REQUIRED_FILES = (
     "tests/runtime/test_continuation.py",
     "tests/runtime/test_verification.py",
     "tests/runtime/test_planning.py",
+    "tests/integration/test_local_spine.py",
+    "docs/local-qualification.md",
     "packs/kinflow-starter/README.md",
     "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json",
     "packs/kinflow-starter/kinflow-starter.1.0.0-draft.2.json",

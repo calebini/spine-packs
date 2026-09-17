@@ -1,6 +1,6 @@
 # Installer artifact contracts
 
-Status: Draft v0.1; implementation authorized through Slice 5 non-mutating verification
+Status: Draft v0.1; runtime through Slice 5, Slice 6 disposable qualification authorized
 
 ## 1. Scope and authority
 

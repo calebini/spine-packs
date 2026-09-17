@@ -50,9 +50,13 @@ read-only `plan`, non-mutating apply preflight, Slice 3 initial approved
 `apply` with durable checkpointing, and Slice 4 same-execution continuation and
 bounded uncertain-response recovery, and Slice 5 non-mutating `verify` in
 `src/spine_packs/`, described in
-`specs/architecture.md`. Testing these slices uses simulated commands; executing
-an actual installation requires a separately supplied target, released pack,
-and exact approval. Do not add broader recovery, remote
+`specs/architecture.md`. Slice 6 disposable local integration qualification is
+also authorized: the test harness may initialize a new temporary ledger and
+bootstrap synthetic subjects through Spine's public administrative CLIs, then
+exercise the installer with isolated synthetic manifests and exact approvals.
+It MUST NOT accept an existing ledger or change a Spine checkout. Operator
+installations still require a separately supplied target, released pack, and
+exact approval. Do not add broader recovery, remote
 transport, release packaging, or speculative service/adapter/model directories
 without separate review and authorization. Planning must retain its strict
 read-command allowlist; apply may use only the six reviewed write commands.

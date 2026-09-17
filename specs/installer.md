@@ -1,6 +1,6 @@
 # Installer contract
 
-Status: Draft v0.4; implementation authorized through Slice 5 non-mutating verification
+Status: Draft v0.4; runtime through Slice 5, Slice 6 disposable qualification authorized
 
 ## 1. Purpose and authority
 
@@ -24,6 +24,11 @@ continuation and uncertain-response recovery, and non-mutating `verify`, using
 the source-tree layout in `specs/architecture.md`. Broader recovery, remote transports, and
 release packaging require separate review and authorization.
 No Spine runtime change is authorized.
+
+Slice 6 additionally permits the separate disposable test setup described in
+`specs/architecture.md`. It does not add administrative commands to the installer
+or authorize an existing operator ledger. Supported packaging follows successful
+source-tree qualification; publishing a release remains a separate decision.
 
 ## 2. Inputs and non-goals
 
