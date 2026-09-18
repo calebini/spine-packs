@@ -13,6 +13,7 @@ REQUIRED_FILES = (
     ".gitignore",
     "AGENTS.md",
     "README.md",
+    "LICENSE",
     "pyproject.toml",
     "docs/releases.md",
     "scripts/qualify_package.py",

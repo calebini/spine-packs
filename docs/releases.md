@@ -1,9 +1,11 @@
 # Installer releases on GitHub
 
 The initial distribution channel is GitHub Releases in `calebini/spine-packs`,
-not PyPI. The local candidate version is `0.1.0a1`; proposed tag:
-`installer-v0.1.0a1`. This is an installer alpha, not `kinflow-starter.v1` or a
-change to any pack or artifact-contract version. No release has been published.
+not PyPI. The operator approved installer version `0.1.0`, MIT licensing, and
+tag `installer-v0.1.0`. The numeric version does not widen the support promises
+below. It is not `kinflow-starter.v1` or a change to any artifact contract.
+Tag publication and GitHub release-asset publication are distinct actions;
+the current authorization covers the tag, not uploading the release assets.
 
 The package uses standard `pyproject.toml` metadata and the `spine-packs`
 console entrypoint. Hatchling bundles authoritative `contracts/schemas/` bytes
@@ -15,11 +17,12 @@ and [Hatch build configuration](https://hatch.pypa.io/latest/config/build/).
 
 Each approved installer release has three explicitly named assets:
 
-- `spine_packs-<version>-py3-none-any.whl`: CLI and all eleven validation schemas;
+- `spine_packs-<version>-py3-none-any.whl`: CLI, eleven validation schemas, and MIT license;
 - `spine_packs-<version>.tar.gz`: rebuildable source, schemas, orientation/release
   docs, and the small disposable-integration harness and its synthetic input;
 - `SHA256SUMS`: SHA-256 of those exact two files.
 
+Both distributions carry the root `LICENSE`; package metadata declares MIT.
 The wheel has no third-party runtime dependencies. Neither distribution
 includes Spine, Tickerd, curated packs, operator artifacts, local ledgers,
 credentials, audit payloads, or Whetstone run evidence. The sdist's reviewed
@@ -77,21 +80,27 @@ uncertain-response recoveries. Repository checks, 55 contract tests and 109
 runtime tests passed. This is candidate evidence, not an all-platform/Python
 version matrix or qualification of the eventual clean release commit.
 
-## Publication gate
+## Review closeout and publication gate
 
-Before the first public prerelease:
+The clean committed candidate `8f7e967` passed the same qualification checks.
+The 22-file Slice 6 bounded review on 2026-09-18 returned `pass`, preserved
+boundaries, and zero findings; see `specs/implementation-plan.md` in the source
+repository. The subsequent `0.1.0`/MIT closeout changes release metadata and
+license checks only, not installer runtime behavior or pack contracts.
 
-- finish Slice 6's bounded review and resolve findings;
-- choose/approve the installer version and licensing terms (this repository
-  currently declares no license; do not infer one from its public visibility);
-- commit the reviewed candidate and run repository, contract, runtime, and
-  package qualification checks from a clean checkout of that exact commit;
-- record Python/platform and build-tool versions, tested Spine/Tickerd commits,
-  limitations, and checksum results in release notes;
-- explicitly approve publishing that commit and its exact three release assets.
+Before publishing the approved tag, commit the version/license closeout and run
+repository, contract, runtime, and package qualification checks from a clean
+checkout of that exact commit. Verify that both archives carry the correct
+version and license. Do not tag an unqualified commit or move an existing tag.
 
-Only then create/push the `installer-v<version>` tag for the approved commit
-and create a GitHub **prerelease**, attaching the three exact qualified assets.
+Before creating a GitHub Release, record the Python/platform and build-tool
+versions, tested Spine/Tickerd commits, limitations, and checksum results in
+release notes, and obtain explicit approval to publish the exact three assets.
+That step is separate from the approved tag and has not run yet.
+The GitHub prerelease marker is independent of the numeric version and can be
+chosen when publishing; a numeric version alone asserts no broader maturity.
+
+Attach only the three qualified assets to the authorized GitHub Release.
 Use GitHub's release UI or `gh release create`; do not use a wildcard that could
 upload logs, manifests, or operator evidence. Publish the qualified wheel, not
 a new untested rebuild. Do not move a published tag or replace published asset
@@ -109,12 +118,12 @@ the wheel's SHA-256 against its named entry, then install the local wheel in
 an isolated tool environment, for example:
 
 ```sh
-pipx install ./spine_packs-0.1.0a1-py3-none-any.whl
+pipx install ./spine_packs-0.1.0-py3-none-any.whl
 spine-packs --help
 ```
 
 Alternatively, use a dedicated venv and `python -m pip install --no-index
---no-deps ./spine_packs-0.1.0a1-py3-none-any.whl`. No repository checkout or
+--no-deps ./spine_packs-0.1.0-py3-none-any.whl`. No repository checkout or
 `PYTHONPATH` is needed. Obtain a separately released compatible pack and explicit
 target inputs before planning; applying still needs the exact plan approval.
 Do not overwrite or discard existing execution/checkpoint evidence on upgrade.

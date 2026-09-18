@@ -5,6 +5,7 @@ Run with an isolated Python 3.12+ build environment containing build and
 hatchling. All subprocess output and disposable integration evidence is retained.
 """
 import argparse
+from email.parser import BytesParser
 import hashlib
 import importlib.metadata
 import json
@@ -62,11 +63,18 @@ def qualify(args, run):
         entries = archive.namelist()
         require(len(entries) == len(set(entries)), "duplicate wheel members")
         info = f"spine_packs-{version}.dist-info/"
-        metadata = {info + name for name in ("METADATA", "WHEEL", "RECORD", "entry_points.txt")}
+        metadata = {info + name for name in (
+            "METADATA", "WHEEL", "RECORD", "entry_points.txt", "licenses/LICENSE")}
         require(set(entries) == set(expected) | metadata, "unexpected or missing wheel members")
         for name, value in expected.items():
             require(archive.read(name) == value, f"packaged bytes differ: {name}")
-        require(b"Requires-Dist:" not in archive.read(info + "METADATA"), "runtime dependency added")
+        package_metadata = BytesParser().parsebytes(archive.read(info + "METADATA"))
+        require(package_metadata["Version"] == version, "incorrect packaged version")
+        require(package_metadata["License-Expression"] == "MIT", "incorrect packaged license")
+        require(package_metadata.get_all("License-File") == ["LICENSE"], "incorrect license file metadata")
+        require(archive.read(info + "licenses/LICENSE") == (ROOT / "LICENSE").read_bytes(),
+                "packaged license differs from source")
+        require(not package_metadata.get_all("Requires-Dist"), "runtime dependency added")
 
     command("build-direct-wheel", [sys.executable, "-m", "build", "--no-isolation", "--wheel",
                                     "--outdir", run / "direct", ROOT])
@@ -78,7 +86,7 @@ def qualify(args, run):
     source_members = {"src/" + name: value for name, value in expected.items()
                       if "/_schemas/" not in name}
     source_members.update({"contracts/schemas/" + name: value for name, value in schemas.items()})
-    for name in (".gitignore", "pyproject.toml", "README.md", "docs/releases.md",
+    for name in (".gitignore", "pyproject.toml", "README.md", "LICENSE", "docs/releases.md",
                  "docs/local-qualification.md",
                  "tests/integration/test_local_spine.py",
                  "tests/fixtures/pack-manifest/positive/medical_and_lesson.json"):

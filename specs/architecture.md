@@ -380,7 +380,7 @@ and recovery qualification outside the checkout with source imports disabled.
 GitHub Releases is the initial distribution channel. Installer versions and
 `installer-v<version>` tags MUST remain separate from pack versions. Published
 tags and asset bytes MUST NOT be replaced; changes require a new version.
-Local candidate preparation does not satisfy the pending bounded-review and
+Local candidate preparation alone does not satisfy the bounded-review and
 exact-commit release gates or authorize publication. Operational steps and
 remaining release decisions are in `docs/releases.md`.
 

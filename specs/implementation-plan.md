@@ -144,7 +144,7 @@ clarification, and one stale test-name nit. Both were patched in `490c298`;
 the follow-up passed 55 contract and 106 runtime tests, without runtime changes.
 The patch has not been separately re-audited. No pack or installer is released.
 
-### Slice 6: end-to-end qualification and supported packaging — local packaging added; review pending
+### Slice 6: end-to-end qualification and supported packaging — technical acceptance passed
 
 The operator authorized kickoff with an isolated throwaway ledger. Start with
 local integration qualification; packaging follows only after the source-tree
@@ -165,13 +165,27 @@ Local wheel/sdist packaging and an installed console entrypoint are now
 authorized for GitHub distribution. `scripts/qualify_package.py` checks archive
 contents, rebuilds from the sdist, and runs the disposable suite through a
 clean installed CLI outside the checkout. See `docs/releases.md` for the
-procedure and remaining version/license/publication choices. The initial
+procedure and publication gates. The initial
 clean-installed candidate passed all four integration tests, including the six
 uncertain-response subcases, on macOS/Python 3.14.6. Source checks passed 55
 contract tests and 109 runtime tests. Direct and sdist-built wheels matched
-byte-for-byte. These are working-tree candidate results. The final
-clean-commit qualification and bounded completion-gate review remain pending;
-this is not completion of Slice 6 or a public release.
+byte-for-byte. The same checks subsequently passed from a clean detached clone
+of `8f7e967db0a0ce178ad19da374deba167b6a6799`, completing the clean-commit gate
+for the reviewed implementation candidate.
+
+The authorized 22-file Whetstone `audit-change` consistency review on
+2026-09-18 returned `pass`, `boundary_preserved=true`, and zero blockers,
+majors, minors, or nits. The reviewed brief SHA-256 is
+`e60e388dd1f6f223f7ee3271868033807b00232a25b3f94d2e5bc4f0fea4441d`.
+Raw review and target-bound test evidence are retained locally, not shipped.
+This completes the bounded Slice 6 technical acceptance; it is not a convergence
+declaration or staging/production qualification.
+
+The operator subsequently approved installer version `0.1.0`, MIT licensing,
+and tag `installer-v0.1.0`. This release-metadata closeout changes no installer
+runtime or pack contract. Its exact final commit must pass qualification before
+tag publication. GitHub release assets and curated pack release remain separate
+from the approved tag operation.
 
 Harden the complete local v1 workflow:
 

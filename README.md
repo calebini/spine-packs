@@ -176,8 +176,9 @@ harness and isolated Spine 0.3.0 setup are documented in
 for inspection and does not release `kinflow-starter` or start a delivery worker.
 The installer has local wheel/sdist packaging and a `spine-packs` console
 entrypoint. See [GitHub release preparation](docs/releases.md) for clean-install
-qualification and publication gates. The `0.1.0a1` candidate is not a published
-release and does not promote any pack draft.
+qualification and publication gates. The approved installer version is `0.1.0`,
+licensed under [MIT](LICENSE). Its tag is `installer-v0.1.0`; publishing package
+assets is separate from tagging and does not promote any pack draft.
 
 ## Repository map
 
@@ -224,8 +225,10 @@ focused contract vectors. Planning, preflight, initial apply, bounded
 same-execution continuation, and non-mutating verification are implemented.
 They have not been validated against a live operator target. Synthetic runtime
 tests remain separate from Slice 6's opt-in real-CLI disposable-ledger tests.
-End-to-end qualification is in progress. Local packaging targets GitHub Releases;
-the bounded Slice 6 review and exact-commit release gate remain pending.
+Slice 6 technical qualification and bounded review passed on committed candidate
+`8f7e967`. The review reported preserved boundaries and zero findings. Final
+version/license packaging must also pass exact-commit qualification before its
+tag is published; release assets remain separately authorized.
 Stable Spine instance identity, binding
 compare-and-set, and public receipt readback remain future hardening rather
 than v1 blockers.
