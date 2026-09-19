@@ -84,16 +84,22 @@ to exclude positive, post-target elapsed offsets.
 ## Schema-15 alignment
 
 The additional inspected baseline is Spine runtime `0.5.0`, schema `15`, commit
-`ab18a8a51c9bf548220f67e2db0220bfe9783888`. Installer candidate `0.2.0` admits
+`ab18a8a51c9bf548220f67e2db0220bfe9783888`. Installer `0.2.0` admits
 that exact pair in addition to the existing `0.3.0` / `12` baseline. `0.4.0`,
 schema 14, future schemas, and undeclared runtime versions remain unsupported.
-This is a working-tree compatibility extension, not release or deployment
-qualification. Publication still requires the gates in `docs/releases.md`.
+Installer `0.2.0` passed exact-commit release qualification at `57a6776` on both
+baselines. This does not qualify a staging deployment. Publication gates and
+the qualification record are in `docs/releases.md` and `docs/release-finalization.md`.
 
 `kinflow-starter.1.0.0-draft.10` preserves every draft-9 definition, binding,
 and empty dependency list. It changes only draft identity, runtime allowlist
 to `["0.3.0", "0.5.0"]`, and the recomputed digest. The three content contracts
 remain unchanged. Drafts 1–9 and their fixture bytes remain review evidence.
+
+Stable `kinflow-starter 1.0.0` promotes draft 10 with the same compatibility
+declaration and no definition changes. Only version, release status, and content
+digest change; drafts 1–10 remain unchanged. Installer `0.2.0` is required for
+the declared `0.5.0` runtime; `0.1.0` does not support that baseline.
 
 The public command map is unchanged, but execution on `0.5.0` requires
 `spine.system-info.v3` and `spine.ledger-instance.v1` in place of

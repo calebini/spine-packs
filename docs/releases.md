@@ -5,9 +5,11 @@ not PyPI. The operator approved installer version `0.1.0`, MIT licensing, and
 tag `installer-v0.1.0`. The numeric version does not widen the support promises
 below. It is not `kinflow-starter.v1` or a change to any artifact contract.
 Installer `0.1.0` has been published. Tag publication and GitHub release-asset
-publication remain distinct actions. Candidate `0.2.0` adds the schema-15
-compatibility extension; its version is proposed, and neither its tag nor its
-assets are authorized for publication yet. Preserve all `0.1.0` release bytes.
+publication remain distinct actions. Installer `0.2.0` is now published at
+tag `installer-v0.2.0`, exact qualified commit `57a6776`, with the approved
+schema-15 compatibility extension. Preserve all `0.1.0` and `0.2.0` release
+bytes. See [release finalization](release-finalization.md) for qualified asset
+hashes and the separately approved `kinflow-starter 1.0.0` promotion.
 
 The package uses standard `pyproject.toml` metadata and the `spine-packs`
 console entrypoint. Hatchling bundles authoritative `contracts/schemas/` bytes
@@ -34,7 +36,7 @@ tests and normative specs remain in the tagged repository.
 The installer requires Python 3.11+ and local POSIX filesystem behavior. The
 `any` wheel tag means pure Python, not qualified Windows or remote-filesystem
 support. Qualification tooling and the external Spine baseline need Python
-3.12+. A compatible Spine CLI (`0.3.0` / schema 12, or for candidate `0.2.0`,
+3.12+. A compatible Spine CLI (`0.3.0` / schema 12, or with installer `0.2.0`,
 `0.5.0` / schema 15) is provisioned separately; the package
 does not install, deploy, upgrade, or configure Spine. Packs are separately
 selected inputs; shipping an installer does not make the current drafts
@@ -72,13 +74,13 @@ private evidence directory and never accepts an existing ledger. It:
 5. records the installed module/schema paths and emits checksums only on success.
 
 The harness rejects source-tree module/schema loading in installed mode.
-For candidate `0.2.0`, repeat qualification against both exact Spine commits
+For releases supporting `0.2.0`'s baselines, repeat qualification against both exact Spine commits
 in `local-qualification.md`. Only a candidate passing both may proceed to
 bounded review and clean-commit release qualification. The schema-15 extension's
 separate bounded review returned `pass_with_minor_clarification`; its two
 wording findings are patched, without a follow-up audit. Clean-commit release
-qualification and version/tag/asset approval remain pending; the earlier Slice 6
-release approval does not carry over.
+qualification passed at `57a6776`; the operator separately approved version,
+tag, and exact assets for `0.2.0`. Later releases require their own gates.
 Normal installed operations invoke the console script in new processes; only
 fault injection uses the installed module in-process. All evidence, including
 failed builds, stays local. Nothing uploads, tags, commits, or pushes.
@@ -128,12 +130,12 @@ the wheel's SHA-256 against its named entry, then install the local wheel in
 an isolated tool environment, for example:
 
 ```sh
-pipx install ./spine_packs-0.1.0-py3-none-any.whl
+pipx install ./spine_packs-0.2.0-py3-none-any.whl
 spine-packs --help
 ```
 
 Alternatively, use a dedicated venv and `python -m pip install --no-index
---no-deps ./spine_packs-0.1.0-py3-none-any.whl`. No repository checkout or
+--no-deps ./spine_packs-0.2.0-py3-none-any.whl`. No repository checkout or
 `PYTHONPATH` is needed. Obtain a separately released compatible pack and explicit
 target inputs before planning; applying still needs the exact plan approval.
 Do not overwrite or discard existing execution/checkpoint evidence on upgrade.

@@ -5,6 +5,18 @@ This document is normative for the approved content of `kinflow-starter` under
 installation. General format and authority rules remain in `pack-format.md`,
 `overview.md`, `architecture.md`, and `compatibility.md`.
 
+## Stable release 1.0.0
+
+`1.0.0` promotes draft 10 without changing definitions, bindings, dependencies,
+or compatibility. Only `pack.version`, `pack.status`, and the content digest
+change. All content rules below also apply to `1.0.0`. The stable manifest is
+`packs/kinflow-starter/kinflow-starter.1.0.0.json`; its content digest MUST remain
+`65d489a84b75ff0051f9df4a507f7104288c58bdda51d0096b030b5a104b5dfb`.
+Released bytes MUST remain immutable. Any correction or additional content
+requires a new version. Drafts 1–10 remain unchanged as review evidence.
+Release status permits planning for apply; it does not authorize installation
+without the exact owner, target, selection, and plan approval.
+
 ## Draft lineage
 
 `1.0.0-draft.10` is the current compatibility-only draft. It MUST preserve

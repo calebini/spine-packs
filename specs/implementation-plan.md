@@ -205,11 +205,11 @@ or a pack remains a separate decision.
 
 ## Deferred hardening
 
-### Schema-15 alignment — implementation candidate
+### Schema-15 alignment — installer release 0.2.0
 
 The operator supplied Spine commit `ab18a8a51c9bf548220f67e2db0220bfe9783888`
 after its independent repair gates. This pins runtime `0.5.0` / schema `15`.
-Installer candidate `0.2.0` adds its public `system.info.v3` validator and
+Installer `0.2.0` adds its public `system.info.v3` validator and
 runtime-specific execution union while preserving `0.3.0` / `12` support.
 The new environment variant binds the ledger-instance ID into plans, approvals
 (through the plan digest), continuation checks, and verification evidence.
@@ -218,8 +218,9 @@ No public command allowlist or recovery scope expands.
 Draft 10 is a compatibility-only copy of draft 9; no profile or archetype
 semantics change, and no draft becomes installable. Completion requires contract
 and adversarial identity tests plus source-tree and clean-package disposable
-qualification on both exact baselines. Exact-commit qualification,
-version/tag/asset approval, and publication are separate remaining gates.
+qualification on both exact baselines. Installer exact-commit qualification
+passed at `57a6776`; its version, tag, and exact assets were separately approved
+and published as `installer-v0.2.0`. This does not authorize staging apply.
 
 Working-tree qualification on 2026-09-19 passed repository verification (107
 required files), 58 contract tests, 115 synthetic runtime tests, and whitespace
@@ -245,6 +246,19 @@ cover both runtime-specific receipt disclosures and reject cross-pairing, and
 the catalog-fingerprint docstring names both pinned baselines. No behavior
 changed in this follow-up, and the patches have not been separately re-audited.
 Original payload and review evidence remain local and unchanged.
+
+### kinflow-starter 1.0.0 promotion
+
+The operator approved the unchanged-content promotion of draft 10 and separate
+publication under `pack-kinflow-starter-v1.0.0`. The stable manifest changes only
+version, status, and digest; exact approved bytes and all 52 definitions in each
+collection are pinned by `test_kinflow_release_contract.py` and registered in the
+pack fixture matrix. Drafts 1–10 remain unchanged. Required checks and independent
+Draft 2020-12 validation must pass from the exact promotion commit before its
+tag and assets are published. This is not a new full-content Whetstone audit.
+The approval, hashes, qualification evidence, and staging prerequisites are in
+`docs/release-finalization.md`. No staging owner, target, selection, or apply
+approval is implied by publication.
 
 ### Remaining follow-ups
 

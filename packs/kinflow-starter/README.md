@@ -1,14 +1,14 @@
 # kinflow-starter
 
-`kinflow-starter` is a draft Spine pack. Current draft version
-`1.0.0-draft.10` is not installable, released, or a publication of `1.0.0`.
-Drafts 1 through 9 remain byte-for-byte unchanged for review provenance.
-Draft 10 changes only compatibility to admit Spine `0.5.0` alongside `0.3.0`,
-its draft version, and digest. All curated definitions remain those of draft 9.
+`kinflow-starter 1.0.0` is the approved stable Spine pack, promoted from draft 10
+without definition or compatibility changes. Drafts 1 through 10 remain
+byte-for-byte unchanged and are not installable. Released bytes are immutable;
+future changes require a new version. Installation still requires an explicit
+owner, target, selection, and exact plan approval.
 
-## Current draft contents
+## Release contents
 
-Draft 9 contains these archetypes, each with its own same-named `_standard`
+Version 1.0.0 contains these 52 archetypes, each with its own same-named `_standard`
 notification profile and one owner-neutral local default-binding intent:
 
 - established slices: `medical_appointment`, `lesson`,
@@ -49,17 +49,21 @@ next reminder. `dinner_reservation` and `visitor_arrival` include deliberate
 exact-target reminders with short delivery windows.
 
 Exact definitions, descriptions, schedules, and boundary rules are normative
-in [the pack specification](../../specs/kinflow-starter.md). The current draft
+in [the pack specification](../../specs/kinflow-starter.md). The stable
 manifest is
-`packs/kinflow-starter/kinflow-starter.1.0.0-draft.10.json`. It contains no
+`packs/kinflow-starter/kinflow-starter.1.0.0.json`. It contains no
 owner, subject, group, route, delivery target, generated Spine ID, timestamp,
 receipt, credential, or environment-specific data.
 
 The recorded Whetstone audit applies to the medical-only predecessor, not to
-this expanded draft.
+the entire expanded pack; release validation must not be described as a new
+full-content Whetstone audit.
 
-## Candidate future content
+## Distribution and compatibility
 
-The planned archetype sections are now represented. The pack remains draft
-while the complete content and contract are reviewed before a future immutable
-`1.0.0` release.
+The pack is distributed separately from the installer under GitHub tag
+`pack-kinflow-starter-v1.0.0`, with the manifest and `SHA256SUMS` as assets.
+It declares exactly Spine `0.3.0` and `0.5.0`; use installer `0.2.0` for `0.5.0`
+/ schema 15. See [release finalization](../../docs/release-finalization.md) for
+checksums, qualification limits, and staging prerequisites. A release does not
+create items, recurrence, owners, delivery routes, or an installation.

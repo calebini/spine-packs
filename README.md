@@ -47,7 +47,7 @@ From this checkout, using Python 3.11 or newer:
 
 ```sh
 PYTHONPATH=src python3 -m spine_packs plan \
-  --manifest packs/kinflow-starter/kinflow-starter.1.0.0-draft.10.json \
+  --manifest packs/kinflow-starter/kinflow-starter.1.0.0.json \
   --request /absolute/operator/path/request.json \
   --output /absolute/operator/path/new-plan.json
 ```
@@ -61,11 +61,12 @@ Existing fixture targets and owner IDs are test data, not usable configuration.
 
 The saved request selects `all` or an exact sorted list of archetype keys.
 Optional `--all` or repeated `--archetype KEY` flags only assert that same
-selection; they never override it. The current draft pack requires
-`draft_posture=inspect_only` and can never produce an apply-eligible plan.
+selection; they never override it. Use `draft_posture=reject` for the stable
+pack. Historical drafts require `draft_posture=inspect_only` and can never
+produce an apply-eligible plan.
 
 The target must already expose a pinned compatible Spine public surface:
-`0.3.0` / schema 12 or `0.5.0` / schema 15. Candidate installer `0.2.0` adds
+`0.3.0` / schema 12 or `0.5.0` / schema 15. Published installer `0.2.0` adds
 the latter; published `0.1.0` does not support it. Schema-15 plans bind Spine's
 public ledger identity and recheck it during apply, recovery, and verify.
 The planner will not downgrade or modify Spine,
@@ -180,10 +181,12 @@ for inspection and does not release `kinflow-starter` or start a delivery worker
 The installer has local wheel/sdist packaging and a `spine-packs` console
 entrypoint. See [GitHub release preparation](docs/releases.md) for clean-install
 qualification and publication gates. Published installer `0.1.0` is licensed
-under [MIT](LICENSE) and tagged `installer-v0.1.0`. Working candidate `0.2.0`
-adds schema-15 support; its bounded review is complete with two wording fixes
-applied. Exact-commit release qualification and release approval remain pending.
-Neither installer publication nor local qualification promotes any pack draft.
+under [MIT](LICENSE) and tagged `installer-v0.1.0`. Published `0.2.0`, tagged
+`installer-v0.2.0` at `57a6776`, adds schema-15 support and passed bounded review
+and clean-commit qualification on both baselines. `kinflow-starter 1.0.0` is a
+separately approved unchanged-content promotion from draft 10, not bundled in
+the installer. See [release finalization](docs/release-finalization.md) for
+exact hashes and remaining staging prerequisites. Historical drafts remain drafts.
 
 ## Repository map
 
@@ -193,7 +196,7 @@ Neither installer publication nor local qualification promotes any pack draft.
 - `contracts/schemas/` contains the machine-readable manifest and draft
   installer-artifact contracts.
 - `packs/` contains independently versioned pack source material, including
-  the draft `kinflow-starter` vertical slices.
+  stable `kinflow-starter 1.0.0` and its preserved draft vertical slices.
 - `tests/contract/` and `tests/fixtures/` contain dependency-free contract
   checks and positive/negative manifest fixtures.
 - `src/spine_packs/` contains planning, preflight, initial/continued apply, verification, and the local command adapter;
@@ -207,15 +210,16 @@ Neither installer publication nor local qualification promotes any pack draft.
 ## Current maturity
 
 This repository is at the **draft-contract** stage. Schema identity
-`spine.pack-manifest.v1` and draft `kinflow-starter` version
-`1.0.0-draft.10` covers the established slices plus the approved Education,
+`spine.pack-manifest.v1` and stable `kinflow-starter` version
+`1.0.0` cover the established slices plus the approved Education,
 Social, Travel, Renewals and administration, Health, and Home, vehicle, and
 logistics and General commitments archetypes and archetype-specific
 notification profiles.
 Earlier drafts remain preserved byte-for-byte.
 Approved content is specified in [specs/kinflow-starter.md](specs/kinflow-starter.md).
-The drafts are not released or installable, and additional archetypes may be
-added before a future immutable `1.0.0` release. The recorded content audit
+The stable release changes only draft 10's version, status, and content digest.
+Drafts are not installable; additional archetypes require a new stable version.
+The recorded content audit
 covers the earlier medical-only slice, not later draft content. A separate
 bounded Whetstone audit passed installer prose draft v0.3 with its
 public-command and single-operator boundaries preserved.
@@ -232,10 +236,10 @@ They have not been validated against a live operator target. Synthetic runtime
 tests remain separate from Slice 6's opt-in real-CLI disposable-ledger tests.
 Slice 6 technical qualification and bounded review passed on committed candidate
 `8f7e967`. The review reported preserved boundaries and zero findings; installer
-`0.1.0` subsequently shipped. The schema-15 extension in candidate `0.2.0`
+`0.1.0` subsequently shipped. The schema-15 extension in released `0.2.0`
 completed its own bounded review with no blockers or majors; its minor and nit
-were patched without a follow-up audit. Exact-commit release qualification remains
-pending. Stable Spine instance
+were patched without a follow-up audit. Exact-commit qualification passed at
+`57a6776` on both pinned baselines. Stable Spine instance
 identity is now checked for `0.5.0`; binding compare-and-set and public receipt
 readback remain future hardening rather than v1 blockers.
 
