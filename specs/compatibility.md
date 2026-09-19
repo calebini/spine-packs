@@ -81,6 +81,27 @@ the signed elapsed-offset semantics accepted by the inspected Spine runtime
 widen the runtime or content-contract allowlists. The pack contract continues
 to exclude positive, post-target elapsed offsets.
 
+## Schema-15 alignment
+
+The additional inspected baseline is Spine runtime `0.5.0`, schema `15`, commit
+`ab18a8a51c9bf548220f67e2db0220bfe9783888`. Installer candidate `0.2.0` admits
+that exact pair in addition to the existing `0.3.0` / `12` baseline. `0.4.0`,
+schema 14, future schemas, and undeclared runtime versions remain unsupported.
+This is a working-tree compatibility extension, not release or deployment
+qualification. Publication still requires the gates in `docs/releases.md`.
+
+`kinflow-starter.1.0.0-draft.10` preserves every draft-9 definition, binding,
+and empty dependency list. It changes only draft identity, runtime allowlist
+to `["0.3.0", "0.5.0"]`, and the recomputed digest. The three content contracts
+remain unchanged. Drafts 1–9 and their fixture bytes remain review evidence.
+
+The public command map is unchanged, but execution on `0.5.0` requires
+`spine.system-info.v3` and `spine.ledger-instance.v1` in place of
+`spine.system-info.v2`. The installer MUST bind and recheck the returned
+ledger identity as defined in the installer specs. Content compatibility alone
+does not bypass this gate. Disposable source and installed-package qualification
+MUST cover both supported baselines before publishing the extension.
+
 ## Content compatibility is not execution readiness
 
 `spine_content_contracts` is intentionally limited to the contracts that give
@@ -90,8 +111,8 @@ complete contract union required to execute `plan`, `apply`, or `verify`.
 Spine's command registry may require additional contracts for a concrete
 command, including `spine.canonical-json.v1`, notification-profile readback,
 catalog cursor, response, or receipt contracts. The draft installer contract
-in `specs/installer.md` names its Spine `0.3.0` command set and derives the
-complete per-command requirement union. A future implementation MUST verify
+in `specs/installer.md` names the command set and derives the complete
+per-command requirement union for each inspected baseline. The installer MUST verify
 that union independently. The v1 pack manifest makes no execution-readiness
 claim.
 
@@ -123,7 +144,7 @@ The following remain intentionally unresolved:
 - version-range syntax;
 - prerelease and development runtime policy;
 - minimum installer-version declarations;
-- evidence required to widen compatibility;
+- generalized evidence required to widen compatibility beyond the pinned baselines;
 - compatibility declarations for dependency packs; and
 - evidence and review required to support installer execution against an
   additional Spine runtime.

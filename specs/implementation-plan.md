@@ -205,9 +205,51 @@ or a pack remains a separate decision.
 
 ## Deferred hardening
 
+### Schema-15 alignment — implementation candidate
+
+The operator supplied Spine commit `ab18a8a51c9bf548220f67e2db0220bfe9783888`
+after its independent repair gates. This pins runtime `0.5.0` / schema `15`.
+Installer candidate `0.2.0` adds its public `system.info.v3` validator and
+runtime-specific execution union while preserving `0.3.0` / `12` support.
+The new environment variant binds the ledger-instance ID into plans, approvals
+(through the plan digest), continuation checks, and verification evidence.
+No public command allowlist or recovery scope expands.
+
+Draft 10 is a compatibility-only copy of draft 9; no profile or archetype
+semantics change, and no draft becomes installable. Completion requires contract
+and adversarial identity tests plus source-tree and clean-package disposable
+qualification on both exact baselines. Exact-commit qualification,
+version/tag/asset approval, and publication are separate remaining gates.
+
+Working-tree qualification on 2026-09-19 passed repository verification (107
+required files), 58 contract tests, 115 synthetic runtime tests, and whitespace
+checks. Both pinned Spine baselines passed the four disposable source-tree
+integration scenarios and all four clean-installed scenarios, including
+uncertain-response recovery across the six write commands. Each package build
+matched its direct wheel to its sdist-built wheel byte-for-byte. Spine checkouts,
+operator ledgers, published tags/assets, and drafts 1–9 were not changed.
+
+Independent `jsonschema` 4.26.0 Draft 2020-12 checks passed all 12 schema
+meta-validations, the complete 35-case pack fixture matrix (lexical and semantic
+checks remain separate), and 15 positive installer artifacts. The new public
+system-info validator was also compared exactly with the pinned upstream schema.
+These results qualify the local implementation candidate, not a clean committed
+release or a staged operator environment.
+
+The authorized 29-file schema-15 Whetstone `audit-change` consistency review
+returned `pass_with_minor_clarification`, preserved boundaries, and reported
+zero blockers, zero majors, one minor and one nit. Its reviewed brief SHA-256 is
+`4264d1c0c46b9ff59b25aa3d8180aeb1fad37bc672f156683cbcafb7ecdde965`.
+Both wording findings are patched: the required semantic vectors explicitly
+cover both runtime-specific receipt disclosures and reject cross-pairing, and
+the catalog-fingerprint docstring names both pinned baselines. No behavior
+changed in this follow-up, and the patches have not been separately re-audited.
+Original payload and review evidence remain local and unchanged.
+
+### Remaining follow-ups
+
 The following remain explicit follow-ups rather than hidden v1 prerequisites:
 
-- stable Spine ledger-instance identity;
 - atomic compare-and-set for binding replacement;
 - public command-receipt readback;
 - remote transport;

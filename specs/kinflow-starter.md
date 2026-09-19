@@ -7,7 +7,14 @@ installation. General format and authority rules remain in `pack-format.md`,
 
 ## Draft lineage
 
-`1.0.0-draft.9` is the current draft. It MUST contain exactly these archetypes,
+`1.0.0-draft.10` is the current compatibility-only draft. It MUST preserve
+draft 9's definitions, bindings, dependencies, and content-contract list exactly,
+changing only version, runtime allowlist to `["0.3.0", "0.5.0"]`, and digest.
+Draft 9 and every earlier artifact MUST remain byte-for-byte unchanged.
+All content rules referring to draft 9 below also apply to draft 10; the
+compatibility-only exception is governed by `specs/compatibility.md`.
+
+`1.0.0-draft.9` established exactly these archetypes,
 their respective same-named `_standard` profiles, and one local default-binding
 intent per archetype:
 

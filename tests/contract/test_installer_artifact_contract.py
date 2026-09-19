@@ -606,11 +606,15 @@ def plan_errors(plan: dict[str, Any]) -> list[str]:
     for field in ("archetype_keys", "profile_keys", "binding_archetype_keys"):
         if not _sorted_unique(plan["closure"][field]):
             errors.append(f"closure_{field}_not_sorted")
-    if plan["required_execution_contracts"] != REQUIRED_EXECUTION_CONTRACTS:
+    required = REQUIRED_EXECUTION_CONTRACTS
+    if plan["environment"]["runtime_version"] == "0.5.0":
+        required = sorted((set(required) - {"spine.system-info.v2"})
+                          | {"spine.system-info.v3", "spine.ledger-instance.v1"})
+    if plan["required_execution_contracts"] != required:
         errors.append("execution_contract_union_mismatch")
     if not _sorted_unique(plan["environment"]["advertised_contracts"]):
         errors.append("advertised_contracts_not_sorted")
-    if not set(REQUIRED_EXECUTION_CONTRACTS).issubset(
+    if not set(required).issubset(
         plan["environment"]["advertised_contracts"]
     ):
         errors.append("required_execution_contract_missing")
@@ -909,6 +913,9 @@ def verification_errors(
         errors.append("verification_snapshot_order")
     if verification["environment"] != plan["environment"]:
         errors.append("verification_environment_mismatch")
+    if verification["receipt_readback"] != (
+            "captured_responses_only_spine_" + verification["environment"]["runtime_version"]):
+        errors.append("verification_receipt_readback_mismatch")
     evidence = verification["response_evidence"]
     if plan["actions"]:
         if evidence == "not_required" or (result is None and evidence != "missing"):

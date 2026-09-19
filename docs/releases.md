@@ -4,8 +4,10 @@ The initial distribution channel is GitHub Releases in `calebini/spine-packs`,
 not PyPI. The operator approved installer version `0.1.0`, MIT licensing, and
 tag `installer-v0.1.0`. The numeric version does not widen the support promises
 below. It is not `kinflow-starter.v1` or a change to any artifact contract.
-Tag publication and GitHub release-asset publication are distinct actions;
-the current authorization covers the tag, not uploading the release assets.
+Installer `0.1.0` has been published. Tag publication and GitHub release-asset
+publication remain distinct actions. Candidate `0.2.0` adds the schema-15
+compatibility extension; its version is proposed, and neither its tag nor its
+assets are authorized for publication yet. Preserve all `0.1.0` release bytes.
 
 The package uses standard `pyproject.toml` metadata and the `spine-packs`
 console entrypoint. Hatchling bundles authoritative `contracts/schemas/` bytes
@@ -17,7 +19,7 @@ and [Hatch build configuration](https://hatch.pypa.io/latest/config/build/).
 
 Each approved installer release has three explicitly named assets:
 
-- `spine_packs-<version>-py3-none-any.whl`: CLI, eleven validation schemas, and MIT license;
+- `spine_packs-<version>-py3-none-any.whl`: CLI, pinned validation schemas, and MIT license;
 - `spine_packs-<version>.tar.gz`: rebuildable source, schemas, orientation/release
   docs, and the small disposable-integration harness and its synthetic input;
 - `SHA256SUMS`: SHA-256 of those exact two files.
@@ -32,7 +34,8 @@ tests and normative specs remain in the tagged repository.
 The installer requires Python 3.11+ and local POSIX filesystem behavior. The
 `any` wheel tag means pure Python, not qualified Windows or remote-filesystem
 support. Qualification tooling and the external Spine baseline need Python
-3.12+. A compatible Spine 0.3.0 CLI is provisioned separately; the package
+3.12+. A compatible Spine CLI (`0.3.0` / schema 12, or for candidate `0.2.0`,
+`0.5.0` / schema 15) is provisioned separately; the package
 does not install, deploy, upgrade, or configure Spine. Packs are separately
 selected inputs; shipping an installer does not make the current drafts
 apply-eligible.
@@ -69,6 +72,13 @@ private evidence directory and never accepts an existing ledger. It:
 5. records the installed module/schema paths and emits checksums only on success.
 
 The harness rejects source-tree module/schema loading in installed mode.
+For candidate `0.2.0`, repeat qualification against both exact Spine commits
+in `local-qualification.md`. Only a candidate passing both may proceed to
+bounded review and clean-commit release qualification. The schema-15 extension's
+separate bounded review returned `pass_with_minor_clarification`; its two
+wording findings are patched, without a follow-up audit. Clean-commit release
+qualification and version/tag/asset approval remain pending; the earlier Slice 6
+release approval does not carry over.
 Normal installed operations invoke the console script in new processes; only
 fault injection uses the installed module in-process. All evidence, including
 failed builds, stays local. Nothing uploads, tags, commits, or pushes.
@@ -96,7 +106,7 @@ version and license. Do not tag an unqualified commit or move an existing tag.
 Before creating a GitHub Release, record the Python/platform and build-tool
 versions, tested Spine/Tickerd commits, limitations, and checksum results in
 release notes, and obtain explicit approval to publish the exact three assets.
-That step is separate from the approved tag and has not run yet.
+That step is separate from approving a tag and must be repeated for each release.
 The GitHub prerelease marker is independent of the numeric version and can be
 chosen when publishing; a numeric version alone asserts no broader maturity.
 

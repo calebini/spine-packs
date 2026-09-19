@@ -41,6 +41,12 @@ schema and select the
 schema named by `artifact_schema`; accepting a structurally similar artifact
 under another identifier is forbidden.
 
+The schema-15 extension retains these draft v1 identifiers and existing
+`0.3.0` artifact bytes/digests. Its new closed environment variant is identified
+by `runtime_version=0.5.0`. Older installer `0.1.0` cannot consume that variant
+and MUST reject it rather than discard identity evidence. New approvals are
+required for new plans; no artifact migration or rewriting is implied.
+
 ## 3. Encoding, closure, and limits
 
 Artifacts MUST be UTF-8 JSON with no byte-order mark, duplicate object member,
@@ -184,6 +190,19 @@ The plan embeds the normalized request without its request
 `environment.ledger_schema_current` are decimal strings. Advertised contracts
 are sorted and unique. `required_execution_contracts` is exactly the closed
 union in `specs/installer.md` Section 3.
+
+Environment is exactly one of two closed shapes:
+
+- `0.3.0`: implemented/current schema both `12`, advertised contracts, and no
+  ledger-instance field (the original shape).
+- `0.5.0`: implemented/current schema both `15`, advertised contracts, and
+  required `ledger_instance_id` matching `^ledger_instance_[0-9a-f]{64}$`.
+
+The latter identity MUST come from validated public `system.info.v3`, never
+from a path hash or local database read. It participates in plan/verification
+digests and exact environment comparisons during initial apply, continuation,
+and verify. Missing, malformed, or changed identity fails closed. The required
+execution union is runtime-specific; mixing the two unions is invalid.
 
 Each classification names its object kind, canonical object key,
 classification, desired semantic value, nullable observed semantic value,
@@ -391,7 +410,7 @@ uncorrelated checkpoint fails closed.
 
 ### 9.1 Continuation snapshot comparison
 
-For the pinned Spine 0.3.0 baseline in `specs/installer.md` Section 3, continuation
+For both pinned Spine baselines in `specs/installer.md` Section 3, continuation
 MAY validate the snapshot component by reconstructing the original fingerprint
 from fresh public readback. This is a comparison technique, not rollback,
 receipt evidence, or an alternative installation ledger. It changes no artifact
@@ -513,9 +532,10 @@ only: it does not issue approval, authenticate its author, or authorize writes.
 All captured requests and responses are revalidated using those execution
 facts. No additional approval file or Spine receipt-readback command is implied.
 
-`receipt_readback` is fixed to
-`captured_responses_only_spine_0.3.0`. It explicitly prevents the artifact from
-claiming independent command-receipt readback that Spine 0.3.0 cannot provide.
+`receipt_readback` MUST be `captured_responses_only_spine_0.3.0` for a `0.3.0`
+environment and `captured_responses_only_spine_0.5.0` for a `0.5.0` environment.
+Cross-pairing is invalid. Neither value claims independent command-receipt
+readback; neither inspected baseline provides a public receipt show/list command.
 
 ## 12. CLI result envelope and exit codes
 
@@ -576,7 +596,8 @@ Before the corresponding behavior is implemented, tests MUST demonstrate at leas
 - contiguous-prefix continuation from a partial result;
 - accepted-before-response recovery from a prepared checkpoint;
 - rejection of an unexplained catalog change;
-- verification mismatch and the Spine 0.3 receipt-readback disclosure; and
+- verification mismatch, runtime-specific receipt-readback disclosures for both
+  pinned Spine baselines, and rejection of cross-paired disclosures; and
 - exact envelope status/category/exit-code correlation.
 
 The first fixture slice may use one complete vertical flow plus focused

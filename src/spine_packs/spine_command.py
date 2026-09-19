@@ -1,4 +1,4 @@
-"""Local process adapter for the pinned Spine 0.3.0 command surface."""
+"""Local process adapter for the explicitly pinned Spine command surfaces."""
 from __future__ import annotations
 
 import hashlib

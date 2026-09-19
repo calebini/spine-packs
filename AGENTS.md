@@ -43,7 +43,9 @@ medical-appointment, lesson,
 game-or-competition, flight, birthday, Education, Social, Travel, and Renewals
 and administration, Health, and Home, vehicle, and logistics vertical slices
 plus the General commitments vertical slice specified for `kinflow-starter`
-draft 9.
+draft 10 (compatibility-only successor to draft 9). The schema-15 alignment
+supports the exact Spine `0.5.0` / schema `15` commit recorded in the installer
+specs alongside `0.3.0` / `12`; it does not authorize broader runtime ranges.
 Do not broaden the schema or pack semantics without matching normative spec,
 fixture, and contract-test changes. The authorized runtime scope is the bounded
 read-only `plan`, non-mutating apply preflight, Slice 3 initial approved

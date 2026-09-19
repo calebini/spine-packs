@@ -41,8 +41,10 @@ FAMILIES = {
 }
 
 
-def validate_readback(value, shape):
-    path = a.SCHEMA_ROOT / "spine-readback-0.3.0.schema.json"
+def validate_readback(value, shape, *, runtime_version="0.3.0"):
+    # Catalog and failure shapes are unchanged at the two inspected commits.
+    version = runtime_version if shape == "systemInfo" else "0.3.0"
+    path = a.SCHEMA_ROOT / f"spine-readback-{version}.schema.json"
     schema = a._schema_document(path)
     require(not a.schema_errors(value, schema["$defs"][shape], path, schema),
             "invalid_public_response")
@@ -272,7 +274,8 @@ def build_plan(manifest, request_artifact, environment, catalogs, snapshots):
                  "manifest_digest": manifest["content_identity"]["digest"]},
         "closure": {"archetype_keys": sorted(archetypes), "profile_keys": sorted(profiles),
                     "binding_archetype_keys": sorted(bindings)},
-        "environment": deepcopy(environment), "required_execution_contracts": a.REQUIRED_EXECUTION_CONTRACTS[:],
+        "environment": deepcopy(environment),
+        "required_execution_contracts": a.execution_contracts(environment["runtime_version"]),
         "catalog_snapshots": [{"catalog": k, "digest": snapshots[k]} for k in CATALOGS],
         "classifications": classifications, "actions": actions,
         "decision_action_ids": [x["action_id"] for x in actions if x["change_kind"] == "update"],
@@ -308,18 +311,22 @@ def observe_installation(manifest, request, transport, *, page_size=100):
     require(isinstance(info, dict) and isinstance(info.get("runtime_version"), str)
             and bool(info["runtime_version"]), "invalid_public_response")
     # Reject a different runtime before interpreting its version-specific payload.
-    require(info["runtime_version"] == "0.3.0"
+    require(info["runtime_version"] in a.RUNTIME_SCHEMAS
             and info["runtime_version"] in manifest["compatibility"]["spine_runtime_versions"],
             "incompatible_runtime_or_contracts", INCOMPATIBLE)
-    validate_readback(info, "systemInfo")
+    validate_readback(info, "systemInfo", runtime_version=info["runtime_version"])
     advertised = info["implemented_contract_versions"]
     require(advertised == sorted(set(advertised)), "contracts_not_canonical")
-    require(set(a.REQUIRED_EXECUTION_CONTRACTS + manifest["compatibility"]["spine_content_contracts"]) <= set(advertised)
-            and info["implemented_ledger_schema_version"] == info["ledger_schema_version"] == "12",
+    require(set(a.execution_contracts(info["runtime_version"])
+                + manifest["compatibility"]["spine_content_contracts"]) <= set(advertised)
+            and info["implemented_ledger_schema_version"] == info["ledger_schema_version"]
+            == a.RUNTIME_SCHEMAS[info["runtime_version"]],
             "incompatible_runtime_or_contracts", INCOMPATIBLE)
     environment = {"runtime_version": info["runtime_version"],
                    "ledger_schema_implemented": info["implemented_ledger_schema_version"],
                    "ledger_schema_current": info["ledger_schema_version"], "advertised_contracts": advertised}
+    if info["runtime_version"] == "0.5.0":
+        environment["ledger_instance_id"] = info["ledger_instance_id"]
     owner = request["request"]["owner"]
     catalogs, snapshots = {}, {}
     for catalog in CATALOGS:

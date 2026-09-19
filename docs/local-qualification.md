@@ -10,8 +10,10 @@ destinations, items, workers, or notification sending.
 ## Isolated dependency setup
 
 Use Python 3.12 or newer (Spine's requirement; the installer needs 3.11+).
-The pinned inspected Spine commit is
+The pinned inspected Spine commits are
+`ab18a8a51c9bf548220f67e2db0220bfe9783888` (0.5.0, schema 15) and
 `72203f092de191a7633b1884bf0d61836a25abe4` (0.3.0, schema 12).
+Run source-tree and clean-package qualification separately against each one.
 The local current Spine checkout may be newer and is not implicitly compatible.
 Do not change its branch, working tree, environment, or database.
 
@@ -25,7 +27,7 @@ capability descriptor admitted by Spine; no Tickerd daemon is launched.
 QUAL_ROOT=$(mktemp -d /private/tmp/spine-packs-slice6.XXXXXX)
 mkdir "$QUAL_ROOT/spine" "$QUAL_ROOT/tickerd"
 git -C /Users/Shared/Agent-Workspace/repos/personal/cortext1/spine archive \
-  72203f092de191a7633b1884bf0d61836a25abe4 | tar -x -C "$QUAL_ROOT/spine"
+  ab18a8a51c9bf548220f67e2db0220bfe9783888 | tar -x -C "$QUAL_ROOT/spine"
 git -C /Users/Shared/Agent-Workspace/repos/personal/cortext1/tickerd archive \
   ffe613c65ea3d6fc70a1dc3603c32068f06350df | tar -x -C "$QUAL_ROOT/tickerd"
 python3 -m venv "$QUAL_ROOT/venv"
@@ -38,6 +40,12 @@ Installing build tooling may require network access. The actual Spine/Tickerd
 builds above use only the exported local source. Do not install into a shared
 environment. Record the source commits and tool versions with qualification
 evidence; executable hashes alone do not attest installed package contents.
+
+For the `0.3.0` regression pass, allocate another fresh directory and substitute
+only its pinned Spine commit above. Do not replace an existing test environment.
+The harness checks the observed runtime/schema pair and makes its synthetic
+manifest explicitly compatible with that pair. It does not admit unknown
+versions, migrate an operator ledger, or relax compatibility for curated packs.
 
 ## Execute the source-tree tests
 
@@ -98,7 +106,7 @@ are not implied by a passing source-tree integration run.
 
 ## Initial qualification environment
 
-The first local pass on 2026-09-17 used Python 3.14.6, the exact Spine and
+The first local pass on 2026-09-17 used Python 3.14.6, the Spine 0.3.0 and
 Tickerd commits above, Spine schema 12, and build tooling setuptools 84.0.0,
 wheel 0.48.0, packaging 26.3 in a fresh virtual environment. No existing Spine
 checkout or environment was changed. The harness identified two setup/test

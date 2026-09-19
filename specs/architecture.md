@@ -98,6 +98,15 @@ client evidence and never become an alternate Spine ledger.
 
 ## First runtime slice: read-only planning
 
+The original slice descriptions below record the `0.3.0` implementation
+baseline. Schema-15 alignment adds the exact `0.5.0` baseline and environment
+variant specified in `installer.md` Section 3 and `installer-artifacts.md`
+Section 7. No command, transport, scheduling, ownership, or recovery scope is
+expanded. `spine-readback-0.5.0.schema.json` pins the new `system.info.v3`
+response; unchanged catalog/request/receipt validators are shared with `0.3.0`.
+Plans bind the public ledger identity on `0.5.0`, and all later operations
+require exact environment equality. Existing `0.3.0` artifacts remain valid.
+
 The source-tree package `src/spine_packs/` is the smallest authorized runtime
 layout. It requires Python 3.11 or newer and the standard library only:
 
@@ -318,7 +327,8 @@ draft pack identity and does not make that pack installable.
 Evidence failure behavior is fixed in installer-artifacts Section 11. Full
 valid captured coverage is required for a plan with writes. A no-write plan
 normally reports `not_required`; any invalid supplied evidence still prevents
-success. `receipt_readback` remains `captured_responses_only_spine_0.3.0`.
+success. `receipt_readback` identifies the pinned runtime as specified in
+installer-artifacts Section 11; it never claims independent receipt readback.
 Verified results exit 0; completed mismatches exit 10 with the sealed artifact.
 Input, target, compatibility, transport, and publication failures use their
 existing specific error exits and make no verification-success claim.
@@ -336,7 +346,7 @@ the public `spine-ledger-migrate --initialize-if-empty` administrative CLI and
 not broaden the installer's read or six-command write allowlists. The harness
 must never open a database or import Spine internals.
 
-Qualification uses the exact inspected Spine 0.3.0 commit and a compatible
+Qualification uses each exact inspected Spine commit (`0.3.0` and `0.5.0`) and a compatible
 Tickerd distribution, installed in an isolated environment from copied source.
 The current Spine checkout is not implicitly compatible. No source checkout
 may be edited or switched by the harness. Synthetic test manifests use a

@@ -154,6 +154,24 @@
       "additionalProperties": false
     },
     "environment": {
+      "oneOf": [
+        { "$ref": "#/$defs/environment030" },
+        { "$ref": "#/$defs/environment050" }
+      ]
+    },
+    "environment050": {
+      "type": "object",
+      "required": ["runtime_version", "ledger_schema_implemented", "ledger_schema_current", "advertised_contracts", "ledger_instance_id"],
+      "properties": {
+        "runtime_version": { "const": "0.5.0" },
+        "ledger_schema_implemented": { "const": "15" },
+        "ledger_schema_current": { "const": "15" },
+        "ledger_instance_id": { "type": "string", "pattern": "^ledger_instance_[0-9a-f]{64}$" },
+        "advertised_contracts": { "$ref": "#/$defs/environment030/properties/advertised_contracts" }
+      },
+      "additionalProperties": false
+    },
+    "environment030": {
       "type": "object",
       "required": ["runtime_version", "ledger_schema_implemented", "ledger_schema_current", "advertised_contracts"],
       "properties": {
@@ -339,7 +357,7 @@
         "pack": { "$ref": "#/$defs/packIdentity" },
         "closure": { "$ref": "#/$defs/closure" },
         "environment": { "$ref": "#/$defs/environment" },
-        "required_execution_contracts": { "type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 160 } },
+        "required_execution_contracts": { "type": "array", "minItems": 9, "maxItems": 10, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 160 } },
         "catalog_snapshots": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/catalogSnapshot" } },
         "classifications": { "type": "array", "maxItems": 768, "items": { "$ref": "#/$defs/classification" } },
         "actions": { "type": "array", "maxItems": 1024, "items": { "$ref": "#/$defs/action" } },
@@ -453,6 +471,16 @@
     },
     "verificationResult": {
       "type": "object",
+      "allOf": [{ "oneOf": [
+        { "properties": {
+          "environment": { "$ref": "#/$defs/environment030" },
+          "receipt_readback": { "const": "captured_responses_only_spine_0.3.0" }
+        } },
+        { "properties": {
+          "environment": { "$ref": "#/$defs/environment050" },
+          "receipt_readback": { "const": "captured_responses_only_spine_0.5.0" }
+        } }
+      ] }],
       "required": ["artifact_schema", "plan_digest", "apply_result_digest", "pack", "target", "environment", "catalog_snapshots", "closure", "object_results", "response_evidence", "receipt_readback", "state", "content_identity"],
       "properties": {
         "artifact_schema": { "const": "spine.pack-verification-result.v1" },
@@ -470,7 +498,7 @@
         "closure": { "$ref": "#/$defs/closure" },
         "object_results": { "type": "array", "maxItems": 768, "items": { "$ref": "#/$defs/verificationObject" } },
         "response_evidence": { "enum": ["not_required", "complete", "missing", "invalid"] },
-        "receipt_readback": { "const": "captured_responses_only_spine_0.3.0" },
+        "receipt_readback": { "enum": ["captured_responses_only_spine_0.3.0", "captured_responses_only_spine_0.5.0"] },
         "state": { "enum": ["verified", "mismatch"] },
         "content_identity": { "$ref": "#/$defs/contentIdentity" }
       },

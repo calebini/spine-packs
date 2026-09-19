@@ -155,7 +155,8 @@ def verify_installation(manifest, plan, transport, result=None, *, page_size=100
         "pack": deepcopy(plan["pack"]), "target": deepcopy(plan["request"]["target"]),
         "environment": environment, "catalog_snapshots": [{"catalog": k, "digest": snapshots[k]} for k in CATALOGS],
         "closure": deepcopy(plan["closure"]), "object_results": objects, "response_evidence": evidence,
-        "receipt_readback": "captured_responses_only_spine_0.3.0", "state": "verified" if verified else "mismatch"})
+        "receipt_readback": "captured_responses_only_spine_" + environment["runtime_version"],
+        "state": "verified" if verified else "mismatch"})
     validate_artifact(value)
     for obj in objects:
         require(obj["observed"] is None or not a.canonical_value_errors(obj["observed"], obj["object_kind"] + "Semantics"),

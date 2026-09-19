@@ -1,8 +1,10 @@
 # kinflow-starter
 
 `kinflow-starter` is a draft Spine pack. Current draft version
-`1.0.0-draft.9` is not installable, released, or a publication of `1.0.0`.
-Drafts 1 through 8 remain byte-for-byte unchanged for review provenance.
+`1.0.0-draft.10` is not installable, released, or a publication of `1.0.0`.
+Drafts 1 through 9 remain byte-for-byte unchanged for review provenance.
+Draft 10 changes only compatibility to admit Spine `0.5.0` alongside `0.3.0`,
+its draft version, and digest. All curated definitions remain those of draft 9.
 
 ## Current draft contents
 
@@ -49,7 +51,7 @@ exact-target reminders with short delivery windows.
 Exact definitions, descriptions, schedules, and boundary rules are normative
 in [the pack specification](../../specs/kinflow-starter.md). The current draft
 manifest is
-`packs/kinflow-starter/kinflow-starter.1.0.0-draft.9.json`. It contains no
+`packs/kinflow-starter/kinflow-starter.1.0.0-draft.10.json`. It contains no
 owner, subject, group, route, delivery target, generated Spine ID, timestamp,
 receipt, credential, or environment-specific data.
 

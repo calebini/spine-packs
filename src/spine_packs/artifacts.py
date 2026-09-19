@@ -79,6 +79,19 @@ REQUIRED_EXECUTION_CONTRACTS = [
     "spine.tickerd-compatibility.v1",
 ]
 
+# Explicit baselines, not a minimum-version or schema-range policy.
+RUNTIME_SCHEMAS = {"0.3.0": "12", "0.5.0": "15"}
+
+
+def execution_contracts(runtime_version):
+    if runtime_version == "0.3.0":
+        return REQUIRED_EXECUTION_CONTRACTS[:]
+    if runtime_version == "0.5.0":
+        return sorted((set(REQUIRED_EXECUTION_CONTRACTS) - {"spine.system-info.v2"})
+                      | {"spine.system-info.v3", "spine.ledger-instance.v1"})
+    raise ValueError("unsupported Spine runtime")
+
+
 EXIT_MAP = {
     "success": ("0", None),
     "invalid_cli_or_artifact_input": ("2", "failed"),
@@ -650,11 +663,12 @@ def plan_errors(plan: dict[str, Any]) -> list[str]:
     for field in ("archetype_keys", "profile_keys", "binding_archetype_keys"):
         if not _sorted_unique(plan["closure"][field]):
             errors.append(f"closure_{field}_not_sorted")
-    if plan["required_execution_contracts"] != REQUIRED_EXECUTION_CONTRACTS:
+    required = execution_contracts(plan["environment"]["runtime_version"])
+    if plan["required_execution_contracts"] != required:
         errors.append("execution_contract_union_mismatch")
     if not _sorted_unique(plan["environment"]["advertised_contracts"]):
         errors.append("advertised_contracts_not_sorted")
-    if not set(REQUIRED_EXECUTION_CONTRACTS).issubset(
+    if not set(required).issubset(
         plan["environment"]["advertised_contracts"]
     ):
         errors.append("required_execution_contract_missing")

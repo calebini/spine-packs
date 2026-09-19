@@ -260,9 +260,12 @@ The dependency-free repository test implements the closed JSON Schema subset
 used by v1 plus the semantic, ordering, and digest stages above. Before any pack
 version is released, development or CI MUST also meta-validate the schema and
 run the complete fixture matrix with an independent standards-conforming JSON
-Schema Draft 2020-12 implementation. That independent check is not available in
-the current local environment and is a release blocker, not evidence against
-the passing local contract suite.
+Schema Draft 2020-12 implementation. This remains a per-release gate, not a
+substitute for semantic validation. During schema-15 alignment, an independent
+`jsonschema` 4.26.0 check passed all 12 schema meta-validations and the 35-case
+pack fixture matrix (including duplicate-member rejection before schema use).
+That working-tree result does not release a pack or qualify a later changed
+release candidate automatically.
 
 ## Deferred decisions
 

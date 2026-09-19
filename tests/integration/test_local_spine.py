@@ -71,16 +71,18 @@ class LocalSpineTests(unittest.TestCase):
         self.db = self.case / "ledger.sqlite3"
         self.assertFalse(self.db.exists())
         initialized = self.public_process([str(self.config["migrate"]), "--db", str(self.db), "--initialize-if-empty"])
-        self.assertEqual(initialized["after_version"], 12)
+        self.assertIn(initialized["after_version"], (12, 15))
         self.assertTrue(initialized["initialized"] and initialized["verified"])
         self.target = {"host_name": socket.getfqdn().lower().removesuffix("."),
             "spine_command": {"path": str(self.config["command"]),
                               "sha256": hashlib.sha256(self.config["command"].read_bytes()).hexdigest()},
             "ledger": {"kind": "path", "path": str(self.db.resolve())}}
         info = self.public_process([str(self.config["command"]), "--db", str(self.db), "system.info"])
-        self.assertEqual(info["runtime_version"], "0.3.0")
-        self.assertEqual(info["ledger_schema_version"], "12")
-        self.assertTrue(set(a.REQUIRED_EXECUTION_CONTRACTS) <= set(info["implemented_contract_versions"]))
+        self.runtime_version = info["runtime_version"]
+        self.assertIn(self.runtime_version, a.RUNTIME_SCHEMAS)
+        self.assertEqual(info["ledger_schema_version"], a.RUNTIME_SCHEMAS[self.runtime_version])
+        self.assertEqual(str(initialized["after_version"]), info["ledger_schema_version"])
+        self.assertTrue(set(a.execution_contracts(self.runtime_version)) <= set(info["implemented_contract_versions"]))
         self.actor = "slice6_synthetic_operator"
         self.public_process([str(self.config["command"]), "--db", str(self.db), "subject.upsert", "--input", "-"], {
             "command_id": "slice6_bootstrap", "actor_subject_id": self.actor, "subject_id": self.actor,
@@ -105,6 +107,7 @@ class LocalSpineTests(unittest.TestCase):
         pack = a.load_json(ROOT / "tests/fixtures/pack-manifest/positive/medical_and_lesson.json")
         pack["pack"] = {"pack_id": "slice6-qualification-only", "version": "1.0.1" if updated else "1.0.0",
                         "status": "released"}
+        pack["compatibility"]["spine_runtime_versions"] = [self.runtime_version]
         if updated:
             pack["archetypes"][0]["revision"]["description"] = "Synthetic revised archetype"
             profile = pack["notification_profiles"][0]

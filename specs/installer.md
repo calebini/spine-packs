@@ -66,6 +66,14 @@ This draft is grounded in the committed Spine runtime `0.3.0` artifacts at
 commit `72203f092de191a7633b1884bf0d61836a25abe4`, ledger schema `12`.
 Uncommitted Spine checkout state is not evidence for this contract.
 
+The schema-15 alignment additionally pins runtime `0.5.0`, ledger schema `15`,
+at commit `ab18a8a51c9bf548220f67e2db0220bfe9783888`. Only these two exact
+runtime/schema pairs are admitted; neither a version range nor schema 14 is
+supported. The six catalog write handlers, catalog readback/fingerprint shapes,
+and embedded command contracts retain the original public semantics. The ledger
+module's command-derived-ID import moved to `spine.core.hashing`; this is not
+a new installer interface or permission to import Spine internals.
+
 The supported command set is deliberately closed:
 
 | Phase | Spine public commands |
@@ -97,6 +105,15 @@ command registry for the commands above is:
 - `spine.system-info.v2`; and
 - `spine.tickerd-compatibility.v1`.
 
+For runtime `0.5.0`, the exact sorted union replaces `spine.system-info.v2`
+with `spine.system-info.v3` and adds `spine.ledger-instance.v1` (ten contracts).
+The command allowlists do not change. Public `system.info.v3` additionally
+requires `ledger_instance_id`; the installer MUST validate, preserve, and bind
+it into plan environment evidence. Initial apply, continuation, and verify
+MUST reject a changed identity even if paths and catalog contents still match.
+This does not replace the single-operator/no-concurrent-writer requirement or
+provide atomic protection against filesystem replacement between commands.
+
 `system.info` MUST succeed before catalog interpretation. Its exact
 `runtime_version` MUST appear in the pack manifest's runtime allowlist, every
 manifest content contract MUST be advertised, and every contract in the
@@ -104,10 +121,9 @@ execution union above MUST be advertised. A mismatch fails before a plan is
 classified. Content compatibility is not sufficient evidence of execution
 readiness.
 
-Supporting another Spine runtime requires a separately reviewed command map
-and execution-contract union. In particular, the currently inspected committed
-Spine `0.4.0` head MUST NOT be treated as compatible with a pack that allows
-only `0.3.0`.
+Supporting any other Spine runtime requires a separately reviewed command map
+and execution-contract union. A pack allowing only `0.3.0` MUST still be
+rejected on `0.5.0`; installer support does not widen a manifest's allowlist.
 
 ## 4. Agent-oriented CLI surface
 
@@ -171,8 +187,8 @@ The local v1 request MUST name an observable target binding containing the
 normalized local host, resolved Spine command executable path and hash, and
 resolved ledger path. These facts are recorded in the plan and checked again
 by `apply`.
-They do not become pack content and do not claim a globally stable Spine ledger
-identity.
+They do not become pack content. On `0.5.0`, the separately observed ledger
+identity is also bound in environment evidence as required in Section 3.
 
 ## 5. Pack validation and selection
 
@@ -432,7 +448,7 @@ On an initial execution, before the first write, `apply` MUST:
    hash, and configured ledger path;
 4. reconnect through `spine-command` to that configured target;
 5. repeat `system.info` and require the planned runtime, implemented and
-   current schema, and contract facts;
+   current schema, contract facts, and (on `0.5.0`) ledger identity;
 6. re-read the owner-scoped catalogs and require the planned catalog snapshot
    hashes and every selected precondition;
 7. fail if the plan is stale, blocked, draft-based, or incompletely
@@ -628,7 +644,7 @@ apply result and one captured, validated Spine command response for every
 planned write. It then independently verifies resulting catalog state through
 fresh public catalog reads. A no-write plan needs no command receipt.
 
-Spine `0.3.0` exposes no public command-receipt show or list command. Replaying
+Neither pinned Spine baseline exposes a public command-receipt show or list command. Replaying
 a write request is not acceptable verification because, if the receipt were
 absent, it could perform a mutation. V1 therefore reports captured Spine
 response evidence and fresh state verification as distinct facts and MUST NOT
@@ -736,9 +752,6 @@ runtime scaffolding begins.
 The following are useful general Spine hardening, but are not blockers under
 the explicit local single-operator v1 assumptions:
 
-- a stable ledger-instance identity exposed by `system.info`, stronger than the
-  observable host, configured ledger reference, runtime/schema, owner, and
-  catalog snapshots bound into a v1 plan;
 - atomic expected-current or expected-absent preconditions for
   `notification_profile.binding.set`; and
 - public command-receipt readback for independent recovery and later audit.
@@ -746,3 +759,6 @@ the explicit local single-operator v1 assumptions:
 None of this future hardening authorizes a Spine change from this repository.
 Any such capability must be proposed, reviewed, and implemented in the Spine
 repository as a separate body of work.
+
+Stable ledger identity is no longer deferred for the `0.5.0` baseline; Section 3
+requires its use. The `0.3.0` baseline retains its weaker observable binding.
