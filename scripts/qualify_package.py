@@ -88,6 +88,7 @@ def qualify(args, run):
     source_members.update({"contracts/schemas/" + name: value for name, value in schemas.items()})
     for name in (".gitignore", "pyproject.toml", "README.md", "LICENSE", "docs/releases.md",
                  "docs/local-qualification.md",
+                 "docs/spine-0.6.0-qualification.md",
                  "tests/integration/test_local_spine.py",
                  "tests/fixtures/pack-manifest/positive/medical_and_lesson.json"):
         source_members[name] = (ROOT / name).read_bytes()

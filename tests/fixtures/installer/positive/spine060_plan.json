@@ -1,0 +1,283 @@
+{
+  "artifact_schema": "spine.pack-install-plan.v1",
+  "request_digest": "82c150c2861c76934ed230732ed490d8264f03d5bb22ba9fd624e12f8614286a",
+  "request": {
+    "selection": {
+      "mode": "archetypes",
+      "archetype_keys": [
+        "lesson",
+        "medical_appointment"
+      ]
+    },
+    "owner": {
+      "owner_kind": "subject",
+      "owner_subject_id": "subject_caleb"
+    },
+    "target": {
+      "host_name": "spine.local",
+      "spine_command": {
+        "path": "/opt/spine/bin/spine-command",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "ledger": {
+        "kind": "path",
+        "path": "/var/lib/spine/ledger.sqlite3"
+      }
+    },
+    "draft_posture": "reject"
+  },
+  "pack": {
+    "manifest_schema": "spine.pack-manifest.v1",
+    "pack_id": "kinflow-starter",
+    "version": "1.0.0",
+    "status": "released",
+    "manifest_digest": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "closure": {
+    "archetype_keys": [
+      "lesson",
+      "medical_appointment"
+    ],
+    "profile_keys": [
+      "lesson_standard",
+      "medical_appointment_standard"
+    ],
+    "binding_archetype_keys": [
+      "lesson",
+      "medical_appointment"
+    ]
+  },
+  "environment": {
+    "runtime_version": "0.6.0",
+    "ledger_schema_implemented": "15",
+    "ledger_schema_current": "15",
+    "advertised_contracts": [
+      "spine.canonical-json.v1",
+      "spine.item-archetypes.v1",
+      "spine.ledger-instance.v1",
+      "spine.notification-profile-bindings.v1",
+      "spine.notification-profile-catalog-cursor.v1",
+      "spine.notification-profile-metadata-update.v1",
+      "spine.notification-profile-readback.v1",
+      "spine.notification-profiles.v1",
+      "spine.system-info.v3",
+      "spine.tickerd-compatibility.v1"
+    ],
+    "ledger_instance_id": "ledger_instance_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "required_execution_contracts": [
+    "spine.canonical-json.v1",
+    "spine.item-archetypes.v1",
+    "spine.ledger-instance.v1",
+    "spine.notification-profile-bindings.v1",
+    "spine.notification-profile-catalog-cursor.v1",
+    "spine.notification-profile-metadata-update.v1",
+    "spine.notification-profile-readback.v1",
+    "spine.notification-profiles.v1",
+    "spine.system-info.v3",
+    "spine.tickerd-compatibility.v1"
+  ],
+  "catalog_snapshots": [
+    {
+      "catalog": "archetypes",
+      "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    {
+      "catalog": "profiles",
+      "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+    },
+    {
+      "catalog": "bindings",
+      "digest": "4444444444444444444444444444444444444444444444444444444444444444"
+    }
+  ],
+  "classifications": [
+    {
+      "object_kind": "archetype",
+      "object_key": "archetype:lesson",
+      "classification": "equivalent",
+      "desired": {
+        "contract": "spine.item-archetypes.v1",
+        "shape": "archetypeSemantics",
+        "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled instructional session.\",\"display_name\":\"Lesson\"}",
+        "digest": "2a37dbc7c1306f95fb483ebe24e9610800ed6a899d9f462c1138da88b4ddb40e"
+      },
+      "observed": {
+        "contract": "spine.item-archetypes.v1",
+        "shape": "archetypeSemantics",
+        "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled instructional session.\",\"display_name\":\"Lesson\"}",
+        "digest": "2a37dbc7c1306f95fb483ebe24e9610800ed6a899d9f462c1138da88b4ddb40e"
+      },
+      "blocked_reason": null,
+      "identity": {
+        "catalog_id": "archetype_lesson"
+      }
+    },
+    {
+      "object_kind": "archetype",
+      "object_key": "archetype:medical_appointment",
+      "classification": "equivalent",
+      "desired": {
+        "contract": "spine.item-archetypes.v1",
+        "shape": "archetypeSemantics",
+        "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled health appointment.\",\"display_name\":\"Medical appointment\"}",
+        "digest": "57e064093ddfe44f39852db9646e59b174be0d6564a9f179a0cb40892e0453ad"
+      },
+      "observed": {
+        "contract": "spine.item-archetypes.v1",
+        "shape": "archetypeSemantics",
+        "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"A scheduled health appointment.\",\"display_name\":\"Medical appointment\"}",
+        "digest": "57e064093ddfe44f39852db9646e59b174be0d6564a9f179a0cb40892e0453ad"
+      },
+      "blocked_reason": null,
+      "identity": {
+        "catalog_id": "archetype_medical"
+      }
+    },
+    {
+      "object_kind": "profile",
+      "object_key": "profile:lesson_standard",
+      "classification": "equivalent",
+      "desired": {
+        "contract": "spine.notification-profiles.v1",
+        "shape": "profileSemantics",
+        "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a lesson.\",\"display_name\":\"Lesson standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+        "digest": "3491f7f210cc832c8a458afbaa483a75533c1c8e414e068674d25a784d7f878e"
+      },
+      "observed": {
+        "contract": "spine.notification-profiles.v1",
+        "shape": "profileSemantics",
+        "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a lesson.\",\"display_name\":\"Lesson standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+        "digest": "3491f7f210cc832c8a458afbaa483a75533c1c8e414e068674d25a784d7f878e"
+      },
+      "blocked_reason": null,
+      "identity": {
+        "catalog_id": "profile_lesson"
+      }
+    },
+    {
+      "object_kind": "profile",
+      "object_key": "profile:medical_appointment_standard",
+      "classification": "drifted",
+      "desired": {
+        "contract": "spine.notification-profiles.v1",
+        "shape": "profileSemantics",
+        "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+        "digest": "2730a76b06eb2177a31f15ddfb71a66b0fef544d46be6635cdc9e6c12c537c57"
+      },
+      "observed": {
+        "contract": "spine.notification-profiles.v1",
+        "shape": "profileSemantics",
+        "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-10800\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+        "digest": "13bf40b8b264ea213aaa2ce8444c7308eaf25b2103f55beb9197d39b5d81005c"
+      },
+      "blocked_reason": null,
+      "identity": {
+        "catalog_id": "profile_medical"
+      }
+    },
+    {
+      "object_kind": "binding",
+      "object_key": "binding:lesson",
+      "classification": "equivalent",
+      "desired": {
+        "contract": "spine.notification-profile-bindings.v1",
+        "shape": "bindingSemantics",
+        "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"lesson_standard\"}",
+        "digest": "0ea793dbe2abdde6814f0a5653c72a3b5292148c3f33676ebe0c0ae367c16238"
+      },
+      "observed": {
+        "contract": "spine.notification-profile-bindings.v1",
+        "shape": "bindingSemantics",
+        "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"lesson_standard\"}",
+        "digest": "0ea793dbe2abdde6814f0a5653c72a3b5292148c3f33676ebe0c0ae367c16238"
+      },
+      "blocked_reason": null,
+      "identity": {
+        "item_archetype_id": "archetype_lesson",
+        "notification_profile_id": "profile_lesson",
+        "observed_binding": {
+          "notification_profile_binding_id": "binding_lesson",
+          "item_archetype_id": "archetype_lesson",
+          "notification_profile_id": "profile_lesson"
+        }
+      }
+    },
+    {
+      "object_kind": "binding",
+      "object_key": "binding:medical_appointment",
+      "classification": "missing",
+      "desired": {
+        "contract": "spine.notification-profile-bindings.v1",
+        "shape": "bindingSemantics",
+        "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"medical_appointment_standard\"}",
+        "digest": "d0b1caec0a9c6136fae265750d70d0000cae9b4b82cf256f8fe2de11d1e66661"
+      },
+      "observed": null,
+      "blocked_reason": null,
+      "identity": {
+        "item_archetype_id": "archetype_medical",
+        "notification_profile_id": "profile_medical",
+        "observed_binding": null
+      }
+    }
+  ],
+  "actions": [
+    {
+      "ordinal": "0",
+      "action_id": "action-000000",
+      "command": "notification_profile.revise",
+      "object_key": "profile:medical_appointment_standard",
+      "change_kind": "update",
+      "desired": {
+        "contract": "spine.notification-profiles.v1",
+        "shape": "profileSemantics",
+        "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+        "digest": "2730a76b06eb2177a31f15ddfb71a66b0fef544d46be6635cdc9e6c12c537c57"
+      },
+      "expected": {
+        "contract": "spine.notification-profiles.v1",
+        "shape": "profileSemantics",
+        "canonical_json": "{\"metadata\":{\"description\":\"Preparation for a medical appointment.\",\"display_name\":\"Medical appointment standard\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-10800\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+        "digest": "13bf40b8b264ea213aaa2ce8444c7308eaf25b2103f55beb9197d39b5d81005c"
+      },
+      "request_template": {
+        "contract": "spine.notification-profiles.v1",
+        "shape": "profileReviseTemplate",
+        "canonical_json": "{\"contract_version\":\"spine.notification-profiles.v1\",\"expected_current_revision_id\":\"profile_revision_old\",\"notification_profile_id\":\"profile_medical\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-7200\"},\"kind\":\"once\"},\"template_key\":\"two_hours_before\"}]}}",
+        "digest": "4db0022a5619d95952c3ee0ca4b6fe431cf3aeb9b3ba8e8ff3579b33743822f1"
+      }
+    },
+    {
+      "ordinal": "1",
+      "action_id": "action-000001",
+      "command": "notification_profile.binding.set",
+      "object_key": "binding:medical_appointment",
+      "change_kind": "create",
+      "desired": {
+        "contract": "spine.notification-profile-bindings.v1",
+        "shape": "bindingSemantics",
+        "canonical_json": "{\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"medical_appointment_standard\"}",
+        "digest": "d0b1caec0a9c6136fae265750d70d0000cae9b4b82cf256f8fe2de11d1e66661"
+      },
+      "expected": null,
+      "request_template": {
+        "contract": "spine.notification-profile-bindings.v1",
+        "shape": "bindingSetTemplate",
+        "canonical_json": "{\"contract_version\":\"spine.notification-profile-bindings.v1\",\"item_archetype_id\":\"archetype_medical\",\"notification_profile_id\":\"profile_medical\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"subject_caleb\"}}",
+        "digest": "3f877067f398c79288cbbb57e6757a605fd4e09a3e921052a20c9bde2c02705a"
+      }
+    }
+  ],
+  "decision_action_ids": [
+    "action-000000"
+  ],
+  "blocked_object_keys": [],
+  "apply_eligible": true,
+  "content_identity": {
+    "algorithm": "sha256",
+    "canonical_json_version": "spine.canonical-json.v1",
+    "derivation_version": "spine.pack-install-plan-digest.v1",
+    "digest": "c29ea7d7897b8cbda48cfa3d5d8e83fb389fc1f76d505780531669e1f9040443"
+  }
+}

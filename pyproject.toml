@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "spine-packs"
-version = "0.2.0"
+version = "0.3.0"
 description = "Local, explicitly approved Spine pack installation through public commands"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -39,6 +39,7 @@ only-include = [
   "contracts/schemas",
   "docs/releases.md",
   "docs/local-qualification.md",
+  "docs/spine-0.6.0-qualification.md",
   "tests/integration/test_local_spine.py",
   "tests/fixtures/pack-manifest/positive/medical_and_lesson.json",
 ]

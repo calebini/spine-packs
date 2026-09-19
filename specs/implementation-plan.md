@@ -260,7 +260,32 @@ The approval, hashes, qualification evidence, and staging prerequisites are in
 `docs/release-finalization.md`. No staging owner, target, selection, or apply
 approval is implied by publication.
 
-### Remaining follow-ups
+### Spine 0.6.0 alignment — reviewed; release finalization
+
+Installer candidate `0.3.0` adds exact Spine `0.6.0` / schema `15` at
+`ad1db8e1a4c7aa9a525612324d08824802a86351`. The CLI command map, execution
+union, public system-info-v3 shape, catalog fingerprints, and replay semantics
+are unchanged from the 0.5.0 pin. The true runtime and ledger identity remain
+bound into artifacts; old plans cannot survive a runtime upgrade by relabeling.
+No HTTP transport or web cursor support is added.
+
+Compatibility-only `kinflow-starter 1.0.1-draft.1` preserves all 1.0.0 content
+and adds only 0.6.0 compatibility. Stable 1.0.0 remains immutable and cannot be
+applied to 0.6.0. Local checks passed: 63 contract and 125 runtime tests, 115
+verifier files, and four source-tree plus four clean-installed disposable
+scenarios on each of all three supported baselines. Independent Draft 2020-12
+and unchanged-upstream checks passed. Evidence and limits are recorded in
+`docs/spine-0.6.0-qualification.md`. The authorized 31-file bounded review
+returned `pass_with_minor_clarification`, zero blockers or majors, and two
+release-handoff minors. Both were patched and clean-installed qualification
+passed again on all three baselines. Original review evidence remains local.
+Stable `1.0.1` now promotes the compatibility draft without content changes;
+its new digest and immutable file bytes are pinned in contract tests.
+Release finalization must qualify the exact committed candidate and obtain
+approval for its tags and assets before publication; see
+`docs/spine-0.6.0-release-finalization.md`. No staged deployment is implied.
+
+### Remaining hardening follow-ups
 
 The following remain explicit follow-ups rather than hidden v1 prerequisites:
 

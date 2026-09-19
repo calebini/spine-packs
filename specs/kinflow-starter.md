@@ -17,7 +17,26 @@ requires a new version. Drafts 1–10 remain unchanged as review evidence.
 Release status permits planning for apply; it does not authorize installation
 without the exact owner, target, selection, and plan approval.
 
+## Stable release 1.0.1
+
+Release finalization promotes `1.0.1-draft.1` without definition, binding,
+dependency, or compatibility changes. Only version, release status, and digest
+change. `packs/kinflow-starter/kinflow-starter.1.0.1.json` MUST retain content
+digest `5d9986c549ea0fe48157e977dbb41d9f45820b3de1f0611816b325e2f1d862af`.
+It preserves all 1.0.0 content and adds only exact Spine `0.6.0` compatibility
+relative to that release. All prior stable and draft artifacts remain unchanged.
+The stable artifact is prepared, not yet published; GitHub publication requires
+the exact-commit qualification and separate approval gates in `docs/releases.md`.
+Apply eligibility is not permission to install into any operator target.
+
 ## Draft lineage
+
+`1.0.1-draft.1` is the compatibility-only successor candidate to stable `1.0.0`.
+It MUST preserve every definition, binding, dependency, and content-contract
+declaration, adding only runtime `0.6.0` to the allowlist and changing draft
+identity/status and digest. It is not released or apply-eligible. All content
+rules below continue to apply; all previous drafts and released bytes remain
+unchanged.
 
 `1.0.0-draft.10` is the current compatibility-only draft. It MUST preserve
 draft 9's definitions, bindings, dependencies, and content-contract list exactly,

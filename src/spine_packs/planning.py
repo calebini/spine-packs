@@ -42,8 +42,9 @@ FAMILIES = {
 
 
 def validate_readback(value, shape, *, runtime_version="0.3.0"):
-    # Catalog and failure shapes are unchanged at the two inspected commits.
-    version = runtime_version if shape == "systemInfo" else "0.3.0"
+    # Spine 0.6.0 at ad1db8e preserves the exact 0.5.0 systemInfo schema.
+    # Catalog/failure shapes are unchanged at all three inspected commits.
+    version = ("0.5.0" if runtime_version == "0.6.0" else runtime_version) if shape == "systemInfo" else "0.3.0"
     path = a.SCHEMA_ROOT / f"spine-readback-{version}.schema.json"
     schema = a._schema_document(path)
     require(not a.schema_errors(value, schema["$defs"][shape], path, schema),
@@ -325,7 +326,7 @@ def observe_installation(manifest, request, transport, *, page_size=100):
     environment = {"runtime_version": info["runtime_version"],
                    "ledger_schema_implemented": info["implemented_ledger_schema_version"],
                    "ledger_schema_current": info["ledger_schema_version"], "advertised_contracts": advertised}
-    if info["runtime_version"] == "0.5.0":
+    if info["runtime_version"] in ("0.5.0", "0.6.0"):
         environment["ledger_instance_id"] = info["ledger_instance_id"]
     owner = request["request"]["owner"]
     catalogs, snapshots = {}, {}

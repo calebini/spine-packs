@@ -1,5 +1,13 @@
 # Installer releases on GitHub
 
+Candidate installer `0.3.0` adds the exact Spine `0.6.0` / schema 15 baseline.
+It requires qualification on all three pinned baselines, bounded review, an
+exact committed release candidate, and separate version/tag/asset approval.
+It is not published by the earlier `0.2.0` authorization. Released pack `1.0.0`
+also excludes `0.6.0`; stable compatibility successor `1.0.1` is prepared
+but its publication still requires separate approval.
+See [0.6.0 qualification](spine-0.6.0-qualification.md).
+
 The initial distribution channel is GitHub Releases in `calebini/spine-packs`,
 not PyPI. The operator approved installer version `0.1.0`, MIT licensing, and
 tag `installer-v0.1.0`. The numeric version does not widen the support promises
@@ -36,9 +44,11 @@ tests and normative specs remain in the tagged repository.
 The installer requires Python 3.11+ and local POSIX filesystem behavior. The
 `any` wheel tag means pure Python, not qualified Windows or remote-filesystem
 support. Qualification tooling and the external Spine baseline need Python
-3.12+. A compatible Spine CLI (`0.3.0` / schema 12, or with installer `0.2.0`,
-`0.5.0` / schema 15) is provisioned separately; the package
-does not install, deploy, upgrade, or configure Spine. Packs are separately
+3.12+. A compatible Spine CLI is provisioned separately. Published installer
+`0.2.0` supports the pinned `0.3.0` / schema 12 and `0.5.0` / schema 15
+baselines. Candidate installer `0.3.0` retains those baselines and adds the
+pinned `0.6.0` / schema 15 baseline; its release requires separate approval.
+The package does not install, deploy, upgrade, or configure Spine. Packs are separately
 selected inputs; shipping an installer does not make the current drafts
 apply-eligible.
 

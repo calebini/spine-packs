@@ -45,7 +45,7 @@ def continuation_checkpoint(plan, approval, source):
 
 
 def catalog_digest(name, entries):
-    """Shared pinned 0.3.0/0.5.0 public catalog fingerprint, independent of pagination."""
+    """Shared pinned 0.3.0/0.5.0/0.6.0 catalog fingerprint, independent of pagination."""
     if name == "bindings":
         fields = ("notification_profile_binding_id", "item_archetype_id",
                   "notification_profile_id", "status")

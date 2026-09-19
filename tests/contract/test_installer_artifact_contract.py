@@ -607,7 +607,7 @@ def plan_errors(plan: dict[str, Any]) -> list[str]:
         if not _sorted_unique(plan["closure"][field]):
             errors.append(f"closure_{field}_not_sorted")
     required = REQUIRED_EXECUTION_CONTRACTS
-    if plan["environment"]["runtime_version"] == "0.5.0":
+    if plan["environment"]["runtime_version"] in ("0.5.0", "0.6.0"):
         required = sorted((set(required) - {"spine.system-info.v2"})
                           | {"spine.system-info.v3", "spine.ledger-instance.v1"})
     if plan["required_execution_contracts"] != required:

@@ -11,9 +11,12 @@ destinations, items, workers, or notification sending.
 
 Use Python 3.12 or newer (Spine's requirement; the installer needs 3.11+).
 The pinned inspected Spine commits are
+`ad1db8e1a4c7aa9a525612324d08824802a86351` (0.6.0, schema 15),
 `ab18a8a51c9bf548220f67e2db0220bfe9783888` (0.5.0, schema 15) and
 `72203f092de191a7633b1884bf0d61836a25abe4` (0.3.0, schema 12).
 Run source-tree and clean-package qualification separately against each one.
+The 0.6.0 baseline uses the same Tickerd pin and public CLI setup below; change
+only the exported Spine commit in a fresh directory, never an existing environment.
 The local current Spine checkout may be newer and is not implicitly compatible.
 Do not change its branch, working tree, environment, or database.
 

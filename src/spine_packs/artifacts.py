@@ -80,13 +80,13 @@ REQUIRED_EXECUTION_CONTRACTS = [
 ]
 
 # Explicit baselines, not a minimum-version or schema-range policy.
-RUNTIME_SCHEMAS = {"0.3.0": "12", "0.5.0": "15"}
+RUNTIME_SCHEMAS = {"0.3.0": "12", "0.5.0": "15", "0.6.0": "15"}
 
 
 def execution_contracts(runtime_version):
     if runtime_version == "0.3.0":
         return REQUIRED_EXECUTION_CONTRACTS[:]
-    if runtime_version == "0.5.0":
+    if runtime_version in ("0.5.0", "0.6.0"):
         return sorted((set(REQUIRED_EXECUTION_CONTRACTS) - {"spine.system-info.v2"})
                       | {"spine.system-info.v3", "spine.ledger-instance.v1"})
     raise ValueError("unsupported Spine runtime")

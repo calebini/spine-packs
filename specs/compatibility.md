@@ -108,6 +108,26 @@ ledger identity as defined in the installer specs. Content compatibility alone
 does not bypass this gate. Disposable source and installed-package qualification
 MUST cover both supported baselines before publishing the extension.
 
+## Spine 0.6.0 candidate alignment
+
+Installer candidate `0.3.0` adds Spine `0.6.0` / schema `15` at exact commit
+`ad1db8e1a4c7aa9a525612324d08824802a86351`, retaining both prior baselines.
+The inspected CLI contracts and handlers are unchanged from the 0.5.0 pin;
+new trusted-web read contracts do not enter the CLI installer union. The exact
+runtime and ledger-instance identity remain bound into every plan.
+
+Released `kinflow-starter 1.0.0` still excludes `0.6.0` and MUST fail closed on
+that runtime. Its bytes MUST NOT change. The proposed successor is
+`1.0.1-draft.1`, adding only `0.6.0` to the exact runtime allowlist, changing
+draft identity/status, and recomputing the digest. All 52 archetypes, profiles,
+bindings, dependencies, and content contracts remain identical to 1.0.0.
+This draft cannot be applied. Stable `1.0.1` promotes it with only version,
+release status, and digest changes; it preserves the three-runtime allowlist
+and requires installer `0.3.0` for Spine `0.6.0`. The stable artifact is prepared
+for publication approval alongside installer `0.3.0`; it is not yet published.
+Neither extension
+qualifies a staged deployment whose source provenance has not been confirmed.
+
 ## Content compatibility is not execution readiness
 
 `spine_content_contracts` is intentionally limited to the contracts that give

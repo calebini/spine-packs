@@ -47,6 +47,11 @@ by `runtime_version=0.5.0`. Older installer `0.1.0` cannot consume that variant
 and MUST reject it rather than discard identity evidence. New approvals are
 required for new plans; no artifact migration or rewriting is implied.
 
+The 0.6.0 extension adds another closed environment variant without changing
+existing artifact bytes or identifiers. Installer `0.2.0` MUST reject it.
+Runtime changes require a fresh plan and approval even if schema and ledger
+identity are unchanged. No artifact may relabel a 0.6.0 observation as 0.5.0.
+
 ## 3. Encoding, closure, and limits
 
 Artifacts MUST be UTF-8 JSON with no byte-order mark, duplicate object member,
@@ -191,12 +196,14 @@ The plan embeds the normalized request without its request
 are sorted and unique. `required_execution_contracts` is exactly the closed
 union in `specs/installer.md` Section 3.
 
-Environment is exactly one of two closed shapes:
+Environment is exactly one of three closed shapes:
 
 - `0.3.0`: implemented/current schema both `12`, advertised contracts, and no
   ledger-instance field (the original shape).
 - `0.5.0`: implemented/current schema both `15`, advertised contracts, and
   required `ledger_instance_id` matching `^ledger_instance_[0-9a-f]{64}$`.
+- `0.6.0`: the same fields and schema-15 constraints as `0.5.0`, but with its
+  own exact runtime value. Unknown runtime/schema pairs remain invalid.
 
 The latter identity MUST come from validated public `system.info.v3`, never
 from a path hash or local database read. It participates in plan/verification
@@ -410,7 +417,7 @@ uncorrelated checkpoint fails closed.
 
 ### 9.1 Continuation snapshot comparison
 
-For both pinned Spine baselines in `specs/installer.md` Section 3, continuation
+For all pinned Spine baselines in `specs/installer.md` Section 3, continuation
 MAY validate the snapshot component by reconstructing the original fingerprint
 from fresh public readback. This is a comparison technique, not rollback,
 receipt evidence, or an alternative installation ledger. It changes no artifact
@@ -533,9 +540,10 @@ All captured requests and responses are revalidated using those execution
 facts. No additional approval file or Spine receipt-readback command is implied.
 
 `receipt_readback` MUST be `captured_responses_only_spine_0.3.0` for a `0.3.0`
-environment and `captured_responses_only_spine_0.5.0` for a `0.5.0` environment.
-Cross-pairing is invalid. Neither value claims independent command-receipt
-readback; neither inspected baseline provides a public receipt show/list command.
+environment, `captured_responses_only_spine_0.5.0` for a `0.5.0` environment,
+and `captured_responses_only_spine_0.6.0` for a `0.6.0` environment.
+Cross-pairing is invalid. None claims independent command-receipt readback;
+none of the inspected baselines provides a public receipt show/list command.
 
 ## 12. CLI result envelope and exit codes
 
@@ -596,7 +604,7 @@ Before the corresponding behavior is implemented, tests MUST demonstrate at leas
 - contiguous-prefix continuation from a partial result;
 - accepted-before-response recovery from a prepared checkpoint;
 - rejection of an unexplained catalog change;
-- verification mismatch, runtime-specific receipt-readback disclosures for both
+- verification mismatch, runtime-specific receipt-readback disclosures for all
   pinned Spine baselines, and rejection of cross-paired disclosures; and
 - exact envelope status/category/exit-code correlation.
 

@@ -5,7 +5,8 @@
     "tests/fixtures/installer/positive/granular_request.json",
     "tests/fixtures/installer/positive/profile_drift_artifact_suite.json",
     "tests/fixtures/installer/positive/profile_drift_vertical_flow.json",
-    "tests/fixtures/installer/positive/schema15_plan.json"
+    "tests/fixtures/installer/positive/schema15_plan.json",
+    "tests/fixtures/installer/positive/spine060_plan.json"
   ],
   "negative": [
     "tests/fixtures/installer/negative/apply_target_mismatch.json",

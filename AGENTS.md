@@ -48,6 +48,13 @@ stable release `1.0.0`. Preserve the exact released bytes and all draft artifact
 future content changes require a new version. The schema-15 alignment
 supports the exact Spine `0.5.0` / schema `15` commit recorded in the installer
 specs alongside `0.3.0` / `12`; it does not authorize broader runtime ranges.
+The bounded 0.6.0 compatibility update additionally admits only Spine commit
+`ad1db8e1a4c7aa9a525612324d08824802a86351`, runtime `0.6.0` / schema `15`,
+and compatibility-only `kinflow-starter 1.0.1-draft.1`. Release finalization
+materializes stable `1.0.1` with unchanged definitions and compatibility from
+that draft; preserve both files. Installer candidate `0.3.0` and stable pack
+`1.0.1` require exact-commit qualification and separate publication approval;
+previous publication approval does not carry over.
 Do not broaden the schema or pack semantics without matching normative spec,
 fixture, and contract-test changes. The authorized runtime scope is the bounded
 read-only `plan`, non-mutating apply preflight, Slice 3 initial approved

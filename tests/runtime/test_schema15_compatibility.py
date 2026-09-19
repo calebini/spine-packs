@@ -19,22 +19,24 @@ from test_planning import manifest, request, info
 import test_installer_artifact_contract as independent
 
 
-def info15():
+def info15(runtime="0.5.0"):
     value = info()
-    value.update(runtime_version="0.5.0", response_contract="spine.system-info.v3",
+    value.update(runtime_version=runtime, response_contract="spine.system-info.v3",
                  implemented_ledger_schema_version="15", ledger_schema_version="15",
                  ledger_instance_id="ledger_instance_" + "a" * 64,
-                 implemented_contract_versions=a.execution_contracts("0.5.0"))
+                 implemented_contract_versions=a.execution_contracts(runtime))
     return value
 
 
 class Schema15Tests(unittest.TestCase):
+    runtime = "0.5.0"
+
     def setup(self):
         pack = manifest(released=True)
-        pack["compatibility"]["spine_runtime_versions"] = ["0.3.0", "0.5.0"]
+        pack["compatibility"]["spine_runtime_versions"] = sorted({"0.3.0", "0.5.0", self.runtime})
         pack["content_identity"]["digest"] = m.content_digest(pack)
         transport = RecoverySpine(pack, {k: [] for k in p.CATALOGS})
-        transport.info = info15()
+        transport.info = info15(self.runtime)
         return pack, transport
 
     def test_plan_binds_identity_and_correct_contract_union(self):
@@ -42,7 +44,7 @@ class Schema15Tests(unittest.TestCase):
         plan = p.plan_installation(pack, request(), transport)
         self.assertEqual(independent.plan_errors(plan), [])
         self.assertEqual(plan["environment"]["ledger_instance_id"], transport.info["ledger_instance_id"])
-        self.assertEqual(plan["required_execution_contracts"], a.execution_contracts("0.5.0"))
+        self.assertEqual(plan["required_execution_contracts"], a.execution_contracts(self.runtime))
         transport.info["ledger_instance_id"] = "ledger_instance_" + "b" * 64
         changed = p.plan_installation(pack, request(), transport)
         self.assertNotEqual(plan["content_identity"]["digest"], changed["content_identity"]["digest"])
@@ -51,7 +53,7 @@ class Schema15Tests(unittest.TestCase):
     def test_public_compatibility_failures_precede_catalog_reads(self):
         mutations = [
             lambda v: v.update(runtime_version="0.4.0"),
-            lambda v: v.update(runtime_version="0.6.0"),
+            lambda v: v.update(runtime_version="0.7.0"),
             lambda v: v.update(ledger_schema_version="14"),
             lambda v: v.update(implemented_ledger_schema_version="16"),
             lambda v: v.update(response_contract="spine.system-info.v2"),
@@ -129,7 +131,7 @@ class Schema15Tests(unittest.TestCase):
         self.assertEqual(result["state"], "applied")
         verified = verify_installation(pack, plan, transport, result)
         self.assertEqual(verified["state"], "verified")
-        self.assertEqual(verified["receipt_readback"], "captured_responses_only_spine_0.5.0")
+        self.assertEqual(verified["receipt_readback"], "captured_responses_only_spine_" + self.runtime)
         self.assertEqual(independent.verification_errors(verified, plan, result), [])
         bad = deepcopy(verified)
         bad["receipt_readback"] = "captured_responses_only_spine_0.3.0"

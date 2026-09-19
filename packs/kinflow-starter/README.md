@@ -6,9 +6,16 @@ byte-for-byte unchanged and are not installable. Released bytes are immutable;
 future changes require a new version. Installation still requires an explicit
 owner, target, selection, and exact plan approval.
 
+Stable `1.0.1` is prepared from compatibility-only `1.0.1-draft.1`, adding
+Spine `0.6.0` without changing any definition or reminder. Publication remains
+pending exact-commit qualification and approval. The draft is preserved and
+is not apply-eligible. `1.0.0` still supports only `0.3.0` and `0.5.0` and MUST
+NOT be edited to bypass that allowlist. Installer `0.3.0` is required for the
+new runtime; it is also awaiting publication approval.
+
 ## Release contents
 
-Version 1.0.0 contains these 52 archetypes, each with its own same-named `_standard`
+Versions 1.0.0 and 1.0.1 contain these 52 archetypes, each with its own same-named `_standard`
 notification profile and one owner-neutral local default-binding intent:
 
 - established slices: `medical_appointment`, `lesson`,
@@ -50,8 +57,9 @@ exact-target reminders with short delivery windows.
 
 Exact definitions, descriptions, schedules, and boundary rules are normative
 in [the pack specification](../../specs/kinflow-starter.md). The stable
-manifest is
-`packs/kinflow-starter/kinflow-starter.1.0.0.json`. It contains no
+manifests are
+`packs/kinflow-starter/kinflow-starter.1.0.0.json` and
+`packs/kinflow-starter/kinflow-starter.1.0.1.json`. They contain no
 owner, subject, group, route, delivery target, generated Spine ID, timestamp,
 receipt, credential, or environment-specific data.
 
@@ -67,3 +75,8 @@ It declares exactly Spine `0.3.0` and `0.5.0`; use installer `0.2.0` for `0.5.0`
 / schema 15. See [release finalization](../../docs/release-finalization.md) for
 checksums, qualification limits, and staging prerequisites. A release does not
 create items, recurrence, owners, delivery routes, or an installation.
+
+The prepared successor proposes separate tag `pack-kinflow-starter-v1.0.1`
+with its JSON manifest and its own `SHA256SUMS`. Its exact runtime allowlist is
+`0.3.0`, `0.5.0`, `0.6.0`. See
+[0.6.0 release finalization](../../docs/spine-0.6.0-release-finalization.md).

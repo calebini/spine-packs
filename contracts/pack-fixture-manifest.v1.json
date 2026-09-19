@@ -3,6 +3,16 @@
   "schema": "contracts/schemas/spine-pack-manifest.v1.schema.json",
   "cases": [
     {
+      "case_id": "kinflow_starter_1_0_1_release",
+      "fixture": "packs/kinflow-starter/kinflow-starter.1.0.1.json",
+      "valid": true
+    },
+    {
+      "case_id": "spine060_compatibility_draft",
+      "fixture": "packs/kinflow-starter/kinflow-starter.1.0.1-draft.1.json",
+      "valid": true
+    },
+    {
       "case_id": "kinflow_starter_1_0_0_release",
       "fixture": "packs/kinflow-starter/kinflow-starter.1.0.0.json",
       "valid": true

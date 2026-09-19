@@ -107,6 +107,15 @@ response; unchanged catalog/request/receipt validators are shared with `0.3.0`.
 Plans bind the public ledger identity on `0.5.0`, and all later operations
 require exact environment equality. Existing `0.3.0` artifacts remain valid.
 
+Installer candidate `0.3.0` additionally admits Spine `0.6.0` / schema `15` at
+`ad1db8e1a4c7aa9a525612324d08824802a86351`. Its exact system-info-v3 shape is
+unchanged, so it explicitly shares the `spine-readback-0.5.0.schema.json`
+validator, not a runtime-version alias. Artifact environments retain `0.6.0`
+and the ledger identity. CLI read/write allowlists, catalog fingerprints,
+receipt handling, and transport/recovery boundaries do not expand. The new
+web-read contracts are outside this installer. Qualification must cover all
+three pinned baselines; existing published distributions remain unchanged.
+
 The source-tree package `src/spine_packs/` is the smallest authorized runtime
 layout. It requires Python 3.11 or newer and the standard library only:
 
@@ -346,7 +355,7 @@ the public `spine-ledger-migrate --initialize-if-empty` administrative CLI and
 not broaden the installer's read or six-command write allowlists. The harness
 must never open a database or import Spine internals.
 
-Qualification uses each exact inspected Spine commit (`0.3.0` and `0.5.0`) and a compatible
+Qualification uses each exact inspected Spine commit (`0.3.0`, `0.5.0`, and `0.6.0`) and a compatible
 Tickerd distribution, installed in an isolated environment from copied source.
 The current Spine checkout is not implicitly compatible. No source checkout
 may be edited or switched by the harness. Synthetic test manifests use a
