@@ -2,6 +2,12 @@
 
 Status: Draft v0.1; runtime through Slice 5, Slice 6 disposable qualification authorized
 
+[facet-rendering-packs.md](facet-rendering-packs.md) proposes separately named v2
+artifacts for new object/reference families, public observation preimages and
+family-specific receipt evidence. Exact schemas/fixtures require review before
+implementation. Do not widen the closed v1 shapes below or treat a new catalog's
+opaque cursor as the existing public `catalog_snapshot_hash` evidence.
+
 ## 1. Scope and authority
 
 This document fixes the machine-readable artifact layer for the local v1

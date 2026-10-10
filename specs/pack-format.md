@@ -1,5 +1,10 @@
 # Pack format requirements
 
+The proposed facet/rendering successor is specified separately in
+[facet-rendering-packs.md](facet-rendering-packs.md). It reserves
+`spine.pack-manifest.v2`; it is not implemented and does not amend the closed v1
+objects below. No curated successor manifest or release is created by that proposal.
+
 ## Status and identity
 
 This document defines the first-pass pack contract,

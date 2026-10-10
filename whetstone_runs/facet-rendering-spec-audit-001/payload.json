@@ -1,0 +1,79 @@
+{
+  "status": "staged_not_authorized_not_run",
+  "mode": "audit-change",
+  "profile": "consistency",
+  "spine_commit": "01ebce7b0c5fb9234e0eab55daca96b01c5cb6a7",
+  "payload_count": 14,
+  "files": [
+    {
+      "path": "whetstone_runs/facet-rendering-spec-audit-001/audit-notes.md",
+      "sha256": "16d2a75a98c8dbd8e0310a83d9309f4741dadb7315781629244c65fb9033ad28",
+      "bytes": 4579
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "541823b3a74099aeba359715c1b88dd3262344df26a0baea5b2fed2124dbb149",
+      "bytes": 5880
+    },
+    {
+      "path": "specs/overview.md",
+      "sha256": "a8e480affee439f5608097d6728a3a96b6765c4aa00f33617711b038bd0d92ab",
+      "bytes": 2399
+    },
+    {
+      "path": "specs/architecture.md",
+      "sha256": "3c1bebaddd306666ef0f81a2d82bc958c95de0b870e506c34f8997e7e6a99b7e",
+      "bytes": 24969
+    },
+    {
+      "path": "specs/compatibility.md",
+      "sha256": "582877297d3f67895bb9a3f0ac73a8fcb799b84655292f3c0bbe0b1442ff0fdc",
+      "bytes": 9381
+    },
+    {
+      "path": "specs/pack-format.md",
+      "sha256": "26ce02b87adad016798d9c4999d3631ff6b928e0d536a16642cd293ca97df1e3",
+      "bytes": 11821
+    },
+    {
+      "path": "specs/installer.md",
+      "sha256": "2b082beb18500968570b6a0b92061dabfcb884c2ceb12f0fbae9737122830f7a",
+      "bytes": 39397
+    },
+    {
+      "path": "specs/installer-artifacts.md",
+      "sha256": "e3f977e2cdc09c12993e4fa20e6da83e320d1635050c8f367429aa9f62e3769e",
+      "bytes": 33936
+    },
+    {
+      "path": "specs/implementation-plan.md",
+      "sha256": "9b6b0cd5e9aebf934c4c829aaae93008d0a4580cbf8392c2fb7c2af89ecb1a55",
+      "bytes": 21822
+    },
+    {
+      "path": "specs/facet-rendering-packs.md",
+      "sha256": "cb33c6e22bd45511aed1f1d29bc1d309ad774a6a0574ddbf17a625f7e5149448",
+      "bytes": 34225
+    },
+    {
+      "path": "docs/facet-rendering-baseline.md",
+      "sha256": "5bdfe805dce09350f1d4e097fe58e5b1628ef5edd9d298c2a0e58863713d7621",
+      "bytes": 12814
+    },
+    {
+      "path": "whetstone_runs/facet-rendering-spec-audit-001/spine-source-excerpts.md",
+      "sha256": "0e47ec1f23418856bd57b8ce429c54c7ebb67b7b6f4e722246f504d39d65b73d",
+      "bytes": 64334
+    },
+    {
+      "path": "whetstone_runs/facet-rendering-spec-audit-001/spine-wire-evidence.json",
+      "sha256": "5afe978bd9db3daaac11f039c9bd28a3a5308465e46f325b45ab6bfc09e3cc71",
+      "bytes": 77629
+    },
+    {
+      "path": "whetstone_runs/facet-rendering-spec-audit-001/spine-readback-blocker.md",
+      "sha256": "95f288931e08e632b7f50c5ccabaecb20fcdb778885559a5726ec7c2d2aa2b66",
+      "bytes": 6405
+    }
+  ]
+}

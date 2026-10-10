@@ -1,5 +1,16 @@
 # Architecture
 
+## Proposed facet/rendering successor — not implemented
+
+[facet-rendering-packs.md](facet-rendering-packs.md) proposes a separate manifest
+and installer-artifact v2 path for exact Spine `0.9.0` / schema `19` at
+`01ebce7b0c5fb9234e0eab55daca96b01c5cb6a7`. It adds a bounded configuration graph:
+archetype and facet schema -> facet binding -> rendering definition -> profile
+revision -> default binding. The proposal does not expand the runtime authority
+or compatibility of the implemented slices below. No disclosure authorization,
+item authoring, scheduling or sending belongs to that graph. Read its review
+gates before successor work; old v1 behavior and released artifacts remain intact.
+
 ## Relationship
 
 The intended data and authority flow is:

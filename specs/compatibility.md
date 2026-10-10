@@ -1,5 +1,16 @@
 # Compatibility
 
+## Proposed 0.9.0 successor — not a support claim
+
+[facet-rendering-packs.md](facet-rendering-packs.md) proposes manifest v2 and
+installer-artifact v2 against exact Spine commit
+`01ebce7b0c5fb9234e0eab55daca96b01c5cb6a7`, runtime `0.9.0`, schema `19`.
+The inspected command/contract matrix is in
+[the baseline evidence](../docs/facet-rendering-baseline.md). This is planning
+only: it does not add 0.9.0 to any existing manifest, schema or runtime allowlist.
+The new content and compatibility require successor releases, separately reviewed
+machine contracts and exact-baseline qualification. Existing v1 support is unchanged.
+
 ## Compatibility dimensions
 
 Every manifest MUST declare compatibility independently for:

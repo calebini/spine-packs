@@ -14,6 +14,9 @@ Before changing pack behavior or format, read:
 Before changing `kinflow-starter` content, also read `specs/kinflow-starter.md`.
 Before changing installer behavior or artifacts, also read
 `specs/installer.md` and `specs/installer-artifacts.md`.
+For proposed facet-aware rendering work, additionally read
+`specs/facet-rendering-packs.md` and its implementation-plan sequence. This is
+specification/planning scope only; it does not authorize successor runtime work.
 
 The files in `specs/` are the normative source of truth. `README.md` is
 orientation, pack-local READMEs describe pack status, and code must implement
@@ -82,6 +85,13 @@ implementation belongs in an explicitly reviewed package layout; explanatory
 material belongs in `docs/` only when the README is insufficient.
 
 ## Change checks
+
+The facet/rendering proposal inspects exact Spine commit
+`01ebce7b0c5fb9234e0eab55daca96b01c5cb6a7` (`0.9.0`, schema `19`). Existing
+runtime allowlists, v1 contracts and pack artifacts remain unchanged. Do not
+provision destination disclosure, create items, materialize reminders or send
+notifications as part of configuration installation. The staged bounded audit
+requires explicit payload approval before any external reviewer invocation.
 
 For documentation, contract, and planner changes, run:
 

@@ -1,0 +1,66 @@
+{
+  "audit_notes_hash": "16d2a75a98c8dbd8e0310a83d9309f4741dadb7315781629244c65fb9033ad28",
+  "audit_notes_path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/facet-rendering-spec-audit-001/audit-notes.md",
+  "client": {
+    "model": "gpt-5.5",
+    "name": "codex",
+    "version": "0.162.0-alpha.17.2"
+  },
+  "generated_at": "2026-10-10T10:15:27.264299+00:00",
+  "profile": "consistency",
+  "schema_version": "change-audit-manifest-v1",
+  "specs": [
+    {
+      "hash": "541823b3a74099aeba359715c1b88dd3262344df26a0baea5b2fed2124dbb149",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/AGENTS.md"
+    },
+    {
+      "hash": "a8e480affee439f5608097d6728a3a96b6765c4aa00f33617711b038bd0d92ab",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/overview.md"
+    },
+    {
+      "hash": "3c1bebaddd306666ef0f81a2d82bc958c95de0b870e506c34f8997e7e6a99b7e",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/architecture.md"
+    },
+    {
+      "hash": "582877297d3f67895bb9a3f0ac73a8fcb799b84655292f3c0bbe0b1442ff0fdc",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/compatibility.md"
+    },
+    {
+      "hash": "26ce02b87adad016798d9c4999d3631ff6b928e0d536a16642cd293ca97df1e3",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/pack-format.md"
+    },
+    {
+      "hash": "2b082beb18500968570b6a0b92061dabfcb884c2ceb12f0fbae9737122830f7a",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/installer.md"
+    },
+    {
+      "hash": "e3f977e2cdc09c12993e4fa20e6da83e320d1635050c8f367429aa9f62e3769e",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/installer-artifacts.md"
+    },
+    {
+      "hash": "9b6b0cd5e9aebf934c4c829aaae93008d0a4580cbf8392c2fb7c2af89ecb1a55",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/implementation-plan.md"
+    },
+    {
+      "hash": "cb33c6e22bd45511aed1f1d29bc1d309ad774a6a0574ddbf17a625f7e5149448",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/facet-rendering-packs.md"
+    },
+    {
+      "hash": "5bdfe805dce09350f1d4e097fe58e5b1628ef5edd9d298c2a0e58863713d7621",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/docs/facet-rendering-baseline.md"
+    },
+    {
+      "hash": "6fc3b16f84f6a2a1816836edcca24fd32bfbc9fe094ca5a1c9ca017022b979b6",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/facet-rendering-spec-audit-001/spine-source-excerpts.md"
+    },
+    {
+      "hash": "5afe978bd9db3daaac11f039c9bd28a3a5308465e46f325b45ab6bfc09e3cc71",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/facet-rendering-spec-audit-001/spine-wire-evidence.json"
+    },
+    {
+      "hash": "476118d87cfd520a2dcba18ceca4325c6dbeb480bafbc057bbca6e7fd0872c82",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/facet-rendering-spec-audit-001/spine-readback-blocker.md"
+    }
+  ]
+}
