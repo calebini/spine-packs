@@ -309,31 +309,32 @@ working-tree review agree. Commit and push are separate operator decisions.
 
 This new sequence is governed by [facet-rendering-packs.md](facet-rendering-packs.md),
 not a reopening of completed installer Slices 1–6. The current scope remains
-specification/planning. The separately approved 14-file bounded audit completed
+specification and FR-1 contracts/fixtures. The separately approved 14-file bounded audit completed
 with one minor clarification, addressed by a local wording patch; see the
 [audit disposition](../whetstone_runs/facet-rendering-spec-audit-001/local-assessment.md).
-No runtime, machine-schema implementation, curated pack rewrite, deployment,
+No runtime, curated pack rewrite, deployment,
 release or additional external review is authorized here. Source baseline: Spine
-`01ebce7b0c5fb9234e0eab55daca96b01c5cb6a7`, `0.9.0` / `19`.
+`57cda1c2d5589360ee8efe7155fd20b503034c2a`, `0.9.1` / `19`, explicitly approved
+as the repaired replacement. The prior audit covers the original proposal,
+not automatic acceptance of new FR-1 machine artifacts.
 
 Use vertical delivery around one flight graph, with a focused contract review
 before each runtime boundary. Do not first convert all 52 starter archetypes.
 
-Blocking upstream gate: source inspection found that the exact baseline's v2
-profile-list handler enters the legacy rejection path for v2 revisions. See
-`docs/facet-rendering-baseline.md`. A separately authorized public-CLI disposable
-reproduction must resolve that finding before runtime implementation is treated
-as buildable against this pin. If it requires a Spine fix, seek explicit approval
-of its replacement commit; no newer baseline or list bypass is implicit.
+The upstream listing gate passed independently on the exact repaired wheel:
+ordinary v2 create/show/list, mixed v1/v2 complete pagination, definition pins,
+and preserved v1 rejection. See `docs/facet-rendering-baseline.md`. The original
+0.9.0 defect remains historical evidence. This narrow gate does not complete
+FR-5 installer qualification or authorize runtime implementation.
 
 | Slice | Deliverable | Exit gate before the next slice |
 | --- | --- | --- |
 | FR-0: proposal and bounded audit | Proposed manifest v2, reference graph, command/contract inventory, failure/recovery rules, product decisions, audit payload | Approved reviewer-only consistency audit completed: pass with one minor clarification, locally addressed. Further implementation scope still requires authorization |
-| FR-1: machine agreements and fixture proof | Manifest v2; seven v2 installer artifact schemas, shared/embedded/readback closure; synthetic scalar + location-label flight flow; independent hash and reference vectors | Resolve the upstream readback gate; Draft 2020-12 meta/fixture validation, semantic tests, unchanged v1 vectors and bounded machine-contract review. Fix exact reference-slot syntax and aggregate observation budgets before code |
-| FR-2: read-only flight plan | Exact 0.9.0 preflight, protected cursor prerequisites, complete public observation view, dependency closure, cascaded drift and typed outputs | Missing/retain/drift/retired and mixed v1/v2 readback tests; all pagination/capacity/staleness failures; no writes even dry-run. No release compatibility claim |
+| FR-1: machine agreements and fixture proof | Manifest v2; seven v2 installer artifact schemas, shared/embedded/readback closure; synthetic scalar + location-label flight flow; independent hash and reference vectors | Repaired listing gate passed; Draft 2020-12 meta/fixture validation, semantic tests, unchanged v1 vectors and bounded machine-contract review. Fix exact reference-slot syntax and aggregate observation budgets before code |
+| FR-2: read-only flight plan | Exact 0.9.1 preflight, protected cursor prerequisites, complete public observation view, dependency closure, cascaded drift and typed outputs | Missing/retain/drift/retired and mixed v1/v2 readback tests; all pagination/capacity/staleness failures; no writes even dry-run. No release compatibility claim |
 | FR-3: approved initial flight apply | New command-specific serializers/evidence validators; ordered dependencies; durable prepared/accepted checkpoints; no-op and binding guards | Every one of the 11 write kinds, all ID-consuming paths and every durability boundary tested; no item/disclosure/send commands; no speculative IDs or automatic drift updates |
 | FR-4: same-execution recovery and verify | Forward expected-state comparison from bounded preimages; prefix/prefix-plus-one recovery; exact request replay; read-only exact-pin verification | Lost responses for schema/rendering create/publish, both binding kinds and nested profile refs; unrelated drift rejected; receipt limitations explicit; every old recovery/verify test preserved |
-| FR-5: disposable and installed-package qualification | Exact pinned Spine build, isolated temporary catalogs, synthetic owner and protected test cursor configs via separately authorized setup; source and clean-wheel plan/apply/replay/verify | All v1 supported-baseline regression gates plus exact 0.9.0 public-CLI qualification. No existing ledger, item creation, materialization, sends, disclosure grants or Spine checkout edits |
+| FR-5: disposable and installed-package qualification | Exact pinned Spine build, isolated temporary catalogs, synthetic owner and protected test cursor configs via separately authorized setup; source and clean-wheel plan/apply/replay/verify | All v1 supported-baseline regression gates plus exact 0.9.1 public-CLI qualification. No existing ledger, item creation, materialization, sends, disclosure grants or Spine checkout edits |
 | FR-6: curated flight content and release readiness | Operator-approved field/label/template/default choices; one new immutable pack version and successor installer packaging | Reviewed flight content/digests, unchanged other curated definitions, consumer v2-application readiness and explicit disclosure handoff. Tag/assets/publication/deployment require separate approval |
 
 FR-1 may use synthetic flight fixture choices without pretending they are curated
@@ -347,3 +348,17 @@ The public-read-only evidence design is intentional: new catalogs have no
 public snapshot hashes, and facet responses have no nested semantic-hash receipt.
 Do not carry the old inverse-fingerprint or universal receipt validators into
 FR-3/4 without the new family-specific contracts and fault-injection proof.
+
+### FR-1 progress and next bounded increment
+
+The manifest-only increment is authored: draft v2 schema, synthetic flight graph,
+indexed positive/negative mutations and independent Draft 2020-12 plus semantic
+checks. Existing runtime and v1 artifacts remain untouched. This is not FR-1
+completion or authorization to start FR-2.
+
+Next: codify the seven v2 installer artifacts, shared/embedded/readback schema
+closure, exact typed reference slots, aggregate observation budgets and one
+request/plan/approval/checkpoint/apply/verify fixture flow. Complete the remaining
+normalization, resolved-byte-limit and recovery evidence oracles, then stage a
+bounded machine-contract review. External review still requires exact-payload
+approval; FR-2 runtime implementation must wait for that gate.

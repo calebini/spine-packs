@@ -2,8 +2,10 @@
 
 The proposed facet/rendering successor is specified separately in
 [facet-rendering-packs.md](facet-rendering-packs.md). It reserves
-`spine.pack-manifest.v2`; it is not implemented and does not amend the closed v1
-objects below. No curated successor manifest or release is created by that proposal.
+`spine.pack-manifest.v2`; its draft manifest schema and test-only fixture are now
+authored for FR-1 review, but installer support is not implemented. It does not
+amend the closed v1 objects below. No curated successor manifest or release is
+created by that proposal.
 
 ## Status and identity
 

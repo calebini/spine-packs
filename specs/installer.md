@@ -3,7 +3,7 @@
 Status: Draft v0.4; runtime through Slice 5, Slice 6 disposable qualification authorized
 
 The separate [facet/rendering proposal](facet-rendering-packs.md) specifies a
-potential v2 workflow for Spine 0.9.0/schema 19. Its new command families,
+potential v2 workflow for Spine 0.9.1/schema 19. Its new command families,
 reference resolution and response handling are not implemented or authorized
 by this v1 contract. Existing operations, approvals and continuation artifacts
 retain the rules below; no implicit artifact migration is permitted.

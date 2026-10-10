@@ -1,0 +1,213 @@
+{
+  "manifest_schema": "spine.pack-manifest.v2",
+  "pack": {
+    "pack_id": "synthetic-flight-proof",
+    "version": "1.0.0-draft.1",
+    "status": "draft"
+  },
+  "compatibility": {
+    "spine_runtime_versions": [
+      "0.9.1"
+    ],
+    "spine_content_contracts": [
+      "spine.archetype-facet-bindings.v1",
+      "spine.facet-schemas.v1",
+      "spine.item-archetypes.v1",
+      "spine.notification-profile-bindings.v1",
+      "spine.notification-profiles.v2",
+      "spine.notification-rendering-definitions.v1",
+      "spine.notification-rendering.v1"
+    ]
+  },
+  "dependencies": [],
+  "archetypes": [
+    {
+      "archetype_key": "flight",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Flight",
+        "description": "Scheduled flight departures.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    }
+  ],
+  "notification_profiles": [
+    {
+      "profile_key": "synthetic_flight_details",
+      "display_name": "Synthetic flight details",
+      "description": "Contract fixture only; not approved curated content.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-14400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            },
+            "rendering": {
+              "kind": "ordinary"
+            }
+          },
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            },
+            "rendering": {
+              "kind": "definition",
+              "definition_ref": {
+                "definition_key": "flight_details"
+              }
+            }
+          },
+          {
+            "template_key": "seven_days_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-604800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            },
+            "rendering": {
+              "kind": "ordinary"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            },
+            "rendering": {
+              "kind": "ordinary"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "binding_intents": [
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "flight",
+      "notification_profile_key": "synthetic_flight_details"
+    }
+  ],
+  "facet_schemas": [
+    {
+      "schema_key": "flight_details",
+      "intended_status": "active",
+      "definition": {
+        "display_name": "Synthetic flight details",
+        "description": null,
+        "compatible_item_types": [
+          "event"
+        ],
+        "fields": [
+          {
+            "key": "flight_number",
+            "type": "text",
+            "max_length": "32",
+            "required": false,
+            "queryable": false
+          },
+          {
+            "key": "origin",
+            "type": "reference",
+            "target_kind": "location",
+            "required": false,
+            "queryable": false
+          }
+        ]
+      }
+    }
+  ],
+  "archetype_facet_bindings": [
+    {
+      "archetype_key": "flight",
+      "facet_key": "flight",
+      "schema_ref": {
+        "schema_key": "flight_details"
+      }
+    }
+  ],
+  "rendering_definitions": [
+    {
+      "definition_key": "flight_details",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Synthetic flight details",
+        "description": null,
+        "compatible_item_types": [
+          "event"
+        ],
+        "base_rendering_contract": "spine.notification-rendering.v1",
+        "base_rendering_profile": "spine.notification-rendering.concise-en-ca.v1",
+        "selections": [
+          {
+            "selection_key": "number",
+            "facet_key": "flight",
+            "schema_ref": {
+              "schema_key": "flight_details"
+            },
+            "field_key": "flight_number",
+            "label": "Flight",
+            "projection": "value"
+          },
+          {
+            "selection_key": "origin",
+            "facet_key": "flight",
+            "schema_ref": {
+              "schema_key": "flight_details"
+            },
+            "field_key": "origin",
+            "label": "From",
+            "projection": "location_label"
+          }
+        ]
+      }
+    }
+  ],
+  "content_identity": {
+    "algorithm": "sha256",
+    "canonical_json_version": "spine.canonical-json.v1",
+    "digest": "80cb80492a6072d3992d6cf22ff31d49ab103912ce76485ca73361db4469d405"
+  }
+}

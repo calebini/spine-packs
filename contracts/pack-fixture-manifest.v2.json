@@ -1,0 +1,939 @@
+{
+  "fixture_manifest": "spine.pack-fixture-manifest.v2",
+  "status": "draft_manifest_only",
+  "schema": "contracts/schemas/spine-pack-manifest.v2.schema.json",
+  "base_fixture": "tests/fixtures/pack-manifest-v2/flight.json",
+  "source_commit": "57cda1c2d5589360ee8efe7155fd20b503034c2a",
+  "oracle": "tests/contract/test_facet_manifest_contract.py",
+  "mutation_semantics": "Apply ordered set/remove edits at typed path segments to a fresh base fixture, then reseal only when reseal=true. valid=true requires schema, graph, normalization, ordering and digest acceptance; valid=false requires validation rejection. These are test vectors, not installable manifests.",
+  "vectors": [
+    {
+      "id": "wrong_runtime",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "compatibility",
+            "spine_runtime_versions"
+          ],
+          "value": [
+            "0.9.0"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "future_runtime",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "compatibility",
+            "spine_runtime_versions"
+          ],
+          "value": [
+            "0.9.2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "embedded_owner",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "owner"
+          ],
+          "value": {
+            "owner_kind": "subject",
+            "owner_subject_id": "synthetic"
+          }
+        }
+      ]
+    },
+    {
+      "id": "schema_ref_contains_ledger_id",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "archetype_facet_bindings",
+            0,
+            "schema_ref"
+          ],
+          "value": {
+            "facet_schema_revision_id": "synthetic"
+          }
+        }
+      ]
+    },
+    {
+      "id": "missing_schema_reference",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "archetype_facet_bindings",
+            0,
+            "schema_ref",
+            "schema_key"
+          ],
+          "value": "missing"
+        }
+      ]
+    },
+    {
+      "id": "missing_rendering_reference",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "notification_profiles",
+            0,
+            "revision",
+            "templates",
+            1,
+            "rendering",
+            "definition_ref",
+            "definition_key"
+          ],
+          "value": "missing"
+        }
+      ]
+    },
+    {
+      "id": "wire_definition_not_portable",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "notification_profiles",
+            0,
+            "revision",
+            "templates",
+            1,
+            "rendering"
+          ],
+          "value": {
+            "kind": "definition",
+            "definition": {
+              "notification_rendering_definition_id": "synthetic",
+              "notification_rendering_definition_revision_id": "synthetic"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "disclosure_in_template",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "notification_profiles",
+            0,
+            "revision",
+            "templates",
+            1,
+            "rendering",
+            "disclosure_authorization_id"
+          ],
+          "value": "synthetic"
+        }
+      ]
+    },
+    {
+      "id": "missing_queryable",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "remove",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "fields",
+            0,
+            "queryable"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "noncanonical_fields",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "fields"
+          ],
+          "value": [
+            {
+              "key": "origin",
+              "type": "reference",
+              "target_kind": "location",
+              "required": false,
+              "queryable": false
+            },
+            {
+              "key": "flight_number",
+              "type": "text",
+              "max_length": "32",
+              "required": false,
+              "queryable": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "noncanonical_templates",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "notification_profiles",
+            0,
+            "revision",
+            "templates"
+          ],
+          "value": [
+            {
+              "template_key": "twenty_four_hours_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-86400"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "21600"
+              },
+              "rendering": {
+                "kind": "ordinary"
+              }
+            },
+            {
+              "template_key": "seven_days_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-604800"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "86400"
+              },
+              "rendering": {
+                "kind": "ordinary"
+              }
+            },
+            {
+              "template_key": "one_hour_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-3600"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "900"
+              },
+              "rendering": {
+                "kind": "definition",
+                "definition_ref": {
+                  "definition_key": "flight_details"
+                }
+              }
+            },
+            {
+              "template_key": "four_hours_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-14400"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "3600"
+              },
+              "rendering": {
+                "kind": "ordinary"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "incorrect_digest",
+      "valid": false,
+      "reseal": false,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "content_identity",
+            "digest"
+          ],
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "id": "draft_status_mismatch",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "pack",
+            "status"
+          ],
+          "value": "released"
+        }
+      ]
+    },
+    {
+      "id": "duplicate_defaults",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "binding_intents"
+          ],
+          "value": [
+            {
+              "binding_kind": "archetype_default",
+              "archetype_key": "flight",
+              "notification_profile_key": "synthetic_flight_details"
+            },
+            {
+              "binding_kind": "archetype_default",
+              "archetype_key": "flight",
+              "notification_profile_key": "synthetic_flight_details"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "duplicate_facet_bindings",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "archetype_facet_bindings"
+          ],
+          "value": [
+            {
+              "archetype_key": "flight",
+              "facet_key": "flight",
+              "schema_ref": {
+                "schema_key": "flight_details"
+              }
+            },
+            {
+              "archetype_key": "flight",
+              "facet_key": "flight",
+              "schema_ref": {
+                "schema_key": "flight_details"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missing_facet_binding",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "archetype_facet_bindings"
+          ],
+          "value": []
+        }
+      ]
+    },
+    {
+      "id": "unknown_selected_field",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "rendering_definitions",
+            0,
+            "revision",
+            "selections",
+            0,
+            "field_key"
+          ],
+          "value": "missing"
+        }
+      ]
+    },
+    {
+      "id": "wrong_projection",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "rendering_definitions",
+            0,
+            "revision",
+            "selections",
+            1,
+            "projection"
+          ],
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "id": "subject_reference_selected",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "fields",
+            1,
+            "target_kind"
+          ],
+          "value": "subject"
+        }
+      ]
+    },
+    {
+      "id": "duplicate_selection",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "rendering_definitions",
+            0,
+            "revision",
+            "selections"
+          ],
+          "value": [
+            {
+              "selection_key": "number",
+              "facet_key": "flight",
+              "schema_ref": {
+                "schema_key": "flight_details"
+              },
+              "field_key": "flight_number",
+              "label": "Flight",
+              "projection": "value"
+            },
+            {
+              "selection_key": "origin",
+              "facet_key": "flight",
+              "schema_ref": {
+                "schema_key": "flight_details"
+              },
+              "field_key": "origin",
+              "label": "From",
+              "projection": "location_label"
+            },
+            {
+              "selection_key": "number",
+              "facet_key": "flight",
+              "schema_ref": {
+                "schema_key": "flight_details"
+              },
+              "field_key": "flight_number",
+              "label": "Flight",
+              "projection": "value"
+            },
+            {
+              "selection_key": "origin",
+              "facet_key": "flight",
+              "schema_ref": {
+                "schema_key": "flight_details"
+              },
+              "field_key": "origin",
+              "label": "From",
+              "projection": "location_label"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "non_nfc_schema",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "display_name"
+          ],
+          "value": "Cafe\u0301"
+        }
+      ]
+    },
+    {
+      "id": "non_normalized_label",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "rendering_definitions",
+            0,
+            "revision",
+            "selections",
+            0,
+            "label"
+          ],
+          "value": " Flight  number "
+        }
+      ]
+    },
+    {
+      "id": "incompatible_schema",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "compatible_item_types"
+          ],
+          "value": [
+            "task"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wrong_kind_reference",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "notification_profiles",
+            0,
+            "revision",
+            "templates",
+            1,
+            "rendering",
+            "definition_ref"
+          ],
+          "value": {
+            "schema_key": "flight_details"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cross_pack_reference",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "notification_profiles",
+            0,
+            "revision",
+            "templates",
+            1,
+            "rendering",
+            "definition_ref",
+            "pack_id"
+          ],
+          "value": "elsewhere"
+        }
+      ]
+    },
+    {
+      "id": "json_number",
+      "valid": false,
+      "reseal": false,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "fields",
+            0,
+            "max_length"
+          ],
+          "value": 32
+        }
+      ]
+    },
+    {
+      "id": "out_of_range_integer",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "fields",
+            0
+          ],
+          "value": {
+            "key": "flight_number",
+            "type": "integer",
+            "required": false,
+            "queryable": false,
+            "min": "0",
+            "max": "9223372036854775808"
+          }
+        }
+      ]
+    },
+    {
+      "id": "inverted_integer_bounds",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "fields",
+            0
+          ],
+          "value": {
+            "key": "flight_number",
+            "type": "integer",
+            "required": false,
+            "queryable": false,
+            "min": "2",
+            "max": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "unsorted_enum",
+      "valid": false,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "fields",
+            0
+          ],
+          "value": {
+            "key": "flight_number",
+            "type": "enum",
+            "required": false,
+            "queryable": false,
+            "choices": [
+              "B",
+              "A"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "scalar_boolean",
+      "valid": true,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "fields",
+            0
+          ],
+          "value": {
+            "key": "flight_number",
+            "type": "boolean",
+            "required": false,
+            "queryable": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "scalar_date",
+      "valid": true,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "fields",
+            0
+          ],
+          "value": {
+            "key": "flight_number",
+            "type": "date",
+            "required": false,
+            "queryable": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "scalar_integer",
+      "valid": true,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "fields",
+            0
+          ],
+          "value": {
+            "key": "flight_number",
+            "type": "integer",
+            "required": false,
+            "queryable": false,
+            "min": "-2",
+            "max": "2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "scalar_enum",
+      "valid": true,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "facet_schemas",
+            0,
+            "definition",
+            "fields",
+            0
+          ],
+          "value": {
+            "key": "flight_number",
+            "type": "enum",
+            "required": false,
+            "queryable": false,
+            "choices": [
+              "A",
+              "B"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "ordinary_only_templates",
+      "valid": true,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "notification_profiles",
+            0,
+            "revision",
+            "templates"
+          ],
+          "value": [
+            {
+              "template_key": "four_hours_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-14400"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "3600"
+              },
+              "rendering": {
+                "kind": "ordinary"
+              }
+            },
+            {
+              "template_key": "one_hour_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-3600"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "900"
+              },
+              "rendering": {
+                "kind": "ordinary"
+              }
+            },
+            {
+              "template_key": "seven_days_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-604800"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "86400"
+              },
+              "rendering": {
+                "kind": "ordinary"
+              }
+            },
+            {
+              "template_key": "twenty_four_hours_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-86400"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "21600"
+              },
+              "rendering": {
+                "kind": "ordinary"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "presentation_order_retained",
+      "valid": true,
+      "reseal": true,
+      "edits": [
+        {
+          "op": "set",
+          "path": [
+            "rendering_definitions",
+            0,
+            "revision",
+            "selections"
+          ],
+          "value": [
+            {
+              "selection_key": "origin",
+              "facet_key": "flight",
+              "schema_ref": {
+                "schema_key": "flight_details"
+              },
+              "field_key": "origin",
+              "label": "From",
+              "projection": "location_label"
+            },
+            {
+              "selection_key": "number",
+              "facet_key": "flight",
+              "schema_ref": {
+                "schema_key": "flight_details"
+              },
+              "field_key": "flight_number",
+              "label": "Flight",
+              "projection": "value"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -16,7 +16,9 @@ Before changing installer behavior or artifacts, also read
 `specs/installer.md` and `specs/installer-artifacts.md`.
 For proposed facet-aware rendering work, additionally read
 `specs/facet-rendering-packs.md` and its implementation-plan sequence. This is
-specification/planning scope only; it does not authorize successor runtime work.
+specification and FR-1 contract/fixture scope; it does not authorize successor
+runtime work. The explicitly authorized repaired-baseline listing gate may use
+new disposable ledgers through public CLIs only, never an existing ledger.
 
 The files in `specs/` are the normative source of truth. `README.md` is
 orientation, pack-local READMEs describe pack status, and code must implement
@@ -86,8 +88,10 @@ material belongs in `docs/` only when the README is insufficient.
 
 ## Change checks
 
-The facet/rendering proposal inspects exact Spine commit
-`01ebce7b0c5fb9234e0eab55daca96b01c5cb6a7` (`0.9.0`, schema `19`). Existing
+The facet/rendering proposal now pins exact Spine commit
+`57cda1c2d5589360ee8efe7155fd20b503034c2a` (`0.9.1`, schema `19`). The original
+`01ebce7b0c5fb9234e0eab55daca96b01c5cb6a7` listing finding and audit are historical
+evidence and MUST NOT be rewritten. Existing
 runtime allowlists, v1 contracts and pack artifacts remain unchanged. Do not
 provision destination disclosure, create items, materialize reminders or send
 notifications as part of configuration installation. The staged bounded audit

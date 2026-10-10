@@ -2,9 +2,77 @@
 
 Inspection date: 2026-10-10. Design authority is
 `specs/facet-rendering-packs.md`; this file records evidence, not an alternative
-Spine contract or an implementation/qualification claim.
+Spine contract. The original inspection and the later narrow qualification below
+are distinct; neither is complete installer qualification.
 
-## Provenance and limits
+## Current repaired baseline and independent listing gate
+
+The operator explicitly replaced the broken baseline with locally available
+commit `57cda1c2d5589360ee8efe7155fd20b503034c2a`, runtime `0.9.1`, schema `19`.
+`git cat-file -t` confirmed the exact commit. A fresh `git archive` export was
+built into a wheel offline and installed into a new isolated environment; no
+checkout files were edited and no fetch, push or release was required.
+
+The diff from the original pin changes pagination/projection wiring and version
+declarations, plus upstream tests/docs. The four authoritative documents, public
+schemas, contract registries and compiled command registry below are unchanged.
+The existing 22-command map and 17-contract union therefore remain the proposed
+execution boundary; this does not add 0.9.1 to existing installer allowlists.
+
+Independent gate: **passed**, using `scripts/qualify_profile_v2_listing.py` and
+only installed public CLI subprocesses. It allocated a fresh private temporary
+ledger and synthetic owner, then checked:
+
+- ordinary v2 create, exact-revision show and list agreement;
+- complete mixed v1/v2 pagination at limits 1, 2 and 500, with no missing,
+  duplicated or reordered entries and one consistent catalog snapshot;
+- a definition-pinned profile retaining its exact rendering root/revision;
+- stored v1/v2 decoder identity and the unchanged v1 rejection guard; and
+- v2 public response schemas and system-info-v3 with Draft 2020-12 validation.
+
+The 28 public invocations include migration and synthetic owner setup. There
+were no SQL reads, internal handler imports, existing ledger access, items,
+disclosure authorizations, materialization or notifications. No proof of general
+read-only ledger integrity is inferred merely from successful list responses.
+
+Provenance:
+
+- Spine wheel SHA-256:
+  `f1783e020ae5de97c0c772b0e1de2c7ed48f5b56f94d2f7398279b7581bf332b`.
+- All 299 packaged `spine/` files match both the exact exported source and the
+  installed files byte-for-byte. This verifies imported-package provenance,
+  rather than relying on the console-script hash or runtime version alone.
+- Tickerd 0.2.0 wheel SHA-256:
+  `7c23fc1910ec8db1f88cb674f2bec8b7d6055b54cd255d56d50c6972367d2a71`;
+  `system.info` validated its required descriptor/compatibility evidence.
+- Retained disposable run:
+  `/var/folders/sg/n2czprsx78764j63m_mjcm1m0000gn/T/spine-packs-profile-v2-gate-nx393onr`.
+- `public-cli-transcript.json` SHA-256:
+  `ae336a793c48f86fa4495edf0437bd0c01c0fc5d9b445c1996ce502eb16ad171`.
+- Isolated source/build/runtime root:
+  `/private/tmp/spine-packs-spine091-source.dZGujO`.
+
+Re-run the gate with that isolated installed environment (or independently build
+the same exact Git tree into a new one):
+
+```sh
+/private/tmp/spine-packs-spine091-source.dZGujO/runtime-env/bin/python -I \
+  /Users/Shared/Agent-Workspace/repos/personal/spine-packs/scripts/qualify_profile_v2_listing.py \
+  --bin-dir /private/tmp/spine-packs-spine091-source.dZGujO/runtime-env/bin \
+  --schemas-dir /private/tmp/spine-packs-spine091-source.dZGujO/contracts/schemas
+```
+
+The harness accepts no ledger path. Each invocation allocates and retains a new
+private run directory. Source commit provenance must be established by the
+build/export check separately; `system.info` does not attest a Git commit.
+
+This is independent evidence for the listing repair only. The upstream report
+of 1,023 tests, six CLI regressions and wheel checks is handoff evidence, not
+tests rerun by Spine Packs. FR-5 still must qualify the actual successor
+installer's plan/apply/recovery/verify and installed package. Neither baseline
+nor new pack content is released or deployable through the existing installer.
+
+## Original 0.9.0 inspection provenance and limits
 
 Reference checkout:
 `/Users/Shared/Agent-Workspace/repos/personal/cortext1/spine`.
@@ -140,9 +208,9 @@ This is source inspection only, not permission to import these implementations
 into the installer. No existing public receipt read command was found in the
 compiled command registry.
 
-## Source-level qualification blocker: profile v2 listing
+## Historical blocker: profile v2 listing at 01ebce7
 
-At the exact requested pin:
+At the original exact requested pin (not the repaired 57cda1c pin):
 
 1. `src/spine/commands/rendering_candidate.py` selects the v2 profile handler.
 2. `src/spine/commands/rendering_profiles.py`'s `.list` branch calls
@@ -160,7 +228,7 @@ and verification. It has NOT been reproduced against a disposable ledger in
 this specification-only task. Source excerpts/hashes are staged in the audit's
 `spine-readback-blocker.md` so the finding can be checked independently.
 
-Next gate: separately authorize a minimal public-CLI regression on this exact
+The original next gate was to separately authorize a minimal public-CLI regression on this exact
 pin: create a synthetic v2 ordinary profile, show it with v2, then list its owner
 with v2, including mixed v1/v2 and paginated cases. Do not deploy, bypass listing,
 read the database, import handlers as an installer shortcut, or claim successful
@@ -168,12 +236,42 @@ qualification before that gate. If confirmed, route the defect to Spine's owner;
 any repaired baseline must be explicitly approved and separately pinned here.
 Do not substitute a newer 0.9.0 build under the original qualification record.
 
+The Spine handoff reports reproducing and repairing that original failure.
+Spine Packs has now independently tested only the repaired pin as recorded above.
+The original 14-file audit payload, source excerpts, finding and report remain
+unchanged in `whetstone_runs/facet-rendering-spec-audit-001/`.
+
 ## Unproved until later slices
 
-No successor schema, fixture, installer code or curated pack was implemented.
-No exact-baseline disposable ledger, wheel rebuild, recovery fault injection or
-consumer authoring workflow was exercised. Planned aggregate observation budgets
-and family-specific evidence schemas still need machine-contract review.
-Current regression tests can establish preservation of old behavior, not that
-the proposed new workflow works. The bounded audit is staged separately and
-cannot be called passed or converged before an approved reviewer run.
+FR-1 has begun with a draft successor manifest schema, synthetic flight fixture
+and positive/negative contract vectors. No installer runtime or curated pack was
+changed. Seven v2 installer artifacts, full public request/response schema closure,
+aggregate observation budgets, resolution slots and recovery/verification flow
+fixtures remain FR-1 work. The original audit passed with one minor clarification
+(locally addressed); it does not review these new machine artifacts. A further
+bounded review needs separately approved exact payload bytes.
+
+## Spine Packs preservation and manifest checks
+
+After the baseline update and first manifest-only FR-1 increment:
+
+- `python3 scripts/verify_repo.py`: passed, 125 required files.
+- Standard contract discovery: 65 passed, five development-schema checks visibly
+  skipped because the default Python lacks `jsonschema`.
+- Isolated contract discovery with `jsonschema` 4.26.0: all 70 tests passed,
+  including v2 Draft 2020-12 meta-validation and 35 indexed manifest vectors.
+- Standard runtime discovery: all 126 tests passed.
+- Tracked and new-file whitespace checks: passed.
+- Existing installer runtime, v1 schemas, all pack artifacts and the original
+  bounded audit are unchanged. Unrelated local audit directories were preserved.
+
+The new v2 checks can be rerun with the isolated environment's Python:
+
+```sh
+/private/tmp/spine-packs-spine091-source.dZGujO/runtime-env/bin/python \
+  -m unittest discover -s tests/contract -p 'test_facet_manifest_contract.py'
+```
+
+No external reviewer was invoked and no commit, push, deployment or publication
+was performed. These checks do not complete FR-1's installer-artifact work or
+FR-5's successor installer package qualification.

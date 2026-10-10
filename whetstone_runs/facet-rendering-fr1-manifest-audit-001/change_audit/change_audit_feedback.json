@@ -1,0 +1,35 @@
+{
+  "draft_hash": "a8b6b77a15eed09b7a917b937b46a6993f21fff4759217037a2c53ef3a0913fe",
+  "feedback": [
+    {
+      "affected_sections": [
+        "Change intent",
+        "Current checks and exclusions",
+        "contracts/pack-fixture-manifest.v2.json"
+      ],
+      "authority_impact": null,
+      "baseline_severity": "minor",
+      "claim": "The audit brief repeatedly describes the v2 manifest fixture matrix as 35 indexed vectors, but the supplied fixture manifest contains more vectors, so the review target count is internally inconsistent.",
+      "determinism_impact": null,
+      "evidence": "The Change intent says \u201cindexed mutation vectors\u201d and the Review targets item 4 asks whether \u201cthe 35 indexed vectors test the claimed failure stage\u201d; Current checks also says isolated contract discovery passed \u201c35 indexed manifest vectors.\u201d However `contracts/pack-fixture-manifest.v2.json` lists vectors from `wrong_runtime` through `presentation_order_retained`, including additional positive scalar and ordering vectors beyond 35.",
+      "feedback_id": "fb_001",
+      "in_scope": true,
+      "invariant_violated": "acceptance_testability",
+      "issue_fingerprint": "824b9c575dc56643f45cc72c9cb7b406ccdd6b70626ed8460694ad96d32c46b5",
+      "issue_id": "iss_824b9c575dc56643",
+      "issue_type": "artifact_reference_consistency",
+      "normalized_severity": "minor",
+      "oscillation_key": null,
+      "recommended_change": "Align the stated vector count with the fixture manifest, preferably by replacing hard-coded \u201c35 indexed vectors\u201d wording with the actual count or with count-neutral wording such as \u201cthe indexed manifest vectors.\u201d",
+      "rubric_impact": "minor",
+      "severity_rationale": "This does not change manifest semantics or authority boundaries, but it can mislead the bounded audit and acceptance evidence about which vectors were reviewed and passed."
+    }
+  ],
+  "profile": "consistency",
+  "reviewer": {
+    "model": "GPT-5",
+    "name": "Codex Consistency Reviewer",
+    "version": "1.0.0"
+  },
+  "round_number": 1
+}
