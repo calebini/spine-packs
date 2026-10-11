@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spine-packs.local/contracts/schemas/spine-pack-embedded-values.v2.schema.json",
+  "$defs": {
+    "archetype": {
+      "$ref": "spine-readback-0.9.1.schema.json#/$defs/semantic_archetype"
+    },
+    "schema": {
+      "$ref": "spine-readback-0.9.1.schema.json#/$defs/semantic_schema"
+    },
+    "rendering": {
+      "$ref": "spine-readback-0.9.1.schema.json#/$defs/semantic_rendering"
+    },
+    "profile": {
+      "$ref": "spine-readback-0.9.1.schema.json#/$defs/semantic_profile"
+    },
+    "profile_v1": {
+      "$ref": "spine-readback-0.9.1.schema.json#/$defs/semantic_profile_v1"
+    },
+    "facet_binding": {
+      "$ref": "spine-readback-0.9.1.schema.json#/$defs/semantic_facet_binding"
+    },
+    "binding": {
+      "$ref": "spine-readback-0.9.1.schema.json#/$defs/semantic_binding"
+    }
+  }
+}

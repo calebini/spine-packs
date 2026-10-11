@@ -339,7 +339,26 @@ class PlanningTests(unittest.TestCase):
                 if isinstance(schema.get(key), dict): inspect(schema[key])
             for key in ("oneOf", "anyOf", "allOf"):
                 for child in schema.get(key, []): inspect(child)
-        for path in a.SCHEMA_ROOT.glob("*.json"):
+        # This is the implemented v1 decoder's vocabulary gate, not an assertion
+        # that proposed successor contracts are accepted by the current runtime.
+        # Keep every original runtime schema covered explicitly. FR-1 v2 uses
+        # independent Draft 2020-12 validation under tests/contract/.
+        runtime_schema_names = (
+            "spine-pack-manifest.v1.schema.json",
+            "spine-pack-installer-types.v1.schema.json",
+            "spine-pack-embedded-values.v1.schema.json",
+            "spine-pack-install-request.v1.schema.json",
+            "spine-pack-install-plan.v1.schema.json",
+            "spine-pack-install-approval.v1.schema.json",
+            "spine-pack-apply-checkpoint.v1.schema.json",
+            "spine-pack-apply-result.v1.schema.json",
+            "spine-pack-verification-result.v1.schema.json",
+            "spine-pack-installer-result.v1.schema.json",
+            "spine-readback-0.3.0.schema.json",
+            "spine-readback-0.5.0.schema.json",
+        )
+        for name in runtime_schema_names:
+            path = a.SCHEMA_ROOT / name
             with self.subTest(schema=path.name): inspect(a.load_json(path))
 
     def test_public_boolean_is_not_a_json_integer(self):

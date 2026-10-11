@@ -19,6 +19,8 @@ For proposed facet-aware rendering work, additionally read
 specification and FR-1 contract/fixture scope; it does not authorize successor
 runtime work. The explicitly authorized repaired-baseline listing gate may use
 new disposable ledgers through public CLIs only, never an existing ledger.
+For successor installer artifacts, also read `specs/installer-artifacts-v2.md`.
+Its test-only oracle and v2 schemas do not expand current runtime authority.
 
 The files in `specs/` are the normative source of truth. `README.md` is
 orientation, pack-local READMEs describe pack status, and code must implement

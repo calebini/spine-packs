@@ -4,6 +4,11 @@ Status: proposed; FR-1 contract/fixture work in progress, runtime not implemente
 Repaired baseline inspected on 2026-10-10. Normative language below defines
 the proposed successor, not additional authority for the current installer.
 
+The FR-1 installer-artifact codification is in
+[installer-artifacts-v2.md](installer-artifacts-v2.md), with separate v2 schemas,
+source inventory and synthetic execution/recovery fixtures. It remains pending
+bounded review; it does not widen the current runtime's command allowlists.
+
 ## 1. Scope and authority
 
 Propose `spine.pack-manifest.v2` and a separately versioned v2 installer-artifact

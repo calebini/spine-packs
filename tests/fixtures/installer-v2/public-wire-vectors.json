@@ -1,0 +1,1065 @@
+{
+  "spine_commit": "57cda1c2d5589360ee8efe7155fd20b503034c2a",
+  "purpose": "Unchanged upstream structural vectors; not installer acceptance or target qualification",
+  "vectors": [
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_facet_schema_create.json",
+      "source_sha256": "101fad9c030dc8cbb08ec1a8f3048cc1fb01dfe5c5b83db1ecd8cea0c49eee67",
+      "command": "facet_schema.create",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "facet_schema.create",
+        "response_contract": "spine.facet-schemas.v1",
+        "command_id": "fixture-facet_schema.create",
+        "command_receipt_id": "command_receipt_f56a6df1a40911c984227d9140b10edf8717255b01fc4246629b4222816e2cf3",
+        "effect": "facet_schema_created",
+        "changed": true,
+        "audit_id": "audit_bee5bab0fb7802517627e79802080fcf1a9a53d6a08a9eeb70289314999640b4",
+        "facet_schema_id": "facet_schema_c0742a134b0891560b65c377fd3ef4936b12fb8aa1f6a3aba7087760479261c4",
+        "prior_revision_id": null,
+        "facet_schema_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "revision_number": "1",
+        "replayed": false
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_facet_schema_create_preview.json",
+      "source_sha256": "f4a8d6be08f8826c9aab2d2cc9563e3041dffa5ad88eef94df687c4a92b7db52",
+      "command": "facet_schema.create",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "facet_schema.create",
+        "response_contract": "spine.facet-schemas.v1",
+        "command_id": "fixture-facet_schema.create",
+        "command_receipt_id": "command_receipt_f56a6df1a40911c984227d9140b10edf8717255b01fc4246629b4222816e2cf3",
+        "effect": "facet_schema_created",
+        "changed": true,
+        "audit_id": "audit_bee5bab0fb7802517627e79802080fcf1a9a53d6a08a9eeb70289314999640b4",
+        "facet_schema_id": "facet_schema_c0742a134b0891560b65c377fd3ef4936b12fb8aa1f6a3aba7087760479261c4",
+        "prior_revision_id": null,
+        "facet_schema_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "revision_number": "1",
+        "replayed": false,
+        "dry_run": true
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_facet_schema_create_replay.json",
+      "source_sha256": "1046acd5688dd8c5024b814bd0141cf27a7eb67bc7d2b712f2f955f60e7888d8",
+      "command": "facet_schema.create",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "facet_schema.create",
+        "response_contract": "spine.facet-schemas.v1",
+        "command_id": "fixture-facet_schema.create",
+        "command_receipt_id": "command_receipt_f56a6df1a40911c984227d9140b10edf8717255b01fc4246629b4222816e2cf3",
+        "effect": "facet_schema_created",
+        "changed": false,
+        "audit_id": "audit_bee5bab0fb7802517627e79802080fcf1a9a53d6a08a9eeb70289314999640b4",
+        "facet_schema_id": "facet_schema_c0742a134b0891560b65c377fd3ef4936b12fb8aa1f6a3aba7087760479261c4",
+        "prior_revision_id": null,
+        "facet_schema_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "revision_number": "1",
+        "replayed": true
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_facet_schema_list.json",
+      "source_sha256": "5a14f8c1c76194562f6b5377e220399bdd6c35c71329c36dc11a08435c833366",
+      "command": "facet_schema.list",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "facet_schema.list",
+        "response_contract": "spine.facet-schemas.v1",
+        "owner": {
+          "owner_kind": "subject_group",
+          "owner_group_id": "travel-team"
+        },
+        "schemas": [
+          {
+            "facet_schema_id": "facet_schema_c0742a134b0891560b65c377fd3ef4936b12fb8aa1f6a3aba7087760479261c4",
+            "owner": {
+              "owner_kind": "subject_group",
+              "owner_group_id": "travel-team"
+            },
+            "schema_key": "flight_details",
+            "current_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+            "status": "active"
+          }
+        ],
+        "limit": "25",
+        "has_more": false,
+        "next_cursor": null
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_facet_schema_publish.json",
+      "source_sha256": "6334a9860920846002c131ed615d47adfa9046b5ba5ec5e190e09f5258c1114e",
+      "command": "facet_schema.publish",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "facet_schema.publish",
+        "response_contract": "spine.facet-schemas.v1",
+        "command_id": "fixture-facet_schema.publish",
+        "command_receipt_id": "command_receipt_535c76fe7f398e86b615b7e75880bd42d3de0ed9c45ae8811416215741c8da53",
+        "effect": "facet_schema_published",
+        "changed": true,
+        "audit_id": "audit_3966e681ca708e88f61508bb38dc45d10a120256d13eaa4f0c78aa9700f5494c",
+        "facet_schema_id": "facet_schema_c0742a134b0891560b65c377fd3ef4936b12fb8aa1f6a3aba7087760479261c4",
+        "prior_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "facet_schema_revision_id": "facet_schema_revision_1726cea8399ecbb54963f4054eaee4344eb21bd64bac0539cb84ac89a0a48372",
+        "revision_number": "2",
+        "replayed": false
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_facet_schema_publish_noop.json",
+      "source_sha256": "66bf856ee07876508e6d2c9e3949851a32d19fcc138e3669f49061331d9b4e26",
+      "command": "facet_schema.publish",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "facet_schema.publish",
+        "response_contract": "spine.facet-schemas.v1",
+        "command_id": "fixture-facet_schema.publish",
+        "command_receipt_id": "command_receipt_535c76fe7f398e86b615b7e75880bd42d3de0ed9c45ae8811416215741c8da53",
+        "effect": "facet_schema_publish_noop",
+        "changed": false,
+        "facet_schema_id": "facet_schema_c0742a134b0891560b65c377fd3ef4936b12fb8aa1f6a3aba7087760479261c4",
+        "prior_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "facet_schema_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "revision_number": "1",
+        "replayed": false
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_facet_schema_publish_noop_replay.json",
+      "source_sha256": "d61904f311e9a444dad516b389f3b321f8bf8d1306eb3451effc29b2db2f6e16",
+      "command": "facet_schema.publish",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "facet_schema.publish",
+        "response_contract": "spine.facet-schemas.v1",
+        "command_id": "fixture-facet_schema.publish",
+        "command_receipt_id": "command_receipt_535c76fe7f398e86b615b7e75880bd42d3de0ed9c45ae8811416215741c8da53",
+        "effect": "facet_schema_publish_noop",
+        "changed": false,
+        "facet_schema_id": "facet_schema_c0742a134b0891560b65c377fd3ef4936b12fb8aa1f6a3aba7087760479261c4",
+        "prior_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "facet_schema_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "revision_number": "1",
+        "replayed": true
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_facet_schema_publish_replay.json",
+      "source_sha256": "d570921d4dfb14237e6426fd6aed910ede0a4b137676d15fc2df143947e5d212",
+      "command": "facet_schema.publish",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "facet_schema.publish",
+        "response_contract": "spine.facet-schemas.v1",
+        "command_id": "fixture-facet_schema.publish",
+        "command_receipt_id": "command_receipt_535c76fe7f398e86b615b7e75880bd42d3de0ed9c45ae8811416215741c8da53",
+        "effect": "facet_schema_published",
+        "changed": false,
+        "audit_id": "audit_3966e681ca708e88f61508bb38dc45d10a120256d13eaa4f0c78aa9700f5494c",
+        "facet_schema_id": "facet_schema_c0742a134b0891560b65c377fd3ef4936b12fb8aa1f6a3aba7087760479261c4",
+        "prior_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "facet_schema_revision_id": "facet_schema_revision_1726cea8399ecbb54963f4054eaee4344eb21bd64bac0539cb84ac89a0a48372",
+        "revision_number": "2",
+        "replayed": true
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_facet_schema_show.json",
+      "source_sha256": "c8b11476cf04de531a05ce6fa13f2abb561ab22b8327a88b1b9d93a354608ffe",
+      "command": "facet_schema.show",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "facet_schema.show",
+        "response_contract": "spine.facet-schemas.v1",
+        "root": {
+          "facet_schema_id": "facet_schema_c0742a134b0891560b65c377fd3ef4936b12fb8aa1f6a3aba7087760479261c4",
+          "owner": {
+            "owner_kind": "subject_group",
+            "owner_group_id": "travel-team"
+          },
+          "schema_key": "flight_details",
+          "current_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+          "status": "active"
+        },
+        "revision": {
+          "facet_schema_id": "facet_schema_c0742a134b0891560b65c377fd3ef4936b12fb8aa1f6a3aba7087760479261c4",
+          "facet_schema_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+          "revision_number": "1",
+          "definition": {
+            "display_name": "Flight details",
+            "description": "Descriptive flight identifiers and airport references.",
+            "compatible_item_types": [
+              "event"
+            ],
+            "fields": [
+              {
+                "key": "airline",
+                "required": false,
+                "type": "text",
+                "max_length": "128",
+                "queryable": false
+              },
+              {
+                "key": "destination",
+                "required": true,
+                "type": "reference",
+                "target_kind": "location",
+                "queryable": true
+              },
+              {
+                "key": "flight_number",
+                "required": true,
+                "type": "text",
+                "max_length": "32",
+                "queryable": true
+              },
+              {
+                "key": "origin",
+                "required": true,
+                "type": "reference",
+                "target_kind": "location",
+                "queryable": true
+              }
+            ]
+          },
+          "definition_hash": "27ef8c40d4fa989f1d99830286b541d04d91c2ea3648c8f67172b5fc199aacdc"
+        }
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_item_archetype_facet_binding_list.json",
+      "source_sha256": "f2c6b44251acf04ca6da1f25cb7c52ab37a2c6a2c67a7be63335b235aad69bf6",
+      "command": "item_archetype.facet_binding.list",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "item_archetype.facet_binding.list",
+        "response_contract": "spine.archetype-facet-bindings.v1",
+        "item_archetype_id": "archetype-flight",
+        "bindings": [
+          {
+            "facet_binding_id": "archetype_facet_binding_db3fa09d817a7b76f9a2ec442900d7051d04b284a771ef7d998ff001774a305f",
+            "item_archetype_id": "archetype-flight",
+            "facet_key": "flight_details",
+            "facet_schema_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+            "status": "active"
+          }
+        ],
+        "limit": "25",
+        "has_more": false,
+        "next_cursor": null
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_item_archetype_facet_binding_set.json",
+      "source_sha256": "8b404eb948c26e3d9a2a12a14b23fe051d604f89c37e3eb9e947dd80899f7c9d",
+      "command": "item_archetype.facet_binding.set",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "item_archetype.facet_binding.set",
+        "response_contract": "spine.archetype-facet-bindings.v1",
+        "command_id": "fixture-item_archetype.facet_binding.set",
+        "command_receipt_id": "command_receipt_9c58a4461b76231d30ba00cf235cdc20452b416b40b4229d1e10fbe30875be02",
+        "effect": "facet_binding_set",
+        "changed": true,
+        "audit_id": "audit_c317d75dc51ea6267b3357de77439879f26001f2ed87606e968e7c91c6ea03c5",
+        "item_archetype_id": "archetype-flight",
+        "facet_key": "flight_details",
+        "prior_binding_id": null,
+        "facet_binding_id": "archetype_facet_binding_db3fa09d817a7b76f9a2ec442900d7051d04b284a771ef7d998ff001774a305f",
+        "facet_schema_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "replayed": false
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_item_archetype_facet_binding_set_noop.json",
+      "source_sha256": "9675548c27c26e68e13dd398b730b09561c2aba828a550eea08a980ad85ea288",
+      "command": "item_archetype.facet_binding.set",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "item_archetype.facet_binding.set",
+        "response_contract": "spine.archetype-facet-bindings.v1",
+        "command_id": "fixture-item_archetype.facet_binding.set",
+        "command_receipt_id": "command_receipt_9c58a4461b76231d30ba00cf235cdc20452b416b40b4229d1e10fbe30875be02",
+        "effect": "facet_binding_set_noop",
+        "changed": false,
+        "item_archetype_id": "archetype-flight",
+        "facet_key": "flight_details",
+        "prior_binding_id": "archetype_facet_binding_db3fa09d817a7b76f9a2ec442900d7051d04b284a771ef7d998ff001774a305f",
+        "facet_binding_id": "archetype_facet_binding_db3fa09d817a7b76f9a2ec442900d7051d04b284a771ef7d998ff001774a305f",
+        "facet_schema_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "replayed": false
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_item_archetype_facet_binding_set_noop_replay.json",
+      "source_sha256": "b86fbe60569348773b59bd203922e0ac24bc1a6f23abce64c4aae8e599b56f6c",
+      "command": "item_archetype.facet_binding.set",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "item_archetype.facet_binding.set",
+        "response_contract": "spine.archetype-facet-bindings.v1",
+        "command_id": "fixture-item_archetype.facet_binding.set",
+        "command_receipt_id": "command_receipt_9c58a4461b76231d30ba00cf235cdc20452b416b40b4229d1e10fbe30875be02",
+        "effect": "facet_binding_set_noop",
+        "changed": false,
+        "item_archetype_id": "archetype-flight",
+        "facet_key": "flight_details",
+        "prior_binding_id": "archetype_facet_binding_db3fa09d817a7b76f9a2ec442900d7051d04b284a771ef7d998ff001774a305f",
+        "facet_binding_id": "archetype_facet_binding_db3fa09d817a7b76f9a2ec442900d7051d04b284a771ef7d998ff001774a305f",
+        "facet_schema_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "replayed": true
+      }
+    },
+    {
+      "source": "tests/fixtures/archetype_facets/contracts/response_item_archetype_facet_binding_set_replay.json",
+      "source_sha256": "3107e95609af1cdaf2887c457d3ae7dab7fdd3127223bb668189f81baba7221e",
+      "command": "item_archetype.facet_binding.set",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "item_archetype.facet_binding.set",
+        "response_contract": "spine.archetype-facet-bindings.v1",
+        "command_id": "fixture-item_archetype.facet_binding.set",
+        "command_receipt_id": "command_receipt_9c58a4461b76231d30ba00cf235cdc20452b416b40b4229d1e10fbe30875be02",
+        "effect": "facet_binding_set",
+        "changed": false,
+        "audit_id": "audit_c317d75dc51ea6267b3357de77439879f26001f2ed87606e968e7c91c6ea03c5",
+        "item_archetype_id": "archetype-flight",
+        "facet_key": "flight_details",
+        "prior_binding_id": null,
+        "facet_binding_id": "archetype_facet_binding_db3fa09d817a7b76f9a2ec442900d7051d04b284a771ef7d998ff001774a305f",
+        "facet_schema_revision_id": "facet_schema_revision_fcbda5c8b6c18df146f519ce33d83e46ab7a59017b0912c41b0eda4b363af4a8",
+        "replayed": true
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_definitions/contracts/response_definition_create.json",
+      "source_sha256": "f946fd5197bd47c40c54880696d13f4838eb66d974b20d42dffa569ed049a7f4",
+      "command": "notification_rendering_definition.create",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "contract_version": "spine.notification-rendering-definitions.v1",
+        "command": "notification_rendering_definition.create",
+        "command_id": "rendering-example-create",
+        "changed": true,
+        "replayed": false,
+        "effect": "rendering_definition_created",
+        "command_receipt_id": "command_receipt_dd4776c5d577d6546bfd1a8355f613a2ff15ea56df1d73e9e66e4f0a3d1502b3",
+        "audit_id": "audit_dc74aec2532b800cebd3e45400dda9b093ed1bdec7ce94f29eb06d0fc3fa73e1",
+        "record": {
+          "notification_rendering_definition_id": "notification_rendering_definition_02f257fab5ae9d05c29ad78672208f2329671a72dbb76fa6773c9623950fa1fe",
+          "notification_rendering_definition_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52",
+          "owner": {
+            "owner_kind": "subject_group",
+            "owner_group_id": "example-group"
+          },
+          "definition_key": "flight_details",
+          "status": "active",
+          "current_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52",
+          "revision_number": "1",
+          "revision": {
+            "display_name": "Flight details",
+            "description": null,
+            "compatible_item_types": [
+              "event"
+            ],
+            "base_rendering_contract": "spine.notification-rendering.v1",
+            "base_rendering_profile": "spine.notification-rendering.concise-en-ca.v1",
+            "selections": [
+              {
+                "selection_key": "flight",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "flight_number",
+                "label": "Flight",
+                "projection": "value"
+              },
+              {
+                "selection_key": "terminal",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "terminal",
+                "label": "Terminal",
+                "projection": "value"
+              },
+              {
+                "selection_key": "departure",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "departure_airport",
+                "label": "Departure",
+                "projection": "location_label"
+              }
+            ]
+          },
+          "definition_hash": "6d8aaffc80a2e54efa76fcd02be0a1f65881e111f5902b8fd271a6ae0a7d5fdb",
+          "created": {
+            "command_id": "rendering-example-create",
+            "actor_subject_id": "example-operator",
+            "action_timestamp_utc": "2026-10-03T12:00:00Z"
+          },
+          "published": {
+            "command_id": "rendering-example-create",
+            "actor_subject_id": "example-operator",
+            "action_timestamp_utc": "2026-10-03T12:00:00Z"
+          },
+          "retired": null
+        }
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_definitions/contracts/response_definition_create_dry_run.json",
+      "source_sha256": "bd07400d3ed100a2620b6084718e911b07faee8de5289c2ab392fe1bfd3dcce9",
+      "command": "notification_rendering_definition.create",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "contract_version": "spine.notification-rendering-definitions.v1",
+        "command": "notification_rendering_definition.create",
+        "command_id": "rendering-example-create",
+        "changed": true,
+        "replayed": false,
+        "dry_run": true,
+        "effect": "rendering_definition_created",
+        "command_receipt_id": "command_receipt_dd4776c5d577d6546bfd1a8355f613a2ff15ea56df1d73e9e66e4f0a3d1502b3",
+        "audit_id": "audit_dc74aec2532b800cebd3e45400dda9b093ed1bdec7ce94f29eb06d0fc3fa73e1",
+        "record": {
+          "notification_rendering_definition_id": "notification_rendering_definition_02f257fab5ae9d05c29ad78672208f2329671a72dbb76fa6773c9623950fa1fe",
+          "notification_rendering_definition_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52",
+          "owner": {
+            "owner_kind": "subject_group",
+            "owner_group_id": "example-group"
+          },
+          "definition_key": "flight_details",
+          "status": "active",
+          "current_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52",
+          "revision_number": "1",
+          "revision": {
+            "display_name": "Flight details",
+            "description": null,
+            "compatible_item_types": [
+              "event"
+            ],
+            "base_rendering_contract": "spine.notification-rendering.v1",
+            "base_rendering_profile": "spine.notification-rendering.concise-en-ca.v1",
+            "selections": [
+              {
+                "selection_key": "flight",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "flight_number",
+                "label": "Flight",
+                "projection": "value"
+              },
+              {
+                "selection_key": "terminal",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "terminal",
+                "label": "Terminal",
+                "projection": "value"
+              },
+              {
+                "selection_key": "departure",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "departure_airport",
+                "label": "Departure",
+                "projection": "location_label"
+              }
+            ]
+          },
+          "definition_hash": "6d8aaffc80a2e54efa76fcd02be0a1f65881e111f5902b8fd271a6ae0a7d5fdb",
+          "created": {
+            "command_id": "rendering-example-create",
+            "actor_subject_id": "example-operator",
+            "action_timestamp_utc": "2026-10-03T12:00:00Z"
+          },
+          "published": {
+            "command_id": "rendering-example-create",
+            "actor_subject_id": "example-operator",
+            "action_timestamp_utc": "2026-10-03T12:00:00Z"
+          },
+          "retired": null
+        }
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_definitions/contracts/response_definition_create_replay.json",
+      "source_sha256": "c19b5b249038c43968b7ca53209f7adf0662717bf9571898cc8cdd9c6c934178",
+      "command": "notification_rendering_definition.create",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "contract_version": "spine.notification-rendering-definitions.v1",
+        "command": "notification_rendering_definition.create",
+        "command_id": "rendering-example-create",
+        "changed": false,
+        "replayed": true,
+        "effect": "rendering_definition_created",
+        "command_receipt_id": "command_receipt_dd4776c5d577d6546bfd1a8355f613a2ff15ea56df1d73e9e66e4f0a3d1502b3",
+        "audit_id": "audit_dc74aec2532b800cebd3e45400dda9b093ed1bdec7ce94f29eb06d0fc3fa73e1",
+        "record": {
+          "notification_rendering_definition_id": "notification_rendering_definition_02f257fab5ae9d05c29ad78672208f2329671a72dbb76fa6773c9623950fa1fe",
+          "notification_rendering_definition_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52",
+          "owner": {
+            "owner_kind": "subject_group",
+            "owner_group_id": "example-group"
+          },
+          "definition_key": "flight_details",
+          "status": "active",
+          "current_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52",
+          "revision_number": "1",
+          "revision": {
+            "display_name": "Flight details",
+            "description": null,
+            "compatible_item_types": [
+              "event"
+            ],
+            "base_rendering_contract": "spine.notification-rendering.v1",
+            "base_rendering_profile": "spine.notification-rendering.concise-en-ca.v1",
+            "selections": [
+              {
+                "selection_key": "flight",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "flight_number",
+                "label": "Flight",
+                "projection": "value"
+              },
+              {
+                "selection_key": "terminal",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "terminal",
+                "label": "Terminal",
+                "projection": "value"
+              },
+              {
+                "selection_key": "departure",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "departure_airport",
+                "label": "Departure",
+                "projection": "location_label"
+              }
+            ]
+          },
+          "definition_hash": "6d8aaffc80a2e54efa76fcd02be0a1f65881e111f5902b8fd271a6ae0a7d5fdb",
+          "created": {
+            "command_id": "rendering-example-create",
+            "actor_subject_id": "example-operator",
+            "action_timestamp_utc": "2026-10-03T12:00:00Z"
+          },
+          "published": {
+            "command_id": "rendering-example-create",
+            "actor_subject_id": "example-operator",
+            "action_timestamp_utc": "2026-10-03T12:00:00Z"
+          },
+          "retired": null
+        }
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_definitions/contracts/response_definition_list_dry_run.json",
+      "source_sha256": "03822daa5a287b332a4fbe7f62bac74c98b4447747415edf83a62aa1313a5e9c",
+      "command": "notification_rendering_definition.list",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "contract_version": "spine.notification-rendering-definitions.v1",
+        "command": "notification_rendering_definition.list",
+        "records": [],
+        "has_more": false,
+        "next_cursor": null,
+        "limit": "20",
+        "dry_run": true
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_definitions/contracts/response_definition_list_empty.json",
+      "source_sha256": "aeeed7167a39cbf3c60627f8db80abafb32aa7989e2f07a310b1d52f1d25a15d",
+      "command": "notification_rendering_definition.list",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "contract_version": "spine.notification-rendering-definitions.v1",
+        "command": "notification_rendering_definition.list",
+        "records": [],
+        "has_more": false,
+        "next_cursor": null,
+        "limit": "20"
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_definitions/contracts/response_definition_publish_noop.json",
+      "source_sha256": "7089a2fdb00c475710db37c55ed22a5e835f606bb8002d9916ba06e3ee18d5f7",
+      "command": "notification_rendering_definition.publish",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "contract_version": "spine.notification-rendering-definitions.v1",
+        "command": "notification_rendering_definition.publish",
+        "command_id": "rendering-example-publish-noop",
+        "changed": false,
+        "replayed": false,
+        "effect": "rendering_definition_publish_noop",
+        "command_receipt_id": "command_receipt_c92376d4bcb98d1dec472473e31d6f71bf46ca68921097937fad81a556e9ecd5",
+        "audit_id": "audit_7ded09e8e81bdeb89066850363a08ed8ce852b44c4273001d46bf77bbcf95136",
+        "record": {
+          "notification_rendering_definition_id": "notification_rendering_definition_02f257fab5ae9d05c29ad78672208f2329671a72dbb76fa6773c9623950fa1fe",
+          "notification_rendering_definition_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52",
+          "owner": {
+            "owner_kind": "subject_group",
+            "owner_group_id": "example-group"
+          },
+          "definition_key": "flight_details",
+          "status": "active",
+          "current_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52",
+          "revision_number": "1",
+          "revision": {
+            "display_name": "Flight details",
+            "description": null,
+            "compatible_item_types": [
+              "event"
+            ],
+            "base_rendering_contract": "spine.notification-rendering.v1",
+            "base_rendering_profile": "spine.notification-rendering.concise-en-ca.v1",
+            "selections": [
+              {
+                "selection_key": "flight",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "flight_number",
+                "label": "Flight",
+                "projection": "value"
+              },
+              {
+                "selection_key": "terminal",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "terminal",
+                "label": "Terminal",
+                "projection": "value"
+              },
+              {
+                "selection_key": "departure",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "departure_airport",
+                "label": "Departure",
+                "projection": "location_label"
+              }
+            ]
+          },
+          "definition_hash": "6d8aaffc80a2e54efa76fcd02be0a1f65881e111f5902b8fd271a6ae0a7d5fdb",
+          "created": {
+            "command_id": "rendering-example-create",
+            "actor_subject_id": "example-operator",
+            "action_timestamp_utc": "2026-10-03T12:00:00Z"
+          },
+          "published": {
+            "command_id": "rendering-example-create",
+            "actor_subject_id": "example-operator",
+            "action_timestamp_utc": "2026-10-03T12:00:00Z"
+          },
+          "retired": null
+        }
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_definitions/contracts/response_definition_show_dry_run.json",
+      "source_sha256": "c1ef5e22d92e5b80f32a48cdb4f7a8c16886240f394d17388bdc8a3c7490018e",
+      "command": "notification_rendering_definition.show",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "contract_version": "spine.notification-rendering-definitions.v1",
+        "command": "notification_rendering_definition.show",
+        "record": {
+          "notification_rendering_definition_id": "notification_rendering_definition_02f257fab5ae9d05c29ad78672208f2329671a72dbb76fa6773c9623950fa1fe",
+          "notification_rendering_definition_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52",
+          "owner": {
+            "owner_kind": "subject_group",
+            "owner_group_id": "example-group"
+          },
+          "definition_key": "flight_details",
+          "status": "active",
+          "current_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52",
+          "revision_number": "1",
+          "revision": {
+            "display_name": "Flight details",
+            "description": null,
+            "compatible_item_types": [
+              "event"
+            ],
+            "base_rendering_contract": "spine.notification-rendering.v1",
+            "base_rendering_profile": "spine.notification-rendering.concise-en-ca.v1",
+            "selections": [
+              {
+                "selection_key": "flight",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "flight_number",
+                "label": "Flight",
+                "projection": "value"
+              },
+              {
+                "selection_key": "terminal",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "terminal",
+                "label": "Terminal",
+                "projection": "value"
+              },
+              {
+                "selection_key": "departure",
+                "facet_key": "flight_details",
+                "facet_schema_revision_id": "facet_schema_revision_flight_v1",
+                "field_key": "departure_airport",
+                "label": "Departure",
+                "projection": "location_label"
+              }
+            ]
+          },
+          "definition_hash": "6d8aaffc80a2e54efa76fcd02be0a1f65881e111f5902b8fd271a6ae0a7d5fdb",
+          "created": {
+            "command_id": "rendering-example-create",
+            "actor_subject_id": "example-operator",
+            "action_timestamp_utc": "2026-10-03T12:00:00Z"
+          },
+          "published": {
+            "command_id": "rendering-example-create",
+            "actor_subject_id": "example-operator",
+            "action_timestamp_utc": "2026-10-03T12:00:00Z"
+          },
+          "retired": null
+        },
+        "dry_run": true
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_integration/response_profile_create.json",
+      "source_sha256": "5fd1f6cd04e5579111cfcfad5d0f61441cf7b280dee1f4baed2cb1ca3a9f82f2",
+      "command": "notification_profile.create",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "notification_profile.create",
+        "response_contract": "spine.notification-profiles.v2",
+        "effect": "notification_profile_created",
+        "notification_profile_id": "profile-example",
+        "notification_profile_revision_id": "revision-example",
+        "revision_number": "1",
+        "status": "active",
+        "normalized_revision_hash": "dfde522127e4cdb593d0946e8ea04a0b82692b43db2de933b80fc47bf415816e",
+        "receipt": {
+          "command_receipt_id": "receipt-example",
+          "command_id": "command-example",
+          "effect": "notification_profile_created",
+          "semantic_facts_hash": "036d030445d89c3bca7804fec6b020b625df927e23a19d164466e71f5bb2f858",
+          "created_at_utc": "2035-02-01T12:00:01Z"
+        },
+        "profile_key": "appointment_standard"
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_integration/response_profile_historical_v1.json",
+      "source_sha256": "4c3862d38b09e00b5b3c0a3c733fe1274807943bdfd31dac90c85ab864c0e230",
+      "command": "notification_profile.show",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "notification_profile.show",
+        "response_contract": "spine.notification-profiles.v2",
+        "notification_profile": {
+          "notification_profile_id": "profile-example",
+          "owner": {
+            "owner_kind": "subject",
+            "owner_subject_id": "subject_owner"
+          },
+          "profile_key": "appointment_standard",
+          "display_name": "Appointment standard",
+          "description": "One day before",
+          "status": "active",
+          "current_revision_id": "revision-example",
+          "revision": {
+            "notification_profile_revision_id": "revision-old",
+            "revision_number": "1",
+            "revision_contract": "spine.notification-profiles.v1",
+            "normalized_revision_hash": "8dcae6cd5b03d21a1945ce6407fe622fdb9f6b9da03dd5449e4ef3022d26a7b6",
+            "content": {
+              "compatible_item_types": [
+                "event"
+              ],
+              "templates": [
+                {
+                  "template_key": "day_before",
+                  "schedule": {
+                    "kind": "once",
+                    "at": {
+                      "kind": "target_offset",
+                      "offset_basis": "elapsed",
+                      "offset_seconds": "-86400"
+                    }
+                  },
+                  "late_handling": {
+                    "kind": "skip"
+                  },
+                  "normalized_template_hash": "b2316725c7b9ee85862cbe9709d4e0ebe0afbcc7550e74371434ef31ab9628f2"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_integration/response_profile_list.json",
+      "source_sha256": "a5a2bd2c48cc1d8ea1c304736fead1c4de0d29b35f69bf19e820751a5de73b38",
+      "command": "notification_profile.list",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "notification_profile.list",
+        "response_contract": "spine.notification-profiles.v2",
+        "entries": [
+          {
+            "notification_profile_id": "profile-example",
+            "owner": {
+              "owner_kind": "subject",
+              "owner_subject_id": "subject_owner"
+            },
+            "profile_key": "appointment_standard",
+            "display_name": "Appointment standard",
+            "description": "One day before",
+            "status": "active",
+            "current_revision_id": "revision-example",
+            "revision": {
+              "notification_profile_revision_id": "revision-example",
+              "revision_number": "2",
+              "revision_contract": "spine.notification-profiles.v2",
+              "normalized_revision_hash": "dfde522127e4cdb593d0946e8ea04a0b82692b43db2de933b80fc47bf415816e",
+              "content": {
+                "compatible_item_types": [
+                  "event"
+                ],
+                "templates": [
+                  {
+                    "template_key": "day_before",
+                    "schedule": {
+                      "kind": "once",
+                      "at": {
+                        "kind": "target_offset",
+                        "offset_basis": "elapsed",
+                        "offset_seconds": "-86400"
+                      }
+                    },
+                    "late_handling": {
+                      "kind": "skip"
+                    },
+                    "rendering": {
+                      "kind": "definition",
+                      "definition": {
+                        "notification_rendering_definition_id": "notification_rendering_definition_02f257fab5ae9d05c29ad78672208f2329671a72dbb76fa6773c9623950fa1fe",
+                        "notification_rendering_definition_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52"
+                      }
+                    },
+                    "normalized_template_hash": "767aea675f91719c3574baf19657c8cc8d99c9cce70cacf71f97fb9d29774c17"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "count": "1",
+        "catalog_snapshot_hash": "461b0879b23e3f32f98b1ecf622ff8e5f2d5e1976d31dc37a421c330cfcdd185",
+        "has_more": false,
+        "next_cursor": null
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_integration/response_profile_overlay_revision.json",
+      "source_sha256": "167bf4a5ca011c2e8310e75661fc9a4dd12f2eaaad420c11bca6c62740c70fa3",
+      "command": "notification_profile.show",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "notification_profile.show",
+        "response_contract": "spine.notification-profiles.v2",
+        "notification_profile": {
+          "notification_profile_id": "profile-example",
+          "owner": {
+            "owner_kind": "subject",
+            "owner_subject_id": "subject_owner"
+          },
+          "profile_key": "appointment_standard",
+          "display_name": "Appointment standard",
+          "description": "One day before",
+          "status": "active",
+          "current_revision_id": "revision-example",
+          "revision": {
+            "notification_profile_revision_id": "revision-example",
+            "revision_number": "2",
+            "revision_contract": "spine.notification-profiles.v2",
+            "normalized_revision_hash": "f4c2ffc6dbfabcc20da20ac1b6a70744493a73344c7d597185554b7720081591",
+            "content": {
+              "compatible_item_types": [
+                "event"
+              ],
+              "templates": [
+                {
+                  "template_key": "day_before",
+                  "schedule": {
+                    "kind": "once",
+                    "at": {
+                      "kind": "target_offset",
+                      "offset_basis": "elapsed",
+                      "offset_seconds": "-86400"
+                    }
+                  },
+                  "late_handling": {
+                    "kind": "skip"
+                  },
+                  "rendering": {
+                    "kind": "definition",
+                    "definition": {
+                      "notification_rendering_definition_id": "notification_rendering_definition_02f257fab5ae9d05c29ad78672208f2329671a72dbb76fa6773c9623950fa1fe",
+                      "notification_rendering_definition_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52"
+                    }
+                  },
+                  "normalized_template_hash": "767aea675f91719c3574baf19657c8cc8d99c9cce70cacf71f97fb9d29774c17"
+                },
+                {
+                  "template_key": "suppressed",
+                  "schedule": {
+                    "kind": "once",
+                    "at": {
+                      "kind": "target_offset",
+                      "offset_basis": "elapsed",
+                      "offset_seconds": "-172800"
+                    }
+                  },
+                  "late_handling": {
+                    "kind": "skip"
+                  },
+                  "rendering": {
+                    "kind": "definition",
+                    "definition": {
+                      "notification_rendering_definition_id": "notification_rendering_definition_02f257fab5ae9d05c29ad78672208f2329671a72dbb76fa6773c9623950fa1fe",
+                      "notification_rendering_definition_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52"
+                    }
+                  },
+                  "normalized_template_hash": "24a8dac32b45e4efc12a47a26c113dfe21164d85429987f286f46082f6f10d34"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_integration/response_profile_revise.json",
+      "source_sha256": "7e79d7b4c2e9475f60ba4e175285161a9290ca9c5e42a969cea85624b48b56be",
+      "command": "notification_profile.revise",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "notification_profile.revise",
+        "response_contract": "spine.notification-profiles.v2",
+        "effect": "notification_profile_revised",
+        "notification_profile_id": "profile-example",
+        "notification_profile_revision_id": "revision-example",
+        "revision_number": "2",
+        "status": "active",
+        "normalized_revision_hash": "dfde522127e4cdb593d0946e8ea04a0b82692b43db2de933b80fc47bf415816e",
+        "receipt": {
+          "command_receipt_id": "receipt-example",
+          "command_id": "command-example",
+          "effect": "notification_profile_revised",
+          "semantic_facts_hash": "036d030445d89c3bca7804fec6b020b625df927e23a19d164466e71f5bb2f858",
+          "created_at_utc": "2035-02-01T12:00:01Z"
+        }
+      }
+    },
+    {
+      "source": "tests/fixtures/notification_rendering_integration/response_profile_show.json",
+      "source_sha256": "385d6b3ce16d677c496694b044233bd685353d1808a234624f83d8208cacdc34",
+      "command": "notification_profile.show",
+      "direction": "response",
+      "value": {
+        "ok": true,
+        "command": "notification_profile.show",
+        "response_contract": "spine.notification-profiles.v2",
+        "notification_profile": {
+          "notification_profile_id": "profile-example",
+          "owner": {
+            "owner_kind": "subject",
+            "owner_subject_id": "subject_owner"
+          },
+          "profile_key": "appointment_standard",
+          "display_name": "Appointment standard",
+          "description": "One day before",
+          "status": "active",
+          "current_revision_id": "revision-example",
+          "revision": {
+            "notification_profile_revision_id": "revision-example",
+            "revision_number": "2",
+            "revision_contract": "spine.notification-profiles.v2",
+            "normalized_revision_hash": "dfde522127e4cdb593d0946e8ea04a0b82692b43db2de933b80fc47bf415816e",
+            "content": {
+              "compatible_item_types": [
+                "event"
+              ],
+              "templates": [
+                {
+                  "template_key": "day_before",
+                  "schedule": {
+                    "kind": "once",
+                    "at": {
+                      "kind": "target_offset",
+                      "offset_basis": "elapsed",
+                      "offset_seconds": "-86400"
+                    }
+                  },
+                  "late_handling": {
+                    "kind": "skip"
+                  },
+                  "rendering": {
+                    "kind": "definition",
+                    "definition": {
+                      "notification_rendering_definition_id": "notification_rendering_definition_02f257fab5ae9d05c29ad78672208f2329671a72dbb76fa6773c9623950fa1fe",
+                      "notification_rendering_definition_revision_id": "notification_rendering_definition_revision_e0ba4b36ee5a68085a16c17068ce0091ef1fc0834da7cd9fbcf7c55302dddc52"
+                    }
+                  },
+                  "normalized_template_hash": "767aea675f91719c3574baf19657c8cc8d99c9cce70cacf71f97fb9d29774c17"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}

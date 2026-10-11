@@ -1,0 +1,1616 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spine-packs.local/contracts/schemas/spine-pack-installer-types.v2.schema.json",
+  "$comment": "Draft FR-1. Semantic correlation, contextual embedded validation, canonical ordering, digests and byte ceilings are normative in specs/installer-artifacts-v2.md.",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+    },
+    "decimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "utc": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "uuid4": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "absolutePath": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 4096,
+      "pattern": "^/.*[^/]$"
+    },
+    "nullableString": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "selection": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "const": "all"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "mode",
+            "archetype_keys"
+          ],
+          "properties": {
+            "mode": {
+              "const": "archetypes"
+            },
+            "archetype_keys": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 256,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/key"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "owner": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "owner_kind",
+            "owner_subject_id"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "subject"
+            },
+            "owner_subject_id": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "owner_kind",
+            "owner_group_id"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "subject_group"
+            },
+            "owner_group_id": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "target": {
+      "type": "object",
+      "required": [
+        "host_name",
+        "spine_command",
+        "ledger"
+      ],
+      "properties": {
+        "host_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 253,
+          "pattern": "^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$"
+        },
+        "spine_command": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "$ref": "#/$defs/absolutePath"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ledger": {
+          "type": "object",
+          "required": [
+            "kind",
+            "path"
+          ],
+          "properties": {
+            "kind": {
+              "const": "path"
+            },
+            "path": {
+              "$ref": "#/$defs/absolutePath"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "requestBody": {
+      "type": "object",
+      "required": [
+        "selection",
+        "owner",
+        "target",
+        "draft_posture"
+      ],
+      "properties": {
+        "selection": {
+          "$ref": "#/$defs/selection"
+        },
+        "owner": {
+          "$ref": "#/$defs/owner"
+        },
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "draft_posture": {
+          "enum": [
+            "reject",
+            "inspect_only"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": [
+        "execution_id",
+        "actor_subject_id",
+        "action_timestamp_utc"
+      ],
+      "properties": {
+        "execution_id": {
+          "$ref": "#/$defs/uuid4"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/id"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/utc"
+        }
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "required": [
+        "category",
+        "code",
+        "message",
+        "facts"
+      ],
+      "properties": {
+        "category": {
+          "enum": [
+            "invalid_cli_or_artifact_input",
+            "invalid_pack_contract_or_digest",
+            "incompatible_spine_runtime_or_contracts",
+            "decision_required_for_drift",
+            "blocked_desired_state",
+            "stale_plan_or_target_mismatch",
+            "spine_command_rejection",
+            "partial_apply",
+            "verification_mismatch",
+            "transport_or_environment_failure"
+          ]
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,95}$"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "facts": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/generatedId"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifactReference": {
+      "type": "object",
+      "required": [
+        "path",
+        "digest"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "applyFailure": {
+      "type": "object",
+      "required": [
+        "action_id",
+        "error"
+      ],
+      "properties": {
+        "action_id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^action-[0-9]{6}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "$ref": "#/$defs/error"
+        }
+      },
+      "additionalProperties": false
+    },
+    "canonicalValue": {
+      "type": "object",
+      "properties": {
+        "canonical_json": {
+          "type": "string",
+          "maxLength": 16777216
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "canonical_json",
+        "digest"
+      ],
+      "additionalProperties": false
+    },
+    "publicResponse": {
+      "type": "object",
+      "properties": {
+        "json_text": {
+          "type": "string",
+          "maxLength": 16777216
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "json_text",
+        "digest"
+      ],
+      "additionalProperties": false
+    },
+    "packIdentity": {
+      "type": "object",
+      "required": [
+        "manifest_schema",
+        "pack_id",
+        "version",
+        "status",
+        "manifest_digest"
+      ],
+      "properties": {
+        "manifest_schema": {
+          "const": "spine.pack-manifest.v2"
+        },
+        "pack_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "maxLength": 64
+        },
+        "version": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 64
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "released"
+          ]
+        },
+        "manifest_digest": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "runtime_version": {
+          "const": "0.9.1"
+        },
+        "ledger_schema_implemented": {
+          "const": "19"
+        },
+        "ledger_schema_current": {
+          "const": "19"
+        },
+        "ledger_instance_id": {
+          "type": "string",
+          "pattern": "^ledger_instance_[0-9a-f]{64}$"
+        },
+        "advertised_contracts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "maxItems": 256
+        }
+      },
+      "required": [
+        "runtime_version",
+        "ledger_schema_implemented",
+        "ledger_schema_current",
+        "ledger_instance_id",
+        "advertised_contracts"
+      ],
+      "additionalProperties": false
+    },
+    "state": {
+      "type": "object",
+      "properties": {
+        "object_key": {
+          "type": "string",
+          "pattern": "^(archetype|rendering|profile|binding):[a-z][a-z0-9_-]{0,63}$|^schema:[a-z][a-z0-9_]{0,63}$|^facet_binding:[a-z][a-z0-9_-]{0,63}:[a-z][a-z0-9_]{0,63}$"
+        },
+        "owner": {
+          "$ref": "#/$defs/owner"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "root_id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision_id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "binding_id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision_contract": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "$ref": "#/$defs/canonicalValue"
+        }
+      },
+      "required": [
+        "object_key",
+        "owner",
+        "status",
+        "root_id",
+        "revision_id",
+        "binding_id",
+        "revision_contract",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "observation": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/owner"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/state"
+          },
+          "maxItems": 4096
+        },
+        "historical_revisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/state"
+          },
+          "maxItems": 4096
+        },
+        "public_catalog_snapshots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "catalog": {
+                "enum": [
+                  "archetypes",
+                  "profiles",
+                  "bindings"
+                ]
+              },
+              "digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            },
+            "required": [
+              "catalog",
+              "digest"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 3
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "owner",
+        "entries",
+        "historical_revisions",
+        "public_catalog_snapshots",
+        "digest"
+      ],
+      "additionalProperties": false
+    },
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "observed"
+            },
+            "object_key": {
+              "type": "string",
+              "pattern": "^(archetype|rendering|profile|binding):[a-z][a-z0-9_-]{0,63}$|^schema:[a-z][a-z0-9_]{0,63}$|^facet_binding:[a-z][a-z0-9_-]{0,63}:[a-z][a-z0-9_]{0,63}$"
+            },
+            "field": {
+              "enum": [
+                "root",
+                "revision",
+                "binding"
+              ]
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "required": [
+            "kind",
+            "object_key",
+            "field",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "action_result"
+            },
+            "action_id": {
+              "type": "string",
+              "pattern": "^action-[0-9]{6}$"
+            },
+            "output_pointer": {
+              "enum": [
+                "/facet_binding_id",
+                "/facet_schema_id",
+                "/facet_schema_revision_id",
+                "/item_archetype_id",
+                "/item_archetype_revision_id",
+                "/notification_profile_binding_id",
+                "/notification_profile_id",
+                "/notification_profile_revision_id",
+                "/record/notification_rendering_definition_id",
+                "/record/notification_rendering_definition_revision_id"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "action_id",
+            "output_pointer"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "resolution": {
+      "type": "object",
+      "properties": {
+        "object_key": {
+          "type": "string",
+          "pattern": "^(archetype|rendering|profile|binding):[a-z][a-z0-9_-]{0,63}$|^schema:[a-z][a-z0-9_]{0,63}$|^facet_binding:[a-z][a-z0-9_-]{0,63}:[a-z][a-z0-9_]{0,63}$"
+        },
+        "root": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/source"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/source"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "binding": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/source"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "object_key",
+        "root",
+        "revision",
+        "binding"
+      ],
+      "additionalProperties": false
+    },
+    "classification": {
+      "type": "object",
+      "properties": {
+        "object_key": {
+          "type": "string",
+          "pattern": "^(archetype|rendering|profile|binding):[a-z][a-z0-9_-]{0,63}$|^schema:[a-z][a-z0-9_]{0,63}$|^facet_binding:[a-z][a-z0-9_-]{0,63}:[a-z][a-z0-9_]{0,63}$"
+        },
+        "classification": {
+          "enum": [
+            "missing",
+            "equivalent",
+            "drifted",
+            "blocked"
+          ]
+        },
+        "desired": {
+          "$ref": "#/$defs/canonicalValue"
+        },
+        "observed": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/state"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "blocked_reason": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "object_key",
+        "classification",
+        "desired",
+        "observed",
+        "blocked_reason"
+      ],
+      "additionalProperties": false
+    },
+    "slot": {
+      "type": "object",
+      "properties": {
+        "request_pointer": {
+          "type": "string",
+          "pattern": "^/[a-z0-9_/]+$",
+          "maxLength": 256
+        },
+        "object_key": {
+          "type": "string",
+          "pattern": "^(archetype|rendering|profile|binding):[a-z][a-z0-9_-]{0,63}$|^schema:[a-z][a-z0-9_]{0,63}$|^facet_binding:[a-z][a-z0-9_-]{0,63}:[a-z][a-z0-9_]{0,63}$"
+        },
+        "field": {
+          "enum": [
+            "root",
+            "revision",
+            "binding"
+          ]
+        }
+      },
+      "required": [
+        "request_pointer",
+        "object_key",
+        "field"
+      ],
+      "additionalProperties": false
+    },
+    "action": {
+      "type": "object",
+      "properties": {
+        "ordinal": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "action_id": {
+          "type": "string",
+          "pattern": "^action-[0-9]{6}$"
+        },
+        "command": {
+          "enum": [
+            "facet_schema.create",
+            "facet_schema.publish",
+            "item_archetype.create",
+            "item_archetype.facet_binding.set",
+            "item_archetype.revise",
+            "notification_profile.binding.set",
+            "notification_profile.create",
+            "notification_profile.metadata.update",
+            "notification_profile.revise",
+            "notification_rendering_definition.create",
+            "notification_rendering_definition.publish"
+          ]
+        },
+        "object_key": {
+          "type": "string",
+          "pattern": "^(archetype|rendering|profile|binding):[a-z][a-z0-9_-]{0,63}$|^schema:[a-z][a-z0-9_]{0,63}$|^facet_binding:[a-z][a-z0-9_-]{0,63}:[a-z][a-z0-9_]{0,63}$"
+        },
+        "change_kind": {
+          "enum": [
+            "create",
+            "update"
+          ]
+        },
+        "desired": {
+          "$ref": "#/$defs/canonicalValue"
+        },
+        "expected": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/state"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "request_template": {
+          "$ref": "#/$defs/canonicalValue"
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/slot"
+          },
+          "maxItems": 256
+        }
+      },
+      "required": [
+        "ordinal",
+        "action_id",
+        "command",
+        "object_key",
+        "change_kind",
+        "desired",
+        "expected",
+        "request_template",
+        "slots"
+      ],
+      "additionalProperties": false
+    },
+    "receipt": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "family": {
+              "const": "catalog"
+            },
+            "command_receipt_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "effect": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "semantic_facts_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "created_at_utc": {
+              "$ref": "#/$defs/utc"
+            }
+          },
+          "required": [
+            "family",
+            "command_receipt_id",
+            "effect",
+            "semantic_facts_hash",
+            "created_at_utc"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "family": {
+              "const": "facet"
+            },
+            "command_receipt_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "effect": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "changed": {
+              "type": "boolean"
+            },
+            "replayed": {
+              "type": "boolean"
+            },
+            "audit_id": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "family",
+            "command_receipt_id",
+            "effect",
+            "changed",
+            "replayed",
+            "audit_id"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "family": {
+              "const": "rendering"
+            },
+            "command_receipt_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "effect": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "changed": {
+              "type": "boolean"
+            },
+            "replayed": {
+              "type": "boolean"
+            },
+            "audit_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "required": [
+            "family",
+            "command_receipt_id",
+            "effect",
+            "changed",
+            "replayed",
+            "audit_id"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "pattern": "^action-[0-9]{6}$"
+        },
+        "command": {
+          "enum": [
+            "facet_schema.create",
+            "facet_schema.publish",
+            "item_archetype.create",
+            "item_archetype.facet_binding.set",
+            "item_archetype.revise",
+            "notification_profile.binding.set",
+            "notification_profile.create",
+            "notification_profile.metadata.update",
+            "notification_profile.revise",
+            "notification_rendering_definition.create",
+            "notification_rendering_definition.publish"
+          ]
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "request": {
+          "$ref": "#/$defs/canonicalValue"
+        },
+        "response": {
+          "$ref": "#/$defs/publicResponse"
+        },
+        "receipt": {
+          "$ref": "#/$defs/receipt"
+        },
+        "post_observation": {
+          "$ref": "#/$defs/state"
+        }
+      },
+      "required": [
+        "action_id",
+        "command",
+        "command_id",
+        "request",
+        "response",
+        "receipt",
+        "post_observation"
+      ],
+      "additionalProperties": false
+    },
+    "unresolved": {
+      "type": "object",
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "pattern": "^action-[0-9]{6}$"
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "submission_state": {
+          "const": "prepared_or_submitted"
+        },
+        "request": {
+          "$ref": "#/$defs/canonicalValue"
+        }
+      },
+      "required": [
+        "action_id",
+        "command_id",
+        "submission_state",
+        "request"
+      ],
+      "additionalProperties": false
+    },
+    "install-request": {
+      "type": "object",
+      "properties": {
+        "artifact_schema": {
+          "const": "spine.pack-install-request.v2"
+        },
+        "request": {
+          "$ref": "#/$defs/requestBody"
+        },
+        "content_identity": {
+          "type": "object",
+          "properties": {
+            "algorithm": {
+              "const": "sha256"
+            },
+            "canonical_json_version": {
+              "const": "spine.canonical-json.v1"
+            },
+            "derivation_version": {
+              "const": "spine.pack-install-request-digest.v2"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "algorithm",
+            "canonical_json_version",
+            "derivation_version",
+            "digest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "artifact_schema",
+        "request",
+        "content_identity"
+      ],
+      "additionalProperties": false
+    },
+    "install-plan": {
+      "type": "object",
+      "properties": {
+        "artifact_schema": {
+          "const": "spine.pack-install-plan.v2"
+        },
+        "request_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "request": {
+          "$ref": "#/$defs/requestBody"
+        },
+        "pack": {
+          "$ref": "#/$defs/packIdentity"
+        },
+        "closure": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(archetype|rendering|profile|binding):[a-z][a-z0-9_-]{0,63}$|^schema:[a-z][a-z0-9_]{0,63}$|^facet_binding:[a-z][a-z0-9_-]{0,63}:[a-z][a-z0-9_]{0,63}$"
+          },
+          "maxItems": 1536
+        },
+        "environment": {
+          "$ref": "#/$defs/environment"
+        },
+        "required_execution_contracts": {
+          "const": [
+            "spine.archetype-facet-bindings.v1",
+            "spine.canonical-json.v1",
+            "spine.facet-cursor.v1",
+            "spine.facet-schemas.v1",
+            "spine.item-archetypes.v1",
+            "spine.ledger-instance.v1",
+            "spine.notification-profile-bindings.v1",
+            "spine.notification-profile-catalog-cursor.v1",
+            "spine.notification-profile-metadata-update.v1",
+            "spine.notification-profile-readback.v1",
+            "spine.notification-profiles.v1",
+            "spine.notification-profiles.v2",
+            "spine.notification-rendering-cursor.v1",
+            "spine.notification-rendering-definitions.v1",
+            "spine.notification-rendering-integration.v1",
+            "spine.system-info.v3",
+            "spine.tickerd-compatibility.v1"
+          ]
+        },
+        "observation": {
+          "$ref": "#/$defs/observation"
+        },
+        "classifications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/classification"
+          },
+          "maxItems": 1536
+        },
+        "resolutions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resolution"
+          },
+          "maxItems": 1536
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          },
+          "maxItems": 2048
+        },
+        "decision_action_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^action-[0-9]{6}$"
+          },
+          "maxItems": 2048
+        },
+        "blocked_object_keys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(archetype|rendering|profile|binding):[a-z][a-z0-9_-]{0,63}$|^schema:[a-z][a-z0-9_]{0,63}$|^facet_binding:[a-z][a-z0-9_-]{0,63}:[a-z][a-z0-9_]{0,63}$"
+          },
+          "maxItems": 1536
+        },
+        "apply_eligible": {
+          "type": "boolean"
+        },
+        "content_identity": {
+          "type": "object",
+          "properties": {
+            "algorithm": {
+              "const": "sha256"
+            },
+            "canonical_json_version": {
+              "const": "spine.canonical-json.v1"
+            },
+            "derivation_version": {
+              "const": "spine.pack-install-plan-digest.v2"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "algorithm",
+            "canonical_json_version",
+            "derivation_version",
+            "digest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "artifact_schema",
+        "request_digest",
+        "request",
+        "pack",
+        "closure",
+        "environment",
+        "required_execution_contracts",
+        "observation",
+        "classifications",
+        "resolutions",
+        "actions",
+        "decision_action_ids",
+        "blocked_object_keys",
+        "apply_eligible",
+        "content_identity"
+      ],
+      "additionalProperties": false
+    },
+    "install-approval": {
+      "type": "object",
+      "properties": {
+        "artifact_schema": {
+          "const": "spine.pack-install-approval.v2"
+        },
+        "plan_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "approve_complete_plan": {
+          "const": true
+        },
+        "acknowledge_single_operator": {
+          "const": true
+        },
+        "authorized_update_action_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^action-[0-9]{6}$"
+          },
+          "maxItems": 2048
+        },
+        "execution": {
+          "$ref": "#/$defs/execution"
+        },
+        "content_identity": {
+          "type": "object",
+          "properties": {
+            "algorithm": {
+              "const": "sha256"
+            },
+            "canonical_json_version": {
+              "const": "spine.canonical-json.v1"
+            },
+            "derivation_version": {
+              "const": "spine.pack-install-approval-digest.v2"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "algorithm",
+            "canonical_json_version",
+            "derivation_version",
+            "digest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "artifact_schema",
+        "plan_digest",
+        "approve_complete_plan",
+        "acknowledge_single_operator",
+        "authorized_update_action_ids",
+        "execution",
+        "content_identity"
+      ],
+      "additionalProperties": false
+    },
+    "apply-checkpoint": {
+      "type": "object",
+      "properties": {
+        "artifact_schema": {
+          "const": "spine.pack-apply-checkpoint.v2"
+        },
+        "plan_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "approval_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "execution": {
+          "$ref": "#/$defs/execution"
+        },
+        "accepted_responses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          },
+          "maxItems": 2048
+        },
+        "unresolved_submission": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/unresolved"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "next_action_id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^action-[0-9]{6}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "content_identity": {
+          "type": "object",
+          "properties": {
+            "algorithm": {
+              "const": "sha256"
+            },
+            "canonical_json_version": {
+              "const": "spine.canonical-json.v1"
+            },
+            "derivation_version": {
+              "const": "spine.pack-apply-checkpoint-digest.v2"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "algorithm",
+            "canonical_json_version",
+            "derivation_version",
+            "digest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "artifact_schema",
+        "plan_digest",
+        "approval_digest",
+        "execution",
+        "accepted_responses",
+        "unresolved_submission",
+        "next_action_id",
+        "content_identity"
+      ],
+      "additionalProperties": false
+    },
+    "apply-result": {
+      "type": "object",
+      "properties": {
+        "artifact_schema": {
+          "const": "spine.pack-apply-result.v2"
+        },
+        "checkpoint": {
+          "$ref": "#/$defs/apply-checkpoint"
+        },
+        "state": {
+          "enum": [
+            "applied",
+            "partial",
+            "not_applied"
+          ]
+        },
+        "failure": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/applyFailure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unattempted_action_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^action-[0-9]{6}$"
+          },
+          "maxItems": 2048
+        },
+        "content_identity": {
+          "type": "object",
+          "properties": {
+            "algorithm": {
+              "const": "sha256"
+            },
+            "canonical_json_version": {
+              "const": "spine.canonical-json.v1"
+            },
+            "derivation_version": {
+              "const": "spine.pack-apply-result-digest.v2"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "algorithm",
+            "canonical_json_version",
+            "derivation_version",
+            "digest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "artifact_schema",
+        "checkpoint",
+        "state",
+        "failure",
+        "unattempted_action_ids",
+        "content_identity"
+      ],
+      "additionalProperties": false
+    },
+    "verification-result": {
+      "type": "object",
+      "properties": {
+        "artifact_schema": {
+          "const": "spine.pack-verification-result.v2"
+        },
+        "plan_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "apply_result_digest": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pack": {
+          "$ref": "#/$defs/packIdentity"
+        },
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "environment": {
+          "$ref": "#/$defs/environment"
+        },
+        "observation": {
+          "$ref": "#/$defs/observation"
+        },
+        "closure": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(archetype|rendering|profile|binding):[a-z][a-z0-9_-]{0,63}$|^schema:[a-z][a-z0-9_]{0,63}$|^facet_binding:[a-z][a-z0-9_-]{0,63}:[a-z][a-z0-9_]{0,63}$"
+          },
+          "maxItems": 1536
+        },
+        "object_results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "object_key": {
+                "type": "string",
+                "pattern": "^(archetype|rendering|profile|binding):[a-z][a-z0-9_-]{0,63}$|^schema:[a-z][a-z0-9_]{0,63}$|^facet_binding:[a-z][a-z0-9_-]{0,63}:[a-z][a-z0-9_]{0,63}$"
+              },
+              "state": {
+                "enum": [
+                  "equivalent",
+                  "missing",
+                  "drifted",
+                  "blocked"
+                ]
+              },
+              "observed": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/state"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "object_key",
+              "state",
+              "observed"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 1536
+        },
+        "response_evidence": {
+          "enum": [
+            "complete",
+            "not_required",
+            "missing",
+            "invalid"
+          ]
+        },
+        "receipt_readback": {
+          "const": "captured_responses_only_spine_0.9.1"
+        },
+        "disclosure": {
+          "const": "separate_operator_configuration_required"
+        },
+        "state": {
+          "enum": [
+            "verified",
+            "mismatch"
+          ]
+        },
+        "content_identity": {
+          "type": "object",
+          "properties": {
+            "algorithm": {
+              "const": "sha256"
+            },
+            "canonical_json_version": {
+              "const": "spine.canonical-json.v1"
+            },
+            "derivation_version": {
+              "const": "spine.pack-verification-result-digest.v2"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "algorithm",
+            "canonical_json_version",
+            "derivation_version",
+            "digest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "artifact_schema",
+        "plan_digest",
+        "apply_result_digest",
+        "pack",
+        "target",
+        "environment",
+        "observation",
+        "closure",
+        "object_results",
+        "response_evidence",
+        "receipt_readback",
+        "disclosure",
+        "state",
+        "content_identity"
+      ],
+      "additionalProperties": false
+    },
+    "installer-result": {
+      "type": "object",
+      "required": [
+        "artifact_schema",
+        "operation",
+        "status",
+        "exit_code",
+        "artifact",
+        "error"
+      ],
+      "properties": {
+        "artifact_schema": {
+          "const": "spine.pack-installer-result.v2"
+        },
+        "operation": {
+          "enum": [
+            "plan",
+            "apply",
+            "verify"
+          ]
+        },
+        "status": {
+          "enum": [
+            "success",
+            "failed",
+            "decision_required",
+            "blocked",
+            "partial",
+            "mismatch"
+          ]
+        },
+        "exit_code": {
+          "enum": [
+            "0",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11"
+          ]
+        },
+        "artifact": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifactReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/error"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

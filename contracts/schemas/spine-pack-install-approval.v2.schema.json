@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spine-packs.local/contracts/schemas/spine-pack-install-approval.v2.schema.json",
+  "$ref": "spine-pack-installer-types.v2.schema.json#/$defs/install-approval"
+}

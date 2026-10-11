@@ -1,0 +1,5268 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spine-packs.local/contracts/schemas/spine-readback-0.9.1.schema.json",
+  "$comment": "Client-only offline closure at Spine 57cda1c2d5589360ee8efe7155fd20b503034c2a. Public fragments are copied with only $ref relocation and $id/$schema removal. Four legacy write and three legacy read responses use the existing client projections, pending exact-baseline FR-5 qualification. See source inventory; no permission for commands outside that inventory.",
+  "$defs": {
+    "public_0002": {
+      "type": "string",
+      "minLength": 1
+    },
+    "public_0003": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "public_0001": {
+      "type": "object",
+      "required": [
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc"
+      ],
+      "properties": {
+        "command_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/public_0003"
+        }
+      }
+    },
+    "public_0004": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "owner_kind"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "system"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "owner_kind",
+            "owner_subject_id"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "subject"
+            },
+            "owner_subject_id": {
+              "$ref": "#/$defs/public_0002"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "owner_kind",
+            "owner_group_id"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "subject_group"
+            },
+            "owner_group_id": {
+              "$ref": "#/$defs/public_0002"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "public_0005": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+    },
+    "public_0007": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "event",
+          "task"
+        ]
+      }
+    },
+    "public_0006": {
+      "type": "object",
+      "required": [
+        "display_name",
+        "description",
+        "compatible_item_types"
+      ],
+      "properties": {
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "compatible_item_types": {
+          "$ref": "#/$defs/public_0007"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0000": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/public_0001"
+        },
+        {
+          "type": "object",
+          "required": [
+            "contract_version",
+            "owner",
+            "archetype_key",
+            "revision"
+          ],
+          "properties": {
+            "contract_version": {
+              "const": "spine.item-archetypes.v1"
+            },
+            "owner": {
+              "$ref": "#/$defs/public_0004"
+            },
+            "archetype_key": {
+              "$ref": "#/$defs/public_0005"
+            },
+            "revision": {
+              "$ref": "#/$defs/public_0006"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "public_0009": {
+      "type": "string",
+      "minLength": 1
+    },
+    "public_0010": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*$"
+    },
+    "public_0011": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+    },
+    "public_0012": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "public_0013": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "public_0008": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "item_archetype_id",
+        "item_archetype_revision_id",
+        "revision_number",
+        "status",
+        "archetype_key",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "item_archetype.create"
+        },
+        "response_contract": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "effect": {
+          "enum": [
+            "item_archetype_created"
+          ]
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0009"
+        },
+        "item_archetype_revision_id": {
+          "$ref": "#/$defs/public_0009"
+        },
+        "revision_number": {
+          "$ref": "#/$defs/public_0010"
+        },
+        "status": {
+          "const": "active"
+        },
+        "archetype_key": {
+          "$ref": "#/$defs/public_0011"
+        },
+        "receipt": {
+          "type": "object",
+          "required": [
+            "command_receipt_id",
+            "command_id",
+            "effect",
+            "semantic_facts_hash",
+            "created_at_utc"
+          ],
+          "properties": {
+            "command_receipt_id": {
+              "$ref": "#/$defs/public_0009"
+            },
+            "command_id": {
+              "$ref": "#/$defs/public_0009"
+            },
+            "effect": {
+              "enum": [
+                "item_archetype_created"
+              ]
+            },
+            "semantic_facts_hash": {
+              "$ref": "#/$defs/public_0012"
+            },
+            "created_at_utc": {
+              "$ref": "#/$defs/public_0013"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0014": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/public_0001"
+        },
+        {
+          "type": "object",
+          "required": [
+            "contract_version",
+            "item_archetype_id",
+            "expected_current_revision_id",
+            "revision"
+          ],
+          "properties": {
+            "contract_version": {
+              "const": "spine.item-archetypes.v1"
+            },
+            "item_archetype_id": {
+              "$ref": "#/$defs/public_0002"
+            },
+            "expected_current_revision_id": {
+              "$ref": "#/$defs/public_0002"
+            },
+            "revision": {
+              "$ref": "#/$defs/public_0006"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "public_0015": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "item_archetype_id",
+        "item_archetype_revision_id",
+        "revision_number",
+        "status",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "item_archetype.revise"
+        },
+        "response_contract": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "effect": {
+          "enum": [
+            "item_archetype_revised"
+          ]
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0009"
+        },
+        "item_archetype_revision_id": {
+          "$ref": "#/$defs/public_0009"
+        },
+        "revision_number": {
+          "$ref": "#/$defs/public_0010"
+        },
+        "status": {
+          "const": "active"
+        },
+        "receipt": {
+          "type": "object",
+          "required": [
+            "command_receipt_id",
+            "command_id",
+            "effect",
+            "semantic_facts_hash",
+            "created_at_utc"
+          ],
+          "properties": {
+            "command_receipt_id": {
+              "$ref": "#/$defs/public_0009"
+            },
+            "command_id": {
+              "$ref": "#/$defs/public_0009"
+            },
+            "effect": {
+              "enum": [
+                "item_archetype_revised"
+              ]
+            },
+            "semantic_facts_hash": {
+              "$ref": "#/$defs/public_0012"
+            },
+            "created_at_utc": {
+              "$ref": "#/$defs/public_0013"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0017": {
+      "type": "object",
+      "required": [
+        "display_name",
+        "description"
+      ],
+      "properties": {
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0016": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/public_0001"
+        },
+        {
+          "type": "object",
+          "required": [
+            "contract_version",
+            "notification_profile_id",
+            "expected_metadata",
+            "metadata"
+          ],
+          "properties": {
+            "contract_version": {
+              "const": "spine.notification-profile-metadata-update.v1"
+            },
+            "notification_profile_id": {
+              "$ref": "#/$defs/public_0002"
+            },
+            "expected_metadata": {
+              "$ref": "#/$defs/public_0017"
+            },
+            "metadata": {
+              "$ref": "#/$defs/public_0017"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "public_0018": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "notification_profile_id",
+        "notification_profile_revision_id",
+        "status",
+        "display_name",
+        "description",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.metadata.update"
+        },
+        "response_contract": {
+          "const": "spine.notification-profile-metadata-update.v1"
+        },
+        "effect": {
+          "enum": [
+            "notification_profile_metadata_updated",
+            "notification_profile_metadata_update_noop"
+          ]
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/public_0009"
+        },
+        "notification_profile_revision_id": {
+          "$ref": "#/$defs/public_0009"
+        },
+        "status": {
+          "const": "active"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "receipt": {
+          "type": "object",
+          "required": [
+            "command_receipt_id",
+            "command_id",
+            "effect",
+            "semantic_facts_hash",
+            "created_at_utc"
+          ],
+          "properties": {
+            "command_receipt_id": {
+              "$ref": "#/$defs/public_0009"
+            },
+            "command_id": {
+              "$ref": "#/$defs/public_0009"
+            },
+            "effect": {
+              "enum": [
+                "notification_profile_metadata_updated",
+                "notification_profile_metadata_update_noop"
+              ]
+            },
+            "semantic_facts_hash": {
+              "$ref": "#/$defs/public_0012"
+            },
+            "created_at_utc": {
+              "$ref": "#/$defs/public_0013"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0019": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/public_0001"
+        },
+        {
+          "type": "object",
+          "required": [
+            "contract_version",
+            "owner",
+            "item_archetype_id",
+            "notification_profile_id"
+          ],
+          "properties": {
+            "contract_version": {
+              "const": "spine.notification-profile-bindings.v1"
+            },
+            "owner": {
+              "$ref": "#/$defs/public_0004"
+            },
+            "item_archetype_id": {
+              "$ref": "#/$defs/public_0002"
+            },
+            "notification_profile_id": {
+              "$ref": "#/$defs/public_0002"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "public_0021": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "event",
+          "task"
+        ]
+      }
+    },
+    "public_0020": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "notification_profile_binding_id",
+        "item_archetype_id",
+        "notification_profile_id",
+        "status",
+        "compatible_item_types",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.binding.set"
+        },
+        "response_contract": {
+          "const": "spine.notification-profile-bindings.v1"
+        },
+        "effect": {
+          "enum": [
+            "notification_profile_binding_set",
+            "notification_profile_binding_set_noop"
+          ]
+        },
+        "notification_profile_binding_id": {
+          "$ref": "#/$defs/public_0009"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0009"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/public_0009"
+        },
+        "status": {
+          "const": "active"
+        },
+        "compatible_item_types": {
+          "$ref": "#/$defs/public_0021"
+        },
+        "receipt": {
+          "type": "object",
+          "required": [
+            "command_receipt_id",
+            "command_id",
+            "effect",
+            "semantic_facts_hash",
+            "created_at_utc"
+          ],
+          "properties": {
+            "command_receipt_id": {
+              "$ref": "#/$defs/public_0009"
+            },
+            "command_id": {
+              "$ref": "#/$defs/public_0009"
+            },
+            "effect": {
+              "enum": [
+                "notification_profile_binding_set",
+                "notification_profile_binding_set_noop"
+              ]
+            },
+            "semantic_facts_hash": {
+              "$ref": "#/$defs/public_0012"
+            },
+            "created_at_utc": {
+              "$ref": "#/$defs/public_0013"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0023": {
+      "type": "object",
+      "required": [
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc"
+      ],
+      "properties": {
+        "command_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/public_0003"
+        }
+      }
+    },
+    "public_0024": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "owner_kind"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "system"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "owner_kind",
+            "owner_subject_id"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "subject"
+            },
+            "owner_subject_id": {
+              "$ref": "#/$defs/public_0002"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "owner_kind",
+            "owner_group_id"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "subject_group"
+            },
+            "owner_group_id": {
+              "$ref": "#/$defs/public_0002"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "public_0025": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,63}(?![\\s\\S])"
+    },
+    "public_0027": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "event",
+          "task"
+        ]
+      }
+    },
+    "public_0032": {
+      "type": "object",
+      "required": [
+        "kind",
+        "at_utc"
+      ],
+      "properties": {
+        "kind": {
+          "const": "absolute_utc"
+        },
+        "at_utc": {
+          "$ref": "#/$defs/public_0003"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0035": {
+      "type": "string",
+      "pattern": "^(0|-?[1-9][0-9]*)$"
+    },
+    "public_0034": {
+      "type": "object",
+      "required": [
+        "kind",
+        "offset_basis",
+        "offset_seconds"
+      ],
+      "properties": {
+        "kind": {
+          "const": "target_offset"
+        },
+        "offset_basis": {
+          "const": "elapsed"
+        },
+        "offset_seconds": {
+          "$ref": "#/$defs/public_0035"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0037": {
+      "type": "string",
+      "pattern": "^[0-9]{2}:[0-9]{2}:[0-9]{2}$"
+    },
+    "public_0036": {
+      "type": "object",
+      "required": [
+        "kind",
+        "offset_basis",
+        "offset_days",
+        "local_time"
+      ],
+      "properties": {
+        "kind": {
+          "const": "target_offset"
+        },
+        "offset_basis": {
+          "const": "calendar_days"
+        },
+        "offset_days": {
+          "$ref": "#/$defs/public_0035"
+        },
+        "local_time": {
+          "$ref": "#/$defs/public_0037"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timezone_database_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0033": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/public_0034"
+        },
+        {
+          "$ref": "#/$defs/public_0036"
+        }
+      ]
+    },
+    "public_0031": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/public_0032"
+        },
+        {
+          "$ref": "#/$defs/public_0033"
+        }
+      ]
+    },
+    "public_0030": {
+      "type": "object",
+      "required": [
+        "kind",
+        "at"
+      ],
+      "properties": {
+        "kind": {
+          "const": "once"
+        },
+        "at": {
+          "$ref": "#/$defs/public_0031"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0038": {
+      "type": "object",
+      "required": [
+        "kind",
+        "at"
+      ],
+      "properties": {
+        "kind": {
+          "const": "offsets"
+        },
+        "at": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/public_0033"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0042": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*$"
+    },
+    "public_0041": {
+      "type": "object",
+      "required": [
+        "kind",
+        "interval_seconds"
+      ],
+      "properties": {
+        "kind": {
+          "const": "fixed_elapsed"
+        },
+        "interval_seconds": {
+          "$ref": "#/$defs/public_0042"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0044": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "public_0045": {
+      "enum": [
+        "MO",
+        "TU",
+        "WE",
+        "TH",
+        "FR",
+        "SA",
+        "SU"
+      ]
+    },
+    "public_0043": {
+      "type": "object",
+      "required": [
+        "kind",
+        "frequency",
+        "seed_local_date",
+        "local_time",
+        "timezone",
+        "timezone_database_version"
+      ],
+      "properties": {
+        "kind": {
+          "const": "local_calendar"
+        },
+        "frequency": {
+          "enum": [
+            "DAILY",
+            "WEEKLY",
+            "MONTHLY",
+            "YEARLY"
+          ]
+        },
+        "interval": {
+          "$ref": "#/$defs/public_0042"
+        },
+        "seed_local_date": {
+          "$ref": "#/$defs/public_0044"
+        },
+        "local_time": {
+          "$ref": "#/$defs/public_0037"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timezone_database_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "by_month": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^([1-9]|1[0-2])$"
+          }
+        },
+        "by_month_day": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^-?([1-9]|[12][0-9]|3[01])$"
+          }
+        },
+        "by_weekday": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/public_0045"
+          }
+        },
+        "by_set_position": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^-?([1-9]|[1-9][0-9]|[12][0-9]{2}|3[0-5][0-9]|36[0-6])$"
+          }
+        },
+        "week_start": {
+          "$ref": "#/$defs/public_0045"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "enum": [
+                  "MONTHLY",
+                  "YEARLY"
+                ]
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "by_month_day",
+                "by_weekday"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "by_set_position"
+            ]
+          },
+          "then": {
+            "required": [
+              "by_weekday"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "DAILY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "by_month"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_month_day"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_weekday"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_set_position"
+                  ]
+                },
+                {
+                  "required": [
+                    "week_start"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "WEEKLY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "by_month"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_month_day"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_set_position"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "MONTHLY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "by_month"
+                  ]
+                },
+                {
+                  "required": [
+                    "week_start"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "YEARLY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "week_start"
+              ]
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "public_0040": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/public_0041"
+        },
+        {
+          "$ref": "#/$defs/public_0043"
+        }
+      ]
+    },
+    "public_0039": {
+      "type": "object",
+      "required": [
+        "kind",
+        "start",
+        "stop",
+        "stop_inclusive",
+        "cadence"
+      ],
+      "properties": {
+        "kind": {
+          "const": "repeat_window"
+        },
+        "start": {
+          "$ref": "#/$defs/public_0031"
+        },
+        "stop": {
+          "$ref": "#/$defs/public_0031"
+        },
+        "stop_inclusive": {
+          "type": "boolean"
+        },
+        "cadence": {
+          "$ref": "#/$defs/public_0040"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0029": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/public_0030"
+        },
+        {
+          "$ref": "#/$defs/public_0038"
+        },
+        {
+          "$ref": "#/$defs/public_0039"
+        }
+      ]
+    },
+    "public_0047": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
+    "public_0046": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "skip"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "grace_seconds"
+          ],
+          "properties": {
+            "kind": {
+              "const": "deliver_within"
+            },
+            "grace_seconds": {
+              "$ref": "#/$defs/public_0047"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "public_0049": {
+      "type": "object",
+      "required": [
+        "notification_rendering_definition_id",
+        "notification_rendering_definition_revision_id"
+      ],
+      "properties": {
+        "notification_rendering_definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "notification_rendering_definition_revision_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0048": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "ordinary"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "definition"
+          ],
+          "properties": {
+            "kind": {
+              "const": "definition"
+            },
+            "definition": {
+              "$ref": "#/$defs/public_0049"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "public_0028": {
+      "type": "object",
+      "required": [
+        "template_key",
+        "schedule",
+        "late_handling"
+      ],
+      "properties": {
+        "template_key": {
+          "$ref": "#/$defs/public_0025"
+        },
+        "schedule": {
+          "$ref": "#/$defs/public_0029"
+        },
+        "late_handling": {
+          "$ref": "#/$defs/public_0046"
+        },
+        "rendering": {
+          "$ref": "#/$defs/public_0048"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0026": {
+      "type": "object",
+      "required": [
+        "compatible_item_types",
+        "templates"
+      ],
+      "properties": {
+        "compatible_item_types": {
+          "$ref": "#/$defs/public_0027"
+        },
+        "templates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/public_0028"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0022": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/public_0023"
+        },
+        {
+          "type": "object",
+          "required": [
+            "contract_version",
+            "owner",
+            "profile_key",
+            "display_name",
+            "description",
+            "revision"
+          ],
+          "properties": {
+            "contract_version": {
+              "const": "spine.notification-profiles.v2"
+            },
+            "owner": {
+              "$ref": "#/$defs/public_0024"
+            },
+            "profile_key": {
+              "$ref": "#/$defs/public_0025"
+            },
+            "display_name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "description": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "revision": {
+              "$ref": "#/$defs/public_0026"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "public_0051": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "public_0052": {
+      "type": "object",
+      "required": [
+        "command_receipt_id",
+        "command_id",
+        "effect",
+        "semantic_facts_hash",
+        "created_at_utc"
+      ],
+      "properties": {
+        "command_receipt_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "command_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "effect": {
+          "enum": [
+            "notification_profile_created",
+            "notification_profile_revised"
+          ]
+        },
+        "semantic_facts_hash": {
+          "$ref": "#/$defs/public_0051"
+        },
+        "created_at_utc": {
+          "$ref": "#/$defs/public_0003"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0050": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "notification_profile_id",
+        "notification_profile_revision_id",
+        "revision_number",
+        "profile_key",
+        "status",
+        "normalized_revision_hash",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.create"
+        },
+        "response_contract": {
+          "const": "spine.notification-profiles.v2"
+        },
+        "effect": {
+          "const": "notification_profile_created"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "notification_profile_revision_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "revision_number": {
+          "$ref": "#/$defs/public_0042"
+        },
+        "profile_key": {
+          "$ref": "#/$defs/public_0005"
+        },
+        "status": {
+          "const": "active"
+        },
+        "normalized_revision_hash": {
+          "$ref": "#/$defs/public_0051"
+        },
+        "receipt": {
+          "$ref": "#/$defs/public_0052"
+        },
+        "dry_run": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0053": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/public_0023"
+        },
+        {
+          "type": "object",
+          "required": [
+            "contract_version",
+            "notification_profile_id",
+            "expected_current_revision_id",
+            "revision"
+          ],
+          "properties": {
+            "contract_version": {
+              "const": "spine.notification-profiles.v2"
+            },
+            "notification_profile_id": {
+              "$ref": "#/$defs/public_0002"
+            },
+            "expected_current_revision_id": {
+              "$ref": "#/$defs/public_0002"
+            },
+            "revision": {
+              "$ref": "#/$defs/public_0026"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "public_0054": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "effect",
+        "notification_profile_id",
+        "notification_profile_revision_id",
+        "revision_number",
+        "status",
+        "normalized_revision_hash",
+        "receipt"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.revise"
+        },
+        "response_contract": {
+          "const": "spine.notification-profiles.v2"
+        },
+        "effect": {
+          "const": "notification_profile_revised"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "notification_profile_revision_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "revision_number": {
+          "$ref": "#/$defs/public_0042"
+        },
+        "status": {
+          "const": "active"
+        },
+        "normalized_revision_hash": {
+          "$ref": "#/$defs/public_0051"
+        },
+        "receipt": {
+          "$ref": "#/$defs/public_0052"
+        },
+        "dry_run": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0056": {
+      "$ref": "#/$defs/public_0002"
+    },
+    "public_0057": {
+      "$ref": "#/$defs/public_0004"
+    },
+    "public_0058": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,63}(?![\\s\\S])"
+    },
+    "public_0061": {
+      "type": "string",
+      "pattern": "^(0|-?[1-9][0-9]*)(?![\\s\\S])",
+      "maxLength": 20,
+      "$comment": "Semantic validation enforces signed 64-bit range."
+    },
+    "public_0060": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "key",
+            "required",
+            "type",
+            "max_length"
+          ],
+          "properties": {
+            "key": {
+              "$ref": "#/$defs/public_0058"
+            },
+            "required": {
+              "type": "boolean"
+            },
+            "type": {
+              "const": "text"
+            },
+            "queryable": {
+              "type": "boolean",
+              "default": false
+            },
+            "max_length": {
+              "type": "string",
+              "pattern": "^([1-9]|[1-9][0-9]{1,2}|10[01][0-9]|102[0-4])(?![\\s\\S])"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "key",
+            "required",
+            "type",
+            "choices"
+          ],
+          "properties": {
+            "key": {
+              "$ref": "#/$defs/public_0058"
+            },
+            "required": {
+              "type": "boolean"
+            },
+            "type": {
+              "const": "enum"
+            },
+            "queryable": {
+              "type": "boolean",
+              "default": false
+            },
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "minItems": 1,
+              "maxItems": 64,
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "key",
+            "required",
+            "type"
+          ],
+          "properties": {
+            "key": {
+              "$ref": "#/$defs/public_0058"
+            },
+            "required": {
+              "type": "boolean"
+            },
+            "type": {
+              "const": "boolean"
+            },
+            "queryable": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "key",
+            "required",
+            "type",
+            "min",
+            "max"
+          ],
+          "properties": {
+            "key": {
+              "$ref": "#/$defs/public_0058"
+            },
+            "required": {
+              "type": "boolean"
+            },
+            "type": {
+              "const": "integer"
+            },
+            "queryable": {
+              "type": "boolean",
+              "default": false
+            },
+            "min": {
+              "$ref": "#/$defs/public_0061"
+            },
+            "max": {
+              "$ref": "#/$defs/public_0061"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "key",
+            "required",
+            "type"
+          ],
+          "properties": {
+            "key": {
+              "$ref": "#/$defs/public_0058"
+            },
+            "required": {
+              "type": "boolean"
+            },
+            "type": {
+              "const": "date"
+            },
+            "queryable": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "key",
+            "required",
+            "type",
+            "target_kind"
+          ],
+          "properties": {
+            "key": {
+              "$ref": "#/$defs/public_0058"
+            },
+            "required": {
+              "type": "boolean"
+            },
+            "type": {
+              "const": "reference"
+            },
+            "queryable": {
+              "type": "boolean",
+              "default": false
+            },
+            "target_kind": {
+              "enum": [
+                "subject",
+                "location"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "public_0059": {
+      "type": "object",
+      "required": [
+        "display_name",
+        "description",
+        "compatible_item_types",
+        "fields"
+      ],
+      "properties": {
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "compatible_item_types": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "event",
+              "task"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/public_0060"
+          },
+          "minItems": 1,
+          "maxItems": 32
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0055": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc",
+        "owner",
+        "schema_key",
+        "definition"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.facet-schemas.v1"
+        },
+        "command_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/public_0003"
+        },
+        "owner": {
+          "$ref": "#/$defs/public_0057"
+        },
+        "schema_key": {
+          "$ref": "#/$defs/public_0058"
+        },
+        "definition": {
+          "$ref": "#/$defs/public_0059"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0062": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "ok",
+            "command",
+            "response_contract",
+            "command_id",
+            "command_receipt_id",
+            "effect",
+            "changed",
+            "audit_id",
+            "facet_schema_id",
+            "prior_revision_id",
+            "facet_schema_revision_id",
+            "revision_number",
+            "replayed"
+          ],
+          "properties": {
+            "ok": {
+              "const": true
+            },
+            "command": {
+              "const": "facet_schema.create"
+            },
+            "response_contract": {
+              "const": "spine.facet-schemas.v1"
+            },
+            "command_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "command_receipt_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "effect": {
+              "const": "facet_schema_created"
+            },
+            "changed": {
+              "type": "boolean"
+            },
+            "audit_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "facet_schema_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "prior_revision_id": {
+              "type": "null"
+            },
+            "facet_schema_revision_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "revision_number": {
+              "const": "1"
+            },
+            "replayed": {
+              "type": "boolean"
+            },
+            "dry_run": {
+              "const": true
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "replayed": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "changed": {
+                    "const": false
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "changed": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "public_0063": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc",
+        "facet_schema_id",
+        "expected_current_revision_id",
+        "definition"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.facet-schemas.v1"
+        },
+        "command_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/public_0003"
+        },
+        "facet_schema_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "expected_current_revision_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "definition": {
+          "$ref": "#/$defs/public_0059"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0065": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*(?![\\s\\S])"
+    },
+    "public_0064": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "ok",
+            "command",
+            "response_contract",
+            "command_id",
+            "command_receipt_id",
+            "effect",
+            "changed",
+            "audit_id",
+            "facet_schema_id",
+            "prior_revision_id",
+            "facet_schema_revision_id",
+            "revision_number",
+            "replayed"
+          ],
+          "properties": {
+            "ok": {
+              "const": true
+            },
+            "command": {
+              "const": "facet_schema.publish"
+            },
+            "response_contract": {
+              "const": "spine.facet-schemas.v1"
+            },
+            "command_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "command_receipt_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "effect": {
+              "const": "facet_schema_published"
+            },
+            "changed": {
+              "type": "boolean"
+            },
+            "audit_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "facet_schema_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "prior_revision_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "facet_schema_revision_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "revision_number": {
+              "$ref": "#/$defs/public_0065"
+            },
+            "replayed": {
+              "type": "boolean"
+            },
+            "dry_run": {
+              "const": true
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "replayed": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "changed": {
+                    "const": false
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "changed": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "ok",
+            "command",
+            "response_contract",
+            "command_id",
+            "command_receipt_id",
+            "effect",
+            "changed",
+            "facet_schema_id",
+            "prior_revision_id",
+            "facet_schema_revision_id",
+            "revision_number",
+            "replayed"
+          ],
+          "properties": {
+            "ok": {
+              "const": true
+            },
+            "command": {
+              "const": "facet_schema.publish"
+            },
+            "response_contract": {
+              "const": "spine.facet-schemas.v1"
+            },
+            "command_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "command_receipt_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "effect": {
+              "const": "facet_schema_publish_noop"
+            },
+            "changed": {
+              "type": "boolean"
+            },
+            "facet_schema_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "prior_revision_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "facet_schema_revision_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "revision_number": {
+              "$ref": "#/$defs/public_0065"
+            },
+            "replayed": {
+              "type": "boolean"
+            },
+            "dry_run": {
+              "const": true
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "replayed": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "changed": {
+                    "const": false
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "changed": {
+                    "const": false
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "public_0066": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc",
+        "item_archetype_id",
+        "facet_key",
+        "facet_schema_revision_id",
+        "expected_binding_id"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.archetype-facet-bindings.v1"
+        },
+        "command_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "actor_subject_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/public_0003"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "facet_key": {
+          "$ref": "#/$defs/public_0058"
+        },
+        "facet_schema_revision_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "expected_binding_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/public_0056"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0067": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "ok",
+            "command",
+            "response_contract",
+            "command_id",
+            "command_receipt_id",
+            "effect",
+            "changed",
+            "audit_id",
+            "item_archetype_id",
+            "facet_key",
+            "prior_binding_id",
+            "facet_binding_id",
+            "facet_schema_revision_id",
+            "replayed"
+          ],
+          "properties": {
+            "ok": {
+              "const": true
+            },
+            "command": {
+              "const": "item_archetype.facet_binding.set"
+            },
+            "response_contract": {
+              "const": "spine.archetype-facet-bindings.v1"
+            },
+            "command_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "command_receipt_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "effect": {
+              "const": "facet_binding_set"
+            },
+            "changed": {
+              "type": "boolean"
+            },
+            "audit_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "item_archetype_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "facet_key": {
+              "$ref": "#/$defs/public_0058"
+            },
+            "prior_binding_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/public_0056"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "facet_binding_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "facet_schema_revision_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "replayed": {
+              "type": "boolean"
+            },
+            "dry_run": {
+              "const": true
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "replayed": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "changed": {
+                    "const": false
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "changed": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "ok",
+            "command",
+            "response_contract",
+            "command_id",
+            "command_receipt_id",
+            "effect",
+            "changed",
+            "item_archetype_id",
+            "facet_key",
+            "prior_binding_id",
+            "facet_binding_id",
+            "facet_schema_revision_id",
+            "replayed"
+          ],
+          "properties": {
+            "ok": {
+              "const": true
+            },
+            "command": {
+              "const": "item_archetype.facet_binding.set"
+            },
+            "response_contract": {
+              "const": "spine.archetype-facet-bindings.v1"
+            },
+            "command_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "command_receipt_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "effect": {
+              "const": "facet_binding_set_noop"
+            },
+            "changed": {
+              "type": "boolean"
+            },
+            "item_archetype_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "facet_key": {
+              "$ref": "#/$defs/public_0058"
+            },
+            "prior_binding_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/public_0056"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "facet_binding_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "facet_schema_revision_id": {
+              "$ref": "#/$defs/public_0056"
+            },
+            "replayed": {
+              "type": "boolean"
+            },
+            "dry_run": {
+              "const": true
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "replayed": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "changed": {
+                    "const": false
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "changed": {
+                    "const": false
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "public_0069": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "public_0070": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "owner_kind"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "system"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "owner_kind",
+            "owner_subject_id"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "subject"
+            },
+            "owner_subject_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "owner_kind",
+            "owner_group_id"
+          ],
+          "properties": {
+            "owner_kind": {
+              "const": "subject_group"
+            },
+            "owner_group_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "public_0072": {
+      "type": "object",
+      "required": [
+        "selection_key",
+        "facet_key",
+        "facet_schema_revision_id",
+        "field_key",
+        "label",
+        "projection"
+      ],
+      "properties": {
+        "selection_key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+        },
+        "facet_key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+        },
+        "facet_schema_revision_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "field_key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "projection": {
+          "enum": [
+            "value",
+            "location_label"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0071": {
+      "type": "object",
+      "required": [
+        "display_name",
+        "description",
+        "compatible_item_types",
+        "base_rendering_contract",
+        "base_rendering_profile",
+        "selections"
+      ],
+      "properties": {
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "compatible_item_types": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "event",
+              "task"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "base_rendering_contract": {
+          "const": "spine.notification-rendering.v1"
+        },
+        "base_rendering_profile": {
+          "const": "spine.notification-rendering.concise-en-ca.v1"
+        },
+        "selections": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/public_0072"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0068": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc",
+        "owner",
+        "definition_key",
+        "revision"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-rendering-definitions.v1"
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "actor_subject_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/public_0069"
+        },
+        "owner": {
+          "$ref": "#/$defs/public_0070"
+        },
+        "definition_key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+        },
+        "revision": {
+          "$ref": "#/$defs/public_0071"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0075": {
+      "type": "object",
+      "required": [
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc"
+      ],
+      "properties": {
+        "command_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "actor_subject_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/public_0069"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0074": {
+      "type": "object",
+      "required": [
+        "notification_rendering_definition_id",
+        "owner",
+        "definition_key",
+        "status",
+        "current_revision_id",
+        "notification_rendering_definition_revision_id",
+        "revision_number",
+        "revision",
+        "definition_hash",
+        "created",
+        "published",
+        "retired"
+      ],
+      "properties": {
+        "notification_rendering_definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "owner": {
+          "$ref": "#/$defs/public_0070"
+        },
+        "definition_key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "current_revision_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "notification_rendering_definition_revision_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "revision_number": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]{0,18}$"
+        },
+        "revision": {
+          "$ref": "#/$defs/public_0071"
+        },
+        "definition_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "created": {
+          "$ref": "#/$defs/public_0075"
+        },
+        "published": {
+          "$ref": "#/$defs/public_0075"
+        },
+        "retired": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "reason_code",
+                "provenance"
+              ],
+              "properties": {
+                "reason_code": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+                },
+                "provenance": {
+                  "$ref": "#/$defs/public_0075"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0073": {
+      "type": "object",
+      "required": [
+        "ok",
+        "contract_version",
+        "command",
+        "command_id",
+        "changed",
+        "replayed",
+        "effect",
+        "command_receipt_id",
+        "audit_id",
+        "record"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "contract_version": {
+          "const": "spine.notification-rendering-definitions.v1"
+        },
+        "command": {
+          "const": "notification_rendering_definition.create"
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "changed": {
+          "type": "boolean"
+        },
+        "replayed": {
+          "type": "boolean"
+        },
+        "dry_run": {
+          "const": true
+        },
+        "effect": {
+          "enum": [
+            "rendering_definition_created"
+          ]
+        },
+        "command_receipt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "audit_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "record": {
+          "$ref": "#/$defs/public_0074"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "replayed": {
+                "const": true
+              }
+            },
+            "required": [
+              "replayed"
+            ]
+          },
+          "then": {
+            "properties": {
+              "changed": {
+                "const": false
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "changed": {
+                "const": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    "public_0076": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "command_id",
+        "actor_subject_id",
+        "action_timestamp_utc",
+        "notification_rendering_definition_id",
+        "expected_current_revision_id",
+        "revision"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-rendering-definitions.v1"
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "actor_subject_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "action_timestamp_utc": {
+          "$ref": "#/$defs/public_0069"
+        },
+        "notification_rendering_definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "expected_current_revision_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "revision": {
+          "$ref": "#/$defs/public_0071"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0077": {
+      "type": "object",
+      "required": [
+        "ok",
+        "contract_version",
+        "command",
+        "command_id",
+        "changed",
+        "replayed",
+        "effect",
+        "command_receipt_id",
+        "audit_id",
+        "record"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "contract_version": {
+          "const": "spine.notification-rendering-definitions.v1"
+        },
+        "command": {
+          "const": "notification_rendering_definition.publish"
+        },
+        "command_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "changed": {
+          "type": "boolean"
+        },
+        "replayed": {
+          "type": "boolean"
+        },
+        "dry_run": {
+          "const": true
+        },
+        "effect": {
+          "enum": [
+            "rendering_definition_published",
+            "rendering_definition_publish_noop"
+          ]
+        },
+        "command_receipt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "audit_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "record": {
+          "$ref": "#/$defs/public_0074"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "replayed": {
+                "const": true
+              }
+            },
+            "required": [
+              "replayed"
+            ]
+          },
+          "then": {
+            "properties": {
+              "changed": {
+                "const": false
+              }
+            }
+          },
+          "else": {
+            "if": {
+              "properties": {
+                "effect": {
+                  "enum": [
+                    "rendering_definition_publish_noop"
+                  ]
+                }
+              },
+              "required": [
+                "effect"
+              ]
+            },
+            "then": {
+              "properties": {
+                "changed": {
+                  "const": false
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "changed": {
+                  "const": true
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "public_0078": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "owner",
+        "limit"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "owner": {
+          "$ref": "#/$defs/public_0004"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "cursor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limit": {
+          "type": "string",
+          "pattern": "^([1-9]|[1-9][0-9]|[1-4][0-9]{2}|500)$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0081": {
+      "type": "string",
+      "minLength": 1
+    },
+    "public_0083": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "public_0084": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "public_0082": {
+      "type": "object",
+      "required": [
+        "item_archetype_revision_id",
+        "item_archetype_id",
+        "revision_number",
+        "created_by_subject_id",
+        "created_by_command_id",
+        "created_at_utc",
+        "display_name",
+        "description",
+        "compatible_item_types",
+        "normalized_content_hash"
+      ],
+      "properties": {
+        "item_archetype_revision_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "revision_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_by_subject_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "created_by_command_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "created_at_utc": {
+          "$ref": "#/$defs/public_0013"
+        },
+        "display_name": {
+          "$ref": "#/$defs/public_0083"
+        },
+        "description": {
+          "$ref": "#/$defs/public_0084"
+        },
+        "compatible_item_types": {
+          "$ref": "#/$defs/public_0021"
+        },
+        "normalized_content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0080": {
+      "type": "object",
+      "required": [
+        "owner_kind",
+        "owner_subject_id",
+        "owner_group_id",
+        "status",
+        "created_by_subject_id",
+        "created_by_command_id",
+        "created_at_utc",
+        "retired_by_subject_id",
+        "retired_by_command_id",
+        "retired_at_utc",
+        "item_archetype_id",
+        "archetype_key",
+        "current_revision_id",
+        "retirement_reason",
+        "revision"
+      ],
+      "properties": {
+        "owner_kind": {
+          "enum": [
+            "system",
+            "subject",
+            "subject_group"
+          ]
+        },
+        "owner_subject_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/public_0081"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner_group_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/public_0081"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "created_by_subject_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "created_by_command_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "created_at_utc": {
+          "$ref": "#/$defs/public_0013"
+        },
+        "retired_by_subject_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/public_0081"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retired_by_command_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/public_0081"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retired_at_utc": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/public_0013"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "archetype_key": {
+          "$ref": "#/$defs/public_0011"
+        },
+        "current_revision_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "retirement_reason": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "$ref": "#/$defs/public_0082"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0079": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "entries",
+        "count",
+        "catalog_snapshot_hash",
+        "has_more",
+        "next_cursor"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "item_archetype.list"
+        },
+        "response_contract": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "entries": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "$ref": "#/$defs/public_0080"
+          }
+        },
+        "count": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "catalog_snapshot_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0085": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "item_archetype_id"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "item_archetype_revision_id": {
+          "$ref": "#/$defs/public_0002"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0086": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "item_archetype"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "item_archetype.show"
+        },
+        "response_contract": {
+          "const": "spine.item-archetypes.v1"
+        },
+        "item_archetype": {
+          "$ref": "#/$defs/public_0080"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0087": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "owner",
+        "limit"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-profile-bindings.v1"
+        },
+        "owner": {
+          "$ref": "#/$defs/public_0004"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "cursor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limit": {
+          "type": "string",
+          "pattern": "^([1-9]|[1-9][0-9]|[1-4][0-9]{2}|500)$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0089": {
+      "type": "object",
+      "required": [
+        "owner_kind",
+        "owner_subject_id",
+        "owner_group_id",
+        "status",
+        "created_by_subject_id",
+        "created_by_command_id",
+        "created_at_utc",
+        "retired_by_subject_id",
+        "retired_by_command_id",
+        "retired_at_utc",
+        "notification_profile_binding_id",
+        "item_archetype_id",
+        "notification_profile_id"
+      ],
+      "properties": {
+        "owner_kind": {
+          "enum": [
+            "system",
+            "subject",
+            "subject_group"
+          ]
+        },
+        "owner_subject_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/public_0081"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owner_group_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/public_0081"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "created_by_subject_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "created_by_command_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "created_at_utc": {
+          "$ref": "#/$defs/public_0013"
+        },
+        "retired_by_subject_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/public_0081"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retired_by_command_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/public_0081"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retired_at_utc": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/public_0013"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notification_profile_binding_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0081"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/public_0081"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0088": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "entries",
+        "count",
+        "catalog_snapshot_hash",
+        "has_more",
+        "next_cursor"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.binding.list"
+        },
+        "response_contract": {
+          "const": "spine.notification-profile-bindings.v1"
+        },
+        "entries": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "$ref": "#/$defs/public_0089"
+          }
+        },
+        "count": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "catalog_snapshot_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0090": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "owner",
+        "limit"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-profiles.v2"
+        },
+        "owner": {
+          "$ref": "#/$defs/public_0024"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "cursor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limit": {
+          "type": "string",
+          "pattern": "^([1-9]|[1-9][0-9]|[1-4][0-9]{2}|500)(?![\\s\\S])"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0094": {
+      "type": "object",
+      "required": [
+        "compatible_item_types",
+        "templates"
+      ],
+      "properties": {
+        "compatible_item_types": {
+          "$ref": "#/$defs/public_0007"
+        },
+        "templates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "required": [
+              "template_key",
+              "schedule",
+              "late_handling",
+              "normalized_template_hash"
+            ],
+            "properties": {
+              "template_key": {
+                "$ref": "#/$defs/public_0005"
+              },
+              "schedule": {
+                "$ref": "#/$defs/public_0029"
+              },
+              "late_handling": {
+                "$ref": "#/$defs/public_0046"
+              },
+              "normalized_template_hash": {
+                "$ref": "#/$defs/public_0051"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0095": {
+      "type": "object",
+      "required": [
+        "compatible_item_types",
+        "templates"
+      ],
+      "properties": {
+        "compatible_item_types": {
+          "$ref": "#/$defs/public_0007"
+        },
+        "templates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "required": [
+              "template_key",
+              "schedule",
+              "late_handling",
+              "rendering",
+              "normalized_template_hash"
+            ],
+            "properties": {
+              "template_key": {
+                "$ref": "#/$defs/public_0005"
+              },
+              "schedule": {
+                "$ref": "#/$defs/public_0029"
+              },
+              "late_handling": {
+                "$ref": "#/$defs/public_0046"
+              },
+              "rendering": {
+                "$ref": "#/$defs/public_0048"
+              },
+              "normalized_template_hash": {
+                "$ref": "#/$defs/public_0051"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0093": {
+      "type": "object",
+      "required": [
+        "notification_profile_revision_id",
+        "revision_number",
+        "revision_contract",
+        "normalized_revision_hash",
+        "content"
+      ],
+      "properties": {
+        "notification_profile_revision_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "revision_number": {
+          "$ref": "#/$defs/public_0042"
+        },
+        "revision_contract": {
+          "enum": [
+            "spine.notification-profiles.v1",
+            "spine.notification-profiles.v2"
+          ]
+        },
+        "normalized_revision_hash": {
+          "$ref": "#/$defs/public_0051"
+        },
+        "content": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/public_0094"
+            },
+            {
+              "$ref": "#/$defs/public_0095"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "revision_contract": {
+                "const": "spine.notification-profiles.v2"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "content": {
+                "$ref": "#/$defs/public_0095"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "content": {
+                "$ref": "#/$defs/public_0094"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "public_0092": {
+      "type": "object",
+      "required": [
+        "notification_profile_id",
+        "owner",
+        "profile_key",
+        "display_name",
+        "description",
+        "status",
+        "current_revision_id",
+        "revision"
+      ],
+      "properties": {
+        "notification_profile_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "owner": {
+          "$ref": "#/$defs/public_0004"
+        },
+        "profile_key": {
+          "$ref": "#/$defs/public_0005"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "current_revision_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "revision": {
+          "$ref": "#/$defs/public_0093"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0091": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "entries",
+        "count",
+        "catalog_snapshot_hash",
+        "has_more",
+        "next_cursor"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.list"
+        },
+        "response_contract": {
+          "const": "spine.notification-profiles.v2"
+        },
+        "entries": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 500,
+          "items": {
+            "$ref": "#/$defs/public_0092"
+          }
+        },
+        "count": {
+          "$ref": "#/$defs/public_0047"
+        },
+        "catalog_snapshot_hash": {
+          "$ref": "#/$defs/public_0051"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dry_run": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0096": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "notification_profile_id"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-profiles.v2"
+        },
+        "notification_profile_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "notification_profile_revision_id": {
+          "$ref": "#/$defs/public_0002"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0097": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "notification_profile"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "notification_profile.show"
+        },
+        "response_contract": {
+          "const": "spine.notification-profiles.v2"
+        },
+        "notification_profile": {
+          "$ref": "#/$defs/public_0092"
+        },
+        "dry_run": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0099": {
+      "type": "string",
+      "pattern": "^([1-9]|[1-9][0-9]|100)(?![\\s\\S])",
+      "default": "25"
+    },
+    "public_0100": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "$comment": "Opaque spine.facet-cursor.v1 token. Section 11 of specs/archetype-facets.md owns MAC, context, snapshot and expiry semantics; structural string validation alone proves none of them."
+    },
+    "public_0098": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "owner"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.facet-schemas.v1"
+        },
+        "owner": {
+          "$ref": "#/$defs/public_0057"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "limit": {
+          "$ref": "#/$defs/public_0099"
+        },
+        "cursor": {
+          "$ref": "#/$defs/public_0100"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0102": {
+      "type": "object",
+      "required": [
+        "facet_schema_id",
+        "owner",
+        "schema_key",
+        "current_revision_id",
+        "status"
+      ],
+      "properties": {
+        "facet_schema_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "owner": {
+          "$ref": "#/$defs/public_0057"
+        },
+        "schema_key": {
+          "$ref": "#/$defs/public_0058"
+        },
+        "current_revision_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0101": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "owner",
+        "schemas",
+        "limit",
+        "has_more",
+        "next_cursor"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "facet_schema.list"
+        },
+        "response_contract": {
+          "const": "spine.facet-schemas.v1"
+        },
+        "owner": {
+          "$ref": "#/$defs/public_0057"
+        },
+        "schemas": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/public_0102"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "limit": {
+          "$ref": "#/$defs/public_0099"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/public_0100"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dry_run": {
+          "const": true
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "has_more": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "next_cursor": {
+                "$ref": "#/$defs/public_0100"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "next_cursor": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "public_0103": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "facet_schema_id"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.facet-schemas.v1"
+        },
+        "facet_schema_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "facet_schema_revision_id": {
+          "$ref": "#/$defs/public_0056"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0106": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/public_0059"
+        },
+        {
+          "properties": {
+            "fields": {
+              "items": {
+                "required": [
+                  "queryable"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "public_0107": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+    },
+    "public_0105": {
+      "type": "object",
+      "required": [
+        "facet_schema_id",
+        "facet_schema_revision_id",
+        "revision_number",
+        "definition",
+        "definition_hash"
+      ],
+      "properties": {
+        "facet_schema_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "facet_schema_revision_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "revision_number": {
+          "$ref": "#/$defs/public_0065"
+        },
+        "definition": {
+          "$ref": "#/$defs/public_0106"
+        },
+        "definition_hash": {
+          "$ref": "#/$defs/public_0107"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0104": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "root",
+        "revision"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "facet_schema.show"
+        },
+        "response_contract": {
+          "const": "spine.facet-schemas.v1"
+        },
+        "root": {
+          "$ref": "#/$defs/public_0102"
+        },
+        "revision": {
+          "$ref": "#/$defs/public_0105"
+        },
+        "dry_run": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0108": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "item_archetype_id"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.archetype-facet-bindings.v1"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "limit": {
+          "$ref": "#/$defs/public_0099"
+        },
+        "cursor": {
+          "$ref": "#/$defs/public_0100"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0110": {
+      "type": "object",
+      "required": [
+        "facet_binding_id",
+        "item_archetype_id",
+        "facet_key",
+        "facet_schema_revision_id",
+        "status"
+      ],
+      "properties": {
+        "facet_binding_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "facet_key": {
+          "$ref": "#/$defs/public_0058"
+        },
+        "facet_schema_revision_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "superseded",
+            "retired"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0109": {
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "item_archetype_id",
+        "bindings",
+        "limit",
+        "has_more",
+        "next_cursor"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "item_archetype.facet_binding.list"
+        },
+        "response_contract": {
+          "const": "spine.archetype-facet-bindings.v1"
+        },
+        "item_archetype_id": {
+          "$ref": "#/$defs/public_0056"
+        },
+        "bindings": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/public_0110"
+              },
+              {
+                "properties": {
+                  "status": {
+                    "const": "active"
+                  }
+                }
+              }
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "limit": {
+          "$ref": "#/$defs/public_0099"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/public_0100"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dry_run": {
+          "const": true
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "has_more": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "next_cursor": {
+                "$ref": "#/$defs/public_0100"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "next_cursor": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "public_0111": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "owner",
+        "status",
+        "limit"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-rendering-definitions.v1"
+        },
+        "owner": {
+          "$ref": "#/$defs/public_0070"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "retired"
+          ]
+        },
+        "limit": {
+          "type": "string",
+          "pattern": "^([1-9]|[1-9][0-9]|100)(?![\\s\\S])"
+        },
+        "cursor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0112": {
+      "type": "object",
+      "required": [
+        "ok",
+        "contract_version",
+        "command",
+        "records",
+        "has_more",
+        "next_cursor",
+        "limit"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "contract_version": {
+          "const": "spine.notification-rendering-definitions.v1"
+        },
+        "command": {
+          "const": "notification_rendering_definition.list"
+        },
+        "records": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "$ref": "#/$defs/public_0074"
+          }
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dry_run": {
+          "const": true
+        },
+        "limit": {
+          "type": "string",
+          "pattern": "^([1-9]|[1-9][0-9]|100)(?![\\s\\S])"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "has_more": {
+                "const": false
+              }
+            },
+            "required": [
+              "has_more"
+            ]
+          },
+          "then": {
+            "properties": {
+              "next_cursor": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "next_cursor": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            }
+          }
+        }
+      ]
+    },
+    "public_0113": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "notification_rendering_definition_id"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-rendering-definitions.v1"
+        },
+        "notification_rendering_definition_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "notification_rendering_definition_revision_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0114": {
+      "type": "object",
+      "required": [
+        "ok",
+        "contract_version",
+        "command",
+        "record"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "contract_version": {
+          "const": "spine.notification-rendering-definitions.v1"
+        },
+        "command": {
+          "const": "notification_rendering_definition.show"
+        },
+        "record": {
+          "$ref": "#/$defs/public_0074"
+        },
+        "dry_run": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "emptyRequest": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "public_0115": {
+      "title": "Spine System Information Response v3",
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "response_contract",
+        "runtime_version",
+        "implemented_ledger_schema_version",
+        "ledger_schema_version",
+        "timezone_database_version",
+        "implemented_contract_versions",
+        "runtime_dependencies",
+        "ledger_instance_id"
+      ],
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "command": {
+          "const": "system.info"
+        },
+        "response_contract": {
+          "const": "spine.system-info.v3"
+        },
+        "runtime_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implemented_ledger_schema_version": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "ledger_schema_version": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "timezone_database_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implemented_contract_versions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allOf": [
+            {
+              "contains": {
+                "const": "spine.system-info.v3"
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "const": "spine.tickerd-compatibility.v1"
+              },
+              "minContains": 1,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "const": "spine.ledger-instance.v1"
+              },
+              "minContains": 1,
+              "maxContains": 1
+            }
+          ]
+        },
+        "runtime_dependencies": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "package_version",
+              "capability_id",
+              "descriptor_sha256",
+              "compatibility_contract",
+              "status"
+            ],
+            "properties": {
+              "name": {
+                "const": "tickerd"
+              },
+              "package_version": {
+                "const": "0.2.0"
+              },
+              "capability_id": {
+                "const": "tickerd.runtime-capabilities.v1"
+              },
+              "descriptor_sha256": {
+                "const": "215f9aa6b54e6c0e6186796a55d78e1c5a270adc9b3ccefb433df5a3bb87b58b"
+              },
+              "compatibility_contract": {
+                "const": "spine.tickerd-compatibility.v1"
+              },
+              "status": {
+                "const": "compatible"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "ledger_instance_id": {
+          "type": "string",
+          "pattern": "^ledger_instance_[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0116": {
+      "type": "object",
+      "required": [
+        "display_name",
+        "description"
+      ],
+      "properties": {
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0123": {
+      "type": "object",
+      "required": [
+        "kind",
+        "at_utc"
+      ],
+      "properties": {
+        "kind": {
+          "const": "absolute_utc"
+        },
+        "at_utc": {
+          "$ref": "#/$defs/public_0013"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0126": {
+      "type": "string",
+      "pattern": "^(0|-?[1-9][0-9]*)$"
+    },
+    "public_0125": {
+      "type": "object",
+      "required": [
+        "kind",
+        "offset_basis",
+        "offset_seconds"
+      ],
+      "properties": {
+        "kind": {
+          "const": "target_offset"
+        },
+        "offset_basis": {
+          "const": "elapsed"
+        },
+        "offset_seconds": {
+          "$ref": "#/$defs/public_0126"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0128": {
+      "type": "string",
+      "pattern": "^[0-9]{2}:[0-9]{2}:[0-9]{2}$"
+    },
+    "public_0127": {
+      "type": "object",
+      "required": [
+        "kind",
+        "offset_basis",
+        "offset_days",
+        "local_time"
+      ],
+      "properties": {
+        "kind": {
+          "const": "target_offset"
+        },
+        "offset_basis": {
+          "const": "calendar_days"
+        },
+        "offset_days": {
+          "$ref": "#/$defs/public_0126"
+        },
+        "local_time": {
+          "$ref": "#/$defs/public_0128"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timezone_database_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0124": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/public_0125"
+        },
+        {
+          "$ref": "#/$defs/public_0127"
+        }
+      ]
+    },
+    "public_0122": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/public_0123"
+        },
+        {
+          "$ref": "#/$defs/public_0124"
+        }
+      ]
+    },
+    "public_0121": {
+      "type": "object",
+      "required": [
+        "kind",
+        "at"
+      ],
+      "properties": {
+        "kind": {
+          "const": "once"
+        },
+        "at": {
+          "$ref": "#/$defs/public_0122"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0129": {
+      "type": "object",
+      "required": [
+        "kind",
+        "at"
+      ],
+      "properties": {
+        "kind": {
+          "const": "offsets"
+        },
+        "at": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/public_0124"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0132": {
+      "type": "object",
+      "required": [
+        "kind",
+        "interval_seconds"
+      ],
+      "properties": {
+        "kind": {
+          "const": "fixed_elapsed"
+        },
+        "interval_seconds": {
+          "$ref": "#/$defs/public_0010"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0134": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "public_0135": {
+      "enum": [
+        "MO",
+        "TU",
+        "WE",
+        "TH",
+        "FR",
+        "SA",
+        "SU"
+      ]
+    },
+    "public_0133": {
+      "type": "object",
+      "required": [
+        "kind",
+        "frequency",
+        "seed_local_date",
+        "local_time",
+        "timezone",
+        "timezone_database_version"
+      ],
+      "properties": {
+        "kind": {
+          "const": "local_calendar"
+        },
+        "frequency": {
+          "enum": [
+            "DAILY",
+            "WEEKLY",
+            "MONTHLY",
+            "YEARLY"
+          ]
+        },
+        "interval": {
+          "$ref": "#/$defs/public_0010"
+        },
+        "seed_local_date": {
+          "$ref": "#/$defs/public_0134"
+        },
+        "local_time": {
+          "$ref": "#/$defs/public_0128"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timezone_database_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "by_month": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^([1-9]|1[0-2])$"
+          }
+        },
+        "by_month_day": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^-?([1-9]|[12][0-9]|3[01])$"
+          }
+        },
+        "by_weekday": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/public_0135"
+          }
+        },
+        "by_set_position": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^-?([1-9]|[1-9][0-9]|[12][0-9]{2}|3[0-5][0-9]|36[0-6])$"
+          }
+        },
+        "week_start": {
+          "$ref": "#/$defs/public_0135"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "enum": [
+                  "MONTHLY",
+                  "YEARLY"
+                ]
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "by_month_day",
+                "by_weekday"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "by_set_position"
+            ]
+          },
+          "then": {
+            "required": [
+              "by_weekday"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "DAILY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "by_month"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_month_day"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_weekday"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_set_position"
+                  ]
+                },
+                {
+                  "required": [
+                    "week_start"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "WEEKLY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "by_month"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_month_day"
+                  ]
+                },
+                {
+                  "required": [
+                    "by_set_position"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "MONTHLY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "by_month"
+                  ]
+                },
+                {
+                  "required": [
+                    "week_start"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frequency": {
+                "const": "YEARLY"
+              }
+            },
+            "required": [
+              "frequency"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "week_start"
+              ]
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "public_0131": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/public_0132"
+        },
+        {
+          "$ref": "#/$defs/public_0133"
+        }
+      ]
+    },
+    "public_0130": {
+      "type": "object",
+      "required": [
+        "kind",
+        "start",
+        "stop",
+        "stop_inclusive",
+        "cadence"
+      ],
+      "properties": {
+        "kind": {
+          "const": "repeat_window"
+        },
+        "start": {
+          "$ref": "#/$defs/public_0122"
+        },
+        "stop": {
+          "$ref": "#/$defs/public_0122"
+        },
+        "stop_inclusive": {
+          "type": "boolean"
+        },
+        "cadence": {
+          "$ref": "#/$defs/public_0131"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0120": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/public_0121"
+        },
+        {
+          "$ref": "#/$defs/public_0129"
+        },
+        {
+          "$ref": "#/$defs/public_0130"
+        }
+      ]
+    },
+    "public_0137": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
+    "public_0136": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "skip"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "kind",
+            "grace_seconds"
+          ],
+          "properties": {
+            "kind": {
+              "const": "deliver_within"
+            },
+            "grace_seconds": {
+              "$ref": "#/$defs/public_0137"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "public_0119": {
+      "type": "object",
+      "required": [
+        "template_key",
+        "schedule",
+        "late_handling"
+      ],
+      "properties": {
+        "template_key": {
+          "$ref": "#/$defs/public_0011"
+        },
+        "schedule": {
+          "$ref": "#/$defs/public_0120"
+        },
+        "late_handling": {
+          "$ref": "#/$defs/public_0136"
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0118": {
+      "type": "object",
+      "required": [
+        "compatible_item_types",
+        "templates"
+      ],
+      "properties": {
+        "compatible_item_types": {
+          "$ref": "#/$defs/public_0021"
+        },
+        "templates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/public_0119"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0117": {
+      "type": "object",
+      "required": [
+        "metadata",
+        "revision"
+      ],
+      "properties": {
+        "metadata": {
+          "$ref": "#/$defs/public_0116"
+        },
+        "revision": {
+          "$ref": "#/$defs/public_0118"
+        }
+      },
+      "additionalProperties": false
+    },
+    "semantic_archetype": {
+      "$ref": "#/$defs/public_0006"
+    },
+    "semantic_schema": {
+      "$ref": "#/$defs/public_0106"
+    },
+    "semantic_rendering": {
+      "$ref": "#/$defs/public_0071"
+    },
+    "semantic_profile": {
+      "type": "object",
+      "properties": {
+        "metadata": {
+          "$ref": "#/$defs/public_0116"
+        },
+        "revision": {
+          "$ref": "#/$defs/public_0026"
+        }
+      },
+      "required": [
+        "metadata",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "semantic_profile_v1": {
+      "$ref": "#/$defs/public_0117"
+    },
+    "semantic_facet_binding": {
+      "type": "object",
+      "properties": {
+        "item_archetype_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "facet_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "facet_schema_revision_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "item_archetype_id",
+        "facet_key",
+        "facet_schema_revision_id"
+      ],
+      "additionalProperties": false
+    },
+    "semantic_binding": {
+      "type": "object",
+      "properties": {
+        "item_archetype_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "notification_profile_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "item_archetype_id",
+        "notification_profile_id"
+      ],
+      "additionalProperties": false
+    },
+    "public_0138": {
+      "title": "Spine facet handler failures (draft v1)",
+      "$comment": "Draft, not implemented or advertised. Normative source: specs/archetype-facets.md.",
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "error"
+      ],
+      "properties": {
+        "ok": {
+          "const": false
+        },
+        "command": {
+          "enum": [
+            "facet_schema.create",
+            "facet_schema.publish",
+            "facet_schema.retire",
+            "facet_schema.show",
+            "facet_schema.list",
+            "item_archetype.facet_binding.set",
+            "item_archetype.facet_binding.remove",
+            "item_archetype.facet_binding.list",
+            "item.facets.update",
+            "item.facets.show",
+            "item.facets.query"
+          ]
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "facet_schema_invalid",
+                "facet_value_invalid",
+                "facet_binding_conflict",
+                "facet_archetype_conflict",
+                "facet_schema_retired",
+                "facet_reference_unavailable",
+                "invalid_request",
+                "unsupported_field",
+                "missing_required_field",
+                "invalid_timestamp",
+                "referenced_row_not_found",
+                "wrong_item_type",
+                "stale_version",
+                "stale_cursor",
+                "invalid_state_transition",
+                "semantic_conflict",
+                "environment_failure",
+                "runtime_failure"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1
+            },
+            "field": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "dry_run": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0139": {
+      "title": "Rendering integration standard command failure (source only)",
+      "type": "object",
+      "required": [
+        "ok",
+        "command",
+        "error"
+      ],
+      "properties": {
+        "ok": {
+          "const": false
+        },
+        "command": {
+          "enum": [
+            "notification_profile.create",
+            "notification_profile.revise",
+            "notification_profile.show",
+            "notification_profile.list",
+            "schedule.create",
+            "schedule.update",
+            "schedule.show",
+            "reminder.create",
+            "reminder.edit"
+          ]
+        },
+        "dry_run": {
+          "const": true
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "invalid_request",
+                "unsupported_field",
+                "missing_required_field",
+                "invalid_timestamp",
+                "referenced_row_not_found",
+                "semantic_conflict",
+                "stale_version",
+                "stale_cursor",
+                "permission_denied",
+                "environment_failure",
+                "runtime_failure",
+                "rendering_definition_invalid",
+                "rendering_definition_retired",
+                "rendering_disclosure_unavailable",
+                "rendering_disclosure_ambiguous",
+                "rendering_disclosure_scope_mismatch"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1
+            },
+            "field": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "public_0140": {
+      "title": "Spine notification-rendering-cursor-config (source only)",
+      "type": "object",
+      "required": [
+        "contract_version",
+        "key_id",
+        "key_generation",
+        "ledger_instance_id",
+        "secret_hex"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "spine.notification-rendering-cursor-config.v1"
+        },
+        "key_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,64}(?![\\s\\S])"
+        },
+        "key_generation": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,64}(?![\\s\\S])"
+        },
+        "ledger_instance_id": {
+          "$ref": "#/$defs/public_0002"
+        },
+        "secret_hex": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 128,
+          "pattern": "^(?:[0-9a-f]{2}){32,64}(?![\\s\\S])"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

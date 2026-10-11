@@ -12,6 +12,12 @@ nothing to any existing v1 manifest, schema or runtime allowlist.
 The new content and compatibility require successor releases, separately reviewed
 machine contracts and exact-baseline qualification. Existing v1 support is unchanged.
 
+The FR-1 draft artifact schemas and offline public closure pin only this repaired
+baseline; `contracts/installer-spine-0.9.1-inventory.json` records the 22-command
+map, 17-contract union and source hashes. Draft artifacts are not accepted by
+the existing installer. Public response JSON numbers are preserved as validated
+text inside v2 evidence, never coerced into v1 canonical comparison values.
+
 ## Compatibility dimensions
 
 Every manifest MUST declare compatibility independently for:

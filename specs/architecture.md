@@ -11,6 +11,11 @@ or compatibility of the implemented slices below. No disclosure authorization,
 item authoring, scheduling or sending belongs to that graph. Read its review
 gates before successor work; old v1 behavior and released artifacts remain intact.
 
+The draft successor machine layer is specified in
+[installer-artifacts-v2.md](installer-artifacts-v2.md). Its pure test oracle lives
+under `tests/contract/`, not `src/spine_packs/`. Saved synthetic execution and
+recovery fixtures are not results from an implemented successor installer.
+
 ## Relationship
 
 The intended data and authority flow is:

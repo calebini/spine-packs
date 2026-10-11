@@ -356,9 +356,18 @@ indexed positive/negative mutations and independent Draft 2020-12 plus semantic
 checks. Existing runtime and v1 artifacts remain untouched. This is not FR-1
 completion or authorization to start FR-2.
 
-Next: codify the seven v2 installer artifacts, shared/embedded/readback schema
-closure, exact typed reference slots, aggregate observation budgets and one
-request/plan/approval/checkpoint/apply/verify fixture flow. Complete the remaining
-normalization, resolved-byte-limit and recovery evidence oracles, then stage a
-bounded machine-contract review. External review still requires exact-payload
-approval; FR-2 runtime implementation must wait for that gate.
+The next increment is now authored in `installer-artifacts-v2.md`: seven v2
+entry schemas, shared/embedded types, offline pinned public closure, typed null
+slots and aggregate observation budgets. Synthetic create and cascading-update
+flight flows cover all 11 writes and prepared/response-loss/accepted recovery
+boundaries. Family-specific evidence retains complete public response text,
+including native public JSON numbers, without inventing a universal receipt.
+Upstream wire vectors supplement the independent schema/semantic/hash oracles.
+
+Next: approve and run the bounded artifact-contract review, address findings,
+then separately authorize FR-2. This is not FR-1 review completion or runtime
+qualification. FR-2 must prove actual full two-pass pagination, cursor-config,
+capacity and transport failure handling; FR-3 must prove durable filesystem
+ordering; FR-4 must implement and fault-test continuation/verification. The
+synthetic oracle cannot stand in for these runtime tests. FR-5 still requires
+the exact Spine package and existing-baseline package regression gates.

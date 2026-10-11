@@ -1,0 +1,411 @@
+{
+  "contract": "spine.pack-installer-fixtures.v2",
+  "status": "synthetic_contract_proof_not_runtime_qualification",
+  "fixtures": [
+    "tests/fixtures/installer-v2/flight-create.json",
+    "tests/fixtures/installer-v2/flight-update.json",
+    "tests/fixtures/installer-v2/public-wire-vectors.json"
+  ],
+  "vectors": [
+    {
+      "id": "flight-create-0-prepared_before_submit",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "0",
+      "command": "item_archetype.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-0-accepted_response_lost",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "0",
+      "command": "item_archetype.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-0-accepted_durable",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "0",
+      "command": "item_archetype.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-1-prepared_before_submit",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "1",
+      "command": "facet_schema.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-1-accepted_response_lost",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "1",
+      "command": "facet_schema.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-1-accepted_durable",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "1",
+      "command": "facet_schema.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-2-prepared_before_submit",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "2",
+      "command": "item_archetype.facet_binding.set",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-2-accepted_response_lost",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "2",
+      "command": "item_archetype.facet_binding.set",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-2-accepted_durable",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "2",
+      "command": "item_archetype.facet_binding.set",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-3-prepared_before_submit",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "3",
+      "command": "notification_rendering_definition.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-3-accepted_response_lost",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "3",
+      "command": "notification_rendering_definition.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-3-accepted_durable",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "3",
+      "command": "notification_rendering_definition.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-4-prepared_before_submit",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "4",
+      "command": "notification_profile.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-4-accepted_response_lost",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "4",
+      "command": "notification_profile.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-4-accepted_durable",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "4",
+      "command": "notification_profile.create",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-5-prepared_before_submit",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "5",
+      "command": "notification_profile.binding.set",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-5-accepted_response_lost",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "5",
+      "command": "notification_profile.binding.set",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-create-5-accepted_durable",
+      "fixture": "flight-create.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "5",
+      "command": "notification_profile.binding.set",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-0-prepared_before_submit",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "0",
+      "command": "item_archetype.revise",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-0-accepted_response_lost",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "0",
+      "command": "item_archetype.revise",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-0-accepted_durable",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "0",
+      "command": "item_archetype.revise",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-1-prepared_before_submit",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "1",
+      "command": "facet_schema.publish",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-1-accepted_response_lost",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "1",
+      "command": "facet_schema.publish",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-1-accepted_durable",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "1",
+      "command": "facet_schema.publish",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-2-prepared_before_submit",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "2",
+      "command": "item_archetype.facet_binding.set",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-2-accepted_response_lost",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "2",
+      "command": "item_archetype.facet_binding.set",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-2-accepted_durable",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "2",
+      "command": "item_archetype.facet_binding.set",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-3-prepared_before_submit",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "3",
+      "command": "notification_rendering_definition.publish",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-3-accepted_response_lost",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "3",
+      "command": "notification_rendering_definition.publish",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-3-accepted_durable",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "3",
+      "command": "notification_rendering_definition.publish",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-4-prepared_before_submit",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "4",
+      "command": "notification_profile.metadata.update",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-4-accepted_response_lost",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "4",
+      "command": "notification_profile.metadata.update",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-4-accepted_durable",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "4",
+      "command": "notification_profile.metadata.update",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-5-prepared_before_submit",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "prepared_before_submit",
+      "prefix_length": "5",
+      "command": "notification_profile.revise",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-5-accepted_response_lost",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_response_lost",
+      "prefix_length": "5",
+      "command": "notification_profile.revise",
+      "expected": "accept"
+    },
+    {
+      "id": "flight-update-5-accepted_durable",
+      "fixture": "flight-update.json",
+      "oracle": "recovery",
+      "boundary": "accepted_durable",
+      "prefix_length": "5",
+      "command": "notification_profile.revise",
+      "expected": "accept"
+    }
+  ],
+  "required_followups": [
+    "bounded machine-contract review",
+    "FR-2 transport observation adversaries",
+    "FR-3 durable filesystem fault injection",
+    "FR-4 actual continuation/verify implementation",
+    "FR-5 exact-package disposable qualification"
+  ],
+  "negative_vector_groups": [
+    {
+      "oracle": "test_negative_typed_references_and_complete_authorization",
+      "cases": [
+        "forward",
+        "wrong_output",
+        "wrong_object",
+        "missing_slot",
+        "non_null_slot",
+        "missing_resolution",
+        "stale_approval",
+        "unauthorized_update",
+        "wrong_union",
+        "wrong_environment",
+        "wrong_owner",
+        "closure_gap",
+        "wrong_digest"
+      ]
+    },
+    {
+      "oracle": "test_negative_evidence_and_replay",
+      "cases": [
+        "gap",
+        "changed_request",
+        "wrong_command_id",
+        "wrong_receipt_hash",
+        "wrong_output",
+        "dry_run",
+        "wrong_selector",
+        "wrong_projection",
+        "wrong_provenance",
+        "noop_change",
+        "guessed_suffix",
+        "unrelated_change",
+        "candidate_without_replay",
+        "candidate_id_mismatch"
+      ]
+    },
+    {
+      "oracle": "test_verification_exact_pins_and_read_only_evidence",
+      "cases": [
+        "current_head",
+        "binding_pin",
+        "missing_result",
+        "wrong_target",
+        "missing_object",
+        "false_disclosure"
+      ]
+    }
+  ],
+  "object_key_vectors": [
+    {"value": "schema:flight-details", "valid": false},
+    {"value": "schema:flight_details", "valid": true},
+    {"value": "archetype:flight-details", "valid": true},
+    {"value": "rendering:flight-details", "valid": true},
+    {"value": "profile:flight-details", "valid": true},
+    {"value": "binding:flight-details", "valid": true},
+    {"value": "facet_binding:flight-details:flight_details", "valid": true},
+    {"value": "facet_binding:flight-details:flight-details", "valid": false}
+  ],
+  "additional_oracles": [
+    "test_typed_object_key_grammar_at_every_schema_location",
+    "test_resolved_rendering_byte_limit_inclusive",
+    "test_response_text_numbers_and_duplicate_rejection",
+    "test_all_artifact_digests_and_v1_rejection",
+    "test_command_and_artifact_hash_preimages_independent",
+    "test_retain_no_write_plan_and_draft_refusal",
+    "test_upstream_public_wire_vectors"
+  ]
+}
