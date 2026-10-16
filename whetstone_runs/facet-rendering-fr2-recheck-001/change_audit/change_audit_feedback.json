@@ -1,0 +1,11 @@
+{
+  "draft_hash": "59b42048b68577ecb584c61ca77a20312f59b8a07b7724aff71970106b219784",
+  "feedback": [],
+  "profile": "consistency",
+  "reviewer": {
+    "model": "gpt-6",
+    "name": "Codex",
+    "version": "1.0"
+  },
+  "round_number": 1
+}

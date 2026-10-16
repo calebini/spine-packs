@@ -1,0 +1,20 @@
+{
+  "audit_brief_hash": "59b42048b68577ecb584c61ca77a20312f59b8a07b7724aff71970106b219784",
+  "audit_manifest_path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/facet-rendering-fr2-recheck-001/change_audit/audit_manifest.json",
+  "boundary_preserved": true,
+  "failure_reason": null,
+  "feedback_counts": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 0,
+    "nit": 0
+  },
+  "generated_at": "2026-10-16T22:40:20.836559+00:00",
+  "in_scope_feedback_ids": [],
+  "out_of_scope_feedback_ids": [],
+  "profile": "consistency",
+  "recommended_next_action": "none",
+  "schema_version": "change-audit-report-v1",
+  "source_feedback_path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/facet-rendering-fr2-recheck-001/change_audit/change_audit_feedback.json",
+  "verdict": "pass"
+}
