@@ -1,10 +1,10 @@
 # Architecture
 
-## Proposed facet/rendering successor — not implemented
+## Facet/rendering successor — FR-2 read-only planning
 
 [facet-rendering-packs.md](facet-rendering-packs.md) proposes a separate manifest
-and installer-artifact v2 path for exact Spine `0.9.1` / schema `19` at
-`57cda1c2d5589360ee8efe7155fd20b503034c2a`. It adds a bounded configuration graph:
+and installer-artifact v2 path for exact Spine `0.10.0` / schema `19` at
+`8f3c50b6fd1b4aa534e50925b7417a7a80d19122`. It adds a bounded configuration graph:
 archetype and facet schema -> facet binding -> rendering definition -> profile
 revision -> default binding. The proposal does not expand the runtime authority
 or compatibility of the implemented slices below. No disclosure authorization,
@@ -17,6 +17,24 @@ under `tests/contract/`, not `src/spine_packs/`. Saved synthetic execution and
 recovery fixtures are not results from an implemented successor installer.
 
 ## Relationship
+
+FR-2 adds `facet_manifest`, `facet_graph`, `facet_contracts`, `facet_inventory`,
+`facet_observation`, `facet_transport` and `facet_planning` in the existing package.
+They implement only manifest-v2/request-v2 read-only `plan`. The CLI uses the
+same selection assertions and private no-clobber output publication; successor
+apply/continuation/verify are rejected before target access. V1 dispatch and
+supported-baseline allowlists are unchanged. Proposed write templates are data,
+not executable authority; the successor transport rejects every write.
+
+The bounded pinned-vocabulary validator is independent of the frozen v1 decoder
+and cross-checked with official Draft 2020-12 in development. Unknown vocabulary
+fails closed. Offline sibling schema references supply the complete transitive
+closure without runtime dependencies or network schema resolution.
+
+`scripts/qualify_fr2.py` is isolated test setup, not installer apply. It accepts
+no existing ledger, attests exported/wheel/installed Spine bytes against the
+exact Git tree, and exercises synthetic configuration through public CLIs only.
+This narrow gate does not complete FR-5 or authorize release/installation.
 
 The intended data and authority flow is:
 

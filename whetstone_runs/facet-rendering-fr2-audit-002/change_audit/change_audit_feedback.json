@@ -1,0 +1,82 @@
+{
+  "draft_hash": "b95b7b22a05b09e5f875901a77cb0f845490d1a0ec97e416ce1da3b9cafffdb2",
+  "feedback": [
+    {
+      "affected_sections": [
+        "src/spine_packs/facet_manifest.py:validate rendering definitions",
+        "src/spine_packs/facet_planning.py:build_plan/action",
+        "specs/installer-artifacts-v2.md:Plans, resolutions and typed slots"
+      ],
+      "authority_impact": null,
+      "baseline_severity": "major",
+      "claim": "The planner can emit an apply-eligible plan whose proposed rendering revision necessarily exceeds the normative 8,192-byte public bound.",
+      "determinism_impact": null,
+      "evidence": "facet_manifest.validate checks rendering text normalization and character limits but never checks rendering revision bytes. build_plan constructs and seals templates without checking their resolved byte bounds; artifact() validates only the outer schema, artifact size and digest. A normalized 2,000-character emoji description plus a 160-character emoji display name already exceeds 8,192 UTF-8 bytes before selections and resolved IDs are included, yet both strings satisfy the supplied manifest schema. An all-missing released graph therefore produces an eligible plan containing an impossible rendering create. rendering_semantics enforces the bound only for observed definitions, creating inconsistent treatment of desired and observed content.",
+      "feedback_id": "feedback_001",
+      "in_scope": true,
+      "invariant_violated": "artifact_integrity",
+      "issue_fingerprint": "553c652c4b282c918101ebc9395675f092ba413f0d6edceb2ac3075ed2572072",
+      "issue_id": "iss_553c652c4b282c91",
+      "issue_type": "implementation_contract_inconsistency",
+      "normalized_severity": "major",
+      "oscillation_key": null,
+      "recommended_change": "Reject rendering revisions that already exceed the bound before ID resolution, and validate resolved bounds during planning wherever observed IDs are available. Keep future generated IDs unresolved and retain the required final materialization check for the separately authorized execution slice. Add a focused oversized desired-rendering vector.",
+      "rubric_impact": null,
+      "severity_rationale": "This affects FR-2 plan correctness: a successfully emitted plan can propose configuration that cannot satisfy the pinned public contract, despite declaring intrinsic eligibility."
+    },
+    {
+      "affected_sections": [
+        "src/spine_packs/facet_transport.py:FacetSpineCommand.read failure handling",
+        "tests/runtime/test_facet_planning.py:test_wrong_failure_exit_and_field_are_not_missing",
+        "specs/installer-artifacts-v2.md:FR-2 exact revision lookup"
+      ],
+      "authority_impact": null,
+      "baseline_severity": "minor",
+      "claim": "Malformed revision-handler failures bypass contextual validation and are reported as ordinary Spine rejections.",
+      "determinism_impact": null,
+      "evidence": "FacetSpineCommand.read validates revision_readback_143 only conditionally. If validation fails, it falls through to spine_command_rejection/spine_read_rejected. For example, referenced_row_not_found with field=facets and CLI exit 4 violates the pinned failure schema but becomes installer exit 8 rather than a malformed-output transport failure. A handler-shaped failure with an unsupported CLI exit similarly skips pairing validation. The focused test only asserts that the error is not referenced_revision_missing, so it does not enforce the specified malformed-output taxonomy.",
+      "feedback_id": "feedback_002",
+      "in_scope": true,
+      "invariant_violated": "failure_handling",
+      "issue_fingerprint": "e91a4dc0eaf5900181cbbe55f931aa48d116ff1dfff4e9dc7dbba8de80a352b1",
+      "issue_id": "iss_e91a4dc0eaf59001",
+      "issue_type": "failure_contract_inconsistency",
+      "normalized_severity": "minor",
+      "oscillation_key": null,
+      "recommended_change": "Reject malformed owning-handler envelopes and invalid exit pairings as transport_or_environment_failure. Distinguish separately recognized preflight failures before applying the handler schema, and assert the exact installer category for malformed-field and unsupported-exit vectors.",
+      "rubric_impact": null,
+      "severity_rationale": "Planning still aborts, preserving the read-only and missing-evidence boundaries, but the machine-readable failure category contradicts the required public-output validation discipline."
+    },
+    {
+      "affected_sections": [
+        "specs/pack-format.md:opening successor paragraph",
+        "specs/installer.md:opening successor paragraph",
+        "specs/architecture.md:Relationship",
+        "specs/compatibility.md:Proposed 0.10.0 successor"
+      ],
+      "authority_impact": null,
+      "baseline_severity": "minor",
+      "claim": "Current normative cross-references still describe the successor as unimplemented and pinned to 0.9.1, conflicting with the FR-2 implementation boundary.",
+      "determinism_impact": null,
+      "evidence": "pack-format.md says the v2 schema is authored for FR-1 review and 'installer support is not implemented.' installer.md introduces the linked proposal as a workflow for 'Spine 0.9.1/schema 19.' In contrast, architecture.md explicitly implements manifest-v2/request-v2 read-only plan, and compatibility.md requires exactly 0.10.0 while retaining 0.9.1 only for historical decoding. These opening paragraphs are current orientation statements, unlike the explicitly preserved historical evidence.",
+      "feedback_id": "feedback_003",
+      "in_scope": true,
+      "invariant_violated": "scope_control",
+      "issue_fingerprint": "b9846ad1efb590fe91ce38ce3762240b48f9e080c2703b490d20b290be4f1657",
+      "issue_id": "iss_b9846ad1efb590fe",
+      "issue_type": "source_of_truth_inconsistency",
+      "normalized_severity": "minor",
+      "oscillation_key": null,
+      "recommended_change": "Update only these current cross-reference paragraphs to identify exact 0.10.0 FR-2 read-only planning and explicitly retain the disabled successor apply/recovery/verify boundary. Preserve historical investigation and qualification records unchanged.",
+      "rubric_impact": null,
+      "severity_rationale": "The conflicting normative status and baseline statements make the newly authorized planner boundary unclear, although the detailed successor specifications and runtime dispatch agree."
+    }
+  ],
+  "profile": "consistency",
+  "reviewer": {
+    "model": "gpt-6",
+    "name": "Codex",
+    "version": "1.0"
+  },
+  "round_number": 1
+}

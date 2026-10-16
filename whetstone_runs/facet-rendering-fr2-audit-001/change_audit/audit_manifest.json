@@ -1,0 +1,190 @@
+{
+  "audit_notes_hash": "5a685fb261e551896745d3b8c91c925e9f13c5ea88301a62e415d3ed729c332b",
+  "audit_notes_path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/facet-rendering-fr2-audit-001/audit-notes.md",
+  "client": {
+    "model": "gpt-6.1-sol",
+    "name": "codex",
+    "version": "0.162.0-alpha.17.2"
+  },
+  "generated_at": "2026-10-16T20:41:25.556920+00:00",
+  "profile": "consistency",
+  "schema_version": "change-audit-manifest-v1",
+  "specs": [
+    {
+      "hash": "327b1c353b1a858bd0d3ba9d4bfbf639ab7d03009fcb667669fb90f6ba1c3076",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/AGENTS.md"
+    },
+    {
+      "hash": "a8e480affee439f5608097d6728a3a96b6765c4aa00f33617711b038bd0d92ab",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/overview.md"
+    },
+    {
+      "hash": "020ef8d0b7c0777e7177a1024f85927ed2aab158f1dd6c8a4d9909227e8fdf24",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/architecture.md"
+    },
+    {
+      "hash": "352e68cb3e1b62f84f6e49a2a6e260e0db65f3c98133dcf27c3d392549743573",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/compatibility.md"
+    },
+    {
+      "hash": "bee633028513c1b26515ec6fd0c03e834bf968d73668fa24209a9b63686cb2ac",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/pack-format.md"
+    },
+    {
+      "hash": "cca13593c863dde3a1757511f72ef30ff19b878442defd40de2c0a20f6f5979b",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/installer.md"
+    },
+    {
+      "hash": "e3f977e2cdc09c12993e4fa20e6da83e320d1635050c8f367429aa9f62e3769e",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/installer-artifacts.md"
+    },
+    {
+      "hash": "7dc71d4810b23c91ae193a1c38eea5158335163862e8a354a61ae1b94844317a",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/installer-artifacts-v2.md"
+    },
+    {
+      "hash": "d84c8b16accc0abce76a38a7b5b75529d9ac2c2830ac2b18a4b05ba9586fcdcd",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/facet-rendering-packs.md"
+    },
+    {
+      "hash": "7d5502fea2420aac44dd59ac558810450d6ef5587e2eabf237ac2dd0f720ea6b",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/implementation-plan.md"
+    },
+    {
+      "hash": "549cc3705b19252a7d7d800675a3bb5bf6ad833bbf475280d5ad962b3ed1b61c",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/docs/facet-rendering-baseline.md"
+    },
+    {
+      "hash": "2dfc9a9e554896f37f99e402ce542d0eccb33326adfd24f725899c0374daf780",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/docs/fr2-historical-facet-readback-gap.md"
+    },
+    {
+      "hash": "bff83304f24c8929776724d22921ab5a603273a103033741cd73f8b5f7fb6724",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/docs/fr2-qualification.md"
+    },
+    {
+      "hash": "e4694cfa53fd274df466420cbcca69af71da704a7917381c90f07bfc9a30d2a2",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/installer-spine-0.10.0-inventory.json"
+    },
+    {
+      "hash": "5837583b796de6b9f9fc90ea511851b271cdbdfcb63fc6a0028e54bc5003282a",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/installer-spine-0.9.1-inventory.json"
+    },
+    {
+      "hash": "a71fa1b2e020a47291132388424546c3ca917443519147ef175bcc5a3dc850d3",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/schemas/spine-pack-manifest.v2.schema.json"
+    },
+    {
+      "hash": "028d901867ee10346078c886bfbf78939559332939611d39e503d53e6e3bfdaf",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/schemas/spine-pack-installer-types.v2.schema.json"
+    },
+    {
+      "hash": "ee241dc6b97afdf53e974a1847791ddbb9dfbabebe464c5e148bec77f4f18f6b",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/schemas/spine-pack-install-request.v2.schema.json"
+    },
+    {
+      "hash": "b9ee69ee49e24846e985651d546ecb3d1ff3a51c0d646ac27685fb210fb1bc9f",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/schemas/spine-pack-install-plan.v2.schema.json"
+    },
+    {
+      "hash": "7788964b91aa95fc9737fd482136eaab828bf405814382a354e653c8846b34a7",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/schemas/spine-pack-installer-result.v2.schema.json"
+    },
+    {
+      "hash": "97d6aefb03028ce25bb7045d56da5d516297b3ac43399c7080029bffb7f18b5f",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/schemas/spine-pack-embedded-values.v2.schema.json"
+    },
+    {
+      "hash": "83af4190bbb1ceab9073b4471e8e60e1d24638f577f10f0b6e1fc416b844b08f",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/schemas/spine-readback-0.10.0.schema.json"
+    },
+    {
+      "hash": "90471d1674233e7b3d47575adf085c4095ddfecc92f1f2e7833f4be56d7d4204",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/schemas/spine-readback-0.9.1.schema.json"
+    },
+    {
+      "hash": "0830a9b5726af69ac5a1e27347a9e35c822ae729c6a8c2bdb47fbc2182a4bd3a",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/facet_contracts.py"
+    },
+    {
+      "hash": "de23373085431e92bcb1e8ccc45bdaf5692f18dab25fd88e64bd228e322a630b",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/facet_graph.py"
+    },
+    {
+      "hash": "ce03c3d6549dfe4cd5ebcb2fbe4af3fde0810c99fa552ce09d932e43eadf050e",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/facet_inventory.py"
+    },
+    {
+      "hash": "27cbd34e18393e7c353aa293a9cb8dc01e69eef0842c44be0188732e78366899",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/facet_manifest.py"
+    },
+    {
+      "hash": "3220a0ec918527b68a585bf3969e2c8a13b7e90b8ed4c0b31d80507e2bf5225f",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/facet_observation.py"
+    },
+    {
+      "hash": "cd0f264978be5dd582845ac8c0fdfe2eb45def4925b18c46862bb916500e78b1",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/facet_planning.py"
+    },
+    {
+      "hash": "07902e517df9afb19193038177d731dea61fec10587840f7a97ff6dc55fb2442",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/facet_transport.py"
+    },
+    {
+      "hash": "6d9817dbb0b1e9ba7fd2ed1c4ece460e1aeb31ac995ccf20df15f02d9d5c297d",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/__main__.py"
+    },
+    {
+      "hash": "00c0c445b82a25ba74d024fd2f75a13b5206c71bef4db8de38ba1e93a0ba1a24",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/spine_command.py"
+    },
+    {
+      "hash": "6a3333f53f89f7fee00f2dafd0ede70ff112271c82b54d0045f11d358aec42d9",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/artifacts.py"
+    },
+    {
+      "hash": "445493754591cb04953b235b6d8bb4ee3e6276d1fb4cf7eb348857a4a2e370ae",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/planning.py"
+    },
+    {
+      "hash": "7fcf9db9d21cfdda1951858c66cbc327f96ab9e6b8b1e15981812425a065ad91",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/contract/test_fr2_contract.py"
+    },
+    {
+      "hash": "7ba9de980c43c0fdf35ddc57746885e4765a174a426c07f07090de8c6ae004bd",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/contract/facet_artifact_oracle.py"
+    },
+    {
+      "hash": "5e58592fa608795e17413c1eff0253ff3c58e1c3b611b89af938130a49ad9370",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/contract/test_facet_manifest_contract.py"
+    },
+    {
+      "hash": "5334a9766fa6ccf3afba003f1a5371af49ed087cc4920a3f6c3c6fad5a59d33a",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/runtime/test_facet_planning.py"
+    },
+    {
+      "hash": "9e92e3538c1618d9832e189a90c72d9e456df0ffa0beb187b84dc57355614a3a",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/installer-v2/fr2-cross-root.json"
+    },
+    {
+      "hash": "f9f07c4222115f5f43aeb0233b3d21e5b0a9f02a3fa0aa434042de16cbc45361",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/installer-v2/revision-readback-0.10.0.json"
+    },
+    {
+      "hash": "22b8a79711c58ce1ca7331dc906679fecba7f32ca5f733e33dbcbb7748d05dee",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/installer-v2/flight-create.json"
+    },
+    {
+      "hash": "ff0e7f2c9f3cf68cf383ac9aba2de8bef8d43b30e602280def762659f761906c",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/scripts/qualify_fr2.py"
+    },
+    {
+      "hash": "fb365d419c898cb1bc1fccfda899a763a65f920015810a622e3f9ac36bc4e48c",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/scripts/build_fr2_contracts.py"
+    },
+    {
+      "hash": "93a4d5b6893e61bd8a36d3df19c0f7a927ba52d911c13dcf5103b848a2e7f101",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/pyproject.toml"
+    }
+  ]
+}

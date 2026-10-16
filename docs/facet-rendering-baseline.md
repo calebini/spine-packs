@@ -5,7 +5,29 @@ Inspection date: 2026-10-10. Design authority is
 Spine contract. The original inspection and the later narrow qualification below
 are distinct; neither is complete installer qualification.
 
-## Current repaired baseline and independent listing gate
+## Current FR-2 baseline: 0.10.0 (2026-10-16)
+
+The operator explicitly adopted commit
+`8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime `0.10.0`, schema `19`.
+The new public `facet_schema.revision.show` closes the historical revision-to-root
+gap documented in `fr2-historical-facet-readback-gap.md`. Its required contracts
+are canonical JSON v1, facet-schema-revision-readback v1, facet-schemas v1 and
+notification-rendering-integration v1. No HTTP route, migration, receipts or
+mutating authority is added by this read.
+
+The separate `contracts/installer-spine-0.10.0-inventory.json` records 23 commands,
+12 reads, 11 proposed writes and an 18-contract union. It pins the upstream
+registry, request/response/failure closure, packaged registry/schema pins and
+fixture authority. The old unchanged schema closure is referenced offline by
+the new closure. FR-2 runtime accepts only this exact runtime/schema; installed
+Git provenance must be established independently of `system.info`.
+
+See `fr2-qualification.md` for the actual read-only planner gate, including
+cross-root historical lookup, installed-package provenance and limitations.
+The earlier listing-only gate below remains historical and is not relabelled
+as 0.10.0 qualification. The upstream 1,041 tests are not installer test results.
+
+## Historical 0.9.1 repaired baseline and independent listing gate
 
 The operator explicitly replaced the broken baseline with locally available
 commit `57cda1c2d5589360ee8efe7155fd20b503034c2a`, runtime `0.9.1`, schema `19`.

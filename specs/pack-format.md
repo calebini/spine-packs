@@ -1,11 +1,12 @@
 # Pack format requirements
 
-The proposed facet/rendering successor is specified separately in
-[facet-rendering-packs.md](facet-rendering-packs.md). It reserves
-`spine.pack-manifest.v2`; its draft manifest schema and test-only fixture are now
-authored for FR-1 review, but installer support is not implemented. It does not
-amend the closed v1 objects below. No curated successor manifest or release is
-created by that proposal.
+The facet/rendering successor is specified separately in
+[facet-rendering-packs.md](facet-rendering-packs.md). Its reviewed FR-1
+`spine.pack-manifest.v2` contracts support the separately authorized FR-2
+read-only planner for exact Spine `0.10.0` / schema `19` at
+`8f3c50b6fd1b4aa534e50925b7417a7a80d19122`. Successor apply/recovery/verify remain
+disabled and unauthorized. This does not amend the closed v1 objects below or
+create a curated successor manifest or release.
 
 ## Status and identity
 

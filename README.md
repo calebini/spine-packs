@@ -15,6 +15,13 @@ do not edit released manifests or relax version checks on staging.
 
 ## Authority and boundaries
 
+The facet/rendering successor now has a separate read-only v2 planner for the
+explicit Spine `0.10.0` / schema `19` pin. It does not enable successor apply,
+recovery, verify or released-pack installation. See
+[FR-2 qualification](docs/fr2-qualification.md) and the
+[implementation sequence](specs/implementation-plan.md). Existing v1 supported
+baselines and released pack bytes are unchanged.
+
 Spine remains the sole authority for installed archetypes, notification
 profiles, bindings, receipts, and ownership. The installer may translate a
 reviewed pack into operations, but it must use Spine's existing public command

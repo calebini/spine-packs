@@ -2,11 +2,13 @@
 
 Status: Draft v0.4; runtime through Slice 5, Slice 6 disposable qualification authorized
 
-The separate [facet/rendering proposal](facet-rendering-packs.md) specifies a
-potential v2 workflow for Spine 0.9.1/schema 19. Its new command families,
-reference resolution and response handling are not implemented or authorized
-by this v1 contract. Existing operations, approvals and continuation artifacts
-retain the rules below; no implicit artifact migration is permitted.
+The separate [facet/rendering successor](facet-rendering-packs.md) specifies v2
+contracts and the separately authorized FR-2 read-only planner for exact Spine
+`0.10.0` / schema `19` at `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`.
+Successor apply/recovery/verify remain disabled and unauthorized. This v1
+contract does not expand its own compatibility or command authority; existing
+operations, approvals and continuation artifacts retain the rules below, with
+no implicit artifact migration.
 
 ## 1. Purpose and authority
 

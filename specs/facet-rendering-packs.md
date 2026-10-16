@@ -1,13 +1,14 @@
 # Facet-aware packs: successor contract proposal
 
-Status: proposed; FR-1 contract/fixture work in progress, runtime not implemented.
-Repaired baseline inspected on 2026-10-10. Normative language below defines
+Status: reviewed FR-1 contracts; operator-authorized FR-2 read-only planner.
+Revision-readback baseline adopted on 2026-10-16. Normative language below defines
 the proposed successor, not additional authority for the current installer.
 
 The FR-1 installer-artifact codification is in
 [installer-artifacts-v2.md](installer-artifacts-v2.md), with separate v2 schemas,
-source inventory and synthetic execution/recovery fixtures. It remains pending
-bounded review; it does not widen the current runtime's command allowlists.
+source inventory and synthetic execution/recovery fixtures. FR-1 review is
+complete. FR-2 adds a separate read-only path; it does not widen the v1 runtime's
+command allowlists.
 
 ## 1. Scope and authority
 
@@ -16,10 +17,11 @@ family for one flight configuration vertical slice. Preserve v1 decoders,
 schemas, fixtures, installer behavior and every released/draft pack artifact.
 Do not add rendering fields to a frozen v1 shape or relabel v1 content as v2.
 
-The exact reference is Spine `57cda1c2d5589360ee8efe7155fd20b503034c2a`, runtime
-`0.9.1`, implemented/current ledger schema `19`. The operator explicitly supplied
-this replacement pin; inspection and the disposable listing gate used an export
-of its exact Git tree, not a newer working tree.
+The exact reference is Spine `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime
+`0.10.0`, implemented/current ledger schema `19`. The operator explicitly supplied
+this replacement pin for historical facet revision readback. The previous
+`57cda1c2d5589360ee8efe7155fd20b503034c2a` (`0.9.1`) listing gate remains
+historical evidence, not qualification of this new baseline.
 [Baseline evidence](../docs/facet-rendering-baseline.md) records public contracts,
 wire differences and qualification gaps. Existing installer `0.3.0` does not
 support this baseline. This proposal neither widens its allowlist nor qualifies
@@ -268,7 +270,7 @@ binding is part of an immutable archetype revision.
 
 ## 6. Compatibility and command boundary
 
-The first v2 pack declares exactly runtime `["0.9.1"]`. Content contracts are:
+The first v2 pack declares exactly runtime `["0.10.0"]`. Content contracts are:
 
 ```text
 spine.archetype-facet-bindings.v1
@@ -282,7 +284,7 @@ spine.notification-rendering.v1
 
 The concise base-renderer profile is a literal algorithm identifier, not a
 separately advertised contract. Execution readiness additionally requires the
-exact 17-contract registry union in the baseline evidence. Do not infer extra
+exact 18-contract registry union in the baseline evidence. Do not infer extra
 command authority from a contract's presence. Both implemented/current schema
 must be `19`; bind the actual public ledger-instance ID and exact runtime into
 plan, approval correlation, continuation and verify. Existing target executable
@@ -297,7 +299,8 @@ or clean-wheel qualification claim and may not silently substitute HEAD.
 
 The proposed allowlist is the existing six reads plus `facet_schema.list/show`,
 `item_archetype.facet_binding.list`, and
-`notification_rendering_definition.list/show` (11 reads); the existing six
+`notification_rendering_definition.list/show`, and `facet_schema.revision.show`
+(12 reads); the existing six
 writes plus `facet_schema.create/publish`, `item_archetype.facet_binding.set`,
 and `notification_rendering_definition.create/publish` (11 writes). Profile
 create/revise/list/show use v2 selectors. Exact request mappings and the union
@@ -330,8 +333,12 @@ existing pins, addressed by IDs discovered through those public reads. Do not
 read unrelated items, actual facet values or disclosure catalogs.
 
 Validate every family-specific envelope, owner, root/revision membership, hash,
-ordering and pagination condition; exhaust each status independently with fixed
-filters/limit. Match show to list facts and selected exact revisions to pins.
+ordering and pagination condition. Exhaust schema/rendering statuses independently
+with fixed filters/limit. Legacy archetype/profile lists use an unfiltered complete
+active-and-retired scan so their public fingerprints cover the same full inventory;
+default bindings remain active-only. Match show to list facts and selected exact
+revisions to pins. Historical facet pins use the revision-addressed algorithm
+and failure discipline in `installer-artifacts-v2.md`; no candidate-root probing.
 Collect a second complete view and require semantic/identity equality after
 sorting, excluding opaque cursors, pagination segmentation and invocation noise.
 Fail on stale cursors, changing views, missing pages, repeated IDs/tokens,
@@ -356,7 +363,7 @@ to compare forward prefix effects; do not enlarge limits silently to fit a ledge
 
 Propose the seven existing artifact kinds with `.v2` identifiers, shared types
 and embedded public-value schemas versioned separately. Bind manifest v2, the
-0.9.1 environment, typed graph/closure and resolution slots, complete observation
+0.10.0 environment, typed graph/closure and resolution slots, complete observation
 preimages/digests, new action kinds and family-tagged response evidence. Preserve
 all v1 readers/writers and bytes; reject mixed artifact versions before target
 access. Carry existing limits, private/no-clobber publication, approval semantics
@@ -454,7 +461,7 @@ values, rendered-body correctness or delivered notifications. A successful hando
 includes the selected installed root/revision/binding map and explicitly states:
 destination disclosure and subsequent item authoring are separate Spine workflows.
 
-Spine 0.9.1 requires a rendering application choice for each surviving definition-
+Spine 0.10.0 requires a rendering application choice for each surviving definition-
 pinned profile template. Fresh trusted-local item creation must explicitly choose
 ordinary output, then use Spine's separately authorized ownership/adoption and
 presentation workflow if details are wanted. The installer must not silently set
@@ -499,7 +506,9 @@ Technical review gates, not product-policy questions: the repaired profile-list 
 has passed as described in Section 1; exact v2 artifact schemas,
 reference-slot syntax, aggregate observation budgets, response correlation and
 fault-injection oracles must be codified and reviewed before their runtime slices.
-Exact 0.9.1 public-CLI and clean-wheel qualification remains outstanding. If a
+The bounded FR-2 read-only public-CLI gate is recorded in
+`docs/fr2-qualification.md`; full successor apply/recovery/verify and clean-wheel
+qualification remain FR-5 work. If a
 public-command gap is found, report it; this task grants no Spine change authority.
 
 ## 11. Codification prerequisites and acceptance
@@ -508,19 +517,21 @@ The ordered delivery slices are in [implementation-plan.md](implementation-plan.
 The first FR-1 increment codifies only the manifest in
 `contracts/schemas/spine-pack-manifest.v2.schema.json`, with a synthetic draft
 flight in `tests/fixtures/pack-manifest-v2/flight.json` and indexed mutation
-vectors in `contracts/pack-fixture-manifest.v2.json`. The schema remains draft
-pending bounded review. The test oracle lives under `tests/contract/`, requires
+vectors in `contracts/pack-fixture-manifest.v2.json`. FR-1's bounded reviews are
+complete; the schemas remain unreleased. The test oracle lives under
+`tests/contract/`, requires
 development `jsonschema` for structural/meta-validation, and is not runtime code.
 Test-only field names, flags and template choices are not curated product approval.
 Post-resolution Spine byte bounds still require the later installer-artifact
 vectors; a portable-manifest check alone cannot prove those bounds.
 
-Before implementing new behavior, complete and review the following FR-1 work:
+The reviewed FR-1 prerequisites are listed below. The additive 0.10.0 readback
+closure belongs to the FR-2 increment, not the preserved 0.9.1 review payload:
 
 - `contracts/schemas/spine-pack-manifest.v2.schema.json`, a v2 fixture manifest,
   and semantic reference/normalization/digest tests;
 - the seven v2 installer-artifact entry schemas, shared v2 types and embedded
-  public-value schema closure, plus exact 0.9.1 readback validators;
+  public-value schema closure, plus the historical exact 0.9.1 readback validators;
 - a command/contract/source-pin inventory with transitive schema references,
   exact wire selectors, normalization/hash derivations and response projections;
 - one synthetic complete flight graph and saved request/plan/approval/checkpoint/

@@ -1,24 +1,30 @@
 # Compatibility
 
-## Proposed 0.9.1 successor — not a support claim
+## Proposed 0.10.0 successor — not a support claim
 
 [facet-rendering-packs.md](facet-rendering-packs.md) proposes manifest v2 and
 installer-artifact v2 against exact Spine commit
-`57cda1c2d5589360ee8efe7155fd20b503034c2a`, runtime `0.9.1`, schema `19`.
+`8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime `0.10.0`, schema `19`.
 The inspected command/contract matrix is in
 [the baseline evidence](../docs/facet-rendering-baseline.md). The repaired listing
-gate passed; the draft v2 manifest schema now permits exactly `0.9.1`. This adds
+gate at 0.9.1 remains historical. FR-2 planning now requires exactly `0.10.0`. This adds
 nothing to any existing v1 manifest, schema or runtime allowlist.
 The new content and compatibility require successor releases, separately reviewed
 machine contracts and exact-baseline qualification. Existing v1 support is unchanged.
 
-The FR-1 draft artifact schemas and offline public closure pin only this repaired
-baseline; `contracts/installer-spine-0.9.1-inventory.json` records the 22-command
-map, 17-contract union and source hashes. Draft artifacts are not accepted by
-the existing installer. Public response JSON numbers are preserved as validated
+The additive FR-2 offline public closure pins the new exact baseline;
+`contracts/installer-spine-0.10.0-inventory.json` records the 23-command
+map, 18-contract union and source hashes. The separate FR-2 planner accepts v2 requests/manifests only for read-only plan.
+V1 apply/recovery/verify do not accept successor artifacts. Public response JSON numbers are preserved as validated
 text inside v2 evidence, never coerced into v1 canonical comparison values.
 
 ## Compatibility dimensions
+
+The old 0.9.1 manifest/artifact declarations remain decodable solely to preserve
+FR-1 fixtures and audit evidence. Draft v2 structural schemas admit either exact
+singleton; the FR-2 runtime rejects 0.9.1 and all unlisted runtimes before catalog
+observation. New pack content still needs a successor immutable release. This
+does not alter stable packs 1.0.0/1.0.1 or installer-v1 supported baselines.
 
 Every manifest MUST declare compatibility independently for:
 

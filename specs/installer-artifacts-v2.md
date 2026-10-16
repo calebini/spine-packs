@@ -1,8 +1,9 @@
 # Facet/rendering installer artifacts v2
 
-Status: FR-1 draft; machine-contract review required. No successor runtime is
-authorized by this document. Read `facet-rendering-packs.md` first. The exact
-Spine pin is `57cda1c2d5589360ee8efe7155fd20b503034c2a`, runtime `0.9.1`, schema
+Status: reviewed FR-1 contracts; FR-2 read-only planning separately authorized.
+Successor apply/recovery/verify are not authorized by this document.
+Read `facet-rendering-packs.md` first. The exact
+Spine pin is `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime `0.10.0`, schema
 `19`. Existing v1 artifacts, runtime compatibility and released packs are unchanged.
 
 ## Encoding and entry points
@@ -35,12 +36,54 @@ Two embedded encodings are intentionally distinct:
   deterministic plans never contain it. Its digest is local byte evidence,
   not a receipt semantic hash or authenticity assertion.
 
-The offline `spine-readback-0.9.1.schema.json` and embedded-value schema contain
+The offline `spine-readback-0.10.0.schema.json` and embedded-value schema contain
 only reachable definitions for the approved command boundary. Their inventory
 records source hashes, exact source pointers and mappings. No online schema
 resolution, Spine import or handler execution is allowed in contract tests.
 
 ## Complete observation preimage
+
+### FR-2 exact revision lookup (2026-10-16)
+
+The current inventory has 23 commands (12 reads, 11 proposed writes) and an
+18-contract execution union. The additional read is `facet_schema.revision.show`,
+selector `spine.facet-schema-revision-readback.v1`. Invoke public CLI tokens
+`facet_schema revision show` with only `contract_version` and the observed
+`facet_schema_revision_id`. Its compiled prerequisites are canonical JSON v1,
+facet-schema-revision-readback v1, facet-schemas v1 and rendering-integration v1.
+No owner, actor, command ID, root ID, cursor configuration or disclosure grant
+belongs in this request. Other catalog reads still require their cursor setup.
+
+Resolve selected observed schema pins by exact revision ID. Validate the returned
+actual root, owner, key, current pointer and status against the complete owner
+inventory; validate the immutable revision, original revision number, root
+membership and definition hash. Deduplicate each revision ID within each pass,
+not across the two passes. Both passes and all lookups share the existing global
+budgets. Historical/retired roots remain readable. If A2/B2 are current and a pin
+references B1, retain B/B1 evidence and compare the actual pin with desired A.
+Never infer A from the desired key, probe candidate roots, or relabel B1 as A.
+
+A rejected referenced read still aborts observation; it never creates a missing
+desired-object classification. The owning readback handler's missing revision
+is `referenced_row_not_found`, field `facet_schema_revision_id`, CLI exit 4;
+corrupt/unsupported evidence is `environment_failure`, field `facets`, exit 7;
+capacity exhaustion is `environment_failure`, field `capacity`, exit 7; invalid
+requests exit 2. Validate the command-specific failure schema and exit pairing.
+Preflight/transport failures retain their own contracts, never absence evidence.
+Only separately recognized, closed preflight envelopes with their owning exit
+pairings bypass the revision-handler failure schema. Malformed handler envelopes,
+unknown failure shapes and unsupported exit pairings are installer
+`transport_or_environment_failure` (exit 11), not ordinary Spine rejection.
+Installer failure envelopes retain the existing exit taxonomy (Spine's CLI exit
+is not blindly copied as the installer exit). Errors must not leak raw output.
+
+The 0.9.1 inventory, closure and saved FR-1 fixtures remain immutable historical
+evidence. The draft v2 schemas permit either singleton baseline declaration for
+decoding that evidence; runtime FR-2 accepts only 0.10.0. Plans bind the matching
+exact 17- or 18-contract union. This is not a compatibility range or permission
+to execute old fixtures. Future execution/recovery/verification codification
+must refresh its own gates; the historical receipt-readback label is not changed
+as part of this read-only slice.
 
 An observation contains exact `owner`, sorted unique `entries`, sorted unique
 `historical_revisions`, the three available old `public_catalog_snapshots`, and
@@ -87,7 +130,7 @@ These are installer safety budgets, not new Spine capacity promises.
 ## Plans, resolutions and typed slots
 
 A plan carries the normalized request/digest, manifest-v2 identity, exact
-environment and 17-contract union, sorted typed closure, full observation,
+environment and 18-contract union, sorted typed closure, full observation,
 classifications, resolutions, actions, decision/blocked lists and eligibility.
 Every selected object has exactly one classification and one resolution row.
 Classification `desired` is the portable manifest object. `observed` is the
@@ -130,6 +173,15 @@ Every referenced producer must be earlier than its consumer. Complete public
 request validation occurs after resolution and execution-field injection.
 Rendering revision canonical bytes MUST be <=8,192 after resolution; facet
 definition bytes <=32,768. Public bounds also apply to fully resolved values.
+Before observation, complete-manifest validation MUST reject rendering revisions
+whose minimum possible wire encoding exceeds 8,192 bytes. Replace local reference
+objects with the wire ID field for this calculation and count at least one UTF-8
+byte per unknown nonempty ID; do not count portable key bytes as installed IDs.
+Planning MUST repeat this check using every retained observed revision ID. It is
+an exact size check when all IDs are known, otherwise a lower bound, and failure
+is `invalid_pack_contract_or_digest`. No guessed ID enters an artifact. A passing
+lower bound does not waive the final post-resolution materialization check in
+the separately authorized execution slice.
 
 Action order is archetypes, schemas, facet bindings, rendering definitions,
 profile creates, metadata updates, profile revisions, defaults; lexical key

@@ -78,6 +78,7 @@ def envelope(category, code=None, artifact=None, operation="plan"):
 
 
 def main(argv=None, *, transport_factory=SpineCommand):
+    successor = False
     try:
         parser = Parser(prog="spine-packs", description="Local Spine pack plan, approved apply, and read-only verify.")
         parser.add_argument("operation", choices=["plan", "apply", "verify"])
@@ -94,21 +95,33 @@ def main(argv=None, *, transport_factory=SpineCommand):
         args = parser.parse_args(argv)
         require(args.manifest is not None and args.output is not None, "invalid_cli_arguments", INVALID)
         manifest = load_input(args.manifest, PACK_INVALID, 16 * 1024 * 1024)
-        require(not validate_pack(manifest, a._schema_document(a.SCHEMA_ROOT / "spine-pack-manifest.v1.schema.json")),
-                "invalid_manifest", PACK_INVALID)
+        successor = isinstance(manifest, dict) and manifest.get('manifest_schema') == 'spine.pack-manifest.v2'
+        if successor:
+            from .facet_manifest import validate as validate_successor
+            from .facet_planning import validate_inputs as validate_successor_inputs, plan_installation as plan_successor
+            from .facet_transport import FacetSpineCommand
+            require(args.operation == 'plan', 'successor_operation_not_authorized', INVALID)
+            validate_successor(manifest)
+        else:
+            require(not validate_pack(manifest, a._schema_document(a.SCHEMA_ROOT / "spine-pack-manifest.v1.schema.json")),
+                    "invalid_manifest", PACK_INVALID)
         if args.operation == "plan":
             require(args.request is not None and args.plan is None and args.approval is None
                     and args.checkpoint is None and args.continue_from is None and args.result is None,
                     "invalid_cli_arguments", INVALID)
             request = load_input(args.request, INVALID, 1024 * 1024)
-            require(not a.validate_schema(request), "invalid_request_shape", INVALID)
+            if successor:
+                validate_successor_inputs(manifest, request)
+            else:
+                require(not a.validate_schema(request), "invalid_request_shape", INVALID)
             require(not a.selection_assertion_errors(request, all_flag=args.all_flag, archetype_flags=args.archetype),
                     "selection_assertion_mismatch", INVALID)
             target = request["request"]["target"]
             output = output_path(args.output, [args.manifest, args.request,
                                              target["spine_command"]["path"], target["ledger"]["path"]])
-            transport = transport_factory(target)
-            plan = plan_installation(manifest, request, transport)
+            factory = FacetSpineCommand if successor and transport_factory is SpineCommand else transport_factory
+            transport = factory(target)
+            plan = (plan_successor if successor else plan_installation)(manifest, request, transport)
             publish(output, plan)
             result = envelope(plan_outcome(plan), artifact={"path": args.output, "digest": plan["content_identity"]["digest"]})
         elif args.operation == "verify":
@@ -167,6 +180,8 @@ def main(argv=None, *, transport_factory=SpineCommand):
         result = envelope(INVALID, "invalid_contract_value", operation=(args.operation if 'args' in locals() else "plan"))
     except OSError:
         result = envelope(ENVIRONMENT, "local_environment_failure", operation=(args.operation if 'args' in locals() else "plan"))
+    if successor:
+        result['artifact_schema'] = 'spine.pack-installer-result.v2'
     print(a.canonical_text(result))
     return int(result["exit_code"])
 

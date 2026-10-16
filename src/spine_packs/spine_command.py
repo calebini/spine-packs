@@ -86,7 +86,7 @@ class SpineCommand:
     def _invoke(self, command, request):
         self.check_target()
         argv = [self.target["spine_command"]["path"], "--db", self.target["ledger"]["path"],
-                command, "--input", "-"]
+                *self._command_arguments(command), "--input", "-"]
         data = (a.canonical_text(request) + "\n").encode("utf-8")
         process = None
         try:
@@ -115,6 +115,7 @@ class SpineCommand:
                         else:
                             output.extend(chunk)
                             require(len(output) <= RESPONSE_LIMIT, "spine_response_too_large")
+                            self._received(chunk)
             returncode = process.wait(timeout=max(0.01, deadline - time.monotonic()))
             response = a.parse_json(bytes(output), public_response=True)
             require(isinstance(response, dict), "invalid_public_response")
@@ -130,3 +131,9 @@ class SpineCommand:
                     process.stdout.close()
                 if process.stdin is not None and not process.stdin.closed:
                     process.stdin.close()
+
+    def _command_arguments(self, command):
+        return [command]
+
+    def _received(self, chunk):
+        """Optional stricter observation budget; v1 retains its existing ceiling."""

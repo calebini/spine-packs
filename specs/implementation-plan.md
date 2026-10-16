@@ -308,14 +308,16 @@ working-tree review agree. Commit and push are separate operator decisions.
 ## Facet-aware rendering successor — proposed sequence
 
 This new sequence is governed by [facet-rendering-packs.md](facet-rendering-packs.md),
-not a reopening of completed installer Slices 1–6. The current scope remains
-specification and FR-1 contracts/fixtures. The separately approved 14-file bounded audit completed
+not a reopening of completed installer Slices 1–6. FR-1 contracts/fixtures are
+committed; FR-2 read-only planning is operator-authorized, with the historical
+lookup blocker resolved by the explicitly adopted 0.10.0 pin below. The separately approved 14-file bounded audit completed
 with one minor clarification, addressed by a local wording patch; see the
 [audit disposition](../whetstone_runs/facet-rendering-spec-audit-001/local-assessment.md).
-No runtime, curated pack rewrite, deployment,
+No successor write/recovery runtime, curated pack rewrite, deployment,
 release or additional external review is authorized here. Source baseline: Spine
-`57cda1c2d5589360ee8efe7155fd20b503034c2a`, `0.9.1` / `19`, explicitly approved
-as the repaired replacement. The prior audit covers the original proposal,
+`8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, `0.10.0` / `19`, explicitly approved
+on 2026-10-16. The earlier 0.9.1 pin and gate remain historical evidence.
+The prior audit covers the original proposal,
 not automatic acceptance of new FR-1 machine artifacts.
 
 Use vertical delivery around one flight graph, with a focused contract review
@@ -331,10 +333,10 @@ FR-5 installer qualification or authorize runtime implementation.
 | --- | --- | --- |
 | FR-0: proposal and bounded audit | Proposed manifest v2, reference graph, command/contract inventory, failure/recovery rules, product decisions, audit payload | Approved reviewer-only consistency audit completed: pass with one minor clarification, locally addressed. Further implementation scope still requires authorization |
 | FR-1: machine agreements and fixture proof | Manifest v2; seven v2 installer artifact schemas, shared/embedded/readback closure; synthetic scalar + location-label flight flow; independent hash and reference vectors | Repaired listing gate passed; Draft 2020-12 meta/fixture validation, semantic tests, unchanged v1 vectors and bounded machine-contract review. Fix exact reference-slot syntax and aggregate observation budgets before code |
-| FR-2: read-only flight plan | Exact 0.9.1 preflight, protected cursor prerequisites, complete public observation view, dependency closure, cascaded drift and typed outputs | Missing/retain/drift/retired and mixed v1/v2 readback tests; all pagination/capacity/staleness failures; no writes even dry-run. No release compatibility claim |
+| FR-2: read-only flight plan | Exact 0.10.0 preflight, protected cursor prerequisites, revision-addressed historical lookup, complete public observation view, dependency closure, cascaded drift and typed outputs | Missing/retain/drift/retired and mixed v1/v2 readback tests; pagination/capacity/staleness failures; no writes even dry-run. Independent disposable read-only gate; bounded review before advancing. No release compatibility claim |
 | FR-3: approved initial flight apply | New command-specific serializers/evidence validators; ordered dependencies; durable prepared/accepted checkpoints; no-op and binding guards | Every one of the 11 write kinds, all ID-consuming paths and every durability boundary tested; no item/disclosure/send commands; no speculative IDs or automatic drift updates |
 | FR-4: same-execution recovery and verify | Forward expected-state comparison from bounded preimages; prefix/prefix-plus-one recovery; exact request replay; read-only exact-pin verification | Lost responses for schema/rendering create/publish, both binding kinds and nested profile refs; unrelated drift rejected; receipt limitations explicit; every old recovery/verify test preserved |
-| FR-5: disposable and installed-package qualification | Exact pinned Spine build, isolated temporary catalogs, synthetic owner and protected test cursor configs via separately authorized setup; source and clean-wheel plan/apply/replay/verify | All v1 supported-baseline regression gates plus exact 0.9.1 public-CLI qualification. No existing ledger, item creation, materialization, sends, disclosure grants or Spine checkout edits |
+| FR-5: disposable and installed-package qualification | Exact pinned Spine build, isolated temporary catalogs, synthetic owner and protected test cursor configs via separately authorized setup; source and clean-wheel plan/apply/replay/verify | All v1 supported-baseline regression gates plus exact 0.10.0 public-CLI qualification. No existing ledger, item creation, materialization, sends, disclosure grants or Spine checkout edits |
 | FR-6: curated flight content and release readiness | Operator-approved field/label/template/default choices; one new immutable pack version and successor installer packaging | Reviewed flight content/digests, unchanged other curated definitions, consumer v2-application readiness and explicit disclosure handoff. Tag/assets/publication/deployment require separate approval |
 
 FR-1 may use synthetic flight fixture choices without pretending they are curated
@@ -364,10 +366,39 @@ boundaries. Family-specific evidence retains complete public response text,
 including native public JSON numbers, without inventing a universal receipt.
 Upstream wire vectors supplement the independent schema/semantic/hash oracles.
 
-Next: approve and run the bounded artifact-contract review, address findings,
-then separately authorize FR-2. This is not FR-1 review completion or runtime
-qualification. FR-2 must prove actual full two-pass pagination, cursor-config,
+The bounded artifact-contract review completed with no blockers or majors and
+one minor key-grammar finding. That finding was fixed with eight vectors across
+all ten schema locations and committed with the reviewed increment as `5403680`.
+See the preserved review disposition and patch follow-up under
+`whetstone_runs/facet-rendering-fr1-artifacts-audit-001/`. The patch passed 83
+independent contract tests, 126 runtime tests and repository/whitespace checks;
+it was not externally re-audited. These are contract gates, not runtime or package
+qualification.
+
+The operator subsequently authorized FR-2. Read-only implementation-readiness
+inspection initially identified an unresolved historical facet revision-to-root lookup:
+existing pins carry revision IDs, while exact public show also requires the root
+ID. See [the FR-2 finding](../docs/fr2-historical-facet-readback-gap.md) for pinned
+contract evidence and resolution options. The operator subsequently resolved
+that decision by explicitly adopting Spine 0.10.0's revision-addressed public
+read. Candidate-root probing and failure suppression remain forbidden.
+FR-2 must prove actual full two-pass pagination, cursor-config,
 capacity and transport failure handling; FR-3 must prove durable filesystem
 ordering; FR-4 must implement and fault-test continuation/verification. The
 synthetic oracle cannot stand in for these runtime tests. FR-5 still requires
 the exact Spine package and existing-baseline package regression gates.
+
+### FR-2 resumed increment (2026-10-16)
+
+The separate v2 read-only planner is implemented with exact revision lookup,
+per-pass deduplication, shared bounded observation, pinned offline decoders,
+typed dependency resolution and fail-closed drift planning. No successor writes,
+recovery or verify are enabled. New 0.10.0 inventory/closure and synthetic
+cross-root public transcripts supplement, not replace, the reviewed FR-1 files.
+Independent test and provenance results are recorded in `docs/fr2-qualification.md`.
+
+Next: review this bounded FR-2 change and its exact payload (external review
+requires fresh approval), then separately authorize FR-3 initial apply. Before
+FR-3, refresh execution-specific 0.10.0 fixtures and evidence labels without
+rewriting 0.9.1 fixtures. FR-6 product decisions remain pending; this synthetic
+flight gate approves no curated fields, labels, templates or disclosure policy.
