@@ -1,0 +1,70 @@
+{
+  "audit_notes_hash": "629e3e1035b3bb0eb97a8f6ec2359c55cdf53f6f932b65ac014172f9013c7204",
+  "audit_notes_path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/whetstone_runs/facet-rendering-fr3-contract-audit-001/audit-notes.md",
+  "client": {
+    "model": "gpt-6.1-sol",
+    "name": "codex",
+    "version": "0.162.0-alpha.17.2"
+  },
+  "generated_at": "2026-10-17T07:24:05.940846+00:00",
+  "profile": "consistency",
+  "schema_version": "change-audit-manifest-v1",
+  "specs": [
+    {
+      "hash": "c8953e3a4e4de4e81bddbf6e22f35e854b56bec5eacb4ea1fa9d58c98c0b2898",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/AGENTS.md"
+    },
+    {
+      "hash": "665bbbc3d455c64dbecf37e05a260ed8db7d0541f297fd53ea9be018c76907be",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/installer-artifacts-v2.md"
+    },
+    {
+      "hash": "d84c8b16accc0abce76a38a7b5b75529d9ac2c2830ac2b18a4b05ba9586fcdcd",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/facet-rendering-packs.md"
+    },
+    {
+      "hash": "e17b53d929c31e373f45098a013848b2c0ed4593551314c6afc57174be667173",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/specs/implementation-plan.md"
+    },
+    {
+      "hash": "7cf161353b16bbc558b47a4a9564048fc65b416badcac37062efc154c30f432a",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/docs/fr3-initial-apply-readiness.md"
+    },
+    {
+      "hash": "e4694cfa53fd274df466420cbcca69af71da704a7917381c90f07bfc9a30d2a2",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/installer-spine-0.10.0-inventory.json"
+    },
+    {
+      "hash": "8c6f83fb688d91d94222ddf9a675b01a68895835eb17c7eb816a63653dd660af",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/contracts/installer-fr3-fixture-manifest.v2.json"
+    },
+    {
+      "hash": "d7d022a17c440b193546b05cfb520d6b31799709e8f9dac296f174c455aea228",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/contract/fr3_fixture_support.py"
+    },
+    {
+      "hash": "4bab7719fefabb8faf0002b338a98cbbe0416d81b9a79cdc071ffa97ae3d548c",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/contract/test_fr3_artifact_contract.py"
+    },
+    {
+      "hash": "7ba9de980c43c0fdf35ddc57746885e4765a174a426c07f07090de8c6ae004bd",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/contract/facet_artifact_oracle.py"
+    },
+    {
+      "hash": "5e58592fa608795e17413c1eff0253ff3c58e1c3b611b89af938130a49ad9370",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/contract/test_facet_manifest_contract.py"
+    },
+    {
+      "hash": "9e3e586c95c69e7cdcf944b135fd1e8f52d938dbcc5953f94cb62a82d1945065",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/installer-v2/flight-create-0.10.0.json"
+    },
+    {
+      "hash": "ce240e8aec27474e3e086d512eb76ec9766f08250c3b057567773d67a940a146",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/tests/fixtures/installer-v2/flight-update-0.10.0.json"
+    },
+    {
+      "hash": "134e6f825c455664cecbb03b73ddfc9d9b9547174e973ff09638d96380af8eba",
+      "path": "/Users/Shared/Agent-Workspace/repos/personal/spine-packs/src/spine_packs/facet_planning.py"
+    }
+  ]
+}

@@ -509,6 +509,8 @@ def evidence_check(plan, approval, action, evidence, prefix):
         if cmd.endswith('.create'):require(record['created']==record['published'],'rendering create provenance')
     elif cmd == 'item_archetype.facet_binding.set':
         require(body == {k:req[k] for k in ('item_archetype_id','facet_key','facet_schema_revision_id')}, 'facet binding semantics')
+        for field in ('facet_key', 'facet_schema_revision_id'):
+            require(response[field] == req[field] == body[field], 'facet binding response ' + field)
     elif cmd == 'notification_profile.binding.set':
         require(body == {k:req[k] for k in ('item_archetype_id','notification_profile_id')}, 'default binding semantics')
     elif cmd == 'notification_profile.metadata.update':

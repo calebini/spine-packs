@@ -134,6 +134,36 @@ class FR3ArtifactTests(unittest.TestCase):
                         with self.assertRaises(ValueError):
                             oracle.evidence_check(p, a, action, evidence, flow['accepted_responses'][:n])
 
+    def test_facet_binding_response_fields_match_request_and_readback(self):
+        for flow in self.flows():
+            p, a = flow['plan'], flow['approval']
+            n = next(i for i, action in enumerate(p['actions'])
+                     if action['command'] == 'item_archetype.facet_binding.set')
+            action = p['actions'][n]
+            prefix = flow['accepted_responses'][:n]
+            original = flow['accepted_responses'][n]
+            oracle.evidence_check(p, a, action, original, prefix)
+            for field, replacement in (('facet_key', 'different_key'),
+                                       ('facet_schema_revision_id', 'different-revision')):
+                with self.subTest(change_kind=action['change_kind'], field=field):
+                    evidence = deepcopy(original)
+                    response = oracle.unblob(evidence['response'], True)
+                    request = oracle.unblob(evidence['request'])
+                    post = oracle.unblob(evidence['post_observation']['value'])
+                    self.assertEqual(response[field], request[field])
+                    self.assertEqual(response[field], post[field])
+                    self.assertNotEqual(response[field], replacement)
+                    response[field] = replacement
+                    reseal_response(evidence, response)
+                    # Prove rejection is semantic correlation, not schema or
+                    # digest failure: only the response field has changed.
+                    oracle.public_schema(action['command'], 'response', response)
+                    self.assertEqual(oracle.unblob(evidence['response'], True), response)
+                    self.assertEqual(evidence['request'], original['request'])
+                    self.assertEqual(evidence['post_observation'], original['post_observation'])
+                    with self.assertRaisesRegex(ValueError, 'facet binding response ' + field):
+                        oracle.evidence_check(p, a, action, evidence, prefix)
+
     def test_stale_approval_and_missing_update_authorization(self):
         for flow in self.flows():
             approval = deepcopy(flow['approval'])

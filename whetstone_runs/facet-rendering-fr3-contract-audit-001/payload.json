@@ -1,0 +1,95 @@
+{
+  "status": "staged_not_authorized_not_run",
+  "mode": "audit-change",
+  "profile": "consistency",
+  "candidate_commit": "97e09b5db6bff382e1c69054a8db1f961c35a225",
+  "spine_commit": "8f3c50b6fd1b4aa534e50925b7417a7a80d19122",
+  "payload_count": 15,
+  "payload_bytes": 442466,
+  "files": [
+    {
+      "path": "whetstone_runs/facet-rendering-fr3-contract-audit-001/audit-notes.md",
+      "bytes": 4581,
+      "sha256": "629e3e1035b3bb0eb97a8f6ec2359c55cdf53f6f932b65ac014172f9013c7204"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 7000,
+      "sha256": "c8953e3a4e4de4e81bddbf6e22f35e854b56bec5eacb4ea1fa9d58c98c0b2898"
+    },
+    {
+      "path": "specs/installer-artifacts-v2.md",
+      "bytes": 17558,
+      "sha256": "665bbbc3d455c64dbecf37e05a260ed8db7d0541f297fd53ea9be018c76907be"
+    },
+    {
+      "path": "specs/facet-rendering-packs.md",
+      "bytes": 36533,
+      "sha256": "d84c8b16accc0abce76a38a7b5b75529d9ac2c2830ac2b18a4b05ba9586fcdcd"
+    },
+    {
+      "path": "specs/implementation-plan.md",
+      "bytes": 27094,
+      "sha256": "e17b53d929c31e373f45098a013848b2c0ed4593551314c6afc57174be667173"
+    },
+    {
+      "path": "docs/fr3-initial-apply-readiness.md",
+      "bytes": 4066,
+      "sha256": "7cf161353b16bbc558b47a4a9564048fc65b416badcac37062efc154c30f432a"
+    },
+    {
+      "path": "contracts/installer-spine-0.10.0-inventory.json",
+      "bytes": 29205,
+      "sha256": "e4694cfa53fd274df466420cbcca69af71da704a7917381c90f07bfc9a30d2a2"
+    },
+    {
+      "path": "contracts/installer-fr3-fixture-manifest.v2.json",
+      "bytes": 1693,
+      "sha256": "8c6f83fb688d91d94222ddf9a675b01a68895835eb17c7eb816a63653dd660af"
+    },
+    {
+      "path": "tests/contract/fr3_fixture_support.py",
+      "bytes": 5849,
+      "sha256": "d7d022a17c440b193546b05cfb520d6b31799709e8f9dac296f174c455aea228"
+    },
+    {
+      "path": "tests/contract/test_fr3_artifact_contract.py",
+      "bytes": 9485,
+      "sha256": "4bab7719fefabb8faf0002b338a98cbbe0416d81b9a79cdc071ffa97ae3d548c"
+    },
+    {
+      "path": "tests/contract/facet_artifact_oracle.py",
+      "bytes": 37913,
+      "sha256": "7ba9de980c43c0fdf35ddc57746885e4765a174a426c07f07090de8c6ae004bd"
+    },
+    {
+      "path": "tests/contract/test_facet_manifest_contract.py",
+      "bytes": 10807,
+      "sha256": "5e58592fa608795e17413c1eff0253ff3c58e1c3b611b89af938130a49ad9370"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/flight-create-0.10.0.json",
+      "bytes": 108110,
+      "sha256": "9e3e586c95c69e7cdcf944b135fd1e8f52d938dbcc5953f94cb62a82d1945065"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/flight-update-0.10.0.json",
+      "bytes": 134239,
+      "sha256": "ce240e8aec27474e3e086d512eb76ec9766f08250c3b057567773d67a940a146"
+    },
+    {
+      "path": "src/spine_packs/facet_planning.py",
+      "bytes": 8333,
+      "sha256": "134e6f825c455664cecbb03b73ddfc9d9b9547174e973ff09638d96380af8eba"
+    }
+  ],
+  "prompt_preflight": {
+    "whetstone_commit": "1b813be46236f53687f610907f5b207ce4d8c772",
+    "export_tracked_files_verified": 1230,
+    "characters": 449380,
+    "utf8_bytes": 449408,
+    "sha256": "6ae4b8199ff282dcd75d289f19243147f40479fe2c8952f6fdbc3bc3ba4022d1",
+    "observed_cli_character_limit": 1048576,
+    "method": "Pure render_audit_brief and _audit_reviewer_prompt; no client invocation"
+  }
+}

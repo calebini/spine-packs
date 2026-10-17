@@ -53,8 +53,11 @@ python -m unittest discover -s tests/contract -p 'test_fr3_artifact_contract.py'
 
 ## Next gate and implementation
 
-1. Focused contract review of the exact-0.10.0 initial-apply refresh. An external
-   Whetstone invocation still needs a separately staged, approved payload.
+1. The approved 15-file focused contract review completed with one minor
+   response-correlation finding and no blockers or majors. The authorized local
+   patch adds exact facet-key/schema-revision response checks and four negative
+   cases. See [patch follow-up](../whetstone_runs/facet-rendering-fr3-contract-audit-001/patch-followup.md)
+   for post-patch verification. The patch has not been externally re-audited.
 2. Implement command-specific serializers and response/readback validators.
    Preserve catalog, facet and rendering receipt distinctions; never treat a
    response output or planned producer as acceptance by itself.

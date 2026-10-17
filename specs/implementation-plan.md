@@ -416,9 +416,14 @@ digests are regenerated, not relabelled. The existing FR-2 planner must reproduc
 these independently refreshed plans exactly.
 
 These are contract tests, not proof of actual writes or filesystem ordering.
-No executor or write transport is enabled by this increment. Next: focused
-review of this contract increment (external payload requires fresh approval),
-then implement FR-3 command serializers/evidence validation, write allowlist,
+No executor or write transport is enabled by this increment. The approved
+15-file focused contract review passed with one minor response-correlation
+finding. The operator-authorized patch adds exact facet-key/schema-revision
+response checks and four negative cases; see
+`whetstone_runs/facet-rendering-fr3-contract-audit-001/patch-followup.md`.
+The patch passed 99 contract and 142 runtime tests, repository verification and
+whitespace checks; it has not been externally re-audited. Next:
+implement FR-3 command serializers/evidence validation, write allowlist,
 initial apply orchestration and durable publication/fault-injection tests.
 Retain the existing read-only plan guard and unchanged v1 execution path.
 
