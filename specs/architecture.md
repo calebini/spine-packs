@@ -1,6 +1,6 @@
 # Architecture
 
-## Facet/rendering successor — FR-2 read-only planning
+## Facet/rendering successor — FR-2 planning and FR-3 initial apply
 
 [facet-rendering-packs.md](facet-rendering-packs.md) proposes a separate manifest
 and installer-artifact v2 path for exact Spine `0.10.0` / schema `19` at
@@ -14,25 +14,26 @@ gates before successor work; old v1 behavior and released artifacts remain intac
 The draft successor machine layer is specified in
 [installer-artifacts-v2.md](installer-artifacts-v2.md). Its pure test oracle lives
 under `tests/contract/`, not `src/spine_packs/`. Saved synthetic execution and
-recovery fixtures are not results from an implemented successor installer.
+recovery fixtures remain synthetic contract evidence. Runtime tests distinguish
+public wire simulations from exact installed-Spine qualification.
 
 FR-3 initial apply work is authorized to begin with the exact-0.10.0 contract
 fixture refresh. The focused contract gate precedes enabling the write boundary;
 see `implementation-plan.md` and `../docs/fr3-initial-apply-readiness.md`.
-That contract gate passed with a minor finding, now patched. The first runtime
-increment adds `facet_execution` pure request/evidence helpers, but changes no
-runtime dispatch or transport. Recovery and verify remain FR-4 work, outside the
-current authorization.
+That contract gate passed with a minor finding, now patched. `facet_execution`
+supplies request/evidence helpers; `facet_apply` and `facet_apply_transport` now
+integrate initial apply. Runtime bounded review and FR-5 qualification remain
+pending. Recovery and verify remain FR-4 work, outside the current authorization.
 
 ## Relationship
 
 FR-2 adds `facet_manifest`, `facet_graph`, `facet_contracts`, `facet_inventory`,
 `facet_observation`, `facet_transport` and `facet_planning` in the existing package.
-They implement only manifest-v2/request-v2 read-only `plan`. The CLI uses the
-same selection assertions and private no-clobber output publication; successor
-apply/continuation/verify are rejected before target access. V1 dispatch and
-supported-baseline allowlists are unchanged. Proposed write templates are data,
-not executable authority; the successor transport rejects every write.
+They implement manifest-v2/request-v2 read-only `plan`. The CLI uses the same
+selection assertions and private no-clobber output publication. V1 dispatch and
+supported-baseline allowlists are unchanged. The planning transport rejects every
+write; initial v2 apply uses its own 11-command adapter. Successor continuation
+and verify are rejected before target access.
 
 `facet_execution.ExecutionContext` checks the manifest, saved plan, observation
 projection and complete approval, and rebuilds the plan before constructing any
@@ -42,14 +43,40 @@ bytes and family-specific receipt/readback correlations are validated using only
 pinned local schemas, without transport or artifact writes. Returning candidate evidence does not advance
 the context and does not authorize a consumer or attest durable acceptance.
 
-The future initial-apply executor MUST perform fresh public preflight before
+The initial-apply executor MUST perform fresh public preflight before
 submitting constructed requests and obtain validated public readback before
 validating response evidence. It MUST durably publish
 accepted evidence before passing it in a subsequent consumer's accepted prefix.
 The helper cannot prove authenticity, freshness or durability from supplied data.
-Write transport, binding rechecks, checkpoint publication, partial-failure
-orchestration and CLI dispatch remain the next FR-3 increment, not completed
-capabilities. Existing v1 execution is unchanged.
+`facet_apply` now repeats the complete two-pass plan observation and requires the
+exact saved plan before submission. Known-ID requests are validated before
+target access. Each binding receives an immediate bounded public recheck; facet
+requests also retain `expected_binding_id` CAS, including null for absence.
+
+`facet_apply_transport.FacetApplyCommand` inherits the public CLI process boundary
+but admits exactly the 11 reviewed configuration writes and preserves stdout
+bytes. Writes retain a 30-second/16-MiB ceiling independent of read budgets.
+Malformed envelopes, unknown failure codes and inconsistent CLI exits fail closed;
+controlled write rejections retain the public code without arbitrary messages.
+
+After each response, initial apply obtains current public show/list readback,
+validates ownership, immutable hashes and exact requested state, and only then
+constructs accepted evidence. Each readback/recheck operation uses the existing
+global observation budget and per-call limits. No item/facet-value/disclosure
+or delivery command belongs to the adapter.
+
+The existing durable writer is reused with a v2-specific artifact validator;
+its v1 default is unchanged. A prepared checkpoint is durable before submission;
+an accepted checkpoint is durable before the next consumer. Once submitted,
+any write/response/readback failure returns `partial` with the exact unresolved
+request retained. Failures before the first submission return `not_applied`.
+Publication failures propagate without a success claim; a result-file failure
+may leave only the valid durable checkpoint. No-action plans publish an empty
+complete checkpoint. CLI input/output/checkpoint collision protections remain.
+
+Runtime tests use synthetic wire data, saved full read transcripts and local
+filesystem faults. These are not FR-5 installed-package/Spine qualification.
+Existing v1 execution remains unchanged.
 
 The bounded pinned-vocabulary validator is independent of the frozen v1 decoder
 and cross-checked with official Draft 2020-12 in development. Unknown vocabulary

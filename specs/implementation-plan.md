@@ -450,3 +450,27 @@ CLI wiring, with fault injection at every durability boundary. Keep the planning
 transport write-disabled. No successor continuation or verify is authorized.
 The pure helper's accepted-prefix argument is not proof of filesystem durability;
 only the future checkpoint owner may supply it after durable acceptance.
+
+### FR-3 initial executor increment
+
+The pure helpers are committed as `fc30fab`. The authorized next bound implements
+`facet_apply` and the separate `FacetApplyCommand` adapter, plus v2 initial-apply
+CLI dispatch. Initial preflight rebuilds the entire two-pass public plan and
+requires equality with the approved plan. Each response receives public readback
+before acceptance; binding rechecks and exact facet CAS precede submission.
+Prepared/accepted v2 checkpoints reuse the existing durable writer with an
+explicit artifact validator. Partial results retain the first unresolved request.
+V2 continuation and verify remain rejected before target access.
+
+Focused tests cover all 11 writes, every prepared/accepted boundary, first and
+later uncertain responses/readback failures, file/directory fsync, link/replace,
+binding drift, CLI publication and collision behavior, default adapter dispatch,
+and the original bounded public-read preflight transcript. A synthetic subprocess
+checks CLI word arguments and exact stdout preservation. The independent oracle
+checks results when run with the development validator. No actual Spine ledger
+is accessed in these tests.
+
+Next gate: bounded FR-3 runtime review, requiring a fresh approved payload before
+an external reviewer. Fix findings before requesting FR-4 recovery/verify scope.
+FR-5 remains the separate exact-source/wheel/public-Spine qualification gate;
+this increment does not qualify a release or authorize operator installation.

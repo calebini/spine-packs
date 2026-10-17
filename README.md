@@ -15,16 +15,16 @@ do not edit released manifests or relax version checks on staging.
 
 ## Authority and boundaries
 
-The facet/rendering successor now has a separate read-only v2 planner for the
-explicit Spine `0.10.0` / schema `19` pin. It does not enable successor apply,
-recovery, verify or released-pack installation. See
+The facet/rendering successor has a separate v2 planner and initial approved
+apply path for the explicit Spine `0.10.0` / schema `19` pin. Runtime bounded
+review and exact package qualification remain pending. Successor recovery and
+verify remain unavailable. See
 [FR-2 qualification](docs/fr2-qualification.md) and the
 [implementation sequence](specs/implementation-plan.md). Existing v1 supported
 baselines and released pack bytes are unchanged.
 
-FR-3's contract review and minor patch are complete. Pure request/evidence helpers
-now cover the exact-0.10.0 configuration graph, but the write executor remains
-disabled pending transport and durable checkpoint integration; see
+FR-3's initial executor now includes fresh preflight, a configuration-only
+write adapter, public readback and durable checkpoint integration; see
 [FR-3 readiness](docs/fr3-initial-apply-readiness.md).
 
 Spine remains the sole authority for installed archetypes, notification

@@ -12,7 +12,7 @@ from .preflight import preflight_apply
 from .recovery import preflight_continuation
 
 
-def checkpoint_writer(path):
+def checkpoint_writer(path, *, validator=None):
     """Create once without clobbering, then replace only this writer's checkpoint."""
     supplied = Path(path)
     require(not supplied.exists() and not supplied.is_symlink(), "checkpoint_already_exists", INVALID)
@@ -22,8 +22,11 @@ def checkpoint_writer(path):
 
     def write(value):
         nonlocal previous
-        validate_artifact(value)
-        require(value["artifact_schema"] == "spine.pack-apply-checkpoint.v1", "invalid_checkpoint", INVALID)
+        if validator is None:
+            validate_artifact(value)
+            require(value["artifact_schema"] == "spine.pack-apply-checkpoint.v1", "invalid_checkpoint", INVALID)
+        else:
+            validator(value)
         encoded = (a.canonical_text(value) + "\n").encode("utf-8")
         temporary = None
         try:

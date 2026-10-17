@@ -14,7 +14,7 @@ from .facet_graph import allowed_slots, expected_template
 from .facet_inventory import BASELINE, COMMANDS, CONTRACTS
 from .facet_observation import snapshots
 from .facet_planning import build_plan, validate_inputs
-from .planning import ENVIRONMENT, INVALID, PlanError, require
+from .planning import ENVIRONMENT, INVALID, PACK_INVALID, PlanError, require
 
 PUBLIC_SCHEMA = 'spine-readback-0.10.0.schema.json'
 TYPES = 'spine-pack-installer-types.v2.schema.json'
@@ -136,6 +136,8 @@ class ExecutionContext:
                 and p['required_execution_contracts'] == CONTRACTS, 'execution_contracts_mismatch', INVALID)
         observation(p['observation'], p['request']['owner'])
         require(build_plan(manifest, req, env, p['observation']) == p, 'plan_rebuild_mismatch', INVALID)
+        require(p['pack']['status'] == 'released', 'draft_plan_not_applicable', PACK_INVALID)
+        require(not p['blocked_object_keys'], 'blocked_plan_not_applicable', 'blocked_desired_state')
         require(p['apply_eligible'] and ap['plan_digest'] == p['content_identity']['digest']
                 and ap['authorized_update_action_ids'] == p['decision_action_ids'], 'invalid_execution_approval', INVALID)
 
@@ -255,6 +257,15 @@ class ExecutionContext:
             require(evidence['receipt'] == receipt(action['command'], response), 'invalid_receipt_projection', INVALID)
             decoded[action['action_id']] = response
         return decoded
+
+    @guarded(INVALID)
+    def validate_known_requests(self):
+        """Preflight known IDs before any submission; never guess producer IDs."""
+        resolutions = {r['object_key']: r for r in self._plan['resolutions']}
+        for i, action in enumerate(self._plan['actions']):
+            if all(resolutions[s['object_key']][s['field']]['kind'] == 'observed'
+                   for s in action['slots']):
+                self._request(i, {})
 
     @guarded(INVALID)
     def materialize(self, accepted):

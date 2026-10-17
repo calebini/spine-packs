@@ -100,7 +100,8 @@ def main(argv=None, *, transport_factory=SpineCommand):
             from .facet_manifest import validate as validate_successor
             from .facet_planning import validate_inputs as validate_successor_inputs, plan_installation as plan_successor
             from .facet_transport import FacetSpineCommand
-            require(args.operation == 'plan', 'successor_operation_not_authorized', INVALID)
+            require(args.operation in ('plan', 'apply') and args.continue_from is None,
+                    'successor_operation_not_authorized', INVALID)
             validate_successor(manifest)
         else:
             require(not validate_pack(manifest, a._schema_document(a.SCHEMA_ROOT / "spine-pack-manifest.v1.schema.json")),
@@ -151,7 +152,11 @@ def main(argv=None, *, transport_factory=SpineCommand):
                     "invalid_cli_arguments", INVALID)
             plan = load_input(args.plan, INVALID, a.SIZE_LIMITS["spine.pack-install-plan.v1"])
             approval = load_input(args.approval, INVALID, a.SIZE_LIMITS["spine.pack-install-approval.v1"])
-            validate_inputs(plan, approval)
+            if successor:
+                from .facet_execution import ExecutionContext
+                ExecutionContext(manifest, plan, approval).validate_known_requests()
+            else:
+                validate_inputs(plan, approval)
             target = plan["request"]["target"]
             protected = [args.manifest, args.plan, args.approval,
                          target["spine_command"]["path"], target["ledger"]["path"]]
@@ -164,10 +169,18 @@ def main(argv=None, *, transport_factory=SpineCommand):
                 protected.append(args.continue_from)
             checkpoint = output_path(args.checkpoint, [*protected, args.output])
             output = output_path(args.output, [*protected, args.checkpoint])
-            writer = checkpoint_writer(checkpoint)
-            transport = transport_factory(target)
-            applied = (apply_initial(manifest, plan, approval, transport, writer) if source is None else
-                       apply_continuation(manifest, plan, approval, source, transport, writer))
+            if successor:
+                from .facet_apply import apply_initial as apply_successor, checkpoint_writer as successor_writer
+                from .facet_apply_transport import FacetApplyCommand
+                writer = successor_writer(checkpoint)
+                factory = FacetApplyCommand if transport_factory is SpineCommand else transport_factory
+                transport = factory(target)
+                applied = apply_successor(manifest, plan, approval, transport, writer)
+            else:
+                writer = checkpoint_writer(checkpoint)
+                transport = transport_factory(target)
+                applied = (apply_initial(manifest, plan, approval, transport, writer) if source is None else
+                           apply_continuation(manifest, plan, approval, source, transport, writer))
             publish(output, applied)
             category = ("success" if applied["state"] == "applied" else "partial_apply"
                         if applied["state"] == "partial" else applied["failure"]["error"]["category"])

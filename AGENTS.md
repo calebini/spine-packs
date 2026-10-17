@@ -82,7 +82,9 @@ clean-install qualification for GitHub Releases as specified in
 Do not add broader recovery, remote
 transport, or speculative service/adapter/model directories
 without separate review and authorization. Planning must retain its strict
-read-command allowlist; apply may use only the six reviewed write commands.
+read-command allowlist. V1 apply may use only its six reviewed write commands;
+the separate FR-3 v2 apply adapter may use only the 11 configuration writes
+in the exact 0.10.0 inventory.
 Mark unresolved design details explicitly instead of silently choosing them.
 
 When the repository advances, add only the smallest structure required by real
@@ -105,10 +107,10 @@ FR-2 explicitly authorizes the separate v2 read-only planner against this exact
 pin, including `facet_schema.revision.show` and new disposable configuration-only
 qualification via public CLIs. Never probe candidate roots or suppress missing
 referenced evidence. FR-3's focused contract review and minor patch are complete.
-Its first runtime increment adds pure request/evidence helpers only; the current
-v2 CLI and transport still reject all writes. Fresh preflight, write orchestration
-and durable checkpoint integration remain pending. Successor recovery/verify
-remain unauthorized. Preserve
+Initial-only v2 apply now integrates fresh preflight, public readback, the separate
+11-write adapter and durable prepared/accepted checkpoints. The FR-2 planning
+adapter remains read-only. Runtime bounded review and exact installed-package
+qualification remain pending. Successor recovery/verify remain unauthorized. Preserve
 the 0.9.1 inventory, fixtures and earlier investigation as historical evidence.
 
 For documentation, contract, and planner changes, run:

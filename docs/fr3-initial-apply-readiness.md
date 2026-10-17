@@ -116,3 +116,68 @@ its outputs. The next bound implements that orchestration and tests actual
 filesystem/transport failure boundaries. Successor recovery/verify remain out
 of scope. Historical fixtures, released packs and existing v1 behavior remain
 unchanged. No package/disposable-ledger qualification or release claim is made.
+
+## Initial executor increment
+
+The pure helpers were committed as `fc30fab`. This increment wires initial-only
+v2 `apply` through a separate configuration write adapter, complete fresh
+preflight, public readback and durable checkpoint publication. The component
+scaffold guidance keeps this in the existing package and test directories.
+
+The external CLI shape remains:
+
+```sh
+spine-packs apply --manifest MANIFEST --plan PLAN --approval APPROVAL --checkpoint CHECKPOINT --output RESULT
+```
+
+Manifest-v2 inputs select the exact-0.10.0 path. Complete approval, input digests,
+known-ID requests and output destinations are checked before target access.
+Fresh two-pass observation must reproduce the saved plan exactly. Later bindings
+receive immediate list rechecks, and facet binding requests retain exact CAS.
+
+The write adapter accepts only the 11 inventory commands, preserves stdout
+without rewriting JSON and uses the existing bounded public subprocess. Each
+response is checked against a fresh current show/list result before acceptance.
+The durable writer validates v2 artifacts while preserving its v1 default. Its
+file fsync, atomic link/replace and directory fsync complete before submission
+or use of producer outputs. Readback/recheck operations have their own existing
+global observation budgets; writes retain 30 seconds and 16 MiB each.
+
+After submission, any uncertain/rejected/malformed response or readback failure
+produces a partial result embedding the prepared checkpoint and exact request.
+There is no automatic retry. A checkpoint publication failure stops without
+submitting a consumer; result publication failure can leave the durable
+checkpoint as the only completed artifact. No-action plans publish an empty
+complete checkpoint. V2 continuation and verify still fail before target access.
+
+Focused tests use synthetic wire responses and projections, the existing full
+FR-2 read transcript, temporary artifact files and a synthetic CLI subprocess.
+The subprocess's target is a new empty test file used only for path checks;
+it is not opened as a Spine ledger. No real Spine command or ledger was used.
+The read transcript independently exercises the complete preflight; orchestration
+fault tests substitute the preflight result so every write boundary can be
+isolated. The official validator additionally checks generated result artifacts
+against the independent test oracle. These are not installed-Spine qualification.
+
+Verification results:
+
+- 22 focused apply/transport tests passed in the isolated development environment,
+  including independent Draft 2020-12 validation of generated result artifacts.
+- Complete required system-Python runtime suite: 175 tests passed, no skips.
+- Official contract suite: 99 tests passed, no skips.
+- Required system-Python contract suite: 99 ran, with 34 skips for the unavailable
+  development validator; the isolated official suite above covers that gate.
+- Repository verifier: 171 required files passed; whitespace checks passed.
+- Historical and refreshed flight fixture hashes, contracts and released packs
+  are unchanged. The exact Spine commit remains available locally.
+
+Draft and blocked inputs retain existing installer exit categories before target
+access. Public revision numbers and full rendering records must agree with
+fresh readback. Publication faults were injected at every prepared/accepted
+boundary and at file fsync, atomic link/replace and directory fsync. A synthetic
+subprocess exercises the actual adapter's CLI arguments and exact stdout capture.
+
+Next: stage the bounded FR-3 runtime review. External invocation needs payload
+approval. Successor recovery/verify and exact Spine installed-package validation
+remain their later gates. No commit, push, deployment or publication is included
+in this implementation request.
