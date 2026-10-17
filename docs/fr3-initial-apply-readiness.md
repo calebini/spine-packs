@@ -73,3 +73,46 @@ No product decision is needed to refresh these synthetic fixtures. Curated
 flight fields, templates and disclosure choices remain FR-6 decisions. The
 historical verification label naming 0.9.1 is explicitly not refreshed here:
 FR-4 must settle its 0.10.0 successor before implementing verification.
+
+## Pure execution increment
+
+Commit `b2f224e` records the bounded audit and minor correlation patch. The next
+increment adds one runtime module, `src/spine_packs/facet_execution.py`, and its
+focused tests in the existing package/test layout. No service or adapter tree
+is introduced; this follows the component-scaffold guidance.
+
+The pure context reconstructs the exact saved plan from manifest and saved
+observation, checks complete approval, constructs only the next approved request,
+and validates every earlier evidence row before consuming returned IDs. It
+preserves original response text (minus one terminal CLI newline), distinguishes
+all three receipt families, and compares response/target/owner/revision/hash and
+semantic readback evidence. Metadata updates cannot silently advance a revision.
+Resolved rendering size is checked after actual producer IDs become available.
+
+Focused tests reproduce all saved independent requests/evidence across all 11
+write kinds, reject malformed and resealed inconsistent inputs, and test the
+exact 8,192-byte rendering boundary versus longer schema IDs. Public JSON integer
+parsing is checked separately from command-specific field schemas, which still
+reject inappropriate types. These tests are synthetic and execute no Spine CLI.
+
+Verification results for this increment:
+
+- 11 focused execution tests passed; complete runtime suite: 153 passed.
+- Official Draft 2020-12 contract suite: 99 passed without skips.
+- Required system-Python contract suite: 99 ran with 34 development-validator
+  skips; the complete official suite above supplies the full gate.
+- Repository verifier: 168 required files passed; whitespace checks passed.
+- Historical/refreshed fixture bytes, contracts, released packs, CLI dispatch
+  and write-disabled transport are unchanged.
+
+The exact Spine commit remains available locally; no Spine execution, build,
+ledger access or checkout change was needed for this pure-helper increment.
+
+No CLI dispatch, write transport, fresh observation/readback collection, durable
+checkpoint publisher or terminal apply-result writer is added here. Supplied
+evidence proves consistency, not authenticity or durable acceptance; the future
+executor must obtain fresh public evidence and persist a producer before using
+its outputs. The next bound implements that orchestration and tests actual
+filesystem/transport failure boundaries. Successor recovery/verify remain out
+of scope. Historical fixtures, released packs and existing v1 behavior remain
+unchanged. No package/disposable-ledger qualification or release claim is made.

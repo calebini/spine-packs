@@ -22,8 +22,9 @@ recovery, verify or released-pack installation. See
 [implementation sequence](specs/implementation-plan.md). Existing v1 supported
 baselines and released pack bytes are unchanged.
 
-FR-3 has begun with separate exact-0.10.0 initial-apply contract fixtures and
-tests. The executor remains disabled pending its focused contract gate; see
+FR-3's contract review and minor patch are complete. Pure request/evidence helpers
+now cover the exact-0.10.0 configuration graph, but the write executor remains
+disabled pending transport and durable checkpoint integration; see
 [FR-3 readiness](docs/fr3-initial-apply-readiness.md).
 
 Spine remains the sole authority for installed archetypes, notification

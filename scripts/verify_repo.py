@@ -36,6 +36,8 @@ REQUIRED_FILES = (
     "tests/fixtures/installer-v2/flight-create-0.10.0.json",
     "tests/fixtures/installer-v2/flight-update-0.10.0.json",
     "tests/runtime/test_facet_planning.py",
+    "src/spine_packs/facet_execution.py",
+    "tests/runtime/test_facet_execution.py",
     "tests/fixtures/installer-v2/fr2-cross-root.json",
     "tests/fixtures/installer-v2/revision-readback-0.10.0.json",
     "contracts/installer-fixture-manifest.v2.json",

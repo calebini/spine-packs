@@ -19,8 +19,10 @@ recovery fixtures are not results from an implemented successor installer.
 FR-3 initial apply work is authorized to begin with the exact-0.10.0 contract
 fixture refresh. The focused contract gate precedes enabling the write boundary;
 see `implementation-plan.md` and `../docs/fr3-initial-apply-readiness.md`.
-This first increment changes no runtime dispatch or transport. Recovery and
-verify remain FR-4 work, outside the current authorization.
+That contract gate passed with a minor finding, now patched. The first runtime
+increment adds `facet_execution` pure request/evidence helpers, but changes no
+runtime dispatch or transport. Recovery and verify remain FR-4 work, outside the
+current authorization.
 
 ## Relationship
 
@@ -31,6 +33,23 @@ same selection assertions and private no-clobber output publication; successor
 apply/continuation/verify are rejected before target access. V1 dispatch and
 supported-baseline allowlists are unchanged. Proposed write templates are data,
 not executable authority; the successor transport rejects every write.
+
+`facet_execution.ExecutionContext` checks the manifest, saved plan, observation
+projection and complete approval, and rebuilds the plan before constructing any
+request. It owns private input copies. It validates a contiguous evidence prefix
+before resolving typed producer outputs for the next action. Public response
+bytes and family-specific receipt/readback correlations are validated using only
+pinned local schemas, without transport or artifact writes. Returning candidate evidence does not advance
+the context and does not authorize a consumer or attest durable acceptance.
+
+The future initial-apply executor MUST perform fresh public preflight before
+submitting constructed requests and obtain validated public readback before
+validating response evidence. It MUST durably publish
+accepted evidence before passing it in a subsequent consumer's accepted prefix.
+The helper cannot prove authenticity, freshness or durability from supplied data.
+Write transport, binding rechecks, checkpoint publication, partial-failure
+orchestration and CLI dispatch remain the next FR-3 increment, not completed
+capabilities. Existing v1 execution is unchanged.
 
 The bounded pinned-vocabulary validator is independent of the frozen v1 decoder
 and cross-checked with official Draft 2020-12 in development. Unknown vocabulary

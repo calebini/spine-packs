@@ -104,8 +104,11 @@ requires explicit payload approval before any external reviewer invocation.
 FR-2 explicitly authorizes the separate v2 read-only planner against this exact
 pin, including `facet_schema.revision.show` and new disposable configuration-only
 qualification via public CLIs. Never probe candidate roots or suppress missing
-referenced evidence. FR-3 is beginning at its contract gate; the current v2
-runtime still rejects all writes. Successor recovery/verify remain unauthorized. Preserve
+referenced evidence. FR-3's focused contract review and minor patch are complete.
+Its first runtime increment adds pure request/evidence helpers only; the current
+v2 CLI and transport still reject all writes. Fresh preflight, write orchestration
+and durable checkpoint integration remain pending. Successor recovery/verify
+remain unauthorized. Preserve
 the 0.9.1 inventory, fixtures and earlier investigation as historical evidence.
 
 For documentation, contract, and planner changes, run:

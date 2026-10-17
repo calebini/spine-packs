@@ -431,3 +431,22 @@ Do not refresh or claim successor recovery/verification in this increment.
 The old verification evidence label belongs to the preserved FR-1 fixtures;
 the exact-0.10.0 verification label and fixtures must be reviewed before FR-4.
 See `docs/fr3-initial-apply-readiness.md` for gate results and limitations.
+
+### FR-3 pure execution increment
+
+The audit and minor correlation patch are committed as `b2f224e`. The next
+bounded runtime increment implements `facet_execution` without enabling writes:
+approved-plan reconstruction, typed next-request materialization, revalidated
+contiguous producer evidence, exact public response text preservation, and
+catalog/facet/rendering-specific response/readback correlation. Saved independent
+0.10.0 create/update flows cover all 11 configuration write kinds. Runtime tests
+include tampered graph/approval/prefix evidence, malformed wire data, no-op
+rejection, metadata revision preservation and post-resolution rendering size.
+
+This increment is not the complete FR-3 executor. The next bound is fresh
+preflight/readback integration, explicit write transport, immediate binding
+guards, durable prepared/accepted checkpoints, initial-only orchestration and
+CLI wiring, with fault injection at every durability boundary. Keep the planning
+transport write-disabled. No successor continuation or verify is authorized.
+The pure helper's accepted-prefix argument is not proof of filesystem durability;
+only the future checkpoint owner may supply it after durable acceptance.
