@@ -22,8 +22,10 @@ fixture refresh. The focused contract gate precedes enabling the write boundary;
 see `implementation-plan.md` and `../docs/fr3-initial-apply-readiness.md`.
 That contract gate passed with a minor finding, now patched. `facet_execution`
 supplies request/evidence helpers; `facet_apply` and `facet_apply_transport` now
-integrate initial apply. Runtime bounded review and FR-5 qualification remain
-pending. Recovery and verify remain FR-4 work, outside the current authorization.
+integrate initial apply. The runtime audit's repair findings are closed by a
+passing focused recheck; see `implementation-plan.md` for current status and
+evidence. Exact installed-package/public-Spine qualification remains FR-5 work.
+Recovery and verify remain FR-4 work, outside the current authorization.
 
 ## Relationship
 

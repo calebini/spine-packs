@@ -188,6 +188,12 @@ class ExecutionContext:
             require(response['status'] == post['status'], 'response_status_mismatch')
         for field, path in COMMANDS[cmd]['outputs'].items():
             require(post[field + '_id'] == pointer(response, path), 'response_output_mismatch')
+        # A published/revised effect produces a new immutable revision even when
+        # its receipt is replayed. Catalog responses do not have a changed flag.
+        # Metadata-only writes have no revision output; no-ops are checked below.
+        if (action['expected'] and 'revision' in COMMANDS[cmd]['outputs']
+                and not response['effect'].endswith('noop')):
+            require(post['revision_id'] != action['expected']['revision_id'], 'immutable_revision_id_reused')
         for field in ('item_archetype_id', 'notification_profile_id', 'facet_schema_id', 'notification_rendering_definition_id'):
             if field in request and field in response:
                 require(response[field] == request[field], 'response_target_mismatch')

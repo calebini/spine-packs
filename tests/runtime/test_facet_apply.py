@@ -19,7 +19,7 @@ from spine_packs import artifacts as a
 from spine_packs.__main__ import main
 from spine_packs.facet_apply import apply_initial, checkpoint, checkpoint_writer
 from spine_packs.facet_apply_transport import FacetApplyCommand
-from spine_packs.facet_contracts import artifact, blob, body, seal
+from spine_packs.facet_contracts import artifact, blob, body, seal, validate
 from spine_packs.facet_inventory import COMMANDS, READ_COMMANDS
 from spine_packs.facet_transport import FacetSpineCommand
 from spine_packs.planning import ENVIRONMENT, PlanError
@@ -211,6 +211,99 @@ class FacetApplyTests(unittest.TestCase):
                     t.write=write
                     result,_,_=self.invoke(f,t)
                     self.assertEqual(result['state'],'partial');self.assertEqual(len(t.writes),n+1)
+
+    def test_changed_revision_cannot_reuse_immutable_prior_identity(self):
+        f = flow('flight-update')
+        n = next(i for i, e in enumerate(f['accepted_responses']) if e['command'] == 'facet_schema.publish')
+        t = Catalog(f); original = t.write
+        def write(command, request):
+            raw = original(command, request)
+            if len(t.writes) - 1 == n:
+                response = json.loads(raw)
+                old = request['expected_current_revision_id']
+                response['facet_schema_revision_id'] = old
+                row = t.rows[f['accepted_responses'][n]['post_observation']['object_key']]
+                row['revision_id'] = old
+                return json.dumps(response, separators=(',', ':')).encode() + b'\n'
+            return raw
+        t.write = write
+        result, _, _ = self.invoke(f, t)
+        self.assertEqual(result['state'], 'partial')
+        self.assertEqual(len(t.writes), n + 1)
+        self.assertEqual(len(result['checkpoint']['accepted_responses']), n)
+        self.assertIsNotNone(result['checkpoint']['unresolved_submission'])
+
+    def assert_reused_revision_stops(self, command, replayed=False):
+        f = flow('flight-update')
+        n = next(i for i, e in enumerate(f['accepted_responses']) if e['command'] == command)
+        t = Catalog(f); original = t.write
+        def write(actual_command, request):
+            raw = original(actual_command, request)
+            if len(t.writes) - 1 != n:
+                return raw
+            response = json.loads(raw)
+            old = f['plan']['actions'][n]['expected']['revision_id']
+            record = response.get('record', response)
+            field = COMMANDS[command]['outputs']['revision'].rsplit('/', 1)[-1]
+            record[field] = old
+            if 'record' in response:
+                record['current_revision_id'] = old
+            if replayed:
+                response.update(replayed=True, changed=False)
+            # Prove the mutation crosses the public schema boundary: rejection
+            # must come from immutable preimage correlation, not malformed JSON.
+            validate(response, 'spine-readback-0.10.0.schema.json', COMMANDS[command]['response'])
+            row = t.rows[f['accepted_responses'][n]['post_observation']['object_key']]
+            row['revision_id'] = old
+            if 'record' in response:
+                t.f['accepted_responses'][n]['response']['json_text'] = json.dumps(response)
+            return json.dumps(response, separators=(',', ':')).encode() + b'\n'
+        t.write = write
+        result, _, saved = self.invoke(f, t)
+        self.assertEqual(result['state'], 'partial')
+        self.assertEqual(len(t.writes), n + 1)
+        self.assertEqual(len(result['checkpoint']['accepted_responses']), n)
+        self.assertEqual(result['checkpoint'], saved[-1])
+        unresolved = result['checkpoint']['unresolved_submission']
+        self.assertIsNotNone(unresolved)
+        self.assertEqual(body(unresolved['request']), t.writes[-1][1])
+
+    def test_catalog_revisions_without_changed_flag_cannot_reuse_preimage(self):
+        for command in ('item_archetype.revise', 'notification_profile.revise'):
+            with self.subTest(command=command):
+                self.assert_reused_revision_stops(command)
+
+    def test_replayed_publish_without_changed_flag_cannot_reuse_preimage(self):
+        for command in ('facet_schema.publish', 'notification_rendering_definition.publish'):
+            with self.subTest(command=command):
+                self.assert_reused_revision_stops(command, replayed=True)
+
+    def test_replayed_publish_with_distinct_revision_remains_accepted(self):
+        for command in ('facet_schema.publish', 'notification_rendering_definition.publish'):
+            with self.subTest(command=command):
+                f = flow('flight-update'); t = Catalog(f); original = t.write
+                def write(actual_command, request):
+                    raw = original(actual_command, request)
+                    if actual_command == command:
+                        response = json.loads(raw)
+                        response.update(replayed=True, changed=False)
+                        return json.dumps(response).encode() + b'\n'
+                    return raw
+                t.write = write
+                result, _, _ = self.invoke(f, t)
+                self.assertEqual(result['state'], 'applied')
+                self.assertEqual(len(t.writes), len(f['plan']['actions']))
+
+    def test_metadata_only_update_still_preserves_prior_revision(self):
+        f = flow('flight-update')
+        n = next(i for i, e in enumerate(f['accepted_responses'])
+                 if e['command'] == 'notification_profile.metadata.update')
+        self.assertEqual(f['plan']['actions'][n]['expected']['revision_id'],
+                         f['accepted_responses'][n]['post_observation']['revision_id'])
+        result, _, _ = self.invoke(f)
+        self.assertEqual(result['state'], 'applied')
+        self.assertEqual(result['checkpoint']['accepted_responses'][n]['post_observation']['revision_id'],
+                         f['plan']['actions'][n]['expected']['revision_id'])
 
     def test_every_durable_boundary_failure_prevents_the_next_submission(self):
         for name in ('flight-create', 'flight-update'):
@@ -442,6 +535,18 @@ class ApplyTransportTests(unittest.TestCase):
             with self.subTest(code=code,exit=exit_code),patch.object(adapter,'_invoke',return_value=(response,exit_code)):
                 with self.assertRaises(PlanError) as error:adapter.write(e['command'],body(e['request']))
                 self.assertEqual(error.exception.category,expected);self.assertNotIn('PRIVATE_SENTINEL',str(error.exception))
+
+        facet_e = next(row for row in f['accepted_responses'] if row['command'] == 'facet_schema.create')
+        for error_body in (
+            dict(code='semantic_conflict', message='PRIVATE_SENTINEL', field=None),
+            dict(code='rendering_definition_invalid', message='PRIVATE_SENTINEL', field='request'),
+        ):
+            response = dict(ok=False, command=facet_e['command'], error=error_body)
+            with self.subTest(error=error_body), patch.object(adapter, '_invoke', return_value=(response, 6)):
+                with self.assertRaises(PlanError) as error:
+                    adapter.write(facet_e['command'], body(facet_e['request']))
+                self.assertEqual(error.exception.category, ENVIRONMENT)
+                self.assertNotIn('PRIVATE_SENTINEL', str(error.exception))
 
 
 if __name__ == '__main__': unittest.main()

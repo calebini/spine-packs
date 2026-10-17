@@ -19,6 +19,13 @@ FAILURE_EXITS.update(dict.fromkeys(('semantic_conflict', 'stale_cursor', 'facet_
     'facet_archetype_conflict', 'rendering_disclosure_scope_mismatch'), 6))
 FAILURE_EXITS.update(stale_version=5, environment_failure=7, runtime_failure=1)
 
+# Use the pinned command-family failure contracts where Spine publishes one.
+# The older generic envelope remains the compatibility boundary for command
+# families without a contextual failure schema in the qualified inventory.
+FAMILY_FAILURES = {
+    'facet': 'public_0138',
+}
+
 
 class FacetApplyCommand(FacetSpineCommand):
     def __init__(self, target, **kwargs):
@@ -40,7 +47,11 @@ class FacetApplyCommand(FacetSpineCommand):
             response, exit_code = self._invoke(command, request)
             require(response.get('command') == command and not response.get('dry_run'), 'invalid_public_response')
             if response.get('ok') is False:
-                validate_readback(response, 'commandFailure')
+                family_failure = FAMILY_FAILURES.get(COMMANDS[command]['family'])
+                if family_failure:
+                    validate(response, PUBLIC_SCHEMA, family_failure, category=ENVIRONMENT)
+                else:
+                    validate_readback(response, 'commandFailure')
                 code = response['error']['code']
                 require(re.fullmatch(r'[a-z][a-z0-9_.:-]{0,159}', code) is not None
                         and code in FAILURE_EXITS and exit_code == FAILURE_EXITS[code], 'invalid_write_failure')

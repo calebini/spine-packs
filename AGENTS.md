@@ -109,8 +109,10 @@ qualification via public CLIs. Never probe candidate roots or suppress missing
 referenced evidence. FR-3's focused contract review and minor patch are complete.
 Initial-only v2 apply now integrates fresh preflight, public readback, the separate
 11-write adapter and durable prepared/accepted checkpoints. The FR-2 planning
-adapter remains read-only. Runtime bounded review and exact installed-package
-qualification remain pending. Successor recovery/verify remain unauthorized. Preserve
+adapter remains read-only. The runtime audit's repair findings are closed by a
+passing focused recheck recorded in `specs/implementation-plan.md`; exact
+installed-package qualification remains pending under FR-5. Successor
+recovery/verify remain unauthorized. Preserve
 the 0.9.1 inventory, fixtures and earlier investigation as historical evidence.
 
 For documentation, contract, and planner changes, run:

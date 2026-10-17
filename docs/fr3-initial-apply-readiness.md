@@ -177,7 +177,78 @@ fresh readback. Publication faults were injected at every prepared/accepted
 boundary and at file fsync, atomic link/replace and directory fsync. A synthetic
 subprocess exercises the actual adapter's CLI arguments and exact stdout capture.
 
-Next: stage the bounded FR-3 runtime review. External invocation needs payload
-approval. Successor recovery/verify and exact Spine installed-package validation
-remain their later gates. No commit, push, deployment or publication is included
-in this implementation request.
+The following review closeout supersedes this increment's pre-review status;
+its recorded test results above remain historical candidate evidence.
+
+## Runtime review and repair closure
+
+Current status is owned by `specs/implementation-plan.md`, under FR-3 runtime
+review and repair closure. Initial executor commit: `540e113`; the repairs remain
+uncommitted in `facet_execution.py`, `facet_apply_transport.py` and
+`tests/runtime/test_facet_apply.py`.
+
+The original bounded audit found one major and one minor. Contextual facet
+failure validation now rejects malformed fields and wrong-family codes as
+environment failures without exposing private messages. The first immutable-ID
+repair was incomplete: catalog revision responses lack `changed`, and replayed
+publication responses may set it false. The final repair therefore follows
+declared revision outputs and non-noop effects, rejecting reuse of the approved
+preimage revision ID independently of that flag. Metadata-only writes and
+legitimate no-op checks retain their semantics.
+
+Focused tests exercise both catalog revise commands and both publication
+families, including replay, accepted-prefix preservation, unresolved-request
+retention and partial termination before consumers. Positive cases retain
+distinct replayed revisions and metadata-only revision preservation.
+
+Recorded repair verification in the existing isolated development environment:
+
+- 27 focused apply/transport tests passed.
+- Full runtime suite: 180 passed (83.820 seconds).
+- Official Draft 2020-12 contract suite: 99 passed, no skips (5.532 seconds).
+- Repository verifier: 171 required files passed; `git diff --check` passed.
+
+The bookkeeping return pass independently reran the local gates: 27 focused
+tests passed, all 180 runtime tests passed (90.433 seconds), all 99 official
+contract tests passed without skips, and repository/whitespace checks passed.
+The required system-Python contract command also ran 99 tests with 34 skips;
+the isolated official run covers those development-validator checks. No package
+or real-Spine qualification was run.
+
+The independently authorized second focused recheck returned `pass`,
+`boundary_preserved=true`, zero findings and recommended action `none`. See
+[the retained report](../whetstone_runs/facet-rendering-fr3-runtime-recheck-002/change_audit/change_audit_report.md).
+Its prepared inputs and authorization bind 13 source/context files plus notes.
+All 13 hashes and the notes were checked against the current files on return to
+this thread; no subsequent repair changes were found. The persisted manifest,
+brief and feedback/report bindings agree. No reviewer was rerun for bookkeeping.
+The first audit/recheck and their follow-ups remain unchanged, including their
+historical pending-status wording.
+
+This closes the reviewed repair findings, not qualification against installed
+Spine. The review is focused, not a fresh exhaustive runtime audit or convergence
+claim. No Spine commands, existing/operator/staging ledger access, deployment,
+commit, push or publication is included in this bookkeeping step.
+
+## Remaining qualification and next scope
+
+There is no separately specified FR-3 installed-package completion gate.
+The remaining real-Spine initial-apply and package proof belongs to **FR-5**:
+
+1. Attest exact Spine commit `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`
+   through isolated export/build, wheel and installed package bytes; runtime
+   0.10.0/schema 19 alone does not establish source provenance.
+2. Exercise source-tree and clean-installed installer plan/apply/replay/verify
+   through public CLIs on newly allocated disposable ledgers with synthetic
+   configuration, synthetic owner and separately authorized protected cursor
+   setup. No existing-ledger argument, item authoring, disclosure or delivery.
+3. Retain target-bound evidence and pass all supported v1 baseline package
+   regressions. Existing FR-2 read-only gates and older package runs do not
+   qualify the repaired FR-3 initial-apply path.
+
+FR-4 is next in the existing implementation sequence. Its recovery/verify scope
+and exact-0.10.0 verification-label/fixture refresh must be authorized before
+implementation; full FR-5 replay/verify qualification cannot be completed by the
+current initial-only executor. Neither FR-4 nor FR-5 starts in this bookkeeping
+task. Packaging/release finalization, staging and operator installation remain
+separate gates and approvals. Curated flight/disclosure choices remain FR-6.

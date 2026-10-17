@@ -470,7 +470,48 @@ checks CLI word arguments and exact stdout preservation. The independent oracle
 checks results when run with the development validator. No actual Spine ledger
 is accessed in these tests.
 
-Next gate: bounded FR-3 runtime review, requiring a fresh approved payload before
-an external reviewer. Fix findings before requesting FR-4 recovery/verify scope.
-FR-5 remains the separate exact-source/wheel/public-Spine qualification gate;
-this increment does not qualify a release or authorize operator installation.
+### FR-3 runtime review and repair closure (2026-10-17)
+
+The initial executor is committed as `540e113`. Its approved bounded runtime
+audit found one major immutable-revision correlation gap and one minor contextual
+facet-failure decoding gap. The first focused recheck retained a major finding:
+catalog revise responses have no `changed` flag, and replayed publications may
+report `changed=false`. Preserve both reports under
+`whetstone_runs/facet-rendering-fr3-runtime-audit-001/` and
+`whetstone_runs/facet-rendering-fr3-runtime-recheck-001/` as historical evidence.
+
+The current uncommitted repairs use the declared revision outputs and non-noop
+effect semantics rather than `changed`, and validate facet failures against the
+pinned contextual contract. Regression tests cover all four revision-producing
+update commands, replayed publications, partial stop before consumers, accepted
+prefix/unresolved-request preservation, valid distinct replayed revisions and
+metadata-only revision preservation. Local repair verification passed 27 focused
+tests, 180 runtime tests, 99 official contract tests without skips, repository
+verification (171 required files) and whitespace checks.
+
+The separately authorized focused recheck completed with `pass`, preserved
+boundaries and zero findings. Its retained
+[report](../whetstone_runs/facet-rendering-fr3-runtime-recheck-002/change_audit/change_audit_report.md),
+`prepared-inputs.json` and authorization bind 13 source/context files plus notes.
+All 13 source/context hashes and the notes still match the current bytes; the
+manifest and brief-bound feedback/report agree. This closes the reviewed FR-3
+repair findings, not a new full-surface audit or a convergence declaration.
+Implementation and repair verification details remain in
+[FR-3 readiness](../docs/fr3-initial-apply-readiness.md).
+
+Next checkpoint: the three repaired implementation/test files and the linked
+status updates; commit/push require separate direction. No new review is needed
+merely to record this retained result. FR-4 recovery/verify is the next planned
+implementation slice, but remains unauthorized, including its exact-0.10.0
+verification-label/fixture gate.
+
+Installed-package qualification is still pending under **FR-5** in the table
+above; there is no separate completed FR-3 installed-package gate. It requires
+exact pinned Spine source/wheel/installed-package provenance, source and clean-
+installed installer public-CLI plan/apply/replay/verify on new disposable ledgers,
+and all supported v1 baseline package regressions. The new initial-apply path
+has not yet received that real-Spine qualification. `system.info`, launcher hashes,
+synthetic tests and the passing review cannot substitute for it. FR-5 follows
+the separately authorized FR-4 implementation and requires its own setup scope;
+do not start it as review bookkeeping. No staging, release, packaging-completion
+or operator-installation claim follows from this closure.
