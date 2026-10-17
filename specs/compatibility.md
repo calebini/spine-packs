@@ -18,6 +18,12 @@ map, 18-contract union and source hashes. The separate FR-2 planner accepts v2 r
 V1 apply/recovery/verify do not accept successor artifacts. Public response JSON numbers are preserved as validated
 text inside v2 evidence, never coerced into v1 canonical comparison values.
 
+The separate FR-3 initial-execution fixture index
+`contracts/installer-fr3-fixture-manifest.v2.json` pins synthetic 0.10.0 create
+and update evidence against this same closure. It preserves the 0.9.1 execution
+fixtures and introduces no schema, compatibility-range or released-pack change.
+It is a pre-implementation contract gate, not successor apply qualification.
+
 ## Compatibility dimensions
 
 The old 0.9.1 manifest/artifact declarations remain decodable solely to preserve

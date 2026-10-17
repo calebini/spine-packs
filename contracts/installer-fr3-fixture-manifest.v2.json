@@ -1,0 +1,44 @@
+{
+  "stage": "FR-3 initial-apply contract gate; synthetic, not runtime qualification",
+  "spine_commit": "8f3c50b6fd1b4aa534e50925b7417a7a80d19122",
+  "runtime_version": "0.10.0",
+  "ledger_schema": "19",
+  "inventory": "contracts/installer-spine-0.10.0-inventory.json",
+  "fixtures": [
+    {
+      "path": "tests/fixtures/installer-v2/flight-create-0.10.0.json",
+      "sha256": "9e3e586c95c69e7cdcf944b135fd1e8f52d938dbcc5953f94cb62a82d1945065",
+      "historical_source": "tests/fixtures/installer-v2/flight-create.json",
+      "historical_sha256": "22b8a79711c58ce1ca7331dc906679fecba7f32ca5f733e33dbcbb7748d05dee",
+      "commands": [
+        "item_archetype.create",
+        "facet_schema.create",
+        "item_archetype.facet_binding.set",
+        "notification_rendering_definition.create",
+        "notification_profile.create",
+        "notification_profile.binding.set"
+      ]
+    },
+    {
+      "path": "tests/fixtures/installer-v2/flight-update-0.10.0.json",
+      "sha256": "ce240e8aec27474e3e086d512eb76ec9766f08250c3b057567773d67a940a146",
+      "historical_source": "tests/fixtures/installer-v2/flight-update.json",
+      "historical_sha256": "8ab30f967392fbd1ac1f4afdec08b9eb07171fd091818c2bd83ebcf320db4866",
+      "commands": [
+        "item_archetype.revise",
+        "facet_schema.publish",
+        "item_archetype.facet_binding.set",
+        "notification_rendering_definition.publish",
+        "notification_profile.metadata.update",
+        "notification_profile.revise"
+      ]
+    }
+  ],
+  "excluded": [
+    "continuation",
+    "uncertain-response replay",
+    "verification",
+    "filesystem durability proof",
+    "live or installed-package qualification"
+  ]
+}

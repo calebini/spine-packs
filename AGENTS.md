@@ -16,8 +16,10 @@ Before changing installer behavior or artifacts, also read
 `specs/installer.md` and `specs/installer-artifacts.md`.
 For proposed facet-aware rendering work, additionally read
 `specs/facet-rendering-packs.md` and its implementation-plan sequence. This is
-reviewed FR-1 contracts plus explicitly authorized FR-2 read-only planning.
-Successor apply/recovery/verify remain unauthorized. The explicitly authorized repaired-baseline listing gate may use
+reviewed FR-1 contracts plus implemented FR-2 read-only planning. FR-3 initial
+apply work is operator-authorized, starting with the exact-0.10.0 execution
+fixture refresh and focused contract review before enabling the write boundary.
+Successor recovery/verify remain unauthorized. The explicitly authorized repaired-baseline listing gate may use
 new disposable ledgers through public CLIs only, never an existing ledger.
 For successor installer artifacts, also read `specs/installer-artifacts-v2.md`.
 Its test-only oracle and v2 schemas do not expand current runtime authority.
@@ -102,7 +104,8 @@ requires explicit payload approval before any external reviewer invocation.
 FR-2 explicitly authorizes the separate v2 read-only planner against this exact
 pin, including `facet_schema.revision.show` and new disposable configuration-only
 qualification via public CLIs. Never probe candidate roots or suppress missing
-referenced evidence. Successor apply/recovery/verify remain unauthorized. Preserve
+referenced evidence. FR-3 is beginning at its contract gate; the current v2
+runtime still rejects all writes. Successor recovery/verify remain unauthorized. Preserve
 the 0.9.1 inventory, fixtures and earlier investigation as historical evidence.
 
 For documentation, contract, and planner changes, run:

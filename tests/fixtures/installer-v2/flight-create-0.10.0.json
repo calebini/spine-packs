@@ -1,0 +1,1620 @@
+{
+  "manifest": {
+    "manifest_schema": "spine.pack-manifest.v2",
+    "pack": {
+      "pack_id": "synthetic-flight-execution",
+      "version": "1.0.0",
+      "status": "released"
+    },
+    "compatibility": {
+      "spine_runtime_versions": [
+        "0.10.0"
+      ],
+      "spine_content_contracts": [
+        "spine.archetype-facet-bindings.v1",
+        "spine.facet-schemas.v1",
+        "spine.item-archetypes.v1",
+        "spine.notification-profile-bindings.v1",
+        "spine.notification-profiles.v2",
+        "spine.notification-rendering-definitions.v1",
+        "spine.notification-rendering.v1"
+      ]
+    },
+    "dependencies": [],
+    "archetypes": [
+      {
+        "archetype_key": "flight",
+        "intended_status": "active",
+        "revision": {
+          "display_name": "Flight",
+          "description": "Scheduled flight departures.",
+          "compatible_item_types": [
+            "event"
+          ]
+        }
+      }
+    ],
+    "notification_profiles": [
+      {
+        "profile_key": "synthetic_flight_details",
+        "display_name": "Synthetic flight details",
+        "description": "Contract fixture only; not approved curated content.",
+        "intended_status": "active",
+        "revision": {
+          "compatible_item_types": [
+            "event"
+          ],
+          "templates": [
+            {
+              "template_key": "four_hours_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-14400"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "3600"
+              },
+              "rendering": {
+                "kind": "ordinary"
+              }
+            },
+            {
+              "template_key": "one_hour_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-3600"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "900"
+              },
+              "rendering": {
+                "kind": "definition",
+                "definition_ref": {
+                  "definition_key": "flight_details"
+                }
+              }
+            },
+            {
+              "template_key": "seven_days_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-604800"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "86400"
+              },
+              "rendering": {
+                "kind": "ordinary"
+              }
+            },
+            {
+              "template_key": "twenty_four_hours_before",
+              "schedule": {
+                "kind": "once",
+                "at": {
+                  "kind": "target_offset",
+                  "offset_basis": "elapsed",
+                  "offset_seconds": "-86400"
+                }
+              },
+              "late_handling": {
+                "kind": "deliver_within",
+                "grace_seconds": "21600"
+              },
+              "rendering": {
+                "kind": "ordinary"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "binding_intents": [
+      {
+        "binding_kind": "archetype_default",
+        "archetype_key": "flight",
+        "notification_profile_key": "synthetic_flight_details"
+      }
+    ],
+    "facet_schemas": [
+      {
+        "schema_key": "flight_details",
+        "intended_status": "active",
+        "definition": {
+          "display_name": "Synthetic flight details",
+          "description": null,
+          "compatible_item_types": [
+            "event"
+          ],
+          "fields": [
+            {
+              "key": "flight_number",
+              "type": "text",
+              "max_length": "32",
+              "required": false,
+              "queryable": false
+            },
+            {
+              "key": "origin",
+              "type": "reference",
+              "target_kind": "location",
+              "required": false,
+              "queryable": false
+            }
+          ]
+        }
+      }
+    ],
+    "archetype_facet_bindings": [
+      {
+        "archetype_key": "flight",
+        "facet_key": "flight",
+        "schema_ref": {
+          "schema_key": "flight_details"
+        }
+      }
+    ],
+    "rendering_definitions": [
+      {
+        "definition_key": "flight_details",
+        "intended_status": "active",
+        "revision": {
+          "display_name": "Synthetic flight details",
+          "description": null,
+          "compatible_item_types": [
+            "event"
+          ],
+          "base_rendering_contract": "spine.notification-rendering.v1",
+          "base_rendering_profile": "spine.notification-rendering.concise-en-ca.v1",
+          "selections": [
+            {
+              "selection_key": "number",
+              "facet_key": "flight",
+              "schema_ref": {
+                "schema_key": "flight_details"
+              },
+              "field_key": "flight_number",
+              "label": "Flight",
+              "projection": "value"
+            },
+            {
+              "selection_key": "origin",
+              "facet_key": "flight",
+              "schema_ref": {
+                "schema_key": "flight_details"
+              },
+              "field_key": "origin",
+              "label": "From",
+              "projection": "location_label"
+            }
+          ]
+        }
+      }
+    ],
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "digest": "1c2aa56dd4be6ac5e303b38bcd57923366f53f1a2791a8cfe242f97709848113"
+    }
+  },
+  "request": {
+    "artifact_schema": "spine.pack-install-request.v2",
+    "request": {
+      "selection": {
+        "mode": "archetypes",
+        "archetype_keys": [
+          "flight"
+        ]
+      },
+      "owner": {
+        "owner_kind": "subject",
+        "owner_subject_id": "synthetic-owner"
+      },
+      "target": {
+        "host_name": "fixture.invalid",
+        "spine_command": {
+          "path": "/synthetic/bin/spine-command",
+          "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "ledger": {
+          "kind": "path",
+          "path": "/synthetic/ledger.db"
+        }
+      },
+      "draft_posture": "reject"
+    },
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-install-request-digest.v2",
+      "digest": "ee2d217423d9ffa0b0a697933ff39c811f7032b3b099da4055af730a9641589e"
+    }
+  },
+  "plan": {
+    "artifact_schema": "spine.pack-install-plan.v2",
+    "request_digest": "ee2d217423d9ffa0b0a697933ff39c811f7032b3b099da4055af730a9641589e",
+    "request": {
+      "selection": {
+        "mode": "archetypes",
+        "archetype_keys": [
+          "flight"
+        ]
+      },
+      "owner": {
+        "owner_kind": "subject",
+        "owner_subject_id": "synthetic-owner"
+      },
+      "target": {
+        "host_name": "fixture.invalid",
+        "spine_command": {
+          "path": "/synthetic/bin/spine-command",
+          "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "ledger": {
+          "kind": "path",
+          "path": "/synthetic/ledger.db"
+        }
+      },
+      "draft_posture": "reject"
+    },
+    "pack": {
+      "manifest_schema": "spine.pack-manifest.v2",
+      "pack_id": "synthetic-flight-execution",
+      "version": "1.0.0",
+      "status": "released",
+      "manifest_digest": "1c2aa56dd4be6ac5e303b38bcd57923366f53f1a2791a8cfe242f97709848113"
+    },
+    "closure": [
+      "archetype:flight",
+      "binding:flight",
+      "facet_binding:flight:flight",
+      "profile:synthetic_flight_details",
+      "rendering:flight_details",
+      "schema:flight_details"
+    ],
+    "environment": {
+      "runtime_version": "0.10.0",
+      "ledger_schema_implemented": "19",
+      "ledger_schema_current": "19",
+      "ledger_instance_id": "ledger_instance_2222222222222222222222222222222222222222222222222222222222222222",
+      "advertised_contracts": [
+        "spine.archetype-facet-bindings.v1",
+        "spine.canonical-json.v1",
+        "spine.facet-cursor.v1",
+        "spine.facet-schema-revision-readback.v1",
+        "spine.facet-schemas.v1",
+        "spine.item-archetypes.v1",
+        "spine.ledger-instance.v1",
+        "spine.notification-profile-bindings.v1",
+        "spine.notification-profile-catalog-cursor.v1",
+        "spine.notification-profile-metadata-update.v1",
+        "spine.notification-profile-readback.v1",
+        "spine.notification-profiles.v1",
+        "spine.notification-profiles.v2",
+        "spine.notification-rendering-cursor.v1",
+        "spine.notification-rendering-definitions.v1",
+        "spine.notification-rendering-integration.v1",
+        "spine.notification-rendering.v1",
+        "spine.system-info.v3",
+        "spine.tickerd-compatibility.v1"
+      ]
+    },
+    "required_execution_contracts": [
+      "spine.archetype-facet-bindings.v1",
+      "spine.canonical-json.v1",
+      "spine.facet-cursor.v1",
+      "spine.facet-schema-revision-readback.v1",
+      "spine.facet-schemas.v1",
+      "spine.item-archetypes.v1",
+      "spine.ledger-instance.v1",
+      "spine.notification-profile-bindings.v1",
+      "spine.notification-profile-catalog-cursor.v1",
+      "spine.notification-profile-metadata-update.v1",
+      "spine.notification-profile-readback.v1",
+      "spine.notification-profiles.v1",
+      "spine.notification-profiles.v2",
+      "spine.notification-rendering-cursor.v1",
+      "spine.notification-rendering-definitions.v1",
+      "spine.notification-rendering-integration.v1",
+      "spine.system-info.v3",
+      "spine.tickerd-compatibility.v1"
+    ],
+    "observation": {
+      "owner": {
+        "owner_kind": "subject",
+        "owner_subject_id": "synthetic-owner"
+      },
+      "entries": [],
+      "historical_revisions": [],
+      "public_catalog_snapshots": [
+        {
+          "catalog": "archetypes",
+          "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "catalog": "profiles",
+          "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        {
+          "catalog": "bindings",
+          "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      ],
+      "digest": "536131d08f76699d0d1962a6dfa33b77cd1cc52ee1bd2693c28655afe1a483df"
+    },
+    "classifications": [
+      {
+        "object_key": "archetype:flight",
+        "classification": "missing",
+        "desired": {
+          "canonical_json": "{\"archetype_key\":\"flight\",\"intended_status\":\"active\",\"revision\":{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}}",
+          "digest": "f2a8940953febe71a35d1a1990ebe07e38fb8fb9f10907fcf14e93441cc1d6bf"
+        },
+        "observed": null,
+        "blocked_reason": null
+      },
+      {
+        "object_key": "binding:flight",
+        "classification": "missing",
+        "desired": {
+          "canonical_json": "{\"archetype_key\":\"flight\",\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"synthetic_flight_details\"}",
+          "digest": "76bcc28de81de3d4bd28b247dd394ea58b1f5fcfcc923beaa69cade6c3e0f34b"
+        },
+        "observed": null,
+        "blocked_reason": null
+      },
+      {
+        "object_key": "facet_binding:flight:flight",
+        "classification": "missing",
+        "desired": {
+          "canonical_json": "{\"archetype_key\":\"flight\",\"facet_key\":\"flight\",\"schema_ref\":{\"schema_key\":\"flight_details\"}}",
+          "digest": "d305d7ca81d388049f2671fc9a37fd4bc79582b90fe4accba14c6dc4ab553a74"
+        },
+        "observed": null,
+        "blocked_reason": null
+      },
+      {
+        "object_key": "profile:synthetic_flight_details",
+        "classification": "missing",
+        "desired": {
+          "canonical_json": "{\"description\":\"Contract fixture only; not approved curated content.\",\"display_name\":\"Synthetic flight details\",\"intended_status\":\"active\",\"profile_key\":\"synthetic_flight_details\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-14400\"},\"kind\":\"once\"},\"template_key\":\"four_hours_before\"},{\"late_handling\":{\"grace_seconds\":\"900\",\"kind\":\"deliver_within\"},\"rendering\":{\"definition_ref\":{\"definition_key\":\"flight_details\"},\"kind\":\"definition\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-3600\"},\"kind\":\"once\"},\"template_key\":\"one_hour_before\"},{\"late_handling\":{\"grace_seconds\":\"86400\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-604800\"},\"kind\":\"once\"},\"template_key\":\"seven_days_before\"},{\"late_handling\":{\"grace_seconds\":\"21600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-86400\"},\"kind\":\"once\"},\"template_key\":\"twenty_four_hours_before\"}]}}",
+          "digest": "f1c625045b794ad603c16495f21cf9863d5bbe1c5cf007b316d1c5fc915f73ae"
+        },
+        "observed": null,
+        "blocked_reason": null
+      },
+      {
+        "object_key": "rendering:flight_details",
+        "classification": "missing",
+        "desired": {
+          "canonical_json": "{\"definition_key\":\"flight_details\",\"intended_status\":\"active\",\"revision\":{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"schema_ref\":{\"schema_key\":\"flight_details\"},\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"schema_ref\":{\"schema_key\":\"flight_details\"},\"selection_key\":\"origin\"}]}}",
+          "digest": "9a65eba8e3d6af38e8edd37b26cb731062ef7984b1a57ffa3f66b9a74854997c"
+        },
+        "observed": null,
+        "blocked_reason": null
+      },
+      {
+        "object_key": "schema:flight_details",
+        "classification": "missing",
+        "desired": {
+          "canonical_json": "{\"definition\":{\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"fields\":[{\"key\":\"flight_number\",\"max_length\":\"32\",\"queryable\":false,\"required\":false,\"type\":\"text\"},{\"key\":\"origin\",\"queryable\":false,\"required\":false,\"target_kind\":\"location\",\"type\":\"reference\"}]},\"intended_status\":\"active\",\"schema_key\":\"flight_details\"}",
+          "digest": "d2b7739eba2623e5d9e66538898655586b0fa612ffbbae5a8cb2de8d59216b91"
+        },
+        "observed": null,
+        "blocked_reason": null
+      }
+    ],
+    "resolutions": [
+      {
+        "object_key": "archetype:flight",
+        "root": {
+          "kind": "action_result",
+          "action_id": "action-000000",
+          "output_pointer": "/item_archetype_id"
+        },
+        "revision": {
+          "kind": "action_result",
+          "action_id": "action-000000",
+          "output_pointer": "/item_archetype_revision_id"
+        },
+        "binding": null
+      },
+      {
+        "object_key": "binding:flight",
+        "root": {
+          "kind": "action_result",
+          "action_id": "action-000000",
+          "output_pointer": "/item_archetype_id"
+        },
+        "revision": null,
+        "binding": {
+          "kind": "action_result",
+          "action_id": "action-000005",
+          "output_pointer": "/notification_profile_binding_id"
+        }
+      },
+      {
+        "object_key": "facet_binding:flight:flight",
+        "root": {
+          "kind": "action_result",
+          "action_id": "action-000000",
+          "output_pointer": "/item_archetype_id"
+        },
+        "revision": null,
+        "binding": {
+          "kind": "action_result",
+          "action_id": "action-000002",
+          "output_pointer": "/facet_binding_id"
+        }
+      },
+      {
+        "object_key": "profile:synthetic_flight_details",
+        "root": {
+          "kind": "action_result",
+          "action_id": "action-000004",
+          "output_pointer": "/notification_profile_id"
+        },
+        "revision": {
+          "kind": "action_result",
+          "action_id": "action-000004",
+          "output_pointer": "/notification_profile_revision_id"
+        },
+        "binding": null
+      },
+      {
+        "object_key": "rendering:flight_details",
+        "root": {
+          "kind": "action_result",
+          "action_id": "action-000003",
+          "output_pointer": "/record/notification_rendering_definition_id"
+        },
+        "revision": {
+          "kind": "action_result",
+          "action_id": "action-000003",
+          "output_pointer": "/record/notification_rendering_definition_revision_id"
+        },
+        "binding": null
+      },
+      {
+        "object_key": "schema:flight_details",
+        "root": {
+          "kind": "action_result",
+          "action_id": "action-000001",
+          "output_pointer": "/facet_schema_id"
+        },
+        "revision": {
+          "kind": "action_result",
+          "action_id": "action-000001",
+          "output_pointer": "/facet_schema_revision_id"
+        },
+        "binding": null
+      }
+    ],
+    "actions": [
+      {
+        "ordinal": "0",
+        "action_id": "action-000000",
+        "command": "item_archetype.create",
+        "object_key": "archetype:flight",
+        "change_kind": "create",
+        "desired": {
+          "canonical_json": "{\"archetype_key\":\"flight\",\"intended_status\":\"active\",\"revision\":{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}}",
+          "digest": "f2a8940953febe71a35d1a1990ebe07e38fb8fb9f10907fcf14e93441cc1d6bf"
+        },
+        "expected": null,
+        "request_template": {
+          "canonical_json": "{\"archetype_key\":\"flight\",\"contract_version\":\"spine.item-archetypes.v1\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}}",
+          "digest": "6d02dcf207d79526bc9e0ee6922ca1f3d4517f2051ce54bc4e62171c6fc378eb"
+        },
+        "slots": []
+      },
+      {
+        "ordinal": "1",
+        "action_id": "action-000001",
+        "command": "facet_schema.create",
+        "object_key": "schema:flight_details",
+        "change_kind": "create",
+        "desired": {
+          "canonical_json": "{\"definition\":{\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"fields\":[{\"key\":\"flight_number\",\"max_length\":\"32\",\"queryable\":false,\"required\":false,\"type\":\"text\"},{\"key\":\"origin\",\"queryable\":false,\"required\":false,\"target_kind\":\"location\",\"type\":\"reference\"}]},\"intended_status\":\"active\",\"schema_key\":\"flight_details\"}",
+          "digest": "d2b7739eba2623e5d9e66538898655586b0fa612ffbbae5a8cb2de8d59216b91"
+        },
+        "expected": null,
+        "request_template": {
+          "canonical_json": "{\"contract_version\":\"spine.facet-schemas.v1\",\"definition\":{\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"fields\":[{\"key\":\"flight_number\",\"max_length\":\"32\",\"queryable\":false,\"required\":false,\"type\":\"text\"},{\"key\":\"origin\",\"queryable\":false,\"required\":false,\"target_kind\":\"location\",\"type\":\"reference\"}]},\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"schema_key\":\"flight_details\"}",
+          "digest": "b0e492717d2278e1c0809e31527b5db79b9035c5b73f239b18bb3886dcf26018"
+        },
+        "slots": []
+      },
+      {
+        "ordinal": "2",
+        "action_id": "action-000002",
+        "command": "item_archetype.facet_binding.set",
+        "object_key": "facet_binding:flight:flight",
+        "change_kind": "create",
+        "desired": {
+          "canonical_json": "{\"archetype_key\":\"flight\",\"facet_key\":\"flight\",\"schema_ref\":{\"schema_key\":\"flight_details\"}}",
+          "digest": "d305d7ca81d388049f2671fc9a37fd4bc79582b90fe4accba14c6dc4ab553a74"
+        },
+        "expected": null,
+        "request_template": {
+          "canonical_json": "{\"contract_version\":\"spine.archetype-facet-bindings.v1\",\"expected_binding_id\":null,\"facet_key\":\"flight\",\"facet_schema_revision_id\":null,\"item_archetype_id\":null}",
+          "digest": "07ad8df67d1e1b4d826a4a4e83ebc65e9ec10f47c6c35ed6c4574ca7ba47cfca"
+        },
+        "slots": [
+          {
+            "request_pointer": "/facet_schema_revision_id",
+            "object_key": "schema:flight_details",
+            "field": "revision"
+          },
+          {
+            "request_pointer": "/item_archetype_id",
+            "object_key": "archetype:flight",
+            "field": "root"
+          }
+        ]
+      },
+      {
+        "ordinal": "3",
+        "action_id": "action-000003",
+        "command": "notification_rendering_definition.create",
+        "object_key": "rendering:flight_details",
+        "change_kind": "create",
+        "desired": {
+          "canonical_json": "{\"definition_key\":\"flight_details\",\"intended_status\":\"active\",\"revision\":{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"schema_ref\":{\"schema_key\":\"flight_details\"},\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"schema_ref\":{\"schema_key\":\"flight_details\"},\"selection_key\":\"origin\"}]}}",
+          "digest": "9a65eba8e3d6af38e8edd37b26cb731062ef7984b1a57ffa3f66b9a74854997c"
+        },
+        "expected": null,
+        "request_template": {
+          "canonical_json": "{\"contract_version\":\"spine.notification-rendering-definitions.v1\",\"definition_key\":\"flight_details\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"revision\":{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"facet_schema_revision_id\":null,\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"facet_schema_revision_id\":null,\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"selection_key\":\"origin\"}]}}",
+          "digest": "b4f1594f65a3e1dd5859cc18ca046624a786cd3b99f70b40425e6887f233ec95"
+        },
+        "slots": [
+          {
+            "request_pointer": "/revision/selections/0/facet_schema_revision_id",
+            "object_key": "schema:flight_details",
+            "field": "revision"
+          },
+          {
+            "request_pointer": "/revision/selections/1/facet_schema_revision_id",
+            "object_key": "schema:flight_details",
+            "field": "revision"
+          }
+        ]
+      },
+      {
+        "ordinal": "4",
+        "action_id": "action-000004",
+        "command": "notification_profile.create",
+        "object_key": "profile:synthetic_flight_details",
+        "change_kind": "create",
+        "desired": {
+          "canonical_json": "{\"description\":\"Contract fixture only; not approved curated content.\",\"display_name\":\"Synthetic flight details\",\"intended_status\":\"active\",\"profile_key\":\"synthetic_flight_details\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-14400\"},\"kind\":\"once\"},\"template_key\":\"four_hours_before\"},{\"late_handling\":{\"grace_seconds\":\"900\",\"kind\":\"deliver_within\"},\"rendering\":{\"definition_ref\":{\"definition_key\":\"flight_details\"},\"kind\":\"definition\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-3600\"},\"kind\":\"once\"},\"template_key\":\"one_hour_before\"},{\"late_handling\":{\"grace_seconds\":\"86400\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-604800\"},\"kind\":\"once\"},\"template_key\":\"seven_days_before\"},{\"late_handling\":{\"grace_seconds\":\"21600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-86400\"},\"kind\":\"once\"},\"template_key\":\"twenty_four_hours_before\"}]}}",
+          "digest": "f1c625045b794ad603c16495f21cf9863d5bbe1c5cf007b316d1c5fc915f73ae"
+        },
+        "expected": null,
+        "request_template": {
+          "canonical_json": "{\"contract_version\":\"spine.notification-profiles.v2\",\"description\":\"Contract fixture only; not approved curated content.\",\"display_name\":\"Synthetic flight details\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"profile_key\":\"synthetic_flight_details\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-14400\"},\"kind\":\"once\"},\"template_key\":\"four_hours_before\"},{\"late_handling\":{\"grace_seconds\":\"900\",\"kind\":\"deliver_within\"},\"rendering\":{\"definition\":{\"notification_rendering_definition_id\":null,\"notification_rendering_definition_revision_id\":null},\"kind\":\"definition\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-3600\"},\"kind\":\"once\"},\"template_key\":\"one_hour_before\"},{\"late_handling\":{\"grace_seconds\":\"86400\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-604800\"},\"kind\":\"once\"},\"template_key\":\"seven_days_before\"},{\"late_handling\":{\"grace_seconds\":\"21600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-86400\"},\"kind\":\"once\"},\"template_key\":\"twenty_four_hours_before\"}]}}",
+          "digest": "837d1feaa9a8267e54597068437621aca6e9945e3e6743bde0c6b2bf0f365372"
+        },
+        "slots": [
+          {
+            "request_pointer": "/revision/templates/1/rendering/definition/notification_rendering_definition_id",
+            "object_key": "rendering:flight_details",
+            "field": "root"
+          },
+          {
+            "request_pointer": "/revision/templates/1/rendering/definition/notification_rendering_definition_revision_id",
+            "object_key": "rendering:flight_details",
+            "field": "revision"
+          }
+        ]
+      },
+      {
+        "ordinal": "5",
+        "action_id": "action-000005",
+        "command": "notification_profile.binding.set",
+        "object_key": "binding:flight",
+        "change_kind": "create",
+        "desired": {
+          "canonical_json": "{\"archetype_key\":\"flight\",\"binding_kind\":\"archetype_default\",\"notification_profile_key\":\"synthetic_flight_details\"}",
+          "digest": "76bcc28de81de3d4bd28b247dd394ea58b1f5fcfcc923beaa69cade6c3e0f34b"
+        },
+        "expected": null,
+        "request_template": {
+          "canonical_json": "{\"contract_version\":\"spine.notification-profile-bindings.v1\",\"item_archetype_id\":null,\"notification_profile_id\":null,\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"}}",
+          "digest": "ec791c66b8a06b29b4db3c83bb9d517526938dfc0ff657d8af666380445c70f0"
+        },
+        "slots": [
+          {
+            "request_pointer": "/item_archetype_id",
+            "object_key": "archetype:flight",
+            "field": "root"
+          },
+          {
+            "request_pointer": "/notification_profile_id",
+            "object_key": "profile:synthetic_flight_details",
+            "field": "root"
+          }
+        ]
+      }
+    ],
+    "decision_action_ids": [],
+    "blocked_object_keys": [],
+    "apply_eligible": true,
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-install-plan-digest.v2",
+      "digest": "09dc5c1af3957a6d455df05d31f2fbed25cdb16e65129ef1ac8326b2efb69d2b"
+    }
+  },
+  "approval": {
+    "artifact_schema": "spine.pack-install-approval.v2",
+    "plan_digest": "09dc5c1af3957a6d455df05d31f2fbed25cdb16e65129ef1ac8326b2efb69d2b",
+    "approve_complete_plan": true,
+    "acknowledge_single_operator": true,
+    "authorized_update_action_ids": [],
+    "execution": {
+      "execution_id": "12345678-1234-4234-8234-000000000001",
+      "actor_subject_id": "synthetic-actor",
+      "action_timestamp_utc": "2035-02-01T12:00:00Z"
+    },
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-install-approval-digest.v2",
+      "digest": "8da91605dd188941ed9a59879ccda79d74ebd4996f6ea74a70458bff396e97e4"
+    }
+  },
+  "accepted_responses": [
+    {
+      "action_id": "action-000000",
+      "command": "item_archetype.create",
+      "command_id": "spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b",
+      "request": {
+        "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"archetype_key\":\"flight\",\"command_id\":\"spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b\",\"contract_version\":\"spine.item-archetypes.v1\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}}",
+        "digest": "03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b"
+      },
+      "response": {
+        "json_text": "{\"ok\":true,\"command\":\"item_archetype.create\",\"response_contract\":\"spine.item-archetypes.v1\",\"effect\":\"item_archetype_created\",\"status\":\"active\",\"receipt\":{\"command_receipt_id\":\"receipt_1\",\"command_id\":\"spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b\",\"effect\":\"item_archetype_created\",\"semantic_facts_hash\":\"03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b\",\"created_at_utc\":\"2035-02-01T12:00:00Z\"},\"item_archetype_id\":\"archetype_1\",\"item_archetype_revision_id\":\"archetype_revision_1\",\"revision_number\":\"1\",\"archetype_key\":\"flight\"}",
+        "digest": "8be296206763ced8dddaf01cc17b9a29c2981283212a91a7113fc069b3caf677"
+      },
+      "receipt": {
+        "family": "catalog",
+        "command_receipt_id": "receipt_1",
+        "effect": "item_archetype_created",
+        "semantic_facts_hash": "03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b",
+        "created_at_utc": "2035-02-01T12:00:00Z"
+      },
+      "post_observation": {
+        "object_key": "archetype:flight",
+        "owner": {
+          "owner_kind": "subject",
+          "owner_subject_id": "synthetic-owner"
+        },
+        "status": "active",
+        "root_id": "archetype_1",
+        "revision_id": "archetype_revision_1",
+        "binding_id": null,
+        "revision_contract": "spine.item-archetypes.v1",
+        "value": {
+          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}",
+          "digest": "dd9483a4ee700cd496de2a7f8a4091a58f21b22fa28068aad26d63651301a978"
+        }
+      }
+    },
+    {
+      "action_id": "action-000001",
+      "command": "facet_schema.create",
+      "command_id": "spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e",
+      "request": {
+        "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e\",\"contract_version\":\"spine.facet-schemas.v1\",\"definition\":{\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"fields\":[{\"key\":\"flight_number\",\"max_length\":\"32\",\"queryable\":false,\"required\":false,\"type\":\"text\"},{\"key\":\"origin\",\"queryable\":false,\"required\":false,\"target_kind\":\"location\",\"type\":\"reference\"}]},\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"schema_key\":\"flight_details\"}",
+        "digest": "386d2253c9ccb093b6579323d9d2d7e12fae3fb65c26152a615a7876129b35e9"
+      },
+      "response": {
+        "json_text": "{\"ok\":true,\"command\":\"facet_schema.create\",\"response_contract\":\"spine.facet-schemas.v1\",\"command_id\":\"spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e\",\"command_receipt_id\":\"receipt_2\",\"effect\":\"facet_schema_created\",\"changed\":true,\"audit_id\":\"audit_2\",\"facet_schema_id\":\"schema_2\",\"prior_revision_id\":null,\"facet_schema_revision_id\":\"schema_revision_2\",\"revision_number\":\"1\",\"replayed\":false}",
+        "digest": "9ee8cb8b9fb89f0b9629340089fc998099955503f11ef6ba8e998cfc05624acb"
+      },
+      "receipt": {
+        "family": "facet",
+        "command_receipt_id": "receipt_2",
+        "effect": "facet_schema_created",
+        "changed": true,
+        "replayed": false,
+        "audit_id": "audit_2"
+      },
+      "post_observation": {
+        "object_key": "schema:flight_details",
+        "owner": {
+          "owner_kind": "subject",
+          "owner_subject_id": "synthetic-owner"
+        },
+        "status": "active",
+        "root_id": "schema_2",
+        "revision_id": "schema_revision_2",
+        "binding_id": null,
+        "revision_contract": "spine.facet-schemas.v1",
+        "value": {
+          "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"fields\":[{\"key\":\"flight_number\",\"max_length\":\"32\",\"queryable\":false,\"required\":false,\"type\":\"text\"},{\"key\":\"origin\",\"queryable\":false,\"required\":false,\"target_kind\":\"location\",\"type\":\"reference\"}]}",
+          "digest": "3e31e0d4d0f94d5adce1c09287cb30e63fdcdd9514e6b3a90de75bd14764f862"
+        }
+      }
+    },
+    {
+      "action_id": "action-000002",
+      "command": "item_archetype.facet_binding.set",
+      "command_id": "spack_3ccae26e5a7f16e2376018c01ca4c3e6c22adc78496b4bc0ed8def2f05ae0cdc",
+      "request": {
+        "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_3ccae26e5a7f16e2376018c01ca4c3e6c22adc78496b4bc0ed8def2f05ae0cdc\",\"contract_version\":\"spine.archetype-facet-bindings.v1\",\"expected_binding_id\":null,\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"item_archetype_id\":\"archetype_1\"}",
+        "digest": "3516278a4e12549f514bad3ac8364486a2bf269f7a81dd80607a590a58cc73fb"
+      },
+      "response": {
+        "json_text": "{\"ok\":true,\"command\":\"item_archetype.facet_binding.set\",\"response_contract\":\"spine.archetype-facet-bindings.v1\",\"command_id\":\"spack_3ccae26e5a7f16e2376018c01ca4c3e6c22adc78496b4bc0ed8def2f05ae0cdc\",\"command_receipt_id\":\"receipt_3\",\"effect\":\"facet_binding_set\",\"changed\":true,\"audit_id\":\"audit_3\",\"item_archetype_id\":\"archetype_1\",\"facet_key\":\"flight\",\"prior_binding_id\":null,\"facet_binding_id\":\"facet_binding_binding_3\",\"facet_schema_revision_id\":\"schema_revision_2\",\"replayed\":false}",
+        "digest": "e4feb8946b2ecd2916e75cf1d0a46136cfc698454fcafb223dfe5d9f99c730dd"
+      },
+      "receipt": {
+        "family": "facet",
+        "command_receipt_id": "receipt_3",
+        "effect": "facet_binding_set",
+        "changed": true,
+        "replayed": false,
+        "audit_id": "audit_3"
+      },
+      "post_observation": {
+        "object_key": "facet_binding:flight:flight",
+        "owner": {
+          "owner_kind": "subject",
+          "owner_subject_id": "synthetic-owner"
+        },
+        "status": "active",
+        "root_id": "archetype_1",
+        "revision_id": null,
+        "binding_id": "facet_binding_binding_3",
+        "revision_contract": null,
+        "value": {
+          "canonical_json": "{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"item_archetype_id\":\"archetype_1\"}",
+          "digest": "f12313557c80caa275da2b6f4a5ff8941ae1f707a0f86bcc2a9939c150e9e77c"
+        }
+      }
+    },
+    {
+      "action_id": "action-000003",
+      "command": "notification_rendering_definition.create",
+      "command_id": "spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d",
+      "request": {
+        "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"contract_version\":\"spine.notification-rendering-definitions.v1\",\"definition_key\":\"flight_details\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"revision\":{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"selection_key\":\"origin\"}]}}",
+        "digest": "eefb39cd2b1f3685ec6dd5009ed56d3fd1c9aec7e835ac7ac01f23a397cfd2bf"
+      },
+      "response": {
+        "json_text": "{\"ok\":true,\"contract_version\":\"spine.notification-rendering-definitions.v1\",\"command\":\"notification_rendering_definition.create\",\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"changed\":true,\"replayed\":false,\"effect\":\"rendering_definition_created\",\"command_receipt_id\":\"receipt_4\",\"audit_id\":\"audit_4\",\"record\":{\"notification_rendering_definition_id\":\"rendering_4\",\"notification_rendering_definition_revision_id\":\"rendering_revision_4\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"definition_key\":\"flight_details\",\"status\":\"active\",\"current_revision_id\":\"rendering_revision_4\",\"revision_number\":\"1\",\"revision\":{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"selection_key\":\"origin\"}]},\"definition_hash\":\"0270f8f49e9f835569cc8a10e8dd116354282de52b44fd8fe5280ef77e31ac67\",\"created\":{\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"actor_subject_id\":\"synthetic-actor\",\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\"},\"published\":{\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"actor_subject_id\":\"synthetic-actor\",\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\"},\"retired\":null}}",
+        "digest": "89d5b87252da8cf3c538d2903946347bda234b26f362eb55857f5953a2bfe13b"
+      },
+      "receipt": {
+        "family": "rendering",
+        "command_receipt_id": "receipt_4",
+        "effect": "rendering_definition_created",
+        "changed": true,
+        "replayed": false,
+        "audit_id": "audit_4"
+      },
+      "post_observation": {
+        "object_key": "rendering:flight_details",
+        "owner": {
+          "owner_kind": "subject",
+          "owner_subject_id": "synthetic-owner"
+        },
+        "status": "active",
+        "root_id": "rendering_4",
+        "revision_id": "rendering_revision_4",
+        "binding_id": null,
+        "revision_contract": "spine.notification-rendering-definitions.v1",
+        "value": {
+          "canonical_json": "{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"selection_key\":\"origin\"}]}",
+          "digest": "a0d1d68b9f11085cf9618516cca46a28092bdfd70c2d2809524773d51f698f64"
+        }
+      }
+    },
+    {
+      "action_id": "action-000004",
+      "command": "notification_profile.create",
+      "command_id": "spack_6292f1be43b882b50d8b75986c8006943a971e877d787995ae0a7b519ff1aa04",
+      "request": {
+        "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_6292f1be43b882b50d8b75986c8006943a971e877d787995ae0a7b519ff1aa04\",\"contract_version\":\"spine.notification-profiles.v2\",\"description\":\"Contract fixture only; not approved curated content.\",\"display_name\":\"Synthetic flight details\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"profile_key\":\"synthetic_flight_details\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-14400\"},\"kind\":\"once\"},\"template_key\":\"four_hours_before\"},{\"late_handling\":{\"grace_seconds\":\"900\",\"kind\":\"deliver_within\"},\"rendering\":{\"definition\":{\"notification_rendering_definition_id\":\"rendering_4\",\"notification_rendering_definition_revision_id\":\"rendering_revision_4\"},\"kind\":\"definition\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-3600\"},\"kind\":\"once\"},\"template_key\":\"one_hour_before\"},{\"late_handling\":{\"grace_seconds\":\"86400\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-604800\"},\"kind\":\"once\"},\"template_key\":\"seven_days_before\"},{\"late_handling\":{\"grace_seconds\":\"21600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-86400\"},\"kind\":\"once\"},\"template_key\":\"twenty_four_hours_before\"}]}}",
+        "digest": "991cb38a212223a3dd0f81ffb2a2923201c1cedff1d3dd11b0cff1998834aa3f"
+      },
+      "response": {
+        "json_text": "{\"ok\":true,\"command\":\"notification_profile.create\",\"response_contract\":\"spine.notification-profiles.v2\",\"effect\":\"notification_profile_created\",\"status\":\"active\",\"receipt\":{\"command_receipt_id\":\"receipt_5\",\"command_id\":\"spack_6292f1be43b882b50d8b75986c8006943a971e877d787995ae0a7b519ff1aa04\",\"effect\":\"notification_profile_created\",\"semantic_facts_hash\":\"991cb38a212223a3dd0f81ffb2a2923201c1cedff1d3dd11b0cff1998834aa3f\",\"created_at_utc\":\"2035-02-01T12:00:00Z\"},\"notification_profile_id\":\"profile_5\",\"notification_profile_revision_id\":\"profile_revision_5\",\"revision_number\":\"1\",\"normalized_revision_hash\":\"689794bd3be44648d72004573c23e416134d13cfef5800daa25b7b5f8b55730b\",\"profile_key\":\"synthetic_flight_details\"}",
+        "digest": "1589de21b9c93354aa3a21a7b70fd14f7ff9434b4767b0d09a707b11df23472a"
+      },
+      "receipt": {
+        "family": "catalog",
+        "command_receipt_id": "receipt_5",
+        "effect": "notification_profile_created",
+        "semantic_facts_hash": "991cb38a212223a3dd0f81ffb2a2923201c1cedff1d3dd11b0cff1998834aa3f",
+        "created_at_utc": "2035-02-01T12:00:00Z"
+      },
+      "post_observation": {
+        "object_key": "profile:synthetic_flight_details",
+        "owner": {
+          "owner_kind": "subject",
+          "owner_subject_id": "synthetic-owner"
+        },
+        "status": "active",
+        "root_id": "profile_5",
+        "revision_id": "profile_revision_5",
+        "binding_id": null,
+        "revision_contract": "spine.notification-profiles.v2",
+        "value": {
+          "canonical_json": "{\"metadata\":{\"description\":\"Contract fixture only; not approved curated content.\",\"display_name\":\"Synthetic flight details\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-14400\"},\"kind\":\"once\"},\"template_key\":\"four_hours_before\"},{\"late_handling\":{\"grace_seconds\":\"900\",\"kind\":\"deliver_within\"},\"rendering\":{\"definition\":{\"notification_rendering_definition_id\":\"rendering_4\",\"notification_rendering_definition_revision_id\":\"rendering_revision_4\"},\"kind\":\"definition\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-3600\"},\"kind\":\"once\"},\"template_key\":\"one_hour_before\"},{\"late_handling\":{\"grace_seconds\":\"86400\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-604800\"},\"kind\":\"once\"},\"template_key\":\"seven_days_before\"},{\"late_handling\":{\"grace_seconds\":\"21600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-86400\"},\"kind\":\"once\"},\"template_key\":\"twenty_four_hours_before\"}]}}",
+          "digest": "0f07443cd1794106253fe23adefdd6c74ec5f3d6e5e0a75a651ae1c54f9f2409"
+        }
+      }
+    },
+    {
+      "action_id": "action-000005",
+      "command": "notification_profile.binding.set",
+      "command_id": "spack_83207ca4bba7d86ad71b72c8dee2fbb5d3d0db41e5e5057d45af08ab90096fd0",
+      "request": {
+        "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_83207ca4bba7d86ad71b72c8dee2fbb5d3d0db41e5e5057d45af08ab90096fd0\",\"contract_version\":\"spine.notification-profile-bindings.v1\",\"item_archetype_id\":\"archetype_1\",\"notification_profile_id\":\"profile_5\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"}}",
+        "digest": "535969833390a6ee47ad735f4e15afba10c75fb7023fa580aa92938d088b8fa0"
+      },
+      "response": {
+        "json_text": "{\"ok\":true,\"command\":\"notification_profile.binding.set\",\"response_contract\":\"spine.notification-profile-bindings.v1\",\"effect\":\"notification_profile_binding_set\",\"status\":\"active\",\"receipt\":{\"command_receipt_id\":\"receipt_6\",\"command_id\":\"spack_83207ca4bba7d86ad71b72c8dee2fbb5d3d0db41e5e5057d45af08ab90096fd0\",\"effect\":\"notification_profile_binding_set\",\"semantic_facts_hash\":\"535969833390a6ee47ad735f4e15afba10c75fb7023fa580aa92938d088b8fa0\",\"created_at_utc\":\"2035-02-01T12:00:00Z\"},\"notification_profile_binding_id\":\"binding_binding_6\",\"item_archetype_id\":\"archetype_1\",\"notification_profile_id\":\"profile_5\",\"compatible_item_types\":[\"event\"]}",
+        "digest": "d8ab47fb4acc7e1bd2da0db28c67d8f3a350bc842814e4c40dad0412f0678d25"
+      },
+      "receipt": {
+        "family": "catalog",
+        "command_receipt_id": "receipt_6",
+        "effect": "notification_profile_binding_set",
+        "semantic_facts_hash": "535969833390a6ee47ad735f4e15afba10c75fb7023fa580aa92938d088b8fa0",
+        "created_at_utc": "2035-02-01T12:00:00Z"
+      },
+      "post_observation": {
+        "object_key": "binding:flight",
+        "owner": {
+          "owner_kind": "subject",
+          "owner_subject_id": "synthetic-owner"
+        },
+        "status": "active",
+        "root_id": "archetype_1",
+        "revision_id": null,
+        "binding_id": "binding_binding_6",
+        "revision_contract": null,
+        "value": {
+          "canonical_json": "{\"item_archetype_id\":\"archetype_1\",\"notification_profile_id\":\"profile_5\"}",
+          "digest": "8dbd7cb63d655b3afd590e855c382ea8fb18d86db6a1303a127a88244a6fe8d3"
+        }
+      }
+    }
+  ],
+  "initial_checkpoint": {
+    "artifact_schema": "spine.pack-apply-checkpoint.v2",
+    "plan_digest": "09dc5c1af3957a6d455df05d31f2fbed25cdb16e65129ef1ac8326b2efb69d2b",
+    "approval_digest": "8da91605dd188941ed9a59879ccda79d74ebd4996f6ea74a70458bff396e97e4",
+    "execution": {
+      "execution_id": "12345678-1234-4234-8234-000000000001",
+      "actor_subject_id": "synthetic-actor",
+      "action_timestamp_utc": "2035-02-01T12:00:00Z"
+    },
+    "accepted_responses": [],
+    "unresolved_submission": null,
+    "next_action_id": "action-000000",
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-apply-checkpoint-digest.v2",
+      "digest": "19b22d5d14906aae930045a50ae0549b866b8e1b4267223251675bc6e6f5a903"
+    }
+  },
+  "final_checkpoint": {
+    "artifact_schema": "spine.pack-apply-checkpoint.v2",
+    "plan_digest": "09dc5c1af3957a6d455df05d31f2fbed25cdb16e65129ef1ac8326b2efb69d2b",
+    "approval_digest": "8da91605dd188941ed9a59879ccda79d74ebd4996f6ea74a70458bff396e97e4",
+    "execution": {
+      "execution_id": "12345678-1234-4234-8234-000000000001",
+      "actor_subject_id": "synthetic-actor",
+      "action_timestamp_utc": "2035-02-01T12:00:00Z"
+    },
+    "accepted_responses": [
+      {
+        "action_id": "action-000000",
+        "command": "item_archetype.create",
+        "command_id": "spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b",
+        "request": {
+          "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"archetype_key\":\"flight\",\"command_id\":\"spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b\",\"contract_version\":\"spine.item-archetypes.v1\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}}",
+          "digest": "03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b"
+        },
+        "response": {
+          "json_text": "{\"ok\":true,\"command\":\"item_archetype.create\",\"response_contract\":\"spine.item-archetypes.v1\",\"effect\":\"item_archetype_created\",\"status\":\"active\",\"receipt\":{\"command_receipt_id\":\"receipt_1\",\"command_id\":\"spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b\",\"effect\":\"item_archetype_created\",\"semantic_facts_hash\":\"03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b\",\"created_at_utc\":\"2035-02-01T12:00:00Z\"},\"item_archetype_id\":\"archetype_1\",\"item_archetype_revision_id\":\"archetype_revision_1\",\"revision_number\":\"1\",\"archetype_key\":\"flight\"}",
+          "digest": "8be296206763ced8dddaf01cc17b9a29c2981283212a91a7113fc069b3caf677"
+        },
+        "receipt": {
+          "family": "catalog",
+          "command_receipt_id": "receipt_1",
+          "effect": "item_archetype_created",
+          "semantic_facts_hash": "03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b",
+          "created_at_utc": "2035-02-01T12:00:00Z"
+        },
+        "post_observation": {
+          "object_key": "archetype:flight",
+          "owner": {
+            "owner_kind": "subject",
+            "owner_subject_id": "synthetic-owner"
+          },
+          "status": "active",
+          "root_id": "archetype_1",
+          "revision_id": "archetype_revision_1",
+          "binding_id": null,
+          "revision_contract": "spine.item-archetypes.v1",
+          "value": {
+            "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}",
+            "digest": "dd9483a4ee700cd496de2a7f8a4091a58f21b22fa28068aad26d63651301a978"
+          }
+        }
+      },
+      {
+        "action_id": "action-000001",
+        "command": "facet_schema.create",
+        "command_id": "spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e",
+        "request": {
+          "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e\",\"contract_version\":\"spine.facet-schemas.v1\",\"definition\":{\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"fields\":[{\"key\":\"flight_number\",\"max_length\":\"32\",\"queryable\":false,\"required\":false,\"type\":\"text\"},{\"key\":\"origin\",\"queryable\":false,\"required\":false,\"target_kind\":\"location\",\"type\":\"reference\"}]},\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"schema_key\":\"flight_details\"}",
+          "digest": "386d2253c9ccb093b6579323d9d2d7e12fae3fb65c26152a615a7876129b35e9"
+        },
+        "response": {
+          "json_text": "{\"ok\":true,\"command\":\"facet_schema.create\",\"response_contract\":\"spine.facet-schemas.v1\",\"command_id\":\"spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e\",\"command_receipt_id\":\"receipt_2\",\"effect\":\"facet_schema_created\",\"changed\":true,\"audit_id\":\"audit_2\",\"facet_schema_id\":\"schema_2\",\"prior_revision_id\":null,\"facet_schema_revision_id\":\"schema_revision_2\",\"revision_number\":\"1\",\"replayed\":false}",
+          "digest": "9ee8cb8b9fb89f0b9629340089fc998099955503f11ef6ba8e998cfc05624acb"
+        },
+        "receipt": {
+          "family": "facet",
+          "command_receipt_id": "receipt_2",
+          "effect": "facet_schema_created",
+          "changed": true,
+          "replayed": false,
+          "audit_id": "audit_2"
+        },
+        "post_observation": {
+          "object_key": "schema:flight_details",
+          "owner": {
+            "owner_kind": "subject",
+            "owner_subject_id": "synthetic-owner"
+          },
+          "status": "active",
+          "root_id": "schema_2",
+          "revision_id": "schema_revision_2",
+          "binding_id": null,
+          "revision_contract": "spine.facet-schemas.v1",
+          "value": {
+            "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"fields\":[{\"key\":\"flight_number\",\"max_length\":\"32\",\"queryable\":false,\"required\":false,\"type\":\"text\"},{\"key\":\"origin\",\"queryable\":false,\"required\":false,\"target_kind\":\"location\",\"type\":\"reference\"}]}",
+            "digest": "3e31e0d4d0f94d5adce1c09287cb30e63fdcdd9514e6b3a90de75bd14764f862"
+          }
+        }
+      },
+      {
+        "action_id": "action-000002",
+        "command": "item_archetype.facet_binding.set",
+        "command_id": "spack_3ccae26e5a7f16e2376018c01ca4c3e6c22adc78496b4bc0ed8def2f05ae0cdc",
+        "request": {
+          "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_3ccae26e5a7f16e2376018c01ca4c3e6c22adc78496b4bc0ed8def2f05ae0cdc\",\"contract_version\":\"spine.archetype-facet-bindings.v1\",\"expected_binding_id\":null,\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"item_archetype_id\":\"archetype_1\"}",
+          "digest": "3516278a4e12549f514bad3ac8364486a2bf269f7a81dd80607a590a58cc73fb"
+        },
+        "response": {
+          "json_text": "{\"ok\":true,\"command\":\"item_archetype.facet_binding.set\",\"response_contract\":\"spine.archetype-facet-bindings.v1\",\"command_id\":\"spack_3ccae26e5a7f16e2376018c01ca4c3e6c22adc78496b4bc0ed8def2f05ae0cdc\",\"command_receipt_id\":\"receipt_3\",\"effect\":\"facet_binding_set\",\"changed\":true,\"audit_id\":\"audit_3\",\"item_archetype_id\":\"archetype_1\",\"facet_key\":\"flight\",\"prior_binding_id\":null,\"facet_binding_id\":\"facet_binding_binding_3\",\"facet_schema_revision_id\":\"schema_revision_2\",\"replayed\":false}",
+          "digest": "e4feb8946b2ecd2916e75cf1d0a46136cfc698454fcafb223dfe5d9f99c730dd"
+        },
+        "receipt": {
+          "family": "facet",
+          "command_receipt_id": "receipt_3",
+          "effect": "facet_binding_set",
+          "changed": true,
+          "replayed": false,
+          "audit_id": "audit_3"
+        },
+        "post_observation": {
+          "object_key": "facet_binding:flight:flight",
+          "owner": {
+            "owner_kind": "subject",
+            "owner_subject_id": "synthetic-owner"
+          },
+          "status": "active",
+          "root_id": "archetype_1",
+          "revision_id": null,
+          "binding_id": "facet_binding_binding_3",
+          "revision_contract": null,
+          "value": {
+            "canonical_json": "{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"item_archetype_id\":\"archetype_1\"}",
+            "digest": "f12313557c80caa275da2b6f4a5ff8941ae1f707a0f86bcc2a9939c150e9e77c"
+          }
+        }
+      },
+      {
+        "action_id": "action-000003",
+        "command": "notification_rendering_definition.create",
+        "command_id": "spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d",
+        "request": {
+          "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"contract_version\":\"spine.notification-rendering-definitions.v1\",\"definition_key\":\"flight_details\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"revision\":{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"selection_key\":\"origin\"}]}}",
+          "digest": "eefb39cd2b1f3685ec6dd5009ed56d3fd1c9aec7e835ac7ac01f23a397cfd2bf"
+        },
+        "response": {
+          "json_text": "{\"ok\":true,\"contract_version\":\"spine.notification-rendering-definitions.v1\",\"command\":\"notification_rendering_definition.create\",\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"changed\":true,\"replayed\":false,\"effect\":\"rendering_definition_created\",\"command_receipt_id\":\"receipt_4\",\"audit_id\":\"audit_4\",\"record\":{\"notification_rendering_definition_id\":\"rendering_4\",\"notification_rendering_definition_revision_id\":\"rendering_revision_4\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"definition_key\":\"flight_details\",\"status\":\"active\",\"current_revision_id\":\"rendering_revision_4\",\"revision_number\":\"1\",\"revision\":{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"selection_key\":\"origin\"}]},\"definition_hash\":\"0270f8f49e9f835569cc8a10e8dd116354282de52b44fd8fe5280ef77e31ac67\",\"created\":{\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"actor_subject_id\":\"synthetic-actor\",\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\"},\"published\":{\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"actor_subject_id\":\"synthetic-actor\",\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\"},\"retired\":null}}",
+          "digest": "89d5b87252da8cf3c538d2903946347bda234b26f362eb55857f5953a2bfe13b"
+        },
+        "receipt": {
+          "family": "rendering",
+          "command_receipt_id": "receipt_4",
+          "effect": "rendering_definition_created",
+          "changed": true,
+          "replayed": false,
+          "audit_id": "audit_4"
+        },
+        "post_observation": {
+          "object_key": "rendering:flight_details",
+          "owner": {
+            "owner_kind": "subject",
+            "owner_subject_id": "synthetic-owner"
+          },
+          "status": "active",
+          "root_id": "rendering_4",
+          "revision_id": "rendering_revision_4",
+          "binding_id": null,
+          "revision_contract": "spine.notification-rendering-definitions.v1",
+          "value": {
+            "canonical_json": "{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"selection_key\":\"origin\"}]}",
+            "digest": "a0d1d68b9f11085cf9618516cca46a28092bdfd70c2d2809524773d51f698f64"
+          }
+        }
+      },
+      {
+        "action_id": "action-000004",
+        "command": "notification_profile.create",
+        "command_id": "spack_6292f1be43b882b50d8b75986c8006943a971e877d787995ae0a7b519ff1aa04",
+        "request": {
+          "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_6292f1be43b882b50d8b75986c8006943a971e877d787995ae0a7b519ff1aa04\",\"contract_version\":\"spine.notification-profiles.v2\",\"description\":\"Contract fixture only; not approved curated content.\",\"display_name\":\"Synthetic flight details\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"profile_key\":\"synthetic_flight_details\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-14400\"},\"kind\":\"once\"},\"template_key\":\"four_hours_before\"},{\"late_handling\":{\"grace_seconds\":\"900\",\"kind\":\"deliver_within\"},\"rendering\":{\"definition\":{\"notification_rendering_definition_id\":\"rendering_4\",\"notification_rendering_definition_revision_id\":\"rendering_revision_4\"},\"kind\":\"definition\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-3600\"},\"kind\":\"once\"},\"template_key\":\"one_hour_before\"},{\"late_handling\":{\"grace_seconds\":\"86400\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-604800\"},\"kind\":\"once\"},\"template_key\":\"seven_days_before\"},{\"late_handling\":{\"grace_seconds\":\"21600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-86400\"},\"kind\":\"once\"},\"template_key\":\"twenty_four_hours_before\"}]}}",
+          "digest": "991cb38a212223a3dd0f81ffb2a2923201c1cedff1d3dd11b0cff1998834aa3f"
+        },
+        "response": {
+          "json_text": "{\"ok\":true,\"command\":\"notification_profile.create\",\"response_contract\":\"spine.notification-profiles.v2\",\"effect\":\"notification_profile_created\",\"status\":\"active\",\"receipt\":{\"command_receipt_id\":\"receipt_5\",\"command_id\":\"spack_6292f1be43b882b50d8b75986c8006943a971e877d787995ae0a7b519ff1aa04\",\"effect\":\"notification_profile_created\",\"semantic_facts_hash\":\"991cb38a212223a3dd0f81ffb2a2923201c1cedff1d3dd11b0cff1998834aa3f\",\"created_at_utc\":\"2035-02-01T12:00:00Z\"},\"notification_profile_id\":\"profile_5\",\"notification_profile_revision_id\":\"profile_revision_5\",\"revision_number\":\"1\",\"normalized_revision_hash\":\"689794bd3be44648d72004573c23e416134d13cfef5800daa25b7b5f8b55730b\",\"profile_key\":\"synthetic_flight_details\"}",
+          "digest": "1589de21b9c93354aa3a21a7b70fd14f7ff9434b4767b0d09a707b11df23472a"
+        },
+        "receipt": {
+          "family": "catalog",
+          "command_receipt_id": "receipt_5",
+          "effect": "notification_profile_created",
+          "semantic_facts_hash": "991cb38a212223a3dd0f81ffb2a2923201c1cedff1d3dd11b0cff1998834aa3f",
+          "created_at_utc": "2035-02-01T12:00:00Z"
+        },
+        "post_observation": {
+          "object_key": "profile:synthetic_flight_details",
+          "owner": {
+            "owner_kind": "subject",
+            "owner_subject_id": "synthetic-owner"
+          },
+          "status": "active",
+          "root_id": "profile_5",
+          "revision_id": "profile_revision_5",
+          "binding_id": null,
+          "revision_contract": "spine.notification-profiles.v2",
+          "value": {
+            "canonical_json": "{\"metadata\":{\"description\":\"Contract fixture only; not approved curated content.\",\"display_name\":\"Synthetic flight details\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-14400\"},\"kind\":\"once\"},\"template_key\":\"four_hours_before\"},{\"late_handling\":{\"grace_seconds\":\"900\",\"kind\":\"deliver_within\"},\"rendering\":{\"definition\":{\"notification_rendering_definition_id\":\"rendering_4\",\"notification_rendering_definition_revision_id\":\"rendering_revision_4\"},\"kind\":\"definition\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-3600\"},\"kind\":\"once\"},\"template_key\":\"one_hour_before\"},{\"late_handling\":{\"grace_seconds\":\"86400\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-604800\"},\"kind\":\"once\"},\"template_key\":\"seven_days_before\"},{\"late_handling\":{\"grace_seconds\":\"21600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-86400\"},\"kind\":\"once\"},\"template_key\":\"twenty_four_hours_before\"}]}}",
+            "digest": "0f07443cd1794106253fe23adefdd6c74ec5f3d6e5e0a75a651ae1c54f9f2409"
+          }
+        }
+      },
+      {
+        "action_id": "action-000005",
+        "command": "notification_profile.binding.set",
+        "command_id": "spack_83207ca4bba7d86ad71b72c8dee2fbb5d3d0db41e5e5057d45af08ab90096fd0",
+        "request": {
+          "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_83207ca4bba7d86ad71b72c8dee2fbb5d3d0db41e5e5057d45af08ab90096fd0\",\"contract_version\":\"spine.notification-profile-bindings.v1\",\"item_archetype_id\":\"archetype_1\",\"notification_profile_id\":\"profile_5\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"}}",
+          "digest": "535969833390a6ee47ad735f4e15afba10c75fb7023fa580aa92938d088b8fa0"
+        },
+        "response": {
+          "json_text": "{\"ok\":true,\"command\":\"notification_profile.binding.set\",\"response_contract\":\"spine.notification-profile-bindings.v1\",\"effect\":\"notification_profile_binding_set\",\"status\":\"active\",\"receipt\":{\"command_receipt_id\":\"receipt_6\",\"command_id\":\"spack_83207ca4bba7d86ad71b72c8dee2fbb5d3d0db41e5e5057d45af08ab90096fd0\",\"effect\":\"notification_profile_binding_set\",\"semantic_facts_hash\":\"535969833390a6ee47ad735f4e15afba10c75fb7023fa580aa92938d088b8fa0\",\"created_at_utc\":\"2035-02-01T12:00:00Z\"},\"notification_profile_binding_id\":\"binding_binding_6\",\"item_archetype_id\":\"archetype_1\",\"notification_profile_id\":\"profile_5\",\"compatible_item_types\":[\"event\"]}",
+          "digest": "d8ab47fb4acc7e1bd2da0db28c67d8f3a350bc842814e4c40dad0412f0678d25"
+        },
+        "receipt": {
+          "family": "catalog",
+          "command_receipt_id": "receipt_6",
+          "effect": "notification_profile_binding_set",
+          "semantic_facts_hash": "535969833390a6ee47ad735f4e15afba10c75fb7023fa580aa92938d088b8fa0",
+          "created_at_utc": "2035-02-01T12:00:00Z"
+        },
+        "post_observation": {
+          "object_key": "binding:flight",
+          "owner": {
+            "owner_kind": "subject",
+            "owner_subject_id": "synthetic-owner"
+          },
+          "status": "active",
+          "root_id": "archetype_1",
+          "revision_id": null,
+          "binding_id": "binding_binding_6",
+          "revision_contract": null,
+          "value": {
+            "canonical_json": "{\"item_archetype_id\":\"archetype_1\",\"notification_profile_id\":\"profile_5\"}",
+            "digest": "8dbd7cb63d655b3afd590e855c382ea8fb18d86db6a1303a127a88244a6fe8d3"
+          }
+        }
+      }
+    ],
+    "unresolved_submission": null,
+    "next_action_id": null,
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-apply-checkpoint-digest.v2",
+      "digest": "bd7c745205edf42b38089f233cdfa90befc860d298b55118a351ab3a3e740fd0"
+    }
+  },
+  "prepared_checkpoint": {
+    "artifact_schema": "spine.pack-apply-checkpoint.v2",
+    "plan_digest": "09dc5c1af3957a6d455df05d31f2fbed25cdb16e65129ef1ac8326b2efb69d2b",
+    "approval_digest": "8da91605dd188941ed9a59879ccda79d74ebd4996f6ea74a70458bff396e97e4",
+    "execution": {
+      "execution_id": "12345678-1234-4234-8234-000000000001",
+      "actor_subject_id": "synthetic-actor",
+      "action_timestamp_utc": "2035-02-01T12:00:00Z"
+    },
+    "accepted_responses": [
+      {
+        "action_id": "action-000000",
+        "command": "item_archetype.create",
+        "command_id": "spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b",
+        "request": {
+          "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"archetype_key\":\"flight\",\"command_id\":\"spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b\",\"contract_version\":\"spine.item-archetypes.v1\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}}",
+          "digest": "03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b"
+        },
+        "response": {
+          "json_text": "{\"ok\":true,\"command\":\"item_archetype.create\",\"response_contract\":\"spine.item-archetypes.v1\",\"effect\":\"item_archetype_created\",\"status\":\"active\",\"receipt\":{\"command_receipt_id\":\"receipt_1\",\"command_id\":\"spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b\",\"effect\":\"item_archetype_created\",\"semantic_facts_hash\":\"03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b\",\"created_at_utc\":\"2035-02-01T12:00:00Z\"},\"item_archetype_id\":\"archetype_1\",\"item_archetype_revision_id\":\"archetype_revision_1\",\"revision_number\":\"1\",\"archetype_key\":\"flight\"}",
+          "digest": "8be296206763ced8dddaf01cc17b9a29c2981283212a91a7113fc069b3caf677"
+        },
+        "receipt": {
+          "family": "catalog",
+          "command_receipt_id": "receipt_1",
+          "effect": "item_archetype_created",
+          "semantic_facts_hash": "03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b",
+          "created_at_utc": "2035-02-01T12:00:00Z"
+        },
+        "post_observation": {
+          "object_key": "archetype:flight",
+          "owner": {
+            "owner_kind": "subject",
+            "owner_subject_id": "synthetic-owner"
+          },
+          "status": "active",
+          "root_id": "archetype_1",
+          "revision_id": "archetype_revision_1",
+          "binding_id": null,
+          "revision_contract": "spine.item-archetypes.v1",
+          "value": {
+            "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}",
+            "digest": "dd9483a4ee700cd496de2a7f8a4091a58f21b22fa28068aad26d63651301a978"
+          }
+        }
+      }
+    ],
+    "unresolved_submission": {
+      "action_id": "action-000001",
+      "command_id": "spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e",
+      "submission_state": "prepared_or_submitted",
+      "request": {
+        "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e\",\"contract_version\":\"spine.facet-schemas.v1\",\"definition\":{\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"fields\":[{\"key\":\"flight_number\",\"max_length\":\"32\",\"queryable\":false,\"required\":false,\"type\":\"text\"},{\"key\":\"origin\",\"queryable\":false,\"required\":false,\"target_kind\":\"location\",\"type\":\"reference\"}]},\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"schema_key\":\"flight_details\"}",
+        "digest": "386d2253c9ccb093b6579323d9d2d7e12fae3fb65c26152a615a7876129b35e9"
+      }
+    },
+    "next_action_id": "action-000001",
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-apply-checkpoint-digest.v2",
+      "digest": "a5c58232ffc97a87569f2f42cb863b57d65d2eb979da98c3046b294241141bf3"
+    }
+  },
+  "partial_result": {
+    "artifact_schema": "spine.pack-apply-result.v2",
+    "checkpoint": {
+      "artifact_schema": "spine.pack-apply-checkpoint.v2",
+      "plan_digest": "09dc5c1af3957a6d455df05d31f2fbed25cdb16e65129ef1ac8326b2efb69d2b",
+      "approval_digest": "8da91605dd188941ed9a59879ccda79d74ebd4996f6ea74a70458bff396e97e4",
+      "execution": {
+        "execution_id": "12345678-1234-4234-8234-000000000001",
+        "actor_subject_id": "synthetic-actor",
+        "action_timestamp_utc": "2035-02-01T12:00:00Z"
+      },
+      "accepted_responses": [
+        {
+          "action_id": "action-000000",
+          "command": "item_archetype.create",
+          "command_id": "spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b",
+          "request": {
+            "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"archetype_key\":\"flight\",\"command_id\":\"spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b\",\"contract_version\":\"spine.item-archetypes.v1\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}}",
+            "digest": "03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b"
+          },
+          "response": {
+            "json_text": "{\"ok\":true,\"command\":\"item_archetype.create\",\"response_contract\":\"spine.item-archetypes.v1\",\"effect\":\"item_archetype_created\",\"status\":\"active\",\"receipt\":{\"command_receipt_id\":\"receipt_1\",\"command_id\":\"spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b\",\"effect\":\"item_archetype_created\",\"semantic_facts_hash\":\"03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b\",\"created_at_utc\":\"2035-02-01T12:00:00Z\"},\"item_archetype_id\":\"archetype_1\",\"item_archetype_revision_id\":\"archetype_revision_1\",\"revision_number\":\"1\",\"archetype_key\":\"flight\"}",
+            "digest": "8be296206763ced8dddaf01cc17b9a29c2981283212a91a7113fc069b3caf677"
+          },
+          "receipt": {
+            "family": "catalog",
+            "command_receipt_id": "receipt_1",
+            "effect": "item_archetype_created",
+            "semantic_facts_hash": "03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b",
+            "created_at_utc": "2035-02-01T12:00:00Z"
+          },
+          "post_observation": {
+            "object_key": "archetype:flight",
+            "owner": {
+              "owner_kind": "subject",
+              "owner_subject_id": "synthetic-owner"
+            },
+            "status": "active",
+            "root_id": "archetype_1",
+            "revision_id": "archetype_revision_1",
+            "binding_id": null,
+            "revision_contract": "spine.item-archetypes.v1",
+            "value": {
+              "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}",
+              "digest": "dd9483a4ee700cd496de2a7f8a4091a58f21b22fa28068aad26d63651301a978"
+            }
+          }
+        }
+      ],
+      "unresolved_submission": {
+        "action_id": "action-000001",
+        "command_id": "spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e",
+        "submission_state": "prepared_or_submitted",
+        "request": {
+          "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e\",\"contract_version\":\"spine.facet-schemas.v1\",\"definition\":{\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"fields\":[{\"key\":\"flight_number\",\"max_length\":\"32\",\"queryable\":false,\"required\":false,\"type\":\"text\"},{\"key\":\"origin\",\"queryable\":false,\"required\":false,\"target_kind\":\"location\",\"type\":\"reference\"}]},\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"schema_key\":\"flight_details\"}",
+          "digest": "386d2253c9ccb093b6579323d9d2d7e12fae3fb65c26152a615a7876129b35e9"
+        }
+      },
+      "next_action_id": "action-000001",
+      "content_identity": {
+        "algorithm": "sha256",
+        "canonical_json_version": "spine.canonical-json.v1",
+        "derivation_version": "spine.pack-apply-checkpoint-digest.v2",
+        "digest": "a5c58232ffc97a87569f2f42cb863b57d65d2eb979da98c3046b294241141bf3"
+      }
+    },
+    "state": "partial",
+    "failure": {
+      "action_id": "action-000001",
+      "error": {
+        "category": "partial_apply",
+        "code": "uncertain_response",
+        "message": "Synthetic response loss",
+        "facts": []
+      }
+    },
+    "unattempted_action_ids": [
+      "action-000002",
+      "action-000003",
+      "action-000004",
+      "action-000005"
+    ],
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-apply-result-digest.v2",
+      "digest": "afba8bcb25c9096168adc5cf9840dd9158562db57c02c535333a0a8f0154045b"
+    }
+  },
+  "empty_prefix_partial": {
+    "artifact_schema": "spine.pack-apply-result.v2",
+    "checkpoint": {
+      "artifact_schema": "spine.pack-apply-checkpoint.v2",
+      "plan_digest": "09dc5c1af3957a6d455df05d31f2fbed25cdb16e65129ef1ac8326b2efb69d2b",
+      "approval_digest": "8da91605dd188941ed9a59879ccda79d74ebd4996f6ea74a70458bff396e97e4",
+      "execution": {
+        "execution_id": "12345678-1234-4234-8234-000000000001",
+        "actor_subject_id": "synthetic-actor",
+        "action_timestamp_utc": "2035-02-01T12:00:00Z"
+      },
+      "accepted_responses": [],
+      "unresolved_submission": {
+        "action_id": "action-000000",
+        "command_id": "spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b",
+        "submission_state": "prepared_or_submitted",
+        "request": {
+          "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"archetype_key\":\"flight\",\"command_id\":\"spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b\",\"contract_version\":\"spine.item-archetypes.v1\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}}",
+          "digest": "03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b"
+        }
+      },
+      "next_action_id": "action-000000",
+      "content_identity": {
+        "algorithm": "sha256",
+        "canonical_json_version": "spine.canonical-json.v1",
+        "derivation_version": "spine.pack-apply-checkpoint-digest.v2",
+        "digest": "7f9a7cbcfff84883d6a71ba4baff1e20038355c54eea4209fb6b7a19af46c0e6"
+      }
+    },
+    "state": "partial",
+    "failure": {
+      "action_id": "action-000000",
+      "error": {
+        "category": "partial_apply",
+        "code": "uncertain_response",
+        "message": "Synthetic response loss",
+        "facts": []
+      }
+    },
+    "unattempted_action_ids": [
+      "action-000001",
+      "action-000002",
+      "action-000003",
+      "action-000004",
+      "action-000005"
+    ],
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-apply-result-digest.v2",
+      "digest": "09210681b69fae1976222072f7d38afec18e80b22bd8628c0357ff637d9c5a33"
+    }
+  },
+  "apply_result": {
+    "artifact_schema": "spine.pack-apply-result.v2",
+    "checkpoint": {
+      "artifact_schema": "spine.pack-apply-checkpoint.v2",
+      "plan_digest": "09dc5c1af3957a6d455df05d31f2fbed25cdb16e65129ef1ac8326b2efb69d2b",
+      "approval_digest": "8da91605dd188941ed9a59879ccda79d74ebd4996f6ea74a70458bff396e97e4",
+      "execution": {
+        "execution_id": "12345678-1234-4234-8234-000000000001",
+        "actor_subject_id": "synthetic-actor",
+        "action_timestamp_utc": "2035-02-01T12:00:00Z"
+      },
+      "accepted_responses": [
+        {
+          "action_id": "action-000000",
+          "command": "item_archetype.create",
+          "command_id": "spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b",
+          "request": {
+            "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"archetype_key\":\"flight\",\"command_id\":\"spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b\",\"contract_version\":\"spine.item-archetypes.v1\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}}",
+            "digest": "03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b"
+          },
+          "response": {
+            "json_text": "{\"ok\":true,\"command\":\"item_archetype.create\",\"response_contract\":\"spine.item-archetypes.v1\",\"effect\":\"item_archetype_created\",\"status\":\"active\",\"receipt\":{\"command_receipt_id\":\"receipt_1\",\"command_id\":\"spack_de270f4899a4f85bdaa41dc36f2adac7d9338348a7201d7aada6b24cc712ab5b\",\"effect\":\"item_archetype_created\",\"semantic_facts_hash\":\"03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b\",\"created_at_utc\":\"2035-02-01T12:00:00Z\"},\"item_archetype_id\":\"archetype_1\",\"item_archetype_revision_id\":\"archetype_revision_1\",\"revision_number\":\"1\",\"archetype_key\":\"flight\"}",
+            "digest": "8be296206763ced8dddaf01cc17b9a29c2981283212a91a7113fc069b3caf677"
+          },
+          "receipt": {
+            "family": "catalog",
+            "command_receipt_id": "receipt_1",
+            "effect": "item_archetype_created",
+            "semantic_facts_hash": "03fa35edd1a33527920983c07386636cd6afa56057b434be754f6cc35cb2ad4b",
+            "created_at_utc": "2035-02-01T12:00:00Z"
+          },
+          "post_observation": {
+            "object_key": "archetype:flight",
+            "owner": {
+              "owner_kind": "subject",
+              "owner_subject_id": "synthetic-owner"
+            },
+            "status": "active",
+            "root_id": "archetype_1",
+            "revision_id": "archetype_revision_1",
+            "binding_id": null,
+            "revision_contract": "spine.item-archetypes.v1",
+            "value": {
+              "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":\"Scheduled flight departures.\",\"display_name\":\"Flight\"}",
+              "digest": "dd9483a4ee700cd496de2a7f8a4091a58f21b22fa28068aad26d63651301a978"
+            }
+          }
+        },
+        {
+          "action_id": "action-000001",
+          "command": "facet_schema.create",
+          "command_id": "spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e",
+          "request": {
+            "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e\",\"contract_version\":\"spine.facet-schemas.v1\",\"definition\":{\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"fields\":[{\"key\":\"flight_number\",\"max_length\":\"32\",\"queryable\":false,\"required\":false,\"type\":\"text\"},{\"key\":\"origin\",\"queryable\":false,\"required\":false,\"target_kind\":\"location\",\"type\":\"reference\"}]},\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"schema_key\":\"flight_details\"}",
+            "digest": "386d2253c9ccb093b6579323d9d2d7e12fae3fb65c26152a615a7876129b35e9"
+          },
+          "response": {
+            "json_text": "{\"ok\":true,\"command\":\"facet_schema.create\",\"response_contract\":\"spine.facet-schemas.v1\",\"command_id\":\"spack_29fb23c6fb154790dbdeb045c44a9e464c4141e89a102d00fbf705ef40f83d6e\",\"command_receipt_id\":\"receipt_2\",\"effect\":\"facet_schema_created\",\"changed\":true,\"audit_id\":\"audit_2\",\"facet_schema_id\":\"schema_2\",\"prior_revision_id\":null,\"facet_schema_revision_id\":\"schema_revision_2\",\"revision_number\":\"1\",\"replayed\":false}",
+            "digest": "9ee8cb8b9fb89f0b9629340089fc998099955503f11ef6ba8e998cfc05624acb"
+          },
+          "receipt": {
+            "family": "facet",
+            "command_receipt_id": "receipt_2",
+            "effect": "facet_schema_created",
+            "changed": true,
+            "replayed": false,
+            "audit_id": "audit_2"
+          },
+          "post_observation": {
+            "object_key": "schema:flight_details",
+            "owner": {
+              "owner_kind": "subject",
+              "owner_subject_id": "synthetic-owner"
+            },
+            "status": "active",
+            "root_id": "schema_2",
+            "revision_id": "schema_revision_2",
+            "binding_id": null,
+            "revision_contract": "spine.facet-schemas.v1",
+            "value": {
+              "canonical_json": "{\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"fields\":[{\"key\":\"flight_number\",\"max_length\":\"32\",\"queryable\":false,\"required\":false,\"type\":\"text\"},{\"key\":\"origin\",\"queryable\":false,\"required\":false,\"target_kind\":\"location\",\"type\":\"reference\"}]}",
+              "digest": "3e31e0d4d0f94d5adce1c09287cb30e63fdcdd9514e6b3a90de75bd14764f862"
+            }
+          }
+        },
+        {
+          "action_id": "action-000002",
+          "command": "item_archetype.facet_binding.set",
+          "command_id": "spack_3ccae26e5a7f16e2376018c01ca4c3e6c22adc78496b4bc0ed8def2f05ae0cdc",
+          "request": {
+            "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_3ccae26e5a7f16e2376018c01ca4c3e6c22adc78496b4bc0ed8def2f05ae0cdc\",\"contract_version\":\"spine.archetype-facet-bindings.v1\",\"expected_binding_id\":null,\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"item_archetype_id\":\"archetype_1\"}",
+            "digest": "3516278a4e12549f514bad3ac8364486a2bf269f7a81dd80607a590a58cc73fb"
+          },
+          "response": {
+            "json_text": "{\"ok\":true,\"command\":\"item_archetype.facet_binding.set\",\"response_contract\":\"spine.archetype-facet-bindings.v1\",\"command_id\":\"spack_3ccae26e5a7f16e2376018c01ca4c3e6c22adc78496b4bc0ed8def2f05ae0cdc\",\"command_receipt_id\":\"receipt_3\",\"effect\":\"facet_binding_set\",\"changed\":true,\"audit_id\":\"audit_3\",\"item_archetype_id\":\"archetype_1\",\"facet_key\":\"flight\",\"prior_binding_id\":null,\"facet_binding_id\":\"facet_binding_binding_3\",\"facet_schema_revision_id\":\"schema_revision_2\",\"replayed\":false}",
+            "digest": "e4feb8946b2ecd2916e75cf1d0a46136cfc698454fcafb223dfe5d9f99c730dd"
+          },
+          "receipt": {
+            "family": "facet",
+            "command_receipt_id": "receipt_3",
+            "effect": "facet_binding_set",
+            "changed": true,
+            "replayed": false,
+            "audit_id": "audit_3"
+          },
+          "post_observation": {
+            "object_key": "facet_binding:flight:flight",
+            "owner": {
+              "owner_kind": "subject",
+              "owner_subject_id": "synthetic-owner"
+            },
+            "status": "active",
+            "root_id": "archetype_1",
+            "revision_id": null,
+            "binding_id": "facet_binding_binding_3",
+            "revision_contract": null,
+            "value": {
+              "canonical_json": "{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"item_archetype_id\":\"archetype_1\"}",
+              "digest": "f12313557c80caa275da2b6f4a5ff8941ae1f707a0f86bcc2a9939c150e9e77c"
+            }
+          }
+        },
+        {
+          "action_id": "action-000003",
+          "command": "notification_rendering_definition.create",
+          "command_id": "spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d",
+          "request": {
+            "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"contract_version\":\"spine.notification-rendering-definitions.v1\",\"definition_key\":\"flight_details\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"revision\":{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"selection_key\":\"origin\"}]}}",
+            "digest": "eefb39cd2b1f3685ec6dd5009ed56d3fd1c9aec7e835ac7ac01f23a397cfd2bf"
+          },
+          "response": {
+            "json_text": "{\"ok\":true,\"contract_version\":\"spine.notification-rendering-definitions.v1\",\"command\":\"notification_rendering_definition.create\",\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"changed\":true,\"replayed\":false,\"effect\":\"rendering_definition_created\",\"command_receipt_id\":\"receipt_4\",\"audit_id\":\"audit_4\",\"record\":{\"notification_rendering_definition_id\":\"rendering_4\",\"notification_rendering_definition_revision_id\":\"rendering_revision_4\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"definition_key\":\"flight_details\",\"status\":\"active\",\"current_revision_id\":\"rendering_revision_4\",\"revision_number\":\"1\",\"revision\":{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"selection_key\":\"origin\"}]},\"definition_hash\":\"0270f8f49e9f835569cc8a10e8dd116354282de52b44fd8fe5280ef77e31ac67\",\"created\":{\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"actor_subject_id\":\"synthetic-actor\",\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\"},\"published\":{\"command_id\":\"spack_3d3fd2633ff714e9521577161d7f14b0fd958f85ec77a0d401477ef09722258d\",\"actor_subject_id\":\"synthetic-actor\",\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\"},\"retired\":null}}",
+            "digest": "89d5b87252da8cf3c538d2903946347bda234b26f362eb55857f5953a2bfe13b"
+          },
+          "receipt": {
+            "family": "rendering",
+            "command_receipt_id": "receipt_4",
+            "effect": "rendering_definition_created",
+            "changed": true,
+            "replayed": false,
+            "audit_id": "audit_4"
+          },
+          "post_observation": {
+            "object_key": "rendering:flight_details",
+            "owner": {
+              "owner_kind": "subject",
+              "owner_subject_id": "synthetic-owner"
+            },
+            "status": "active",
+            "root_id": "rendering_4",
+            "revision_id": "rendering_revision_4",
+            "binding_id": null,
+            "revision_contract": "spine.notification-rendering-definitions.v1",
+            "value": {
+              "canonical_json": "{\"base_rendering_contract\":\"spine.notification-rendering.v1\",\"base_rendering_profile\":\"spine.notification-rendering.concise-en-ca.v1\",\"compatible_item_types\":[\"event\"],\"description\":null,\"display_name\":\"Synthetic flight details\",\"selections\":[{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"flight_number\",\"label\":\"Flight\",\"projection\":\"value\",\"selection_key\":\"number\"},{\"facet_key\":\"flight\",\"facet_schema_revision_id\":\"schema_revision_2\",\"field_key\":\"origin\",\"label\":\"From\",\"projection\":\"location_label\",\"selection_key\":\"origin\"}]}",
+              "digest": "a0d1d68b9f11085cf9618516cca46a28092bdfd70c2d2809524773d51f698f64"
+            }
+          }
+        },
+        {
+          "action_id": "action-000004",
+          "command": "notification_profile.create",
+          "command_id": "spack_6292f1be43b882b50d8b75986c8006943a971e877d787995ae0a7b519ff1aa04",
+          "request": {
+            "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_6292f1be43b882b50d8b75986c8006943a971e877d787995ae0a7b519ff1aa04\",\"contract_version\":\"spine.notification-profiles.v2\",\"description\":\"Contract fixture only; not approved curated content.\",\"display_name\":\"Synthetic flight details\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"},\"profile_key\":\"synthetic_flight_details\",\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-14400\"},\"kind\":\"once\"},\"template_key\":\"four_hours_before\"},{\"late_handling\":{\"grace_seconds\":\"900\",\"kind\":\"deliver_within\"},\"rendering\":{\"definition\":{\"notification_rendering_definition_id\":\"rendering_4\",\"notification_rendering_definition_revision_id\":\"rendering_revision_4\"},\"kind\":\"definition\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-3600\"},\"kind\":\"once\"},\"template_key\":\"one_hour_before\"},{\"late_handling\":{\"grace_seconds\":\"86400\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-604800\"},\"kind\":\"once\"},\"template_key\":\"seven_days_before\"},{\"late_handling\":{\"grace_seconds\":\"21600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-86400\"},\"kind\":\"once\"},\"template_key\":\"twenty_four_hours_before\"}]}}",
+            "digest": "991cb38a212223a3dd0f81ffb2a2923201c1cedff1d3dd11b0cff1998834aa3f"
+          },
+          "response": {
+            "json_text": "{\"ok\":true,\"command\":\"notification_profile.create\",\"response_contract\":\"spine.notification-profiles.v2\",\"effect\":\"notification_profile_created\",\"status\":\"active\",\"receipt\":{\"command_receipt_id\":\"receipt_5\",\"command_id\":\"spack_6292f1be43b882b50d8b75986c8006943a971e877d787995ae0a7b519ff1aa04\",\"effect\":\"notification_profile_created\",\"semantic_facts_hash\":\"991cb38a212223a3dd0f81ffb2a2923201c1cedff1d3dd11b0cff1998834aa3f\",\"created_at_utc\":\"2035-02-01T12:00:00Z\"},\"notification_profile_id\":\"profile_5\",\"notification_profile_revision_id\":\"profile_revision_5\",\"revision_number\":\"1\",\"normalized_revision_hash\":\"689794bd3be44648d72004573c23e416134d13cfef5800daa25b7b5f8b55730b\",\"profile_key\":\"synthetic_flight_details\"}",
+            "digest": "1589de21b9c93354aa3a21a7b70fd14f7ff9434b4767b0d09a707b11df23472a"
+          },
+          "receipt": {
+            "family": "catalog",
+            "command_receipt_id": "receipt_5",
+            "effect": "notification_profile_created",
+            "semantic_facts_hash": "991cb38a212223a3dd0f81ffb2a2923201c1cedff1d3dd11b0cff1998834aa3f",
+            "created_at_utc": "2035-02-01T12:00:00Z"
+          },
+          "post_observation": {
+            "object_key": "profile:synthetic_flight_details",
+            "owner": {
+              "owner_kind": "subject",
+              "owner_subject_id": "synthetic-owner"
+            },
+            "status": "active",
+            "root_id": "profile_5",
+            "revision_id": "profile_revision_5",
+            "binding_id": null,
+            "revision_contract": "spine.notification-profiles.v2",
+            "value": {
+              "canonical_json": "{\"metadata\":{\"description\":\"Contract fixture only; not approved curated content.\",\"display_name\":\"Synthetic flight details\"},\"revision\":{\"compatible_item_types\":[\"event\"],\"templates\":[{\"late_handling\":{\"grace_seconds\":\"3600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-14400\"},\"kind\":\"once\"},\"template_key\":\"four_hours_before\"},{\"late_handling\":{\"grace_seconds\":\"900\",\"kind\":\"deliver_within\"},\"rendering\":{\"definition\":{\"notification_rendering_definition_id\":\"rendering_4\",\"notification_rendering_definition_revision_id\":\"rendering_revision_4\"},\"kind\":\"definition\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-3600\"},\"kind\":\"once\"},\"template_key\":\"one_hour_before\"},{\"late_handling\":{\"grace_seconds\":\"86400\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-604800\"},\"kind\":\"once\"},\"template_key\":\"seven_days_before\"},{\"late_handling\":{\"grace_seconds\":\"21600\",\"kind\":\"deliver_within\"},\"rendering\":{\"kind\":\"ordinary\"},\"schedule\":{\"at\":{\"kind\":\"target_offset\",\"offset_basis\":\"elapsed\",\"offset_seconds\":\"-86400\"},\"kind\":\"once\"},\"template_key\":\"twenty_four_hours_before\"}]}}",
+              "digest": "0f07443cd1794106253fe23adefdd6c74ec5f3d6e5e0a75a651ae1c54f9f2409"
+            }
+          }
+        },
+        {
+          "action_id": "action-000005",
+          "command": "notification_profile.binding.set",
+          "command_id": "spack_83207ca4bba7d86ad71b72c8dee2fbb5d3d0db41e5e5057d45af08ab90096fd0",
+          "request": {
+            "canonical_json": "{\"action_timestamp_utc\":\"2035-02-01T12:00:00Z\",\"actor_subject_id\":\"synthetic-actor\",\"command_id\":\"spack_83207ca4bba7d86ad71b72c8dee2fbb5d3d0db41e5e5057d45af08ab90096fd0\",\"contract_version\":\"spine.notification-profile-bindings.v1\",\"item_archetype_id\":\"archetype_1\",\"notification_profile_id\":\"profile_5\",\"owner\":{\"owner_kind\":\"subject\",\"owner_subject_id\":\"synthetic-owner\"}}",
+            "digest": "535969833390a6ee47ad735f4e15afba10c75fb7023fa580aa92938d088b8fa0"
+          },
+          "response": {
+            "json_text": "{\"ok\":true,\"command\":\"notification_profile.binding.set\",\"response_contract\":\"spine.notification-profile-bindings.v1\",\"effect\":\"notification_profile_binding_set\",\"status\":\"active\",\"receipt\":{\"command_receipt_id\":\"receipt_6\",\"command_id\":\"spack_83207ca4bba7d86ad71b72c8dee2fbb5d3d0db41e5e5057d45af08ab90096fd0\",\"effect\":\"notification_profile_binding_set\",\"semantic_facts_hash\":\"535969833390a6ee47ad735f4e15afba10c75fb7023fa580aa92938d088b8fa0\",\"created_at_utc\":\"2035-02-01T12:00:00Z\"},\"notification_profile_binding_id\":\"binding_binding_6\",\"item_archetype_id\":\"archetype_1\",\"notification_profile_id\":\"profile_5\",\"compatible_item_types\":[\"event\"]}",
+            "digest": "d8ab47fb4acc7e1bd2da0db28c67d8f3a350bc842814e4c40dad0412f0678d25"
+          },
+          "receipt": {
+            "family": "catalog",
+            "command_receipt_id": "receipt_6",
+            "effect": "notification_profile_binding_set",
+            "semantic_facts_hash": "535969833390a6ee47ad735f4e15afba10c75fb7023fa580aa92938d088b8fa0",
+            "created_at_utc": "2035-02-01T12:00:00Z"
+          },
+          "post_observation": {
+            "object_key": "binding:flight",
+            "owner": {
+              "owner_kind": "subject",
+              "owner_subject_id": "synthetic-owner"
+            },
+            "status": "active",
+            "root_id": "archetype_1",
+            "revision_id": null,
+            "binding_id": "binding_binding_6",
+            "revision_contract": null,
+            "value": {
+              "canonical_json": "{\"item_archetype_id\":\"archetype_1\",\"notification_profile_id\":\"profile_5\"}",
+              "digest": "8dbd7cb63d655b3afd590e855c382ea8fb18d86db6a1303a127a88244a6fe8d3"
+            }
+          }
+        }
+      ],
+      "unresolved_submission": null,
+      "next_action_id": null,
+      "content_identity": {
+        "algorithm": "sha256",
+        "canonical_json_version": "spine.canonical-json.v1",
+        "derivation_version": "spine.pack-apply-checkpoint-digest.v2",
+        "digest": "bd7c745205edf42b38089f233cdfa90befc860d298b55118a351ab3a3e740fd0"
+      }
+    },
+    "state": "applied",
+    "failure": null,
+    "unattempted_action_ids": [],
+    "content_identity": {
+      "algorithm": "sha256",
+      "canonical_json_version": "spine.canonical-json.v1",
+      "derivation_version": "spine.pack-apply-result-digest.v2",
+      "digest": "218b8304a0a19ec316c1a81947b9c72ad75e0024c1aa0f9da425969c38a2cd78"
+    }
+  }
+}

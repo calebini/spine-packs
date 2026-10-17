@@ -1,0 +1,72 @@
+# FR-3 initial-apply readiness
+
+Date: 2026-10-17. The operator requested committing the clean FR-2 re-audit and
+beginning implementation. Audit evidence was committed as `16e5f4a`; nothing was
+pushed. Normative authority remains `specs/implementation-plan.md` and
+`specs/installer-artifacts-v2.md`.
+
+## This increment
+
+FR-3 starts at the required exact-baseline execution-contract refresh. The exact
+Spine commit `8f3c50b6fd1b4aa534e50925b7417a7a80d19122` exists locally. All 20
+`upstream/` schema inputs in `installer-spine-0.10.0-inventory.json` were compared
+with `git show <exact-pin>:<path>` and match their recorded SHA-256 hashes. No
+HEAD substitution, Spine checkout modification, build, ledger or Spine command
+execution was needed for this synthetic contract increment.
+
+The new fixture index pins two separate initial-only flight flows for runtime
+0.10.0/schema 19, plus the unchanged historical 0.9.1 sources. An independent
+test-only refresh helper regenerates manifest/plan/approval identities, all
+command IDs, submitted requests, correlated responses and checkpoint/results.
+Returned IDs and receipts are synthetic; they are not captured public-CLI proof.
+The current read-only planner must reproduce the independent plans exactly.
+
+Eight focused contract tests cover all 11 configuration write kinds, all
+producer-dependent request slots, prepared and accepted prefixes, first-action
+and later partial failures, stale/incomplete approvals, exact version/contract
+requirements and malformed receipt/owner/root/byte evidence for every command.
+Official Draft 2020-12 validation uses the exact 0.10.0 offline public closure.
+The old fixtures and their recovery/verification claims are preserved unchanged.
+
+This does **not** prove filesystem durability, real response validation, writes,
+continuation, verification or package qualification. No runtime code, schema,
+released pack or existing compatibility allowlist changes in this increment.
+The component-scaffold guidance keeps the work in the existing contracts/tests
+layout without introducing a new runtime architecture.
+
+## Verification
+
+- Repository verifier: passed, 166 required files.
+- Focused FR-3 contract suite: eight tests passed without skips.
+- Complete official Draft 2020-12 contract suite: 98 tests passed without skips.
+- Required system-Python contract command: 98 tests ran, 33 skipped because
+  development `jsonschema` is unavailable there; the complete gate above used
+  `/private/tmp/spine-packs-fr2-0100.WbU0lE/env/bin/python`.
+- Complete runtime suite: 142 tests passed without skips.
+- `git diff --check` and explicit new-file whitespace checks: passed.
+
+Reproduce the focused gate with a development interpreter providing `jsonschema`:
+
+```sh
+python -m unittest discover -s tests/contract -p 'test_fr3_artifact_contract.py'
+```
+
+## Next gate and implementation
+
+1. Focused contract review of the exact-0.10.0 initial-apply refresh. An external
+   Whetstone invocation still needs a separately staged, approved payload.
+2. Implement command-specific serializers and response/readback validators.
+   Preserve catalog, facet and rendering receipt distinctions; never treat a
+   response output or planned producer as acceptance by itself.
+3. Implement initial-only apply orchestration with exact approval and fresh
+   preflight, an explicit 11-write allowlist, prepared-before-submit and
+   accepted-before-consumer durable checkpoints, binding guards and partial
+   failure results. Keep the read-only planner transport write-disabled.
+4. Add filesystem/transport fault-injection tests at every durability boundary,
+   including rendering size checks after resolving real IDs. Preserve all v1
+   behavior and reject successor continuation/verify until FR-4 authorization.
+
+No product decision is needed to refresh these synthetic fixtures. Curated
+flight fields, templates and disclosure choices remain FR-6 decisions. The
+historical verification label naming 0.9.1 is explicitly not refreshed here:
+FR-4 must settle its 0.10.0 successor before implementing verification.

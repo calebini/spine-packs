@@ -22,6 +22,10 @@ recovery, verify or released-pack installation. See
 [implementation sequence](specs/implementation-plan.md). Existing v1 supported
 baselines and released pack bytes are unchanged.
 
+FR-3 has begun with separate exact-0.10.0 initial-apply contract fixtures and
+tests. The executor remains disabled pending its focused contract gate; see
+[FR-3 readiness](docs/fr3-initial-apply-readiness.md).
+
 Spine remains the sole authority for installed archetypes, notification
 profiles, bindings, receipts, and ownership. The installer may translate a
 reviewed pack into operations, but it must use Spine's existing public command

@@ -1,7 +1,8 @@
 # Facet/rendering installer artifacts v2
 
-Status: reviewed FR-1 contracts; FR-2 read-only planning separately authorized.
-Successor apply/recovery/verify are not authorized by this document.
+Status: reviewed FR-1 contracts; implemented FR-2 read-only planning. The operator
+has authorized beginning FR-3 initial apply, with a focused contract review before
+the runtime write boundary. Successor recovery/verify remain unauthorized.
 Read `facet-rendering-packs.md` first. The exact
 Spine pin is `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime `0.10.0`, schema
 `19`. Existing v1 artifacts, runtime compatibility and released packs are unchanged.
@@ -260,3 +261,19 @@ they are not pack releases. Saved execution/recovery scenarios are test evidence
 not results from a real installer. FR-2/3/4 still require transport, observation,
 durability and fault-injection tests; FR-5 still requires exact-package public
 CLI qualification. Contract test success does not waive bounded review.
+
+### FR-3 exact-baseline initial execution fixtures
+
+`contracts/installer-fr3-fixture-manifest.v2.json` indexes separate exact-0.10.0
+synthetic initial-apply flows. They use the existing v2 schemas, the 18-contract
+execution union and the complete 0.10.0 public closure; no additional artifact
+version or runtime range is introduced. Their provenance pins the unchanged
+0.9.1 source fixtures. Runtime implementation MUST NOT derive command IDs or
+acceptance from the fixture's synthetic returned IDs. Dependent requests may
+consume actual public response outputs only after complete evidence validation
+and durable acceptance of the producer.
+
+The refresh covers initial apply/checkpoint/result evidence only. The preceding
+`captured_responses_only_spine_0.9.1` verification label remains historical FR-1
+evidence, not a qualified label for 0.10.0 verification. A successor verification
+label and execution/recovery qualification remain FR-4 gates, not FR-3 defaults.

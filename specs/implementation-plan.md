@@ -313,8 +313,9 @@ committed; FR-2 read-only planning is operator-authorized, with the historical
 lookup blocker resolved by the explicitly adopted 0.10.0 pin below. The separately approved 14-file bounded audit completed
 with one minor clarification, addressed by a local wording patch; see the
 [audit disposition](../whetstone_runs/facet-rendering-spec-audit-001/local-assessment.md).
-No successor write/recovery runtime, curated pack rewrite, deployment,
-release or additional external review is authorized here. Source baseline: Spine
+FR-3 initial apply work is now separately operator-authorized, subject to the
+focused contract gate below. Successor recovery/verify, curated pack rewrite,
+deployment, release and additional external review remain unauthorized. Source baseline: Spine
 `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, `0.10.0` / `19`, explicitly approved
 on 2026-10-16. The earlier 0.9.1 pin and gate remain historical evidence.
 The prior audit covers the original proposal,
@@ -397,8 +398,31 @@ recovery or verify are enabled. New 0.10.0 inventory/closure and synthetic
 cross-root public transcripts supplement, not replace, the reviewed FR-1 files.
 Independent test and provenance results are recorded in `docs/fr2-qualification.md`.
 
-Next: review this bounded FR-2 change and its exact payload (external review
-requires fresh approval), then separately authorize FR-3 initial apply. Before
-FR-3, refresh execution-specific 0.10.0 fixtures and evidence labels without
-rewriting 0.9.1 fixtures. FR-6 product decisions remain pending; this synthetic
-flight gate approves no curated fields, labels, templates or disclosure policy.
+The focused FR-2 re-audit passed with no findings; its evidence is committed as
+`16e5f4a`. See `whetstone_runs/facet-rendering-fr2-recheck-001/`. The operator
+subsequently authorized beginning FR-3 initial apply. FR-6 product decisions
+remain pending; this synthetic flight gate approves no curated fields, labels,
+templates or disclosure policy.
+
+### FR-3 initial contract increment (2026-10-17)
+
+The execution-fixture refresh is authored under the exact 0.10.0 inventory and
+offline closure. `contracts/installer-fr3-fixture-manifest.v2.json` pins separate
+synthetic create/update flows and their unchanged 0.9.1 sources. The new flows
+cover all 11 initial write kinds, typed dependency consumers, complete approval,
+prepared/accepted checkpoint shapes and partial results, including failure at
+the first submitted action. Plan, approval, command, evidence and checkpoint
+digests are regenerated, not relabelled. The existing FR-2 planner must reproduce
+these independently refreshed plans exactly.
+
+These are contract tests, not proof of actual writes or filesystem ordering.
+No executor or write transport is enabled by this increment. Next: focused
+review of this contract increment (external payload requires fresh approval),
+then implement FR-3 command serializers/evidence validation, write allowlist,
+initial apply orchestration and durable publication/fault-injection tests.
+Retain the existing read-only plan guard and unchanged v1 execution path.
+
+Do not refresh or claim successor recovery/verification in this increment.
+The old verification evidence label belongs to the preserved FR-1 fixtures;
+the exact-0.10.0 verification label and fixtures must be reviewed before FR-4.
+See `docs/fr3-initial-apply-readiness.md` for gate results and limitations.

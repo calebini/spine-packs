@@ -16,6 +16,12 @@ The draft successor machine layer is specified in
 under `tests/contract/`, not `src/spine_packs/`. Saved synthetic execution and
 recovery fixtures are not results from an implemented successor installer.
 
+FR-3 initial apply work is authorized to begin with the exact-0.10.0 contract
+fixture refresh. The focused contract gate precedes enabling the write boundary;
+see `implementation-plan.md` and `../docs/fr3-initial-apply-readiness.md`.
+This first increment changes no runtime dispatch or transport. Recovery and
+verify remain FR-4 work, outside the current authorization.
+
 ## Relationship
 
 FR-2 adds `facet_manifest`, `facet_graph`, `facet_contracts`, `facet_inventory`,
