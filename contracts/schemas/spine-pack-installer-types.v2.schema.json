@@ -1579,7 +1579,10 @@
           ]
         },
         "receipt_readback": {
-          "const": "captured_responses_only_spine_0.9.1"
+          "enum": [
+            "captured_responses_only_spine_0.9.1",
+            "captured_responses_only_spine_0.10.0"
+          ]
         },
         "disclosure": {
           "const": "separate_operator_configuration_required"
@@ -1631,6 +1634,29 @@
         "disclosure",
         "state",
         "content_identity"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "environment": {
+                "properties": {"runtime_version": {"const": "0.10.0"}},
+                "required": ["runtime_version"]
+              }
+            },
+            "required": ["environment"]
+          },
+          "then": {
+            "properties": {
+              "receipt_readback": {"const": "captured_responses_only_spine_0.10.0"}
+            }
+          },
+          "else": {
+            "properties": {
+              "receipt_readback": {"const": "captured_responses_only_spine_0.9.1"}
+            }
+          }
+        }
       ],
       "additionalProperties": false
     },

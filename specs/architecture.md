@@ -25,7 +25,9 @@ supplies request/evidence helpers; `facet_apply` and `facet_apply_transport` now
 integrate initial apply. The runtime audit's repair findings are closed by a
 passing focused recheck; see `implementation-plan.md` for current status and
 evidence. Exact installed-package/public-Spine qualification remains FR-5 work.
-Recovery and verify remain FR-4 work, outside the current authorization.
+FR-4 now begins with an authorized recovery/verify contract and fixture refresh;
+its focused contract recheck has passed, while runtime continuation/verify
+remain disabled.
 
 ## Relationship
 

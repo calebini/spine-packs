@@ -24,6 +24,14 @@ and update evidence against this same closure. It preserves the 0.9.1 execution
 fixtures and introduces no schema, compatibility-range or released-pack change.
 It is a pre-implementation contract gate, not successor apply qualification.
 
+The additive FR-4 contract gate introduces the 0.10.0 captured-response
+verification label, structurally paired with the exact environment. Historical
+0.9.1 fixtures retain their original label and bytes. Recovery/verify companions
+reference unchanged FR-3 sources; no new runtime, schema pair, command or contract
+union is admitted. See `installer-artifacts-v2.md`. Runtime continuation/verify
+remain disabled after the passing contract recheck; package qualification
+remains FR-5 work.
+
 ## Compatibility dimensions
 
 The old 0.9.1 manifest/artifact declarations remain decodable solely to preserve

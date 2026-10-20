@@ -1,8 +1,9 @@
 # Facet/rendering installer artifacts v2
 
-Status: reviewed FR-1 contracts; implemented FR-2 read-only planning. The operator
-has authorized beginning FR-3 initial apply, with a focused contract review before
-the runtime write boundary. Successor recovery/verify remain unauthorized.
+Status: reviewed FR-1 contracts; implemented FR-2 planning and FR-3 initial apply.
+FR-3 repair findings are closed. FR-4 begins with the operator-authorized
+recovery/verify contract and fixture refresh below; runtime continuation/verify
+remain disabled pending focused contract review. This is not FR-5 qualification.
 Read `facet-rendering-packs.md` first. The exact
 Spine pin is `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime `0.10.0`, schema
 `19`. Existing v1 artifacts, runtime compatibility and released packs are unchanged.
@@ -250,8 +251,10 @@ identity. Current schema/rendering heads and all reference edges must match;
 historical availability alone is insufficient. Unrelated unselected changes do
 not fail final verification (but do fail continuation).
 
-`receipt_readback=captured_responses_only_spine_0.9.1` and
-`disclosure=separate_operator_configuration_required` are mandatory. No missing
+`receipt_readback` MUST be `captured_responses_only_spine_0.9.1` for historical
+0.9.1 environments or `captured_responses_only_spine_0.10.0` for exact 0.10.0
+environments. Cross-pairing is invalid structurally, not just semantically.
+`disclosure=separate_operator_configuration_required` remains mandatory. No missing
 receipt is repaired by replay in verify. No result claims item creation,
 disclosure approval, rendering correctness or notification delivery.
 
@@ -273,7 +276,146 @@ acceptance from the fixture's synthetic returned IDs. Dependent requests may
 consume actual public response outputs only after complete evidence validation
 and durable acceptance of the producer.
 
-The refresh covers initial apply/checkpoint/result evidence only. The preceding
-`captured_responses_only_spine_0.9.1` verification label remains historical FR-1
-evidence, not a qualified label for 0.10.0 verification. A successor verification
-label and execution/recovery qualification remain FR-4 gates, not FR-3 defaults.
+That FR-3 refresh covers initial apply/checkpoint/result evidence only. Its
+fixtures remain unchanged. The historical 0.9.1 verification label is not relabelled
+in place; the following additive FR-4 gate supplies the 0.10.0 evidence.
+
+## FR-4 exact-baseline recovery and verification contract gate
+
+The operator authorized this contract/fixture increment on 2026-10-18. It MUST
+NOT enable continuation/verify, invoke Spine, allocate a ledger, or qualify a
+package. Runtime work follows focused review. The command inventory remains
+exactly 12 reads, 11 configuration writes and 18 execution contracts at
+`8f3c50b6fd1b4aa534e50925b7417a7a80d19122`. Verification uses only the read side;
+recovery may eventually replay only the existing first unresolved configuration
+request. No command or baseline is added. Existing v1 and 0.9.1 bytes remain valid.
+
+### Continuation admission versus acceptance
+
+Sources are an exact same-execution checkpoint (including a complete checkpoint
+after result-publication loss) or a validated terminal `partial` result. Reject
+`applied`, `not_applied`, mixed-version, torn, oversized, digest-invalid,
+noncontiguous or uncorrelated sources before target access. The manifest, plan,
+complete approval, execution, owner, exact environment including ledger identity,
+target and request derivations MUST agree. A source is never edited or merged;
+continuation destinations are new, private and distinct, under the inherited
+collision/no-clobber/durability rules. Admission failure emits an error, not a
+new `not_applied` claim about an interrupted execution.
+
+Validate the complete bounded fresh public observation before candidate
+comparison, using the existing two-pass algorithm and global limits. Compare
+forward from the original preimage, not inverse fingerprints for new catalogs.
+The only candidates are the accepted prefix, or that prefix plus exactly the
+first durable unresolved request. Retain original immutable revision preimages
+in execution lineage after head changes, even after the last consumer moves.
+All untouched entries/history and remaining suffix preconditions must agree.
+Fresh public fingerprints are validated independently; no new Spine snapshot
+hash is invented. Synthetic fixture fingerprints are calculated test values,
+not captured public observations.
+
+Validate a provisional candidate's full desired semantic projection, exact
+owner/key/root, decoder, current head and reference edges. Schema IDs use exact
+revision lookup without root probing. Rendering candidates additionally require
+public record hash, exact create/publish provenance and root/revision identity;
+a reduced semantic projection alone cannot prove those facts. Facet public
+readback cannot establish receipt identity or actor/time provenance. Never invent
+that proof. Reuse of a known immutable revision ID with a different root,
+decoder or revision body is contradictory evidence. Mutable profile metadata is
+not part of that immutable revision body.
+
+Retain a private copy of the validated full rendering candidate record through
+replay correlation, including immutable creation provenance. The replay record
+MUST agree with that candidate record; a matching reduced projection is not
+enough. For publish, creation attribution may belong to an earlier execution;
+it need not equal the current publication actor/command/time, but cannot change
+between candidate and replay evidence.
+
+Candidate admission is NOT acceptance: it leaves the checkpoint prefix and
+original request unchanged. Provisional IDs MUST NOT fill consumer slots or
+replace expected revisions/CAS inputs. Replay the original canonical request,
+command ID, actor and timestamp. Validate the family-specific response and fresh
+readback, including all exposed candidate IDs and rendering provenance, before
+durably accepting it. Revision-producing non-noop updates require a distinct
+revision ID even when replay reports `changed=false`; metadata-only updates
+retain revision ID/decoder. A metadata-update response's revision ID MUST equal
+both the preserved post-observation revision ID and the approved preimage revision
+ID. No-op cannot explain planned semantic drift. If
+genuine no-op candidates are identical, deduplicate the state but still replay;
+the current planner emits no actions for retained definitions, so a retained
+object is not converted into a synthetic no-op write for this fixture gate.
+
+Immediately recheck either binding before replay/submission. In the uncertain
+post-action candidate case, require that exact admitted binding; otherwise
+require the prefix-expected binding or absence. Keep the original facet
+`expected_binding_id` (including null); never rewrite it to the post-binding ID.
+Default bindings gain no new CAS guarantee. Preserve the single-operator posture.
+
+Publish the admitted checkpoint at a new destination before submitting a retry;
+publish prepared and accepted checkpoints under FR-3 durability rules. Complete
+checkpoints can produce an applied result without writes after fresh validation.
+After admission, uncertainty or suffix failure is `partial`, preserving the
+accepted prefix and exact unresolved request where one exists. Publication errors
+stop without success. No rollback, new execution to bypass uncertainty, request
+regeneration or speculative suffix is allowed.
+
+### Verification correlation and failure precedence
+
+The CLI contract remains `verify --manifest MANIFEST --plan PLAN [--result RESULT]
+--output VERIFICATION`, without approval, selection or continuation inputs.
+Validate outer result syntax/schema/digest/size before public observation. A bad
+outer artifact is invalid input with no verification artifact. A well-formed
+artifact with invalid embedded evidence, plan/approval/execution correlation or
+coverage instead produces `response_evidence=invalid` and `state=mismatch` after
+successful fresh observation. It MUST NOT be ignored for no-write plans.
+
+Approval digest correlation is checksum-only: reconstruct the unique closed v2
+approval preimage from the plan's update IDs, result execution and the two true
+assertions, then correlate its digest and every captured request/response. This
+neither issues approval nor authenticates its operator. No separate approval
+file, write replay, receipt read, disclosure read or disclosure write is allowed.
+
+For plans with writes, valid complete applied evidence is `complete`; absent or
+valid partial/not-applied evidence is `missing`. Preserve a supplied result digest
+for such plans even when its embedded evidence is invalid. No-write plans use
+`not_required` with a null result digest, unless supplied evidence is invalid.
+Missing/invalid coverage always prevents success. Unresolved identities cannot
+be guessed from current content: report an unprovable selected object as blocked
+while retaining its actual observed projection. This does not turn unavailable
+or corrupt public readback into an object-level mismatch: observation failures
+abort under their owning environment/transport/input contracts.
+
+Resolve expected identities from approved retained observations and validated
+captured responses only. Check every selected active object, current schema and
+rendering head, exact facet-schema and rendering pins and profile decoder.
+Historical availability alone cannot satisfy an advanced head. Archetypes and
+ordinary v1 profiles retain their existing semantic-equivalence rule; same-target
+default-binding replacement alone is not drift. Facet bindings and v2 profile
+pins use the exact successor identity comparison. Unrelated unselected changes
+do not fail final verification, although they fail continuation. Independent
+verification need not retain unused execution-lineage rows; it still validates
+all historical evidence needed by current selected pins.
+
+Successful state requires all selected objects equivalent and coverage complete
+or not required. Completed mismatch emits the sealed verification artifact and
+exit 10; success exits 0. Target/environment or malformed/incomplete observation
+failures emit their existing specific error, never a fabricated mismatch/success.
+The two baseline-paired receipt labels assert captured responses only, never
+independent receipt readback, disclosure readiness, item creation or delivery.
+
+### Synthetic fixture and implementation boundary
+
+`contracts/installer-fr4-fixture-manifest.v2.json` pins two companion fixtures to
+unchanged FR-3 sources, with complete prefix views, fresh verification and result
+envelopes. It enumerates all 36 prepared/response-loss/accepted boundaries across
+the two six-action flows (11 distinct commands). The independent test-only oracle
+and negative mutations cover admission, replay, references, immutable lineage,
+provenance, binding rechecks, evidence coverage and receipt-label cross-pairing.
+No artifact version, new recovery artifact or runtime package module is added.
+These are synthetic contract vectors, not simulated filesystem durability,
+actual public-CLI response captures or FR-5 installed-package proof.
+
+Next: focused bounded contract review with explicit payload approval. Only then
+proceed to runtime observation/admission, continuation/durability and read-only
+verification increments, each with focused fault tests. Keep all existing v1
+recovery/verify tests and v2 runtime rejection guards until the new boundary is
+reviewed and implemented. Curated flight choices remain FR-6 operator decisions.

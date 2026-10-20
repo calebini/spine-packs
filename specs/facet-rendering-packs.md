@@ -1,6 +1,9 @@
 # Facet-aware packs: successor contract proposal
 
-Status: reviewed FR-1 contracts; operator-authorized FR-2 read-only planner.
+Status: reviewed FR-1 contracts; implemented FR-2 planning and FR-3 initial apply.
+FR-4 recovery/verify contract and fixture refresh is operator-authorized;
+its focused contract recheck has passed, while runtime continuation/verify
+remain disabled.
 Revision-readback baseline adopted on 2026-10-16. Normative language below defines
 the proposed successor, not additional authority for the current installer.
 

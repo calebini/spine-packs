@@ -313,9 +313,12 @@ committed; FR-2 read-only planning is operator-authorized, with the historical
 lookup blocker resolved by the explicitly adopted 0.10.0 pin below. The separately approved 14-file bounded audit completed
 with one minor clarification, addressed by a local wording patch; see the
 [audit disposition](../whetstone_runs/facet-rendering-spec-audit-001/local-assessment.md).
-FR-3 initial apply work is now separately operator-authorized, subject to the
-focused contract gate below. Successor recovery/verify, curated pack rewrite,
-deployment, release and additional external review remain unauthorized. Source baseline: Spine
+FR-3 initial apply is implemented and its repair findings are closed. FR-4 is
+authorized to begin with its recovery/verify contract and fixture refresh;
+The focused contract recheck has passed; runtime continuation/verify remain
+disabled and are not activated by this checkpoint.
+Curated pack rewrite, deployment, release, FR-5 qualification and additional
+external review remain unauthorized. Source baseline: Spine
 `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, `0.10.0` / `19`, explicitly approved
 on 2026-10-16. The earlier 0.9.1 pin and gate remain historical evidence.
 The prior audit covers the original proposal,
@@ -515,3 +518,51 @@ synthetic tests and the passing review cannot substitute for it. FR-5 follows
 the separately authorized FR-4 implementation and requires its own setup scope;
 do not start it as review bookkeeping. No staging, release, packaging-completion
 or operator-installation claim follows from this closure.
+
+### FR-4 recovery/verify contract increment (2026-10-18)
+
+The FR-3 repair checkpoint is committed as `52b30e2`; no push was requested.
+The operator authorized proceeding with FR-4, starting at the required contract
+and fixture refresh rather than immediately enabling runtime recovery/verify.
+This supersedes earlier pending-authorization wording without rewriting audits.
+
+The additive shared-schema change pairs the 0.10.0 environment with
+`captured_responses_only_spine_0.10.0`, retaining the historical 0.9.1 pair and
+rejecting cross-pairing. No v1 contract or released artifact changes. Separate
+hash-pinned companions extend unchanged FR-3 create/update sources with complete
+prefix views, verification and envelopes. All 36 interruption boundaries across
+11 commands are indexed; new negative/positive test-only oracles distinguish
+admission from replay acceptance, exact references, immutable lineage,
+provenance, binding guards and verification evidence/selection scope.
+
+The exact Spine commit exists and all 20 upstream schema inputs plus the
+revision-readback authority pins match its Git tree. No HEAD substitution,
+Spine execution, checkout edit, ledger allocation or package build occurred.
+Current results, evidence limitations and the staged bounded review scope are
+recorded in `../docs/fr4-contract-readiness.md`.
+
+The approved 20-file bounded FR-4 contract audit completed with two major
+test-oracle correlation findings; both were reproduced locally. The operator
+authorized the narrow repairs: metadata response IDs now correlate to both the
+expected and post-observation revisions; a private full rendering candidate
+record now survives admission for exact replay-record comparison, including
+creation provenance from earlier executions. Four focused regressions cover
+resealed metadata evidence through checkpoint/verification, all three creation
+provenance fields, valid earlier creation attribution and private record copies.
+The original audit and approved payload are preserved unchanged under
+`whetstone_runs/facet-rendering-fr4-contract-audit-001/`. These are local fixes,
+not independent reviewer closure; a focused recheck needs new payload approval.
+Post-patch checks passed 22 focused tests, 121 official contract tests without
+skips, 180 runtime tests, the 178-file repository verifier and whitespace checks.
+See the separate `patch-followup.md` in that audit root for evidence and limits.
+
+The explicitly approved focused contract recheck passed with its boundary
+preserved and zero findings on 2026-10-20. See the retained
+[report](../whetstone_runs/facet-rendering-fr4-contract-recheck-001/change_audit/change_audit_report.md).
+The operator authorized a local checkpoint, not a push or runtime activation.
+
+Next implementation step: public observation/forward admission and historical
+readback; same-execution replay and durable continuation with fault injection;
+independent read-only exact-pin verification. This contract increment keeps
+runtime CLI guards intact and adds no code under `src/spine_packs/`. FR-5
+disposable/installed qualification and FR-6 product/release choices stay separate.

@@ -1,0 +1,343 @@
+{
+  "stage": "FR-4 recovery/verify contract refresh; synthetic only; runtime disabled",
+  "spine_commit": "8f3c50b6fd1b4aa534e50925b7417a7a80d19122",
+  "runtime_version": "0.10.0",
+  "ledger_schema": "19",
+  "inventory": "contracts/installer-spine-0.10.0-inventory.json",
+  "fixtures": [
+    {
+      "path": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "sha256": "cf7725c962840972ebc4eb99289ae991325a30b83b1ab71c8b55c23b2a143f44"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "sha256": "cc8b004dca0fe5dafc710a761e70fef2a53bffa62804501ea51628b97d63156d"
+    }
+  ],
+  "preserved_inputs": [
+    {
+      "path": "contracts/installer-spine-0.9.1-inventory.json",
+      "sha256": "5837583b796de6b9f9fc90ea511851b271cdbdfcb63fc6a0028e54bc5003282a"
+    },
+    {
+      "path": "contracts/installer-spine-0.10.0-inventory.json",
+      "sha256": "e4694cfa53fd274df466420cbcca69af71da704a7917381c90f07bfc9a30d2a2"
+    },
+    {
+      "path": "contracts/installer-fixture-manifest.v2.json",
+      "sha256": "d51ff079bb1ca14324f066ac156235e91dcc26ff024ebdd2db5af1a51fbe84e7"
+    },
+    {
+      "path": "contracts/installer-fr3-fixture-manifest.v2.json",
+      "sha256": "8c6f83fb688d91d94222ddf9a675b01a68895835eb17c7eb816a63653dd660af"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/flight-create.json",
+      "sha256": "22b8a79711c58ce1ca7331dc906679fecba7f32ca5f733e33dbcbb7748d05dee"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/flight-update.json",
+      "sha256": "8ab30f967392fbd1ac1f4afdec08b9eb07171fd091818c2bd83ebcf320db4866"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/flight-create-0.10.0.json",
+      "sha256": "9e3e586c95c69e7cdcf944b135fd1e8f52d938dbcc5953f94cb62a82d1945065"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/flight-update-0.10.0.json",
+      "sha256": "ce240e8aec27474e3e086d512eb76ec9766f08250c3b057567773d67a940a146"
+    },
+    {
+      "path": "contracts/schemas/spine-pack-installer-types.v1.schema.json",
+      "sha256": "a4d10169ac9823f22d926d110966919a61e41cb6cc0661db18e8c83162a7f717"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0.json",
+      "sha256": "a0d73767e5fdfe91080328bf7486734d283c134bb57db76c0af95d9644917d9f"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.1.json",
+      "sha256": "4ad2c351af5fb575827590efa45dabceebff8dfbf6aa3acea5a0ee143c45b491"
+    }
+  ],
+  "recovery_vectors": [
+    {
+      "id": "flight-create-0-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "0",
+      "boundary": "prepared_before_submit",
+      "command": "item_archetype.create"
+    },
+    {
+      "id": "flight-create-0-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "0",
+      "boundary": "accepted_response_lost",
+      "command": "item_archetype.create"
+    },
+    {
+      "id": "flight-create-0-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "0",
+      "boundary": "accepted_durable",
+      "command": "item_archetype.create"
+    },
+    {
+      "id": "flight-create-1-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "1",
+      "boundary": "prepared_before_submit",
+      "command": "facet_schema.create"
+    },
+    {
+      "id": "flight-create-1-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "1",
+      "boundary": "accepted_response_lost",
+      "command": "facet_schema.create"
+    },
+    {
+      "id": "flight-create-1-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "1",
+      "boundary": "accepted_durable",
+      "command": "facet_schema.create"
+    },
+    {
+      "id": "flight-create-2-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "2",
+      "boundary": "prepared_before_submit",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-create-2-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "2",
+      "boundary": "accepted_response_lost",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-create-2-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "2",
+      "boundary": "accepted_durable",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-create-3-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "3",
+      "boundary": "prepared_before_submit",
+      "command": "notification_rendering_definition.create"
+    },
+    {
+      "id": "flight-create-3-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "3",
+      "boundary": "accepted_response_lost",
+      "command": "notification_rendering_definition.create"
+    },
+    {
+      "id": "flight-create-3-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "3",
+      "boundary": "accepted_durable",
+      "command": "notification_rendering_definition.create"
+    },
+    {
+      "id": "flight-create-4-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "4",
+      "boundary": "prepared_before_submit",
+      "command": "notification_profile.create"
+    },
+    {
+      "id": "flight-create-4-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "4",
+      "boundary": "accepted_response_lost",
+      "command": "notification_profile.create"
+    },
+    {
+      "id": "flight-create-4-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "4",
+      "boundary": "accepted_durable",
+      "command": "notification_profile.create"
+    },
+    {
+      "id": "flight-create-5-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "5",
+      "boundary": "prepared_before_submit",
+      "command": "notification_profile.binding.set"
+    },
+    {
+      "id": "flight-create-5-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "5",
+      "boundary": "accepted_response_lost",
+      "command": "notification_profile.binding.set"
+    },
+    {
+      "id": "flight-create-5-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "prefix_length": "5",
+      "boundary": "accepted_durable",
+      "command": "notification_profile.binding.set"
+    },
+    {
+      "id": "flight-update-0-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "0",
+      "boundary": "prepared_before_submit",
+      "command": "item_archetype.revise"
+    },
+    {
+      "id": "flight-update-0-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "0",
+      "boundary": "accepted_response_lost",
+      "command": "item_archetype.revise"
+    },
+    {
+      "id": "flight-update-0-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "0",
+      "boundary": "accepted_durable",
+      "command": "item_archetype.revise"
+    },
+    {
+      "id": "flight-update-1-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "1",
+      "boundary": "prepared_before_submit",
+      "command": "facet_schema.publish"
+    },
+    {
+      "id": "flight-update-1-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "1",
+      "boundary": "accepted_response_lost",
+      "command": "facet_schema.publish"
+    },
+    {
+      "id": "flight-update-1-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "1",
+      "boundary": "accepted_durable",
+      "command": "facet_schema.publish"
+    },
+    {
+      "id": "flight-update-2-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "2",
+      "boundary": "prepared_before_submit",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-update-2-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "2",
+      "boundary": "accepted_response_lost",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-update-2-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "2",
+      "boundary": "accepted_durable",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-update-3-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "3",
+      "boundary": "prepared_before_submit",
+      "command": "notification_rendering_definition.publish"
+    },
+    {
+      "id": "flight-update-3-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "3",
+      "boundary": "accepted_response_lost",
+      "command": "notification_rendering_definition.publish"
+    },
+    {
+      "id": "flight-update-3-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "3",
+      "boundary": "accepted_durable",
+      "command": "notification_rendering_definition.publish"
+    },
+    {
+      "id": "flight-update-4-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "4",
+      "boundary": "prepared_before_submit",
+      "command": "notification_profile.metadata.update"
+    },
+    {
+      "id": "flight-update-4-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "4",
+      "boundary": "accepted_response_lost",
+      "command": "notification_profile.metadata.update"
+    },
+    {
+      "id": "flight-update-4-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "4",
+      "boundary": "accepted_durable",
+      "command": "notification_profile.metadata.update"
+    },
+    {
+      "id": "flight-update-5-prepared_before_submit",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "5",
+      "boundary": "prepared_before_submit",
+      "command": "notification_profile.revise"
+    },
+    {
+      "id": "flight-update-5-accepted_response_lost",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "5",
+      "boundary": "accepted_response_lost",
+      "command": "notification_profile.revise"
+    },
+    {
+      "id": "flight-update-5-accepted_durable",
+      "fixture": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "prefix_length": "5",
+      "boundary": "accepted_durable",
+      "command": "notification_profile.revise"
+    }
+  ],
+  "verification_receipt_readback": "captured_responses_only_spine_0.10.0",
+  "required_negative_families": [
+    "changed_replay_request",
+    "prefix_gap",
+    "stale_approval_execution_target_environment",
+    "unrelated_or_suffix_change",
+    "immutable_revision_reuse",
+    "wrong_candidate_owner_root_semantics",
+    "missing_history",
+    "rendering_provenance",
+    "candidate_not_acceptance",
+    "immediate_binding_recheck",
+    "wrong_replay_identity",
+    "receipt_label_cross_pairing",
+    "current_head_or_reference_drift",
+    "missing_partial_invalid_response_evidence",
+    "invalid_outer_artifact",
+    "no_write_invalid_supplied_evidence"
+  ],
+  "excluded": [
+    "runtime continuation or verification",
+    "filesystem durability qualification",
+    "Spine subprocess or ledger access",
+    "installed-package qualification",
+    "product content or disclosure approval"
+  ]
+}
