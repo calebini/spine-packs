@@ -48,6 +48,8 @@ REQUIRED_FILES = (
     "src/spine_packs/facet_apply.py",
     "src/spine_packs/facet_apply_transport.py",
     "tests/runtime/test_facet_apply.py",
+    "src/spine_packs/facet_recovery.py",
+    "tests/runtime/test_facet_recovery.py",
     "tests/fixtures/installer-v2/fr2-cross-root.json",
     "tests/fixtures/installer-v2/revision-readback-0.10.0.json",
     "contracts/installer-fixture-manifest.v2.json",

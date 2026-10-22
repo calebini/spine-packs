@@ -1,4 +1,4 @@
-"""Bounded, two-pass public catalog observation for FR-2. No writes or SQL."""
+"""Bounded two-pass public catalog/lineage observation. No writes or SQL."""
 from copy import deepcopy
 import re
 import unicodedata
@@ -138,8 +138,25 @@ def snapshots(entries):
 
 
 class Observer:
-    def __init__(self, transport, owner, selection, page_size=100):
+    def __init__(self, transport, owner, selection, page_size=100, *, lineage=()):
         require(type(page_size) is int and 1 <= page_size <= 100, 'invalid_page_size')
+        require(isinstance(lineage, (list, tuple)) and len(lineage) <= 4096, 'observation_entry_capacity')
+        self.lineage = deepcopy(lineage)
+        identities = {}
+        for row in self.lineage:
+            validate(row, 'spine-pack-installer-types.v2.schema.json', 'state', category=ENVIRONMENT)
+            family = row['object_key'].split(':', 1)[0]
+            decoders = {'archetype': ('spine.item-archetypes.v1',),
+                        'profile': ('spine.notification-profiles.v1', 'spine.notification-profiles.v2'),
+                        'schema': ('spine.facet-schemas.v1',),
+                        'rendering': ('spine.notification-rendering-definitions.v1',)}
+            require(row['owner'] == owner and row['root_id'] is not None
+                    and row['revision_id'] is not None and row['binding_id'] is None
+                    and row['revision_contract'] in decoders.get(family, ()), 'invalid_lineage_pin')
+            identity = (row['object_key'], row['root_id'], row['revision_contract'])
+            require(row['revision_id'] not in identities or identities[row['revision_id']] == identity,
+                    'conflicting_lineage_pin')
+            identities[row['revision_id']] = identity
         self.transport, self.owner, self.selection, self.limit = transport, owner, set(selection), page_size
         self.entries, self.history, self.raw, self.exact = {}, {}, {}, {}
         self.fingerprints = {}
@@ -232,6 +249,44 @@ class Observer:
             require((selection['projection'] == 'location_label' and field['type'] == 'reference' and field['target_kind'] == 'location')
                     or (selection['projection'] == 'value' and field['type'] != 'reference'), 'rendering_projection_mismatch')
 
+    def retain_lineage(self):
+        """Fresh exact reads for history no longer required by current pins.
+
+        Saved bodies never substitute for public reads. Use only known root /
+        revision pairs, sharing this pass's cache and observation budget.
+        """
+        seen = set()
+        for expected in self.lineage:
+            key, revision = expected['object_key'], expected['revision_id']
+            if (key, revision) in seen:
+                continue
+            seen.add((key, revision))
+            current = self.entries.get(key)
+            require(current is not None and current['root_id'] == expected['root_id'],
+                    'lineage_root_not_in_catalog')
+            family = key.split(':', 1)[0]
+            if family == 'schema':
+                row = self.schema_revision(revision)
+            elif family == 'rendering':
+                row = self.rendering_revision(expected['root_id'], revision)
+            else:
+                require(family in ('archetype', 'profile'), 'invalid_lineage_family')
+                if revision == current['revision_id']:
+                    row = current
+                else:
+                    prefix, _, id_field, _ = FAMILIES[family]
+                    shown = self.read(prefix + '.show', **{id_field: expected['root_id'],
+                                                         prefix + '_revision_id': revision})
+                    record = shown[prefix]
+                    original = self.raw[key]
+                    require({k: v for k, v in record.items() if k != 'revision'} ==
+                            {k: v for k, v in original.items() if k != 'revision'},
+                            'lineage_root_changed')
+                    row = state(family, record, self.owner, historical=True)
+                    self.add(row, True)
+            require(row['object_key'] == key and row['root_id'] == expected['root_id']
+                    and row['revision_id'] == revision, 'lineage_revision_mismatch')
+
     def collect(self):
         for family, (prefix, key_field, id_field, collection) in FAMILIES.items():
             all_rows = []
@@ -293,6 +348,7 @@ class Observer:
                         definition = self.rendering_revision(ref['notification_rendering_definition_id'], ref['notification_rendering_definition_revision_id'])
                         require(set(body(row['value'])['revision']['compatible_item_types'])
                                 <= set(body(definition['value'])['compatible_item_types']), 'profile_rendering_type_mismatch')
+        self.retain_lineage()
         entries = [self.entries[k] for k in sorted(self.entries)]
         public = snapshots(entries)
         require(all(self.fingerprints[r['catalog']] == r['digest'] for r in public), 'public_fingerprint_mismatch')
@@ -303,7 +359,7 @@ class Observer:
         return view
 
 
-def observe(transport, owner, selection, *, page_size=100, content_contracts=()):
+def observe(transport, owner, selection, *, page_size=100, content_contracts=(), lineage=()):
     budget = ObservationBudget()
     transport.begin_observation(budget)
     transport.check_target()
@@ -317,8 +373,8 @@ def observe(transport, owner, selection, *, page_size=100, content_contracts=())
         return dict(runtime_version='0.10.0', ledger_schema_current='19', ledger_schema_implemented='19',
                     ledger_instance_id=info['ledger_instance_id'], advertised_contracts=info['implemented_contract_versions'])
     env = environment()
-    first = Observer(transport, owner, selection, page_size).collect()
-    second = Observer(transport, owner, selection, page_size).collect()
+    first = Observer(transport, owner, selection, page_size, lineage=lineage).collect()
+    second = Observer(transport, owner, selection, page_size, lineage=lineage).collect()
     require(first == second and env == environment(), 'catalog_changed_between_passes')
     require(budget.clock() < budget.deadline, 'observation_capacity')
     transport.check_target()

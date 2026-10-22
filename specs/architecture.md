@@ -1,6 +1,6 @@
 # Architecture
 
-## Facet/rendering successor — FR-2 planning and FR-3 initial apply
+## Facet/rendering successor — planning, initial apply and recovery foundation
 
 [facet-rendering-packs.md](facet-rendering-packs.md) proposes a separate manifest
 and installer-artifact v2 path for exact Spine `0.10.0` / schema `19` at
@@ -25,9 +25,9 @@ supplies request/evidence helpers; `facet_apply` and `facet_apply_transport` now
 integrate initial apply. The runtime audit's repair findings are closed by a
 passing focused recheck; see `implementation-plan.md` for current status and
 evidence. Exact installed-package/public-Spine qualification remains FR-5 work.
-FR-4 now begins with an authorized recovery/verify contract and fixture refresh;
-its focused contract recheck has passed, while runtime continuation/verify
-remain disabled.
+FR-4's recovery/verify contract and fixture recheck has passed. Its first runtime
+increment adds read-only historical lineage observation and exact accepted-prefix
+comparison; CLI continuation/verify remain disabled.
 
 ## Relationship
 
@@ -38,6 +38,20 @@ selection assertions and private no-clobber output publication. V1 dispatch and
 supported-baseline allowlists are unchanged. The planning transport rejects every
 write; initial v2 apply uses its own 11-command adapter. Successor continuation
 and verify are rejected before target access.
+
+`facet_recovery.RecoveryPreimage` revalidates the approved graph, checkpoint,
+contiguous accepted evidence and any exact unresolved request before observation.
+It derives a private semantic/identity comparison view by forwarding only
+accepted effects. Original immutable revisions survive head changes in lineage;
+known revisions cannot change root, decoder or body. Mutable profile metadata
+is not immutable revision content, but remains part of full state comparison.
+`observe_prefix` uses the existing two-pass public observer and global budget,
+with exact historical reads deduplicated only within each pass. Saved lineage
+bodies are hints, never fresh read evidence. Current public fingerprints are
+validated independently, not predicted or republished as Spine attestations.
+Only the exact accepted-prefix state passes this foundation. It does not admit
+prefix-plus-one candidates, replay writes, publish checkpoints or implement
+verification. CLI rejection guards remain in place; FR-5 qualification is pending.
 
 `facet_execution.ExecutionContext` checks the manifest, saved plan, observation
 projection and complete approval, and rebuilds the plan before constructing any

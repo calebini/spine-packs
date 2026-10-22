@@ -116,3 +116,13 @@ Exact source/wheel/installed public-CLI qualification remains FR-5 and requires
 separate setup authorization. FR-6 still owns curated flight fields, labels,
 template choices, default/opt-in policy and distribution identity; this gate
 settles none of those product choices. No deployment or publication is implied.
+
+## Subsequent runtime foundation
+
+The reviewed contract checkpoint is `b1379ce`. The operator subsequently
+authorized resuming the local read-only recovery foundation, recorded in
+`../specs/implementation-plan.md`. It adds fresh historical lineage reads and
+exact accepted-prefix comparison, not candidate admission, replay, continuation
+or verify. The contract review above is retained evidence, not independent
+review of this new runtime code. CLI guards remain disabled; no ledger or
+installed-package qualification is part of this increment.

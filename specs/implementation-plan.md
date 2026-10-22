@@ -313,10 +313,10 @@ committed; FR-2 read-only planning is operator-authorized, with the historical
 lookup blocker resolved by the explicitly adopted 0.10.0 pin below. The separately approved 14-file bounded audit completed
 with one minor clarification, addressed by a local wording patch; see the
 [audit disposition](../whetstone_runs/facet-rendering-spec-audit-001/local-assessment.md).
-FR-3 initial apply is implemented and its repair findings are closed. FR-4 is
-authorized to begin with its recovery/verify contract and fixture refresh;
-The focused contract recheck has passed; runtime continuation/verify remain
-disabled and are not activated by this checkpoint.
+FR-3 initial apply is implemented and its repair findings are closed. FR-4's
+recovery/verify contract recheck passed. Its next authorized runtime increment
+adds read-only historical lineage observation and exact accepted-prefix
+comparison; CLI continuation/verify remain disabled.
 Curated pack rewrite, deployment, release, FR-5 qualification and additional
 external review remain unauthorized. Source baseline: Spine
 `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, `0.10.0` / `19`, explicitly approved
@@ -566,3 +566,45 @@ readback; same-execution replay and durable continuation with fault injection;
 independent read-only exact-pin verification. This contract increment keeps
 runtime CLI guards intact and adds no code under `src/spine_packs/`. FR-5
 disposable/installed qualification and FR-6 product/release choices stay separate.
+
+### FR-4 read-only recovery foundation
+
+The reviewed contract checkpoint is `b1379ce`. The operator authorized resuming
+the existing local recovery work, without repeating that contract review. This
+increment implements `facet_recovery.RecoveryPreimage` in the existing package:
+it revalidates the approved graph, checkpoint identity, contiguous accepted
+responses and the exact pending request before target use. It forwards accepted
+effects into a private expected view, retaining immutable revision preimages
+after current consumers move away. It never fabricates public catalog hashes.
+
+`facet_observation` now accepts exact lineage hints. Fresh public historical
+reads cover archetypes, mixed v1/v2 profiles, facet schemas and rendering
+definitions. Only schema revision-addressed lookup is used for schemas, with
+no candidate-root probing. Reads share the existing global observation budget
+and per-pass caches; both complete passes must agree. Hint bodies never replace
+public evidence; wrong owners/roots, contradictory identities, missing evidence,
+corruption and capacity failures fail closed.
+
+The synthetic runtime tests exercise every create/update accepted and prepared
+prefix against the independent FR-4 fixture views, immutable identity rules,
+malformed checkpoints, all historical families, repeated/current/retired pins,
+unreferenced A1 alongside current A2/B2 and pinned B1, failure contracts, global
+budgets and changed second-pass history. These are wire simulations, not real
+Spine or installed-package qualification. Existing fixtures, schemas, released
+packs, v1 behavior and CLI rejection guards are unchanged.
+
+Checks passed: 22 focused recovery-foundation tests, 202 complete runtime tests,
+121 contract tests with the official Draft 2020-12 validator (no skips), the
+180-file repository verifier and whitespace checks, including the new files.
+The required system-Python contract run also passed, with 56 development-
+validator skips covered by the complete official run. An additional synthetic
+historical v2-profile readback check passed. The exact Spine commit was confirmed
+available without invoking Spine or opening a ledger. No external reviewer,
+package build/qualification, commit or push was run for this increment.
+
+This foundation accepts only the exact accepted-prefix comparison. It rejects
+prefix-plus-one states and performs no replay, checkpoint publication,
+continuation, or final verification. Next: implement and fault-test uncertain
+candidate admission and exact replay correlation, then durable continuation and
+independent read-only verify. External runtime review requires separate approved
+payload scope. FR-5 qualification and FR-6 product choices remain pending.

@@ -1,9 +1,10 @@
 # Facet/rendering installer artifacts v2
 
 Status: reviewed FR-1 contracts; implemented FR-2 planning and FR-3 initial apply.
-FR-3 repair findings are closed. FR-4 begins with the operator-authorized
-recovery/verify contract and fixture refresh below; runtime continuation/verify
-remain disabled pending focused contract review. This is not FR-5 qualification.
+FR-3 repair findings are closed. FR-4's recovery/verify contract and fixture
+recheck passed. The first runtime increment adds read-only historical lineage
+observation and exact accepted-prefix comparison, not candidate admission,
+replay or CLI continuation/verify. This is not FR-5 qualification.
 Read `facet-rendering-packs.md` first. The exact
 Spine pin is `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime `0.10.0`, schema
 `19`. Existing v1 artifacts, runtime compatibility and released packs are unchanged.
