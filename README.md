@@ -18,10 +18,12 @@ do not edit released manifests or relax version checks on staging.
 The facet/rendering successor has a separate v2 planner and initial approved
 apply path for the explicit Spine `0.10.0` / schema `19` pin. The runtime audit's
 repair findings are closed by a passing focused recheck; exact package
-qualification remains pending under FR-5. Successor recovery and verify remain
-unavailable; FR-4's contract/fixture recheck has passed, and its first runtime
-increment adds read-only lineage observation and exact checkpoint-prefix
-comparison without enabling those CLI paths. See
+qualification remains pending under FR-5. Successor CLI continuation and verify
+remain unavailable. Following FR-4's passing contract recheck and read-only
+foundation, internal uncertain-response admission, exact replay correlation and
+durable continuation and independent internal read-only verification have
+synthetic runtime coverage, not real-target qualification or independent
+runtime-review closure. See
 [FR-2 qualification](docs/fr2-qualification.md) and the
 [implementation sequence](specs/implementation-plan.md). Existing v1 supported
 baselines and released pack bytes are unchanged.

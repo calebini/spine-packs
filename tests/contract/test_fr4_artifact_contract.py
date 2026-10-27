@@ -379,5 +379,31 @@ class FR4ArtifactTests(unittest.TestCase):
                 fr4.admit(flow,flow['final_checkpoint'],flow['observations'][-1])
                 fr4.verification_check(flow,flow['apply_result'],flow['verification'])
 
+    def test_blocked_resolutions_do_not_verify_from_readable_old_dependency_rows(self):
+        flow=self.flows()[0]; plan=flow['plan']; fresh=deepcopy(flow['observations'][-1])
+        rows={r['object_key']:r for r in fresh['entries']}
+        rows['schema:flight_details']['status']='retired'
+        blocked=sorted(k for k in plan['closure'] if k!='archetype:flight')
+        plan.update(observation=reseal_view(fresh),actions=[],decision_action_ids=[],
+                    blocked_object_keys=blocked,apply_eligible=False)
+        for c in plan['classifications']:
+            is_blocked=c['object_key'] in blocked
+            c.update(classification='blocked' if is_blocked else 'equivalent',observed=rows[c['object_key']],
+                     blocked_reason='retired_definition_or_dependency' if is_blocked else None)
+        for resolution in plan['resolutions']:
+            key=resolution['object_key']; row=rows[key]
+            for field in ('root','revision','binding'):
+                value=row[field+'_id']
+                resolution[field]=(dict(kind='observed',object_key=key,field=field,value=value)
+                                   if key not in blocked and value else None)
+        flow['plan']=o.seal(plan)
+        value=fr4.verification(flow,fresh)
+        self.assertEqual(value['state'],'mismatch')
+        states={r['object_key']:r for r in value['object_results']}
+        self.assertEqual(states['archetype:flight']['state'],'equivalent')
+        for key in blocked:
+            self.assertEqual(states[key]['state'],'blocked')
+            self.assertIsNotNone(states[key]['observed'])
+
 
 if __name__=='__main__':unittest.main()

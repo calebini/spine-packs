@@ -1,4 +1,4 @@
-"""FR-3 initial-only v2 apply; no continuation, recovery, or final verify."""
+"""V2 initial/internal continued apply; CLI continuation and verify stay gated."""
 from copy import deepcopy
 import hashlib
 
@@ -127,16 +127,44 @@ def apply_initial(manifest, plan, approval, transport, writer, *, page_size=100)
         require(fresh == plan, 'stale_plan', STALE)
     except PlanError as exc:
         return result(plan, cp, 'not_applied', exc)
-    if not plan['actions']:
-        writer(deepcopy(cp))
+    return _execute(context, plan, approval, transport, writer, cp, page_size=page_size)
+
+
+def apply_continuation(manifest, plan, approval, source, transport, writer, *, page_size=100):
+    """Internal same-execution boundary; no CLI activation or source overwrite.
+
+    Callers supply an operator-selected source and a new private checkpoint
+    writer. Invalid/stale admission raises before publication or submission.
+    """
+    from .facet_recovery import preflight_continuation
+    manifest, plan, approval, source = deepcopy((manifest, plan, approval, source))
+    admission = preflight_continuation(manifest, plan, approval, source, transport, page_size=page_size)
+    cp = admission.checkpoint()
+    writer(deepcopy(cp))  # New destination durable before retry, even for a complete checkpoint.
+    context = ExecutionContext(manifest, plan, approval)
+    return _execute(context, plan, approval, transport, writer, cp, page_size=page_size,
+                    continuing=True, admission=admission)
+
+
+def _execute(context, plan, approval, transport, writer, cp, *, page_size, continuing=False, admission=None):
+    accepted = deepcopy(cp['accepted_responses'])
+    start = len(accepted)
+    if start == len(plan['actions']):
+        if not continuing: writer(deepcopy(cp))
         return result(plan, cp, 'applied')
-    for action in plan['actions']:
+    for index in range(start, len(plan['actions'])):
+        action = plan['actions'][index]
+        retry = admission if index == start and cp['unresolved_submission'] is not None else None
         try:
-            request = context.materialize(accepted)
+            request = retry.retry_request() if retry is not None else context.materialize(accepted)
             if action['command'] in ('item_archetype.facet_binding.set', 'notification_profile.binding.set'):
-                binding_guard(transport, plan, action, request, page_size)
+                if retry is not None:
+                    current = binding_row(reader(transport, plan, page_size), action, request)
+                    retry.check_binding(current)
+                else:
+                    binding_guard(transport, plan, action, request, page_size)
         except PlanError as exc:
-            return result(plan, cp, 'partial' if accepted else 'not_applied', exc, action['action_id'])
+            return result(plan, cp, 'partial' if accepted or continuing else 'not_applied', exc, action['action_id'])
         pending = dict(action_id=action['action_id'], command_id=request['command_id'],
             submission_state='prepared_or_submitted', request=blob(request))
         cp = checkpoint(plan, approval, accepted, pending)
@@ -144,7 +172,8 @@ def apply_initial(manifest, plan, approval, transport, writer, *, page_size=100)
         try:
             raw_response = transport.write(action['command'], deepcopy(request))
             post = readback(transport, plan, action, request, raw_response, page_size)
-            evidence = context.response_evidence(accepted, raw_response, post)
+            evidence = (retry.replay_evidence(raw_response, post) if retry is not None else
+                        context.response_evidence(accepted, raw_response, post))
             advanced = checkpoint(plan, approval, [*accepted, evidence])
         except (PlanError, ValueError, TypeError, KeyError, RecursionError, OSError) as exc:
             if not isinstance(exc, PlanError):

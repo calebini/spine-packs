@@ -126,3 +126,17 @@ exact accepted-prefix comparison, not candidate admission, replay, continuation
 or verify. The contract review above is retained evidence, not independent
 review of this new runtime code. CLI guards remain disabled; no ledger or
 installed-package qualification is part of this increment.
+
+The operator subsequently authorized completing candidate/replay correlation and
+the next internal durable-continuation increment. Current implementation and
+synthetic test evidence are recorded in `../specs/implementation-plan.md`.
+The contract recheck does not independently review that runtime code. CLI
+continuation/verify and FR-5 qualification remain gated; no external reviewer
+invocation or ledger access is authorized by this progress record.
+
+The next operator-authorized slice adds independent internal read-only
+verification, with synthetic public-command tests and a narrow test-oracle repair
+for blocked/null plan resolutions. See `../specs/implementation-plan.md` for
+current evidence and limits. It neither activates the CLI nor reuses the prior
+contract review as independent runtime-review closure. No new reviewer, real
+ledger or package qualification is part of that slice.

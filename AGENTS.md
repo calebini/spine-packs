@@ -20,9 +20,14 @@ reviewed FR-1 contracts plus implemented FR-2 read-only planning. FR-3 initial
 apply work is operator-authorized, starting with the exact-0.10.0 execution
 fixture refresh and focused contract review before enabling the write boundary.
 FR-4's exact-0.10.0 recovery/verify contract and fixture recheck has passed.
-The next authorized runtime increment is read-only historical lineage observation
-and exact accepted-prefix comparison. CLI continuation/verify remain disabled;
-this foundation does not admit an uncertain candidate or submit/replay writes.
+Read-only historical lineage observation and exact accepted-prefix comparison
+are checkpointed in `3a5e560`. The operator subsequently authorized completing
+uncertain-candidate admission/replay correlation and the next bounded internal
+same-execution continuation increment, with synthetic public-command/durability
+tests only. The next operator-authorized slice adds independent internal
+read-only verification with synthetic public-command tests, no replay, and no
+approval-file input. CLI continuation/verify remain disabled. No real target
+execution, new ledger, installed-package qualification or external review is authorized.
 The explicitly authorized repaired-baseline listing gate may use
 new disposable ledgers through public CLIs only, never an existing ledger.
 For successor installer artifacts, also read `specs/installer-artifacts-v2.md`.
@@ -117,10 +122,15 @@ adapter remains read-only. The runtime audit's repair findings are closed by a
 passing focused recheck recorded in `specs/implementation-plan.md`; exact
 installed-package qualification remains pending under FR-5. FR-4 contract and
 fixture work is authorized; its focused contract recheck passed with zero
-findings. The operator subsequently authorized the read-only recovery foundation
-described above. Runtime continuation/verify remains disabled; neither the
-contract checkpoint nor prefix comparison activates those paths. No new ledger
-or package qualification is part of this increment. Preserve the 0.9.1 inventory,
+findings. The read-only foundation is committed; the operator subsequently
+authorized the admission/replay and internal continuation increments above.
+The FR-2 adapter remains read-only; internal continuation reuses only the FR-3
+11-write adapter and requires fresh admission plus durable checkpoints. Internal
+verification is separately authorized and must use only the FR-2 public read
+adapter, correlate captured responses without granting approval, and never
+invoke apply, recovery, receipt repair or disclosure operations. CLI continuation
+and verify remain disabled. No new ledger or package qualification
+is part of this increment. Preserve the 0.9.1 inventory,
 fixtures and earlier investigation as historical evidence.
 
 For documentation, contract, and planner changes, run:

@@ -315,8 +315,11 @@ with one minor clarification, addressed by a local wording patch; see the
 [audit disposition](../whetstone_runs/facet-rendering-spec-audit-001/local-assessment.md).
 FR-3 initial apply is implemented and its repair findings are closed. FR-4's
 recovery/verify contract recheck passed. Its next authorized runtime increment
-adds read-only historical lineage observation and exact accepted-prefix
-comparison; CLI continuation/verify remain disabled.
+added read-only historical lineage observation and exact accepted-prefix
+comparison. Subsequent authorized increments complete uncertain-response
+admission/replay correlation and internal durable continuation with synthetic
+fault tests. The next authorized slice adds independent internal read-only
+verification; CLI continuation/verify remain disabled.
 Curated pack rewrite, deployment, release, FR-5 qualification and additional
 external review remain unauthorized. Source baseline: Spine
 `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, `0.10.0` / `19`, explicitly approved
@@ -608,3 +611,114 @@ continuation, or final verification. Next: implement and fault-test uncertain
 candidate admission and exact replay correlation, then durable continuation and
 independent read-only verify. External runtime review requires separate approved
 payload scope. FR-5 qualification and FR-6 product choices remain pending.
+
+### FR-4 admission/replay and internal continuation (2026-10-27)
+
+The read-only foundation is checkpointed as `3a5e560`. The operator authorized
+inspecting and finishing the existing local admission/replay work, then picking
+up the next bounded increment. The implementation stays in the existing package
+and test layout, without activating CLI continuation or independent verify.
+
+The pure admission handle validates exactly prefix or prefix-plus-one, preserves
+the original request and all immutable lineage, and correlates replay response
+IDs with the provisional candidate. Full rendering creation/publication records
+are retained privately through replay; available archetype root/revision
+provenance is checked as well. Missing facet provenance is not invented.
+Immediate binding checks use the admitted post-binding only for the unresolved
+candidate, otherwise the approved prefix precondition; CAS inputs never change.
+
+The next bounded increment implements `facet_apply.apply_continuation` internally.
+Checkpoint or terminal-partial sources are fully correlated before target use;
+other terminal results are rejected. Fresh admission uses the real two-pass
+observer, with pending head preimages and a bounded single-record capture in
+both passes under the existing global budget. New private checkpoint publication
+precedes any retry. Initial and continued apply share prepared/accepted durability
+ordering. Completed checkpoints can finish without writes; admission errors
+publish nothing, later failures remain partial, and durability failures propagate
+without manufacturing a result or advancing consumers.
+
+Synthetic tests cover all 11 writes across prepared, lost-response and accepted
+boundaries, both source kinds, complete checkpoints, exact request/ID/metadata
+correlation, full rendering creation evidence, available archetype provenance,
+untouched state, per-pass record drift, binding rechecks, every publication
+boundary, response/readback failures, real private checkpoint files and directory
+fsync failure. Complete public-wire simulations exercise real observation plus
+admission at every prefix and selected replay/suffix flows without stubbing
+preflight. They are not actual Spine execution or installed-package qualification.
+
+Verification passed: 26 focused admission/continuation tests (also repeated with
+official Draft 2020-12 and independent semantic result checks enabled), all 228
+runtime tests, all 121 official contract tests without skips, the 181-file
+repository verifier, and whitespace checks including the new test file. The
+required system-Python contract run also passed with its 56 development-validator
+skips covered by the complete official run. The exact Spine source commit was
+confirmed available; no Spine process or real ledger was used. V1 execution,
+CLI guards, both transport allowlists, all machine contracts and released pack
+bytes remain unchanged. This is local implementation evidence, not independent
+runtime-review closure or publication approval.
+
+Next after this checkpoint: independent read-only successor verification; CLI
+continuation/verify activation must separately wire all input/source/destination
+collision checks and preserve rejection guards until ready. No new ledger,
+Spine checkout mutation, package qualification, external reviewer, commit or push
+is part of this work. No schema, fixture, released pack, command allowlist,
+compatibility range or product-policy choice changes. Runtime review still needs
+its own explicit payload approval; FR-5 and FR-6 remain pending.
+
+### FR-4 independent internal read-only verification
+
+The operator authorized the next bounded slice after internal continuation.
+`facet_verification` uses shared pure saved-plan validation and the existing
+bounded two-pass public observer. It has no apply/recovery/checkpoint path,
+receipt/disclosure command, approval-file input or write/replay call. Known
+immutable lineage checks now live with pure execution evidence so verification
+does not import continuation admission. Apply's strict applicability gate is
+unchanged; existing uncommitted recovery/continuation work is preserved.
+
+Malformed outer apply results fail before target use. Valid-shaped outer results
+with bad nested digests, plan/approval/execution correlation, evidence, coverage
+or unresolved requests produce invalid coverage and mismatch only after fresh
+observation succeeds. Reconstructed approval is checksum correlation only.
+Missing coverage cannot be filled from current convenient IDs. Supplied execution
+claims for ineligible plans are invalid; no-write draft inspection without a
+result still verifies state without making the draft installable.
+
+Selected current heads, exact schema/rendering/facet/profile references and
+decoder identity are checked independently of captured responses. Archetype,
+ordinary-v1 profile and same-target default-binding equivalence are preserved.
+Verification does not retain unused execution history or impose continuation's
+whole-view staleness rule; unrelated valid unselected changes are not excess.
+Public corruption, capacity and missing referenced evidence abort under their
+owning contracts, never as a fabricated object mismatch or success.
+
+One test-only oracle gap was reproduced: blocked plan dependencies with null
+resolutions could be labelled equivalent from readable old rows. The oracle
+now preserves those unresolved blocked identities, with an independent in-memory
+contract regression and matching public-wire runtime test. This tightens existing
+fail-closed requirements without changing schemas or immutable fixture bytes;
+the earlier contract recheck does not independently review this repair/runtime
+increment. No product choice or new compatibility policy is introduced.
+
+Synthetic tests cover released/no-write/draft plans, complete/partial/missing/
+invalid evidence, failure precedence, immutable corruption versus mutable
+metadata drift, active/retired/missing roots, current/historical exact pins,
+equal schema content on another actual root, both profile decoders, unrelated
+changes and no replay/write behavior. Outputs retain the exact 0.10.0 captured-
+response-only label and separate-disclosure requirement.
+
+Verification passed: 24 focused runtime tests, also repeated with the official
+Draft 2020-12 validator and independent semantic oracle enabled; 23 focused FR-4
+contract tests; all 252 runtime tests; all 122 official contract tests without
+skips; the 183-file repository verifier; and whitespace checks, including new
+files. The required system-Python contract run also passed, with 57 development-
+validator skips covered by the complete official run. The exact Spine commit
+was confirmed available without invoking Spine or accessing a ledger. No real
+target or package qualification claim follows from these synthetic results.
+
+Next: checkpoint and bounded FR-4 runtime review, then separately gated CLI
+continuation/verify activation with collision/private-publication/exit handling.
+External review requires explicit payload approval. FR-5 exact installed-package
+qualification and FR-6 product/release decisions remain pending. This increment
+does not invoke Spine, allocate a ledger, qualify a package, deploy, publish,
+commit or push; CLI rejection guards, all public schemas, released artifacts,
+v1 runtime behavior and command allowlists remain unchanged.

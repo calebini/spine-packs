@@ -1,6 +1,6 @@
 # Architecture
 
-## Facet/rendering successor — planning, initial apply and recovery foundation
+## Facet/rendering successor — planning, apply and internal recovery/verification
 
 [facet-rendering-packs.md](facet-rendering-packs.md) proposes a separate manifest
 and installer-artifact v2 path for exact Spine `0.10.0` / schema `19` at
@@ -26,8 +26,10 @@ integrate initial apply. The runtime audit's repair findings are closed by a
 passing focused recheck; see `implementation-plan.md` for current status and
 evidence. Exact installed-package/public-Spine qualification remains FR-5 work.
 FR-4's recovery/verify contract and fixture recheck has passed. Its first runtime
-increment adds read-only historical lineage observation and exact accepted-prefix
-comparison; CLI continuation/verify remain disabled.
+increment added read-only historical lineage observation and exact accepted-prefix
+comparison. Subsequent authorized increments add candidate/replay correlation and
+internal same-execution continuation and independent read-only verification;
+CLI continuation/verify remain disabled.
 
 ## Relationship
 
@@ -49,9 +51,60 @@ is not immutable revision content, but remains part of full state comparison.
 with exact historical reads deduplicated only within each pass. Saved lineage
 bodies are hints, never fresh read evidence. Current public fingerprints are
 validated independently, not predicted or republished as Spine attestations.
-Only the exact accepted-prefix state passes this foundation. It does not admit
-prefix-plus-one candidates, replay writes, publish checkpoints or implement
-verification. CLI rejection guards remain in place; FR-5 qualification is pending.
+`compare_prefix` retains its strict exact-prefix boundary. The separate `admit`
+method admits that prefix or prefix plus only the durable unresolved action,
+without advancing evidence or resolving a suffix producer. Fresh observation
+also retains a pending head advance's original revision and captures the relevant
+full archetype/rendering record in both existing passes under the same budget.
+Available archetype creation/revision provenance and rendering creation/publish
+provenance must correlate. No facet provenance is invented. A private admission
+handle retains rendering records for exact replay comparison, the unchanged retry
+request and the appropriate immediate binding precondition.
+
+`facet_apply.apply_continuation` is an internal service boundary, not CLI
+activation. It validates an operator-selected same-execution checkpoint or
+terminal partial result, performs bounded fresh admission, and publishes the
+admitted checkpoint at a new private destination before retry. It shares the
+existing initial-apply loop: prepared durability before submission and accepted
+durability before consumers. Only validated responses and fresh readback can
+extend the prefix; provisional IDs cannot alter requests or CAS inputs. Complete
+checkpoints can produce applied results without writes after admission.
+Admission failures propagate without publication or a false `not_applied` claim;
+post-admission failures preserve a partial checkpoint, while durability failures
+stop without fabricating terminal success. Source evidence is never overwritten.
+The internal API takes decoded source artifacts and a new checkpoint writer;
+future CLI activation must additionally enforce all source/destination/target
+path-collision checks. CLI rejection guards remain in place. Runtime-review
+closure and FR-5 qualification remain pending.
+
+`facet_verification.verify_installation` is a separate internal read-only
+boundary, with manifest/plan and optional captured apply-result input, no
+approval file. Shared pure plan validation rebuilds saved intent before target
+use without requiring applicability for draft inspection. The stricter execution
+context remains mandatory for validating supplied execution claims. Invalid
+outer result syntax/schema/digest/size fails before public observation; valid
+outer artifacts with contradictory embedded evidence instead yield invalid
+coverage and a completed mismatch after successful fresh reads. Checksum-only
+approval reconstruction neither authorizes writes nor authenticates an operator.
+
+Verification uses the existing complete two-pass observer without retaining
+unused execution lineage or replaying writes. It compares selected active state
+with identities from approved retained observations and validated responses only.
+Schema/rendering heads, facet pins, facet bindings and v2 profile pins remain
+exact; readable old revisions or equal content on another root are insufficient.
+Archetypes, ordinary v1 profiles and same-target default bindings preserve their
+existing equivalence rules. Missing or blocked identities cannot be filled from
+fresh convenient rows, and blocked plan resolutions remain blocked. Unselected
+valid changes alone do not fail verification. Corrupt or unavailable public
+evidence aborts observation rather than becoming an object mismatch.
+
+The sealed v2 result separates captured-response coverage from fresh state, with
+the exact 0.10.0 captured-only receipt label and mandatory separate-disclosure
+marker. No-write draft state may verify without a result, but a supplied execution
+claim for an ineligible plan is invalid. Completed internal verification returns
+verified/mismatch data; CLI publication and exit-0/10 wiring remain gated. It
+never invokes apply, continuation, checkpoint writers, receipt/disclosure reads
+or writes. Synthetic public-command tests are not installed-package qualification.
 
 `facet_execution.ExecutionContext` checks the manifest, saved plan, observation
 projection and complete approval, and rebuilds the plan before constructing any

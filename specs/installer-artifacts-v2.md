@@ -2,9 +2,11 @@
 
 Status: reviewed FR-1 contracts; implemented FR-2 planning and FR-3 initial apply.
 FR-3 repair findings are closed. FR-4's recovery/verify contract and fixture
-recheck passed. The first runtime increment adds read-only historical lineage
-observation and exact accepted-prefix comparison, not candidate admission,
-replay or CLI continuation/verify. This is not FR-5 qualification.
+recheck passed. Following the read-only foundation, subsequent authorized runtime
+increments add candidate/replay correlation, internal durable continuation and
+independent read-only verification.
+CLI continuation/verify remain disabled. This is neither independent runtime-
+review closure nor FR-5 qualification.
 Read `facet-rendering-packs.md` first. The exact
 Spine pin is `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime `0.10.0`, schema
 `19`. Existing v1 artifacts, runtime compatibility and released packs are unchanged.
@@ -385,6 +387,12 @@ while retaining its actual observed projection. This does not turn unavailable
 or corrupt public readback into an object-level mismatch: observation failures
 abort under their owning environment/transport/input contracts.
 
+Objects with blocked/null plan resolutions remain unprovable even if their old
+rows are readable; verification must not report those old rows as equivalent
+desired definitions. A no-write inspection-only draft needs no result. A supplied
+execution claim for an ineligible plan is invalid evidence, even if its prefix
+is empty; checksum reconstruction does not make draft execution applicable.
+
 Resolve expected identities from approved retained observations and validated
 captured responses only. Check every selected active object, current schema and
 rendering head, exact facet-schema and rendering pins and profile decoder.
@@ -415,8 +423,11 @@ No artifact version, new recovery artifact or runtime package module is added.
 These are synthetic contract vectors, not simulated filesystem durability,
 actual public-CLI response captures or FR-5 installed-package proof.
 
-Next: focused bounded contract review with explicit payload approval. Only then
-proceed to runtime observation/admission, continuation/durability and read-only
-verification increments, each with focused fault tests. Keep all existing v1
-recovery/verify tests and v2 runtime rejection guards until the new boundary is
-reviewed and implemented. Curated flight choices remain FR-6 operator decisions.
+The focused bounded contract recheck passed; retained evidence is linked from
+`implementation-plan.md`. Observation/admission and internal continuation now
+have synthetic fault tests. Independent internal verification now has separate
+read-only tests. CLI activation remains a separate increment. Keep all existing
+v1 recovery/verify tests and the v2 CLI
+rejection guards until each new boundary is reviewed and implemented. External
+runtime review requires its own approved payload; curated flight choices remain
+FR-6 operator decisions.

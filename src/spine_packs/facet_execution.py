@@ -115,27 +115,48 @@ def public_body(value):
     return a.parse_json(raw, public_response=True)
 
 
+@guarded(INVALID)
+def validate_saved_plan(manifest, plan):
+    """Rebuild saved intent without requiring an applicable plan or approval."""
+    require(isinstance(manifest, dict) and isinstance(plan, dict), 'invalid_execution_inputs', INVALID)
+    artifact(plan, 'install-plan')
+    req = seal(dict(artifact_schema='spine.pack-install-request.v2', request=plan['request']))
+    validate_inputs(manifest, req)
+    env = plan['environment']
+    require(env['runtime_version'] == BASELINE['runtime']
+            and env['ledger_schema_current'] == env['ledger_schema_implemented'] == BASELINE['schema'],
+            'execution_baseline_mismatch', INVALID)
+    advertised = env['advertised_contracts']
+    require(advertised == sorted(set(advertised)) and set(CONTRACTS) <= set(advertised)
+            and set(manifest['compatibility']['spine_content_contracts']) <= set(advertised)
+            and plan['required_execution_contracts'] == CONTRACTS, 'execution_contracts_mismatch', INVALID)
+    observation(plan['observation'], plan['request']['owner'])
+    require(build_plan(manifest, req, env, plan['observation']) == plan, 'plan_rebuild_mismatch', INVALID)
+
+
+def immutable_lineage(rows, *, category=INVALID):
+    """Immutable revision identity excludes mutable profile root metadata."""
+    known = {}
+    for row in rows:
+        revision = row['revision_id']
+        if revision is None: continue
+        value = body(row['value'])
+        if row['object_key'].startswith('profile:'): value = value['revision']
+        identity = (row['root_id'], row['revision_contract'], value)
+        require(revision not in known or known[revision] == identity,
+                'immutable_revision_contradiction', category)
+        known[revision] = identity
+
+
 class ExecutionContext:
-    """Private copies of an exact approved graph; never an execution capability."""
+    """Exact applicable approved graph; still no transport or write authority."""
 
     @guarded(INVALID)
     def __init__(self, manifest, plan, approval):
         require(all(isinstance(v, dict) for v in (manifest, plan, approval)), 'invalid_execution_inputs', INVALID)
         self._plan, self._approval = deepcopy(plan), deepcopy(approval)
         p, ap = self._plan, self._approval
-        artifact(p, 'install-plan'); artifact(ap, 'install-approval')
-        req = seal(dict(artifact_schema='spine.pack-install-request.v2', request=p['request']))
-        validate_inputs(manifest, req)
-        env = p['environment']
-        require(env['runtime_version'] == BASELINE['runtime']
-                and env['ledger_schema_current'] == env['ledger_schema_implemented'] == BASELINE['schema'],
-                'execution_baseline_mismatch', INVALID)
-        advertised = env['advertised_contracts']
-        require(advertised == sorted(set(advertised)) and set(CONTRACTS) <= set(advertised)
-                and set(manifest['compatibility']['spine_content_contracts']) <= set(advertised)
-                and p['required_execution_contracts'] == CONTRACTS, 'execution_contracts_mismatch', INVALID)
-        observation(p['observation'], p['request']['owner'])
-        require(build_plan(manifest, req, env, p['observation']) == p, 'plan_rebuild_mismatch', INVALID)
+        validate_saved_plan(manifest, p); artifact(ap, 'install-approval')
         require(p['pack']['status'] == 'released', 'draft_plan_not_applicable', PACK_INVALID)
         require(not p['blocked_object_keys'], 'blocked_plan_not_applicable', 'blocked_desired_state')
         require(p['apply_eligible'] and ap['plan_digest'] == p['content_identity']['digest']

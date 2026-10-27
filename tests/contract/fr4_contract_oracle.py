@@ -217,6 +217,9 @@ def verification(flow, fresh, result=None, *, environment=None, target=None):
     expected = {r['object_key']: r for r in plan['observation']['entries']}
     expected.update({e['post_observation']['object_key']: e['post_observation'] for e in accepted})
     pending = {a['object_key'] for a in plan['actions'][len(accepted):]}
+    # Blocked resolutions are null: readable old rows are not proof of the
+    # desired configuration, and verify must not resolve them speculatively.
+    pending.update(plan['blocked_object_keys'])
     rows = {r['object_key']: r for r in fresh['entries']}
     results = []
     for key in plan['closure']:

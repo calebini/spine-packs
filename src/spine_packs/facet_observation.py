@@ -359,7 +359,9 @@ class Observer:
         return view
 
 
-def observe(transport, owner, selection, *, page_size=100, content_contracts=(), lineage=()):
+def observe(transport, owner, selection, *, page_size=100, content_contracts=(), lineage=(), record_key=None):
+    require(record_key is None or (isinstance(record_key, str)
+            and record_key.split(':', 1)[0] in ('archetype', 'rendering')), 'invalid_record_capture')
     budget = ObservationBudget()
     transport.begin_observation(budget)
     transport.check_target()
@@ -373,9 +375,15 @@ def observe(transport, owner, selection, *, page_size=100, content_contracts=(),
         return dict(runtime_version='0.10.0', ledger_schema_current='19', ledger_schema_implemented='19',
                     ledger_instance_id=info['ledger_instance_id'], advertised_contracts=info['implemented_contract_versions'])
     env = environment()
-    first = Observer(transport, owner, selection, page_size, lineage=lineage).collect()
-    second = Observer(transport, owner, selection, page_size, lineage=lineage).collect()
+    first_reader = Observer(transport, owner, selection, page_size, lineage=lineage)
+    first = first_reader.collect()
+    second_reader = Observer(transport, owner, selection, page_size, lineage=lineage)
+    second = second_reader.collect()
     require(first == second and env == environment(), 'catalog_changed_between_passes')
+    if record_key is not None:
+        require(first_reader.raw.get(record_key) == second_reader.raw.get(record_key), 'catalog_changed_between_passes')
     require(budget.clock() < budget.deadline, 'observation_capacity')
     transport.check_target()
+    if record_key is not None:
+        return env, first, deepcopy(first_reader.raw.get(record_key))
     return env, first
