@@ -557,10 +557,16 @@ def forward(view, evidence):
     entries = {r['object_key']: r for r in result['entries']}
     history = {(r['object_key'], r['revision_id']): r for r in result['historical_revisions']}
     for e in evidence:
-        post = e['post_observation']; old = entries.get(post['object_key'])
+        post = deepcopy(e['post_observation']); old = entries.get(post['object_key'])
         if old and old['revision_id'] and old['revision_id'] != post['revision_id']:
             history[(old['object_key'], old['revision_id'])] = old
         entries[post['object_key']] = post
+        if post['object_key'].startswith('profile:'):
+            root_metadata = unblob(post['value'])['metadata']
+            for prior in history.values():
+                if (prior['object_key'], prior['root_id']) == (post['object_key'], post['root_id']):
+                    content = unblob(prior['value'])
+                    prior['value'] = blob(dict(content, metadata=deepcopy(root_metadata)))
     result['entries'] = [entries[k] for k in sorted(entries)]
     result['historical_revisions'] = [history[k] for k in sorted(history)]
     # Old fingerprints are independently validated by the observer; they cannot

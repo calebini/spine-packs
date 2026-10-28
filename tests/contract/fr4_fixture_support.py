@@ -60,3 +60,48 @@ def replay_evidence(evidence):
         response.update(replayed=True, changed=False)
         reseal_response(evidence, response)
     return evidence
+
+
+def profile_history_flow(decoder='v2'):
+    """In-memory metadata-update regression; never rewrite pinned fixture bytes.
+
+    Add a distinct preexisting profile revision, then rebind saved command and
+    receipt identities to the changed plan. No runtime helper computes the
+    expected historical metadata or immutable content.
+    """
+    from fr3_fixture_support import reseal_response
+    flow = oracle.load(oracle.ROOT / 'tests/fixtures/installer-v2/flight-update-0.10.0.json')
+    plan = flow['plan']; view = plan['observation']
+    old = deepcopy(next(r for r in view['entries'] if r['object_key'].startswith('profile:')))
+    old['revision_id'] = 'profile_revision_before_5'
+    old['revision_contract'] = 'spine.notification-profiles.' + decoder
+    value = oracle.unblob(old['value'])
+    value['revision']['templates'][0]['late_handling']['grace_seconds'] = '1800'
+    if decoder == 'v1':
+        for template in value['revision']['templates']:
+            template.pop('rendering')
+    old['value'] = oracle.blob(value)
+    view['historical_revisions'].append(old)
+    view['historical_revisions'].sort(key=lambda r: (r['object_key'], r['revision_id']))
+    view['digest'] = oracle.observation_digest(view)
+    flow['plan'] = plan = oracle.seal(plan)
+    flow['approval']['plan_digest'] = plan['content_identity']['digest']
+    flow['approval'] = oracle.seal(flow['approval'])
+    for action, evidence in zip(plan['actions'], flow['accepted_responses'], strict=True):
+        request = oracle.unblob(evidence['request'])
+        request['command_id'] = oracle.command_id(plan, flow['approval'], action)
+        evidence.update(command_id=request['command_id'], request=oracle.blob(request))
+        response = oracle.unblob(evidence['response'], True)
+        response.get('receipt', response)['command_id'] = request['command_id']
+        if evidence['receipt']['family'] == 'catalog':
+            response['receipt']['semantic_facts_hash'] = oracle.hash_value(request)
+        elif evidence['receipt']['family'] == 'rendering':
+            response['record']['published']['command_id'] = request['command_id']
+        reseal_response(evidence, response)
+    flow['initial_checkpoint'].update(plan_digest=plan['content_identity']['digest'],
+        approval_digest=flow['approval']['content_identity']['digest'])
+    flow['initial_checkpoint'] = oracle.seal(flow['initial_checkpoint'])
+    # Old saved terminal artifacts belong to the original plan, not this case.
+    for key in ('final_checkpoint', 'prepared_checkpoint', 'apply_result', 'partial_result', 'empty_prefix_partial'):
+        del flow[key]
+    return flow

@@ -140,3 +140,12 @@ for blocked/null plan resolutions. See `../specs/implementation-plan.md` for
 current evidence and limits. It neither activates the CLI nor reuses the prior
 contract review as independent runtime-review closure. No new reviewer, real
 ledger or package qualification is part of that slice.
+
+The operator-approved FR-4 runtime audit of `8810c30` subsequently reported two
+major findings. Both were reproduced and locally repaired on 2026-10-28: the
+missing v2 error-fact definition and forwarding of current mutable profile
+metadata into historical comparison rows. The normative clarification and
+current progress are in `../specs/installer-artifacts-v2.md` and
+`../specs/implementation-plan.md`. Original audit inputs and reports remain
+unchanged. These repairs do not independently close that review, activate CLI
+continuation/verify or qualify an installed package.

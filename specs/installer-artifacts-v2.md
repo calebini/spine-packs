@@ -326,6 +326,16 @@ that proof. Reuse of a known immutable revision ID with a different root,
 decoder or revision body is contradictory evidence. Mutable profile metadata is
 not part of that immutable revision body.
 
+Historical profile readback combines the requested immutable revision with the
+root's current `display_name` and `description`. When forwarding an explained
+profile post-state, its mutable metadata MUST therefore also be projected onto
+retained historical rows for that exact profile key and root. Preserve their
+revision IDs, decoders and immutable revision bodies. This changes only the
+private expected comparison view, never saved plan/response evidence. Full
+current-root metadata still compares exactly; unexplained metadata changes,
+foreign roots and immutable historical changes remain failures. Do not normalize
+away discrepancies in fresh public evidence or fabricate a public fingerprint.
+
 Retain a private copy of the validated full rendering candidate record through
 replay correlation, including immutable creation provenance. The replay record
 MUST agree with that candidate record; a matching reduced projection is not

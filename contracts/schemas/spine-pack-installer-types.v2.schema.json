@@ -216,6 +216,15 @@
       },
       "additionalProperties": false
     },
+    "generatedId": {
+      "type": "object",
+      "required": ["name", "value"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "value": { "$ref": "#/$defs/id" }
+      },
+      "additionalProperties": false
+    },
     "error": {
       "type": "object",
       "required": [

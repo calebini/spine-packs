@@ -7,7 +7,7 @@ from unittest.mock import patch
 import facet_artifact_oracle as o
 import fr4_contract_oracle as fr4
 from fr3_fixture_support import checkpoint_at, current_contracts, reseal_response
-from fr4_fixture_support import BASELINE, RECEIPT, load_flow, refresh, replay_evidence
+from fr4_fixture_support import BASELINE, RECEIPT, load_flow, refresh, replay_evidence, profile_history_flow
 
 INDEX = o.ROOT / 'contracts/installer-fr4-fixture-manifest.v2.json'
 
@@ -56,6 +56,62 @@ class FR4ArtifactTests(unittest.TestCase):
                 if wrong == value['receipt_readback']: continue
                 changed = deepcopy(value); changed['receipt_readback'] = wrong
                 with self.assertRaises(fr4.ValidationError): o.artifact(o.seal(changed))
+
+    def test_nonempty_write_rejection_facts_are_closed_and_validate_independently(self):
+        value = deepcopy(self.flows()[1]['empty_prefix_partial'])
+        error = value['failure']['error']
+        error.update(category='spine_command_rejection', code='spine_write_rejected',
+                     message='Apply stopped: spine_write_rejected.',
+                     facts=[dict(name='spine_error_code', value='stale_version')])
+        o.artifact(o.seal(value))
+        for fact in ({'name': 'spine_error_code'}, {'name': '', 'value': 'stale_version'},
+                     {'name': 'spine_error_code', 'value': False},
+                     {'name': 'spine_error_code', 'value': 'stale_version', 'extra': 'invalid'}):
+            changed = deepcopy(value); changed['failure']['error']['facts'] = [fact]
+            with self.subTest(fact=fact), self.assertRaises(fr4.ValidationError):
+                o.artifact(o.seal(changed))
+
+    def test_v2_transitive_schema_references_resolve_even_without_exercised_values(self):
+        pending = ['spine-pack-installer-types.v2.schema.json']; visited = set()
+        def references(value):
+            if isinstance(value, dict):
+                if '$ref' in value: yield value['$ref']
+                for child in value.values(): yield from references(child)
+            elif isinstance(value, list):
+                for child in value: yield from references(child)
+        while pending:
+            name = pending.pop()
+            if name in visited: continue
+            visited.add(name); document = o.load(o.SCHEMAS / name)
+            for ref in references(document):
+                target, _, fragment = ref.partition('#'); target = target or name
+                self.assertNotIn('/', target); self.assertNotIn(':', target)
+                resolved = o.load(o.SCHEMAS / target)
+                for token in fragment.split('/')[1:]:
+                    resolved = resolved[token.replace('~1', '/').replace('~0', '~')]
+                pending.append(target)
+
+    def test_profile_metadata_update_preserves_history_and_admits_explained_change(self):
+        for decoder in ('v1', 'v2'):
+            f = profile_history_flow(decoder); n = 4
+            original = deepcopy(f['plan']['observation'])
+            # Construct fresh expected evidence independently of forward().
+            fresh = deepcopy(self.flows()[1]['observations'][n+1])
+            history = deepcopy(original['historical_revisions'][0])
+            content = o.unblob(history['value']); revision = deepcopy(content['revision'])
+            content['metadata'] = o.unblob(f['accepted_responses'][n]['post_observation']['value'])['metadata']
+            history['value'] = o.blob(content)
+            fresh['historical_revisions'].append(history)
+            fresh['historical_revisions'].sort(key=lambda r:(r['object_key'], r['revision_id']))
+            fresh = reseal_view(fresh)
+            for accepted in (False, True):
+                cp = checkpoint_at(f, n+int(accepted), not accepted)
+                with self.subTest(decoder=decoder, accepted=accepted):
+                    handle = fr4.admit(f, cp, fresh,
+                        provisional=None if accepted else f['accepted_responses'][n]['post_observation'])
+                    self.assertEqual(handle['kind'], 'prefix' if accepted else 'prefix_plus_one')
+            self.assertEqual(o.unblob(history['value'])['revision'], revision)
+            self.assertEqual(f['plan']['observation'], original)
 
     def test_every_indexed_boundary_and_all_eleven_commands(self):
         index = o.load(INDEX); commands = set(); boundaries = set()

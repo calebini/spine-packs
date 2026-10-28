@@ -21,6 +21,7 @@ from test_facet_apply import Catalog, TRANSCRIPT, independent, current_contracts
 from test_facet_execution import flow
 from test_facet_recovery import companion
 from test_facet_planning import CURSORS, Replay, fixture
+from fr4_fixture_support import profile_history_flow
 
 
 def prepared(f, n):
@@ -475,6 +476,68 @@ class ContinuationTests(unittest.TestCase):
 
 
 class CaptureTests(unittest.TestCase):
+    def test_profile_history_survives_metadata_admission_replay_and_continuation(self):
+        for decoder in ('v1', 'v2'):
+            f = profile_history_flow(decoder); before = deepcopy(f); n = 4
+            view = deepcopy(companion('flight-update')['observations'][n+1])
+            history = deepcopy(f['plan']['observation']['historical_revisions'][0])
+            view['historical_revisions'].append(history)
+            view['historical_revisions'].sort(key=lambda r:(r['object_key'], r['revision_id']))
+            # Public historical show rebuilds the current root with the exact
+            # old revision, so it exposes new mutable metadata on the old ID.
+            for accepted in (False, True):
+                cp = checkpoint(f['plan'], f['approval'], f['accepted_responses'][:n+1]) if accepted else prepared(f,n)
+                start = n+int(accepted); t = PublicCatalog(f,start,reseal_view(deepcopy(view)),lost=not accepted)
+                saved = []
+                with self.subTest(decoder=decoder, accepted=accepted), patch.dict('os.environ', CURSORS):
+                    value = apply_continuation(f['manifest'],f['plan'],f['approval'],cp,t,
+                        lambda cp:saved.append(deepcopy(cp)),page_size=1)
+                    self.assertEqual(value['state'],'applied')
+                    self.assertEqual(len(t.writes),len(f['plan']['actions'])-start)
+                    self.assertEqual(saved[0],cp)
+                    self.assertEqual(t.writes[0][1],body(f['accepted_responses'][start]['request']))
+                    history_reads=[r for cmd,r in t.reads if cmd=='notification_profile.show'
+                                   and r.get('notification_profile_revision_id')==history['revision_id']]
+                    self.assertEqual(len(history_reads),2)
+                    if independent.Draft202012Validator is not None:
+                        with current_contracts(): independent.result_check(f['plan'],f['approval'],value)
+                    # A later restart must also retain the revision superseded
+                    # by the suffix, with its new current-root metadata.
+                    finished = deepcopy(companion('flight-update')['observations'][-1])
+                    finished['historical_revisions'].append(deepcopy(history))
+                    finished['historical_revisions'].sort(key=lambda r:(r['object_key'],r['revision_id']))
+                    t2 = PublicCatalog(f,6,reseal_view(finished)); saved2 = []
+                    again = apply_continuation(f['manifest'],f['plan'],f['approval'],value['checkpoint'],t2,
+                        lambda cp:saved2.append(deepcopy(cp)),page_size=1)
+                    self.assertEqual(again['state'],'applied'); self.assertFalse(t2.writes)
+                    self.assertEqual(saved2,[value['checkpoint']])
+            self.assertEqual(f,before)
+
+    def test_profile_history_fix_keeps_unexplained_metadata_and_immutable_changes_closed(self):
+        f = profile_history_flow(); n = 5
+        cp = checkpoint(f['plan'],f['approval'],f['accepted_responses'][:n])
+        view = deepcopy(companion('flight-update')['observations'][n])
+        historical = deepcopy(f['plan']['observation']['historical_revisions'][0])
+        view['historical_revisions'].append(historical)
+        view['historical_revisions'].sort(key=lambda r:(r['object_key'],r['revision_id']))
+        for fault in ('metadata', 'revision', 'decoder'):
+            t = PublicCatalog(f,n,reseal_view(deepcopy(view))); writer = Mock()
+            if fault == 'metadata':
+                row = t.rows[historical['object_key']]; content = body(row['value'])
+                content['metadata']['description'] = 'Unapproved root metadata'
+            else:
+                row = next(r for r in t.history if r['revision_id']==historical['revision_id'])
+                content = body(row['value'])
+                if fault == 'revision':
+                    content['revision']['templates'][0]['late_handling']['grace_seconds'] = '1200'
+                else:
+                    row['revision_contract'] = 'spine.notification-profiles.v1'
+                    for template in content['revision']['templates']: template.pop('rendering')
+            row['value'] = blob(content)
+            with self.subTest(fault=fault), patch.dict('os.environ',CURSORS), self.assertRaises(PlanError):
+                apply_continuation(f['manifest'],f['plan'],f['approval'],cp,t,writer,page_size=1)
+            self.assertFalse(t.writes); writer.assert_not_called()
+
     def test_real_observer_admits_every_saved_prefix_and_single_lost_action(self):
         for name in ('flight-create','flight-update'):
             f=flow(name); views=companion(name)['observations']

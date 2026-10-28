@@ -722,3 +722,42 @@ qualification and FR-6 product/release decisions remain pending. This increment
 does not invoke Spine, allocate a ledger, qualify a package, deploy, publish,
 commit or push; CLI rejection guards, all public schemas, released artifacts,
 v1 runtime behavior and command allowlists remain unchanged.
+
+### FR-4 runtime audit repairs (2026-10-28)
+
+The operator-approved reviewer-only audit of checkpoint `8810c30` completed with
+`needs_revision` and two major findings, zero blockers. The retained report is
+`whetstone_runs/facet-rendering-fr4-runtime-audit-001/change_audit/change_audit_report.md`.
+This is a runtime assessment, separate from the earlier passing contract recheck.
+The operator authorized fixing the findings after independent local assessment.
+
+Both defects reproduced before their fixes. The v2 shared error schema now
+defines its existing `generatedId` reference as a closed bounded string
+`{name, value}` pair. A controlled public write rejection can produce its required
+partial result with nonempty facts and the exact prepared request intact.
+Regressions cover empty/nonempty accepted prefixes, secret-safe errors, official
+schema validation, malformed facts and unused transitive schema references.
+
+Forward recovery comparison now projects an explained profile's current mutable
+metadata onto that same root's retained historical rows. Original revision IDs,
+decoders and immutable bodies remain exact; fresh public evidence and saved
+plan/response artifacts are not rewritten. The independent contract oracle uses
+the clarified rule. In-memory vectors exercise preexisting v1/v2 history, both
+durable acceptance and lost-response replay, suffix execution and a later
+completed-checkpoint restart through the real two-pass public observer.
+Unexplained metadata changes, altered historical bodies and decoder changes
+still fail before checkpoint publication or submission.
+
+Verification passed: all 255 runtime tests; all 125 official Draft 2020-12
+contract tests without skips, including 26 focused FR-4 tests; all three new
+runtime regressions repeated with the official validator and independent result
+oracle enabled; the 183-file repository verifier; and whitespace checks. The
+required system-Python contract run also passed, with 60 development-validator
+skips covered by the complete official run. Exact Spine source availability was
+checked through Git only; no Spine process, ledger or package qualification was
+used. Approved audit payload hashes remain unchanged.
+
+These are local repairs, not independent review closure. No saved fixture or
+released pack bytes, v1 schema/behavior, command allowlist or Spine baseline
+changed. CLI continuation/verify remain disabled. A focused recheck requires its
+own approved payload; FR-5 qualification and FR-6 product decisions stay separate.

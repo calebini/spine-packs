@@ -5,7 +5,7 @@ Fresh views must come from the bounded public observer, not an internal ledger.
 """
 from copy import deepcopy
 
-from .facet_contracts import artifact, body, validate
+from .facet_contracts import artifact, blob, body, validate
 from .facet_execution import ExecutionContext, guarded, immutable_lineage, observation, projected_state, public_body
 from .facet_inventory import COMMANDS
 from .facet_observation import observe, state
@@ -30,6 +30,16 @@ def forward_view(view, posts):
         if old and old['revision_id'] is not None and old['revision_id'] != post['revision_id']:
             history[(old['object_key'], old['revision_id'])] = old
         entries[post['object_key']] = post
+        if post['object_key'].startswith('profile:'):
+            # Historical show combines the immutable revision with the current
+            # mutable root metadata. Forward only this explained root effect;
+            # preserve every historical ID, decoder and revision body.
+            metadata = body(post['value'])['metadata']
+            for row in history.values():
+                if row['object_key'] == post['object_key'] and row['root_id'] == post['root_id']:
+                    value = body(row['value'])
+                    value['metadata'] = deepcopy(metadata)
+                    row['value'] = blob(value)
     result['entries'] = [entries[k] for k in sorted(entries)]
     result['historical_revisions'] = [history[k] for k in sorted(history)]
     require(len(entries) + len(history) <= 4096, 'observation_capacity', INVALID)

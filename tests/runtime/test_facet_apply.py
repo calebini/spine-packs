@@ -192,6 +192,32 @@ class FacetApplyTests(unittest.TestCase):
             preflight.assert_not_called()
         self.assertFalse(t.writes)
 
+    def test_controlled_adapter_rejection_preserves_nonempty_facts_in_partial_result(self):
+        for name, n in (('flight-create', 0), ('flight-update', 4)):
+            f = flow(name); t = Catalog(f); original_write = t.write
+            adapter = FacetApplyCommand(f['plan']['request']['target'])
+            command = f['plan']['actions'][n]['command']
+            rejection = dict(ok=False, command=command, error=dict(
+                code='stale_version', field='request', message='PRIVATE_SENTINEL'))
+            def write(actual, request):
+                if len(t.writes) != n: return original_write(actual, request)
+                t.writes.append((actual, deepcopy(request)))
+                with patch.object(adapter, '_invoke', return_value=(rejection, 5)):
+                    return adapter.write(actual, request)
+            t.write = write
+            with self.subTest(flow=name, n=n):
+                value, _, saved = self.invoke(f, t)
+                self.assertEqual(value['state'], 'partial')
+                self.assertEqual(value['checkpoint'], saved[-1])
+                self.assertEqual(len(t.writes), n+1)
+                self.assertEqual(len(value['checkpoint']['accepted_responses']), n)
+                self.assertEqual(value['checkpoint']['unresolved_submission']['request'],
+                                 f['accepted_responses'][n]['request'])
+                self.assertEqual(value['failure']['error']['facts'],
+                                 [dict(name='spine_error_code', value='stale_version')])
+                self.assertNotIn('PRIVATE_SENTINEL', a.canonical_text(value))
+                artifact(value, 'apply-result'); self.independent_result(f, value)
+
     def test_public_readback_revision_numbers_and_rendering_provenance_match(self):
         for name in ('flight-create', 'flight-update'):
             f=flow(name)
