@@ -466,14 +466,15 @@ class FacetApplyTests(unittest.TestCase):
                 if scenario!='output_failure':
                     saved = a.load_json(Path(directory)/'result.json'); self.independent_result(f, saved)
 
-    def test_cli_rejects_successor_continuation_and_verify_before_target(self):
+    def test_cli_rejects_invalid_continuation_and_verify_inputs_before_target(self):
         for operation in ('apply','verify'):
             with self.subTest(operation=operation), tempfile.TemporaryDirectory() as directory:
                 f = flow(); t = Catalog(f)
                 code, envelope = self.cli(directory, f, t, source='unread-source.json' if operation=='apply' else None,
                                           operation=operation)
                 self.assertEqual(code,2); self.assertFalse(t.events or t.writes)
-                self.assertEqual(envelope['error']['code'],'successor_operation_not_authorized')
+                self.assertEqual(envelope['error']['code'],
+                    'invalid_input_file' if operation=='apply' else 'invalid_cli_arguments')
 
     def test_cli_output_collision_rejected_before_transport_construction(self):
         with tempfile.TemporaryDirectory() as directory:

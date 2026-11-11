@@ -1,4 +1,4 @@
-"""V2 initial/internal continued apply; CLI continuation and verify stay gated."""
+"""V2 initial and same-execution continued apply through public commands."""
 from copy import deepcopy
 import hashlib
 
@@ -131,7 +131,7 @@ def apply_initial(manifest, plan, approval, transport, writer, *, page_size=100)
 
 
 def apply_continuation(manifest, plan, approval, source, transport, writer, *, page_size=100):
-    """Internal same-execution boundary; no CLI activation or source overwrite.
+    """Same-execution boundary; the caller protects source/destination paths.
 
     Callers supply an operator-selected source and a new private checkpoint
     writer. Invalid/stale admission raises before publication or submission.

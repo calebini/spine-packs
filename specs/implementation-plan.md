@@ -318,8 +318,10 @@ recovery/verify contract recheck passed. Its next authorized runtime increment
 added read-only historical lineage observation and exact accepted-prefix
 comparison. Subsequent authorized increments complete uncertain-response
 admission/replay correlation and internal durable continuation with synthetic
-fault tests. The next authorized slice adds independent internal read-only
-verification; CLI continuation/verify remain disabled.
+fault tests and independent internal read-only verification. The FR-4 runtime
+repair recheck passed at `965326a`; the operator subsequently authorized CLI
+continuation/verify wiring with synthetic public-command tests. Installed-package
+qualification remains a separate FR-5 increment.
 Curated pack rewrite, deployment, release, FR-5 qualification and additional
 external review remain unauthorized. Source baseline: Spine
 `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, `0.10.0` / `19`, explicitly approved
@@ -761,3 +763,51 @@ These are local repairs, not independent review closure. No saved fixture or
 released pack bytes, v1 schema/behavior, command allowlist or Spine baseline
 changed. CLI continuation/verify remain disabled. A focused recheck requires its
 own approved payload; FR-5 qualification and FR-6 product decisions stay separate.
+
+### FR-4 runtime review closure and CLI wiring (2026-11-11)
+
+The approved focused recheck of `965326a` completed on 2026-11-10 with `pass`,
+boundary preserved and zero findings. Its retained evidence is
+[the focused report](../whetstone_runs/facet-rendering-fr4-runtime-recheck-001/change_audit/change_audit_report.md).
+It closes both original runtime repair findings within that approved scope;
+the later CLI increment below is separately implemented and tested.
+
+The operator authorized the next slice: expose the reviewed continuation and
+verification services through the existing noninteractive flags. V2 apply
+validates the exact original plan/approval and selected checkpoint or terminal
+partial result before transport construction, then uses the existing 11-write
+adapter and durable executor. Complete checkpoints finish without writes after
+fresh admission. Source/result path checks precede opening those artifacts;
+resolved aliases and hard links to protected inputs or target files are refused.
+Checkpoint and terminal-output destinations stay new, private and distinct.
+
+V2 verify constructs the FR-2 read adapter, accepts no approval or continuation
+flags and invokes no recovery/write boundary. Omitted result input follows the
+reviewed coverage rules; an explicitly supplied JSON null is rejected before
+transport construction. Verified and mismatch results publish sealed private
+artifacts with exits 0 and 10. Continuation partials use exit 9; failed admission,
+observation or publication retains the owning error without false success or a
+new `not_applied` claim. V1 CLI dispatch and its existing validation remain intact.
+
+`test_facet_cli.py` exercises full synthetic public observation, exact retry,
+checkpoint and partial-result sources, complete/no-write recovery, v1/v2
+verification semantics, invalid/mixed/oversized inputs, forbidden flags,
+protected aliases, input preservation, private files, no-clobber races,
+durability failure and result/exit correlation. Official independent structural
+and semantic result checks supplement the dependency-free runtime tests.
+
+Verification passed: all 270 runtime tests; all 125 official Draft 2020-12
+contract tests without skips; all 15 focused CLI tests with independent envelope,
+apply-result and verification-result checks enabled; the 184-file repository
+verifier; and whitespace checks including the new test file. The required
+system-Python contract run also passed with 60 development-validator skips,
+covered by the full official run. Existing v1 runtime tests passed unchanged.
+The exact Spine source commit remains available, checked by Git only. No source
+qualification or real-target claim follows from these synthetic tests.
+
+No public schema, saved fixture, released pack, compatibility pin or command
+allowlist changes. This increment does not allocate a ledger, invoke Spine,
+qualify a package, deploy, publish, commit or push. Independent review of the CLI
+increment needs its own approved payload. Next: review this CLI increment, then
+FR-5 exact-source/installed-package qualification under separate setup authority.
+FR-6 content, application/default policy and release decisions remain pending.

@@ -98,7 +98,7 @@ def object_results(plan, fresh, accepted):
 
 
 def verify_installation(manifest, plan, transport, result=None, *, page_size=100):
-    """Internal read-only boundary; CLI activation and qualification stay gated."""
+    """Read-only selected-state verification; no approval or write authority."""
     manifest, plan, result = deepcopy((manifest, plan, result))
     validate_verification_inputs(manifest, plan, result)
     coverage, accepted = response_coverage(manifest, plan, result)

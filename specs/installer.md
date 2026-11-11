@@ -5,8 +5,8 @@ Status: Draft v0.4; runtime through Slice 5, Slice 6 disposable qualification au
 The separate [facet/rendering successor](facet-rendering-packs.md) specifies v2
 contracts and the separately authorized FR-2 read-only planner for exact Spine
 `0.10.0` / schema `19` at `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`.
-FR-3 initial apply is implemented; FR-4 recovery/verify starts with its authorized
-contract/fixture gate while runtime continuation/verify remain disabled. This v1
+FR-3 initial apply and FR-4 recovery/verify are implemented; their reviewed
+services now have separately authorized CLI wiring with synthetic tests. This v1
 contract does not expand its own compatibility or command authority; existing
 operations, approvals and continuation artifacts retain the rules below, with
 no implicit artifact migration.

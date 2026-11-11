@@ -53,6 +53,7 @@ REQUIRED_FILES = (
     "tests/runtime/test_facet_continuation.py",
     "src/spine_packs/facet_verification.py",
     "tests/runtime/test_facet_verification.py",
+    "tests/runtime/test_facet_cli.py",
     "tests/fixtures/installer-v2/fr2-cross-root.json",
     "tests/fixtures/installer-v2/revision-readback-0.10.0.json",
     "contracts/installer-fixture-manifest.v2.json",

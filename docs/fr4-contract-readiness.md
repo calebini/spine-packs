@@ -149,3 +149,13 @@ current progress are in `../specs/installer-artifacts-v2.md` and
 `../specs/implementation-plan.md`. Original audit inputs and reports remain
 unchanged. These repairs do not independently close that review, activate CLI
 continuation/verify or qualify an installed package.
+
+The operator-approved focused runtime recheck subsequently passed at `965326a`
+on 2026-11-10 with zero findings; see
+[the report](../whetstone_runs/facet-rendering-fr4-runtime-recheck-001/change_audit/change_audit_report.md).
+The next authorized increment wires the reviewed services into CLI continuation
+and verify, with protected input/source/destination paths, private publication
+and existing result/exit contracts. It has separate synthetic runtime tests;
+the prior review does not automatically review the new CLI wiring. Current
+progress is in `../specs/implementation-plan.md`. FR-5 installed qualification,
+any further external review and publication remain separately gated.

@@ -4,7 +4,10 @@ Status: reviewed FR-1 contracts; implemented FR-2 planning and FR-3 initial appl
 FR-4 recovery/verify contract and fixture refresh is operator-authorized;
 its focused contract recheck has passed. Internal admission/replay and durable
 continuation and independent internal read-only verification have synthetic
-coverage. CLI continuation/verify remain disabled. Current execution status is
+coverage. Their focused runtime repair recheck passed with zero findings at
+`965326a`. Operator-authorized CLI continuation/verify wiring now exposes those
+services using the existing flags; installed-package qualification remains FR-5.
+Current execution status is
 in `implementation-plan.md`.
 Revision-readback baseline adopted on 2026-10-16. Normative language below defines
 the proposed successor, not additional authority for the current installer.

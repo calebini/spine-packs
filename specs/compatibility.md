@@ -28,10 +28,10 @@ The additive FR-4 contract gate introduces the 0.10.0 captured-response
 verification label, structurally paired with the exact environment. Historical
 0.9.1 fixtures retain their original label and bytes. Recovery/verify companions
 reference unchanged FR-3 sources; no new runtime, schema pair, command or contract
-union is admitted. See `installer-artifacts-v2.md`. CLI continuation/verify
-remain disabled after the passing contract recheck. Subsequent internal recovery
-and independent internal verification use that same exact command/contract
-inventory without expanding any allowlist; package qualification remains FR-5 work.
+union is admitted. See `installer-artifacts-v2.md`. Recovery and verification
+passed their focused runtime repair recheck at `965326a`. The subsequent
+operator-authorized CLI wiring uses that same exact command/contract inventory
+without expanding any allowlist; package qualification remains FR-5 work.
 
 ## Compatibility dimensions
 

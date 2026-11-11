@@ -41,6 +41,16 @@ def output_path(path, inputs):
     return resolved
 
 
+def distinct_input(path, protected, code, *, file_identity=False):
+    """Check aliases before opening a source/result as an artifact."""
+    candidate = Path(path)
+    require(candidate.resolve() not in {Path(p).resolve() for p in protected}, code, INVALID)
+    if file_identity and candidate.exists():
+        for other in protected:
+            if Path(other).exists():
+                require(not candidate.samefile(other), code, INVALID)
+
+
 def publish(path, plan):
     """Atomically publish without replacing an existing file, even after a race."""
     temporary = None
@@ -100,8 +110,6 @@ def main(argv=None, *, transport_factory=SpineCommand):
             from .facet_manifest import validate as validate_successor
             from .facet_planning import validate_inputs as validate_successor_inputs, plan_installation as plan_successor
             from .facet_transport import FacetSpineCommand
-            require(args.operation in ('plan', 'apply') and args.continue_from is None,
-                    'successor_operation_not_authorized', INVALID)
             validate_successor(manifest)
         else:
             require(not validate_pack(manifest, a._schema_document(a.SCHEMA_ROOT / "spine-pack-manifest.v1.schema.json")),
@@ -130,18 +138,24 @@ def main(argv=None, *, transport_factory=SpineCommand):
                     and args.checkpoint is None and args.continue_from is None
                     and not args.all_flag and args.archetype is None, "invalid_cli_arguments", INVALID)
             plan = load_input(args.plan, INVALID, a.SIZE_LIMITS["spine.pack-install-plan.v1"])
-            validate_verification_inputs(manifest, plan)
+            if successor:
+                from .facet_verification import validate_verification_inputs as validate_successor_verification
+                from .facet_verification import verify_installation as verify_successor
+            validator = validate_successor_verification if successor else validate_verification_inputs
+            validator(manifest, plan)
             target = plan["request"]["target"]
             protected = [args.manifest, args.plan, target["spine_command"]["path"], target["ledger"]["path"]]
             applied = None
             if args.result is not None:
-                require(Path(args.result).resolve() not in {Path(p).resolve() for p in protected},
-                        "verification_result_input_collision", INVALID)
+                distinct_input(args.result, protected, "verification_result_input_collision", file_identity=successor)
                 applied = load_input(args.result, INVALID, a.SIZE_LIMITS["spine.pack-apply-result.v1"])
-                validate_verification_inputs(manifest, plan, applied)
+                if successor:
+                    require(isinstance(applied, dict), 'invalid_apply_result', INVALID)
+                validator(manifest, plan, applied)
                 protected.append(args.result)
             output = output_path(args.output, protected)
-            verified = verify_installation(manifest, plan, transport_factory(target), applied)
+            factory = FacetSpineCommand if successor and transport_factory is SpineCommand else transport_factory
+            verified = (verify_successor if successor else verify_installation)(manifest, plan, factory(target), applied)
             publish(output, verified)
             result = envelope("success" if verified["state"] == "verified" else "verification_mismatch",
                               artifact={"path": args.output, "digest": verified["content_identity"]["digest"]},
@@ -162,20 +176,25 @@ def main(argv=None, *, transport_factory=SpineCommand):
                          target["spine_command"]["path"], target["ledger"]["path"]]
             source = None
             if args.continue_from is not None:
-                require(Path(args.continue_from).resolve() not in {Path(p).resolve() for p in protected},
-                        "continuation_source_input_collision", INVALID)
+                distinct_input(args.continue_from, protected, "continuation_source_input_collision", file_identity=successor)
                 source = load_input(args.continue_from, INVALID, a.SIZE_LIMITS["spine.pack-apply-checkpoint.v1"])
-                continuation_checkpoint(plan, approval, source)
+                if successor:
+                    from .facet_recovery import continuation_context
+                    continuation_context(manifest, plan, approval, source)
+                else:
+                    continuation_checkpoint(plan, approval, source)
                 protected.append(args.continue_from)
             checkpoint = output_path(args.checkpoint, [*protected, args.output])
             output = output_path(args.output, [*protected, args.checkpoint])
             if successor:
                 from .facet_apply import apply_initial as apply_successor, checkpoint_writer as successor_writer
+                from .facet_apply import apply_continuation as continue_successor
                 from .facet_apply_transport import FacetApplyCommand
                 writer = successor_writer(checkpoint)
                 factory = FacetApplyCommand if transport_factory is SpineCommand else transport_factory
                 transport = factory(target)
-                applied = apply_successor(manifest, plan, approval, transport, writer)
+                applied = (apply_successor(manifest, plan, approval, transport, writer) if source is None else
+                           continue_successor(manifest, plan, approval, source, transport, writer))
             else:
                 writer = checkpoint_writer(checkpoint)
                 transport = transport_factory(target)

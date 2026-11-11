@@ -24,9 +24,12 @@ Read-only historical lineage observation and exact accepted-prefix comparison
 are checkpointed in `3a5e560`. The operator subsequently authorized completing
 uncertain-candidate admission/replay correlation and the next bounded internal
 same-execution continuation increment, with synthetic public-command/durability
-tests only. The next operator-authorized slice adds independent internal
+tests only. A subsequent operator-authorized slice added independent internal
 read-only verification with synthetic public-command tests, no replay, and no
-approval-file input. CLI continuation/verify remain disabled. No real target
+approval-file input. The FR-4 runtime repair recheck passed with zero findings
+at `965326a`. The operator authorized CLI continuation/verify wiring with source,
+target and destination collision checks, private publication and result/exit
+handling, using synthetic public-command tests only. No real target
 execution, new ledger, installed-package qualification or external review is authorized.
 The explicitly authorized repaired-baseline listing gate may use
 new disposable ledgers through public CLIs only, never an existing ledger.
@@ -128,8 +131,11 @@ The FR-2 adapter remains read-only; internal continuation reuses only the FR-3
 11-write adapter and requires fresh admission plus durable checkpoints. Internal
 verification is separately authorized and must use only the FR-2 public read
 adapter, correlate captured responses without granting approval, and never
-invoke apply, recovery, receipt repair or disclosure operations. CLI continuation
-and verify remain disabled. No new ledger or package qualification
+invoke apply, recovery, receipt repair or disclosure operations. The
+operator-authorized CLI slice exposes these reviewed services with the existing
+flags and v2 artifacts, preserving v1 dispatch. Supplied source/result path
+aliases, including hard links to protected files, must fail before those paths
+are opened as artifacts. No new ledger or package qualification
 is part of this increment. Preserve the 0.9.1 inventory,
 fixtures and earlier investigation as historical evidence.
 

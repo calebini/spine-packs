@@ -5,8 +5,8 @@ The facet/rendering successor is specified separately in
 `spine.pack-manifest.v2` contracts support the separately authorized FR-2
 read-only planner for exact Spine `0.10.0` / schema `19` at
 `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`. FR-3 initial apply is implemented;
-FR-4 begins its authorized contract/fixture gate, with runtime recovery/verify
-still disabled after the passing contract recheck. This does not amend the closed v1 objects below or
+FR-4 recovery/verify services passed their runtime repair recheck and now have
+separately authorized CLI wiring with synthetic tests. This does not amend the closed v1 objects below or
 create a curated successor manifest or release.
 
 ## Status and identity

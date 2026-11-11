@@ -1,6 +1,6 @@
 # Architecture
 
-## Facet/rendering successor — planning, apply and internal recovery/verification
+## Facet/rendering successor — planning, apply, recovery and verification
 
 [facet-rendering-packs.md](facet-rendering-packs.md) proposes a separate manifest
 and installer-artifact v2 path for exact Spine `0.10.0` / schema `19` at
@@ -28,8 +28,10 @@ evidence. Exact installed-package/public-Spine qualification remains FR-5 work.
 FR-4's recovery/verify contract and fixture recheck has passed. Its first runtime
 increment added read-only historical lineage observation and exact accepted-prefix
 comparison. Subsequent authorized increments add candidate/replay correlation and
-internal same-execution continuation and independent read-only verification;
-CLI continuation/verify remain disabled.
+internal same-execution continuation and independent read-only verification.
+Their runtime repair recheck passed at `965326a` with zero findings. The next
+operator-authorized increment exposes CLI continuation and verify with synthetic
+public-command tests; FR-5 installed-package qualification remains separate.
 
 ## Relationship
 
@@ -38,8 +40,9 @@ FR-2 adds `facet_manifest`, `facet_graph`, `facet_contracts`, `facet_inventory`,
 They implement manifest-v2/request-v2 read-only `plan`. The CLI uses the same
 selection assertions and private no-clobber output publication. V1 dispatch and
 supported-baseline allowlists are unchanged. The planning transport rejects every
-write; initial v2 apply uses its own 11-command adapter. Successor continuation
-and verify are rejected before target access.
+write; initial and continued v2 apply use the same separate 11-command adapter.
+V2 verify constructs only the FR-2 read adapter. CLI flags and artifact families
+are unchanged; input validation precedes transport construction.
 
 `facet_recovery.RecoveryPreimage` revalidates the approved graph, checkpoint,
 contiguous accepted evidence and any exact unresolved request before observation.
@@ -61,8 +64,7 @@ provenance must correlate. No facet provenance is invented. A private admission
 handle retains rendering records for exact replay comparison, the unchanged retry
 request and the appropriate immediate binding precondition.
 
-`facet_apply.apply_continuation` is an internal service boundary, not CLI
-activation. It validates an operator-selected same-execution checkpoint or
+`facet_apply.apply_continuation` validates an operator-selected same-execution checkpoint or
 terminal partial result, performs bounded fresh admission, and publishes the
 admitted checkpoint at a new private destination before retry. It shares the
 existing initial-apply loop: prepared durability before submission and accepted
@@ -72,10 +74,16 @@ checkpoints can produce applied results without writes after admission.
 Admission failures propagate without publication or a false `not_applied` claim;
 post-admission failures preserve a partial checkpoint, while durability failures
 stop without fabricating terminal success. Source evidence is never overwritten.
-The internal API takes decoded source artifacts and a new checkpoint writer;
-future CLI activation must additionally enforce all source/destination/target
-path-collision checks. CLI rejection guards remain in place. Runtime-review
-closure and FR-5 qualification remain pending.
+The service takes decoded source artifacts and a new checkpoint writer. The CLI
+uses the inherited `apply --continue-from SOURCE` flags and validates SOURCE
+before constructing a transport. Checkpoint and result destinations MUST be new
+and distinct from each other, SOURCE, manifest, plan, approval and target files.
+SOURCE MUST be distinct from other inputs and target files before it is opened.
+For v2 source and verification-result inputs, compare resolved paths and existing
+file identities so symlink and hard-link aliases to protected files fail closed.
+No source discovery, source overwrite or artifact merging is introduced. The
+reviewed runtime services and this later CLI wiring have separate test evidence;
+FR-5 qualification remains pending.
 
 `facet_verification.verify_installation` is a separate internal read-only
 boundary, with manifest/plan and optional captured apply-result input, no
@@ -101,10 +109,21 @@ evidence aborts observation rather than becoming an object mismatch.
 The sealed v2 result separates captured-response coverage from fresh state, with
 the exact 0.10.0 captured-only receipt label and mandatory separate-disclosure
 marker. No-write draft state may verify without a result, but a supplied execution
-claim for an ineligible plan is invalid. Completed internal verification returns
-verified/mismatch data; CLI publication and exit-0/10 wiring remain gated. It
+claim for an ineligible plan is invalid. Completed verification publishes a new
+private sealed artifact and exits 0 for verified state or 10 for mismatch. It
 never invokes apply, continuation, checkpoint writers, receipt/disclosure reads
 or writes. Synthetic public-command tests are not installed-package qualification.
+
+The v2 CLI takes `verify --manifest MANIFEST --plan PLAN [--result RESULT]
+--output VERIFICATION`. Supplied RESULT must be distinct from manifest, plan and
+target files before opening; output must be new and distinct from every input
+and target. An explicitly supplied JSON null is invalid artifact input, not an
+omitted result. Input/observation/publication failures emit only their owning
+error envelope, never a fabricated verification artifact. Continuation admission
+failure likewise publishes no checkpoint/result and makes no `not_applied` claim.
+After admission, partial application publishes the terminal partial result and
+exits 9; durability/publication errors retain their owning error handling without
+fabricating success. Existing private no-clobber publication is reused.
 
 `facet_execution.ExecutionContext` checks the manifest, saved plan, observation
 projection and complete approval, and rebuilds the plan before constructing any

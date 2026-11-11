@@ -5,8 +5,9 @@ FR-3 repair findings are closed. FR-4's recovery/verify contract and fixture
 recheck passed. Following the read-only foundation, subsequent authorized runtime
 increments add candidate/replay correlation, internal durable continuation and
 independent read-only verification.
-CLI continuation/verify remain disabled. This is neither independent runtime-
-review closure nor FR-5 qualification.
+The focused runtime repair recheck passed with zero findings at `965326a`.
+The subsequent operator-authorized CLI wiring exposes continuation/verify with
+synthetic public-command tests. This does not complete FR-5 qualification.
 Read `facet-rendering-packs.md` first. The exact
 Spine pin is `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime `0.10.0`, schema
 `19`. Existing v1 artifacts, runtime compatibility and released packs are unchanged.
@@ -375,7 +376,9 @@ regeneration or speculative suffix is allowed.
 
 The CLI contract remains `verify --manifest MANIFEST --plan PLAN [--result RESULT]
 --output VERIFICATION`, without approval, selection or continuation inputs.
-Validate outer result syntax/schema/digest/size before public observation. A bad
+Validate outer result syntax/schema/digest/size before public observation. A
+supplied result file containing JSON null is invalid input; only omitting
+`--result` means no result was supplied. A bad
 outer artifact is invalid input with no verification artifact. A well-formed
 artifact with invalid embedded evidence, plan/approval/execution correlation or
 coverage instead produces `response_evidence=invalid` and `state=mismatch` after
@@ -436,8 +439,9 @@ actual public-CLI response captures or FR-5 installed-package proof.
 The focused bounded contract recheck passed; retained evidence is linked from
 `implementation-plan.md`. Observation/admission and internal continuation now
 have synthetic fault tests. Independent internal verification now has separate
-read-only tests. CLI activation remains a separate increment. Keep all existing
-v1 recovery/verify tests and the v2 CLI
-rejection guards until each new boundary is reviewed and implemented. External
-runtime review requires its own approved payload; curated flight choices remain
-FR-6 operator decisions.
+read-only tests. Their runtime repair recheck passed at `965326a`; the subsequent
+operator-authorized CLI increment wires those services with protected paths,
+private publication and existing result/exit contracts. Keep all existing v1
+recovery/verify tests and reject invalid/mixed v2 inputs before target use.
+External review of the CLI increment requires its own approved payload; curated
+flight choices remain FR-6 operator decisions.
