@@ -159,3 +159,10 @@ and existing result/exit contracts. It has separate synthetic runtime tests;
 the prior review does not automatically review the new CLI wiring. Current
 progress is in `../specs/implementation-plan.md`. FR-5 installed qualification,
 any further external review and publication remain separately gated.
+
+The bounded CLI audit of `e23ff2a` passed with one minor on 2026-11-13: a writer's
+terminal LF prevented reload of checkpoint/result files exactly at the canonical
+byte ceiling. The operator authorized the narrow v2 loader allowance and four
+boundary regression methods. Current local evidence is recorded in
+`../specs/implementation-plan.md`; the original audit report/payload remains
+unchanged. The repair does not change canonical ceilings or complete FR-5.

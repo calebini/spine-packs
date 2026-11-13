@@ -22,11 +22,15 @@ class Parser(argparse.ArgumentParser):
         raise PlanError(INVALID, "invalid_cli_arguments")
 
 
-def load_input(path, category, limit):
+def load_input(path, category, limit, *, allow_terminal_newline=False):
     try:
         with Path(path).open("rb") as handle:
-            data = handle.read(limit + 1)
-        require(len(data) <= limit, "input_too_large", category)
+            data = handle.read(limit + int(allow_terminal_newline) + 1)
+        # The v2 continuation/result writers append one LF outside the canonical
+        # artifact quota. No other extra byte or unbounded formatting is allowed;
+        # callers still validate canonical size, schema and digest after parsing.
+        require(len(data) <= limit or (allow_terminal_newline
+                and len(data) == limit + 1 and data.endswith(b"\n")), "input_too_large", category)
         return a.parse_json(data)
     except (OSError, ValueError, RecursionError) as exc:
         raise PlanError(category, "invalid_input_file") from exc
@@ -148,7 +152,8 @@ def main(argv=None, *, transport_factory=SpineCommand):
             applied = None
             if args.result is not None:
                 distinct_input(args.result, protected, "verification_result_input_collision", file_identity=successor)
-                applied = load_input(args.result, INVALID, a.SIZE_LIMITS["spine.pack-apply-result.v1"])
+                applied = load_input(args.result, INVALID, a.SIZE_LIMITS["spine.pack-apply-result.v1"],
+                                     allow_terminal_newline=successor)
                 if successor:
                     require(isinstance(applied, dict), 'invalid_apply_result', INVALID)
                 validator(manifest, plan, applied)
@@ -177,7 +182,8 @@ def main(argv=None, *, transport_factory=SpineCommand):
             source = None
             if args.continue_from is not None:
                 distinct_input(args.continue_from, protected, "continuation_source_input_collision", file_identity=successor)
-                source = load_input(args.continue_from, INVALID, a.SIZE_LIMITS["spine.pack-apply-checkpoint.v1"])
+                source = load_input(args.continue_from, INVALID, a.SIZE_LIMITS["spine.pack-apply-checkpoint.v1"],
+                                    allow_terminal_newline=successor)
                 if successor:
                     from .facet_recovery import continuation_context
                     continuation_context(manifest, plan, approval, source)

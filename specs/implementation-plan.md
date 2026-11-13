@@ -811,3 +811,46 @@ qualify a package, deploy, publish, commit or push. Independent review of the CL
 increment needs its own approved payload. Next: review this CLI increment, then
 FR-5 exact-source/installed-package qualification under separate setup authority.
 FR-6 content, application/default policy and release decisions remain pending.
+
+### FR-4 CLI audit minor repair (2026-11-13)
+
+The operator-approved bounded CLI audit of `e23ff2a` completed with
+`pass_with_minor_clarification`, boundary preserved, zero blockers/majors and one
+minor. Its retained
+[report](../whetstone_runs/facet-rendering-fr4-cli-audit-001/change_audit/change_audit_report.md)
+identified raw loading of writer-produced artifacts at the canonical byte limit:
+the writer's terminal LF made an otherwise valid maximum-size file one byte too
+large for `--continue-from` or `--result`.
+
+Both cases independently reproduced before the operator-authorized repair.
+`load_input` now offers a bounded single-terminal-LF allowance, enabled only for
+those two v2 input paths. Canonical artifact ceilings, validators, digests, v1
+loading, command allowlists and all other input paths are unchanged. Additional
+bytes require rejection; a canonical artifact exceeding its ceiling still fails
+before target use. No writer or artifact schema change is needed.
+
+Four new CLI regression methods cover the actual 16,777,216-byte ceiling, real
+local checkpoint/result writers and bounded raw framing. A maximum-size result now completes read-only
+verification with complete evidence. A maximum-size checkpoint loads and passes
+saved-source validation before a deliberate fresh-preflight stop, without writes
+or output claims: wrapping that entire checkpoint in a terminal result would
+exceed the result's independent ceiling, which this repair does not waive.
+Negative cases cover one-byte-too-large canonical artifacts with and without LF,
+checkpoint-writer refusal and extra LF/CRLF/space framing. Exact-size input
+without LF and unchanged default loader behavior are checked separately.
+Saved fixture bytes are preserved through in-memory
+extensions using valid public-response whitespace and recomputed local digests.
+
+Verification passed: all 274 runtime tests; all 125 official Draft 2020-12
+contract tests without skips; all 19 focused CLI tests with official structural
+and independent semantic checks enabled; the 184-file repository verifier; and
+whitespace checks. The required system-Python contract run also passed with 60
+development-validator skips, covered by the official run. The maximum-size
+writer-produced checkpoint/result cases failed before the repair and passed
+after it; oversized canonical artifacts remain rejected. All approved audit
+payload bytes, public schemas, saved fixtures and released packs are preserved.
+
+This is local repair evidence, not an independent re-review of the patch. No
+Spine invocation, ledger, package qualification, new reviewer, commit, push,
+deployment or publication belongs to this repair. FR-5 setup and FR-6 product
+decisions remain separate from the CLI byte-boundary fix.

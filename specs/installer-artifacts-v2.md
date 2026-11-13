@@ -21,6 +21,15 @@ to accept mixed-version artifacts. The v1 encoding, artifact byte ceilings,
 local target normalization, approval assertions, private publication, durability,
 exit codes and secret-safe errors carry forward. All objects are closed.
 
+V2 CLI `--continue-from` and `--result` inputs MUST accept the writers' single
+terminal LF outside the compact canonical artifact byte ceiling: at most the
+ceiling plus one raw byte, with LF required for that extra byte. Schema, digest
+and canonical-size validation remain mandatory; an artifact whose compact
+canonical encoding exceeds its ceiling still fails before target use. No other
+extra framing or unbounded whitespace allowance is introduced. A continuation
+checkpoint that fits its own ceiling does not waive the independent checkpoint
+or terminal-result ceilings for artifacts emitted later in the execution.
+
 Artifact and request JSON MUST reject duplicate members, BOMs, numbers and
 invalid Unicode. Decimal quantities remain strings. Digests omit only
 `content_identity.digest`, retain the other identity members, and use the

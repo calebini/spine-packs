@@ -1,6 +1,7 @@
 """FR-4 CLI wiring with synthetic public commands and private local artifacts."""
 from copy import deepcopy
 import contextlib
+import hashlib
 import io
 import json
 import os
@@ -15,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT/'src'), str(ROOT/'tests/contract')]
 from spine_packs import artifacts as a
 from spine_packs.__main__ import load_input, main, publish
+from spine_packs.facet_apply import checkpoint_writer as successor_checkpoint_writer
 from spine_packs.facet_contracts import artifact, body, seal, validate
 from spine_packs.facet_inventory import READ_COMMANDS
 from spine_packs.facet_planning import build_plan
@@ -26,6 +28,19 @@ from test_facet_planning import CURSORS
 from test_facet_recovery import companion
 from test_facet_verification import final_view, no_write_flow
 import fr4_contract_oracle as oracle
+
+
+def padded_response_artifact(value, canonical_bytes):
+    """Preserve valid wire JSON with trailing spaces, leaving semantics intact."""
+    value = deepcopy(value)
+    padding = canonical_bytes - len(a.canonical_text(value).encode('utf-8'))
+    if padding < 0: raise ValueError('fixture already exceeds requested size')
+    cp = value['checkpoint'] if 'checkpoint' in value else value
+    response = cp['accepted_responses'][-1]['response']
+    response['json_text'] += ' '*padding
+    response['digest'] = hashlib.sha256(response['json_text'].encode('utf-8')).hexdigest()
+    if 'checkpoint' in value: value['checkpoint'] = seal(cp)
+    return seal(value)
 
 
 class FacetCLITests(unittest.TestCase):
@@ -186,6 +201,85 @@ class FacetCLITests(unittest.TestCase):
             code,envelope = self.invoke(args,factory=factory)
             self.assertEqual((code,envelope['error']['code']),(2,'input_too_large'))
             factory.assert_not_called()
+
+    def test_writer_checkpoint_at_canonical_limit_reloads_for_continuation(self):
+        f = flow(); limit = a.SIZE_LIMITS['spine.pack-apply-checkpoint.v1']
+        value = padded_response_artifact(f['final_checkpoint'],limit)
+        self.assertEqual(len(a.canonical_text(value).encode('utf-8')),limit)
+        args,p = self.inputs(f,'apply')
+        successor_checkpoint_writer(p['source'])(value)
+        self.assertEqual(p['source'].stat().st_size,limit+1)
+        before = hashlib.sha256(p['source'].read_bytes()).hexdigest()
+        # A checkpoint at its ceiling can load and validate. Stop at fresh
+        # preflight: wrapping it in a terminal result would exceed that result's
+        # separate ceiling. Do not turn this input test into a larger quota.
+        t = Mock(target=deepcopy(f['plan']['request']['target']))
+        t.check_target.side_effect = PlanError(ENVIRONMENT,'synthetic_preflight_stop')
+        factory = Mock(return_value=t)
+        code,envelope = self.invoke(args+['--continue-from',str(p['source'])],factory=factory)
+        self.assertEqual((code,envelope['error']['code']),(11,'synthetic_preflight_stop'))
+        factory.assert_called_once_with(f['plan']['request']['target'])
+        t.check_target.assert_called_once(); t.read.assert_not_called(); t.write.assert_not_called()
+        self.assertIsNone(envelope['artifact']); self.assertFalse(p['checkpoint'].exists() or p['output'].exists())
+        self.assertEqual(hashlib.sha256(p['source'].read_bytes()).hexdigest(),before)
+
+    def test_writer_apply_result_at_canonical_limit_verifies(self):
+        f = flow(); limit = a.SIZE_LIMITS['spine.pack-apply-result.v1']
+        value = padded_response_artifact(f['apply_result'],limit)
+        self.assertEqual(len(a.canonical_text(value).encode('utf-8')),limit)
+        artifact(value,'apply-result')
+        args,p = self.inputs(f,'verify')
+        publish(p['applied'],value)
+        self.assertEqual(p['applied'].stat().st_size,limit+1)
+        before = hashlib.sha256(p['applied'].read_bytes()).hexdigest()
+        t = PublicCatalog(f,6,final_view()); t.write = Mock(side_effect=AssertionError('verify cannot write'))
+        code,envelope = self.invoke(args+['--result',str(p['applied'])],t)
+        self.assertEqual(code,0)
+        verified = a.load_json(p['output']); artifact(verified,'verification-result')
+        self.assertEqual(verified['state'],'verified'); self.assertEqual(verified['response_evidence'],'complete')
+        self.assertEqual(verified['apply_result_digest'],value['content_identity']['digest'])
+        self.assertEqual(envelope['artifact']['digest'],verified['content_identity']['digest'])
+        self.assertEqual(hashlib.sha256(p['applied'].read_bytes()).hexdigest(),before)
+        t.write.assert_not_called()
+        if independent.Draft202012Validator is not None:
+            with current_contracts(): oracle.verification_check(f,value,verified)
+
+    def test_over_limit_canonical_artifacts_fail_with_or_without_writer_newline(self):
+        f = flow()
+        for operation in ('apply','verify'):
+            kind = 'apply-checkpoint' if operation=='apply' else 'apply-result'
+            limit = a.SIZE_LIMITS['spine.pack-'+kind+'.v1']
+            value = padded_response_artifact(f['final_checkpoint'] if operation=='apply' else f['apply_result'],limit+1)
+            raw = a.canonical_text(value).encode('utf-8'); self.assertEqual(len(raw),limit+1)
+            with self.assertRaisesRegex(PlanError,'artifact_too_large'): artifact(value,kind)
+            if operation=='apply':
+                refused = self.root/'refused-checkpoint.json'
+                with self.assertRaisesRegex(PlanError,'artifact_too_large'): successor_checkpoint_writer(refused)(value)
+                self.assertFalse(refused.exists())
+            for suffix in (b'',b'\n'):
+                args,p = self.inputs(f,operation)
+                source = p['source' if operation=='apply' else 'applied']; source.write_bytes(raw+suffix)
+                flag = '--continue-from' if operation=='apply' else '--result'
+                factory = Mock(side_effect=AssertionError('oversized input reached target'))
+                with self.subTest(operation=operation,newline=bool(suffix)):
+                    code,envelope = self.invoke(args+[flag,str(source)],factory=factory)
+                    self.assertEqual((code,envelope['error']['code']),(2,'input_too_large'))
+                    factory.assert_not_called(); self.assertIsNone(envelope['artifact'])
+                    self.assertFalse(p['checkpoint'].exists() or p['output'].exists())
+
+    def test_terminal_newline_allowance_is_one_lf_and_v2_input_only(self):
+        path = self.root/'framing.json'
+        path.write_bytes(b'{}')
+        self.assertEqual(load_input(path,'invalid_cli_or_artifact_input',2),{})
+        self.assertEqual(load_input(path,'invalid_cli_or_artifact_input',2,allow_terminal_newline=True),{})
+        path.write_bytes(b'{}\n')
+        self.assertEqual(load_input(path,'invalid_cli_or_artifact_input',2,allow_terminal_newline=True),{})
+        with self.assertRaisesRegex(PlanError,'input_too_large'):
+            load_input(path,'invalid_cli_or_artifact_input',2)
+        for raw in (b'{} ',b'{}\n\n',b'{}\r\n'):
+            path.write_bytes(raw)
+            with self.subTest(raw=raw),self.assertRaisesRegex(PlanError,'input_too_large'):
+                load_input(path,'invalid_cli_or_artifact_input',2,allow_terminal_newline=True)
 
     def test_source_and_result_protected_paths_are_rejected_before_open(self):
         f = flow(); target = f['plan']['request']['target']
