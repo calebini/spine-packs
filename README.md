@@ -19,7 +19,9 @@ The facet/rendering successor provides v2 `plan`, approved initial `apply`,
 same-execution `apply --continue-from`, and read-only `verify` for the explicit
 Spine `0.10.0` / schema `19` pin. FR-3 and FR-4 runtime repair findings are closed
 by passing focused rechecks. The subsequent CLI wiring has synthetic runtime
-coverage; exact installed-package qualification remains pending under FR-5.
+coverage. FR-5 adds opt-in disposable source and installed-wheel qualification;
+the harness and its limits are described in [FR-5 qualification](docs/fr5-qualification.md).
+Local candidate qualification is separate from release approval.
 Continuation uses a supplied checkpoint or terminal partial result, the original
 approval, and new private checkpoint/output paths. Verify takes a plan and
 optional apply result, without an approval file. See

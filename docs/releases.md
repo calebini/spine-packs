@@ -84,6 +84,17 @@ private evidence directory and never accepts an existing ledger. It:
 5. records the installed module/schema paths and emits checksums only on success.
 
 The harness rejects source-tree module/schema loading in installed mode.
+For the facet/rendering successor, `scripts/qualify_fr5.py` builds exact Git
+exports of Spine `0.10.0` and all three existing v1 baselines, attests installed
+source bytes, and runs source plus installed plan/apply/recovery/verify gates.
+See [FR-5 qualification](fr5-qualification.md) in the development checkout.
+The sdist includes both disposable integration harnesses and their small
+synthetic inputs. Its v2 flight input is contract evidence, not approved
+`kinflow-starter` content. The current `0.3.0` package metadata is retained for
+local candidate builds; these builds must not replace published assets. A
+successor release identity and exact committed release qualification remain
+separate operator decisions.
+
 For releases supporting `0.2.0`'s baselines, repeat qualification against both exact Spine commits
 in `local-qualification.md`. Only a candidate passing both may proceed to
 bounded review and clean-commit release qualification. The schema-15 extension's

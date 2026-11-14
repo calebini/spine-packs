@@ -90,6 +90,8 @@ def qualify(args, run):
                  "docs/local-qualification.md",
                  "docs/spine-0.6.0-qualification.md",
                  "tests/integration/test_local_spine.py",
+                 "tests/integration/test_facet_spine.py",
+                 "tests/fixtures/pack-manifest-v2/flight.json",
                  "tests/fixtures/pack-manifest/positive/medical_and_lesson.json"):
         source_members[name] = (ROOT / name).read_bytes()
     with tarfile.open(sdist) as archive:

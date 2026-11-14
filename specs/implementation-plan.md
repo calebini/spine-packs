@@ -321,8 +321,9 @@ admission/replay correlation and internal durable continuation with synthetic
 fault tests and independent internal read-only verification. The FR-4 runtime
 repair recheck passed at `965326a`; the operator subsequently authorized CLI
 continuation/verify wiring with synthetic public-command tests. Installed-package
-qualification remains a separate FR-5 increment.
-Curated pack rewrite, deployment, release, FR-5 qualification and additional
+qualification is recorded in the separately authorized FR-5 increment below.
+The operator has now authorized FR-5 disposable source and installed-package
+qualification. Curated pack rewrite, deployment, release and additional
 external review remain unauthorized. Source baseline: Spine
 `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, `0.10.0` / `19`, explicitly approved
 on 2026-10-16. The earlier 0.9.1 pin and gate remain historical evidence.
@@ -854,3 +855,47 @@ This is local repair evidence, not an independent re-review of the patch. No
 Spine invocation, ledger, package qualification, new reviewer, commit, push,
 deployment or publication belongs to this repair. FR-5 setup and FR-6 product
 decisions remain separate from the CLI byte-boundary fix.
+
+### FR-5 disposable and installed-package qualification (2026-11-14)
+
+The operator authorized the next qualification slice after checkpoint
+`1c7809309b30153c4b41db8cf5e44934cd0fd85b`. The scope is exact Git exports,
+isolated local builds and new disposable configuration-only ledgers. No
+existing/operator ledger, Spine checkout change, curated content change,
+disclosure grant, items/facet values, reminder or send operation is included.
+External review and release/commit/push remain separately authorized actions.
+
+`scripts/qualify_fr5.py` builds and attests exact Spine/Tickerd source, wheel and
+installed bytes, then runs the existing FR-2 read gate, new v2 public-CLI
+execution/recovery/verify scenarios, and the full source/installed v1 integration
+matrix. `tests/integration/test_facet_spine.py` injects loss only around genuine
+public-command responses or before submission. It checks all 11 write kinds,
+exact request/ID correlation, cascaded updates, private checkpoints, read-only
+verification and retained source evidence. Normal continuation/verify runs in
+new CLI processes. Installed tests use the extracted sdist harness and bundled
+wheel schemas. Provenance rejection tests cover wrong pins, missing modules,
+changed installed bytes and extra installed modules.
+
+The sdist adds only that harness and the existing small synthetic flight fixture;
+wheel runtime/layout, dependencies, public schemas, supported baseline allowlists,
+released packs and frozen audit payloads are unchanged. Package version `0.3.0`
+is used only for local candidate builds, with no authorization to replace release
+assets. Tooling, exact pins, qualification outcome and limitations are recorded
+in `../docs/fr5-qualification.md`.
+
+Technical qualification passed on the working-tree candidate: all 32 source and
+installed integration scenarios, source and installed FR-2 gates, exact upstream
+Git/export/wheel/installed attestation, identical candidate archives across the
+three v1 baselines, and isolated installed v2 resources. Both v2 runs recovered
+lost responses for every one of the 11 writes. Additional official schema checks
+passed all 390 saved v2 artifacts/manifests. Required checks passed: 188-file
+verifier, 125 official contract tests without skips, 279 runtime tests and
+whitespace checks. The required system-Python contract run passed with 60
+development-validator skips covered by the official run. No runtime repair,
+schema/allowlist change, commit, push, deployment or publication was needed.
+
+Next: stage a bounded review of this qualification increment and obtain approval
+for its exact external payload. FR-6 curated field/label/template/default and
+distribution/release choices remain unresolved; these tests do not settle them.
+A committed release candidate still needs exact clean-commit qualification and
+separate tag/asset/publication approval.

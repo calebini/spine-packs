@@ -31,7 +31,10 @@ reference unchanged FR-3 sources; no new runtime, schema pair, command or contra
 union is admitted. See `installer-artifacts-v2.md`. Recovery and verification
 passed their focused runtime repair recheck at `965326a`. The subsequent
 operator-authorized CLI wiring uses that same exact command/contract inventory
-without expanding any allowlist; package qualification remains FR-5 work.
+without expanding any allowlist. FR-5 source and installed-package technical
+qualification passed on the exact 0.10.0 pin and all three existing v1 baselines;
+see `../docs/fr5-qualification.md`. This is working-tree candidate evidence,
+with bounded review still pending, not a new release or broader support claim.
 
 ## Compatibility dimensions
 

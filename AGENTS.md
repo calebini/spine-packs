@@ -29,8 +29,12 @@ read-only verification with synthetic public-command tests, no replay, and no
 approval-file input. The FR-4 runtime repair recheck passed with zero findings
 at `965326a`. The operator authorized CLI continuation/verify wiring with source,
 target and destination collision checks, private publication and result/exit
-handling, using synthetic public-command tests only. No real target
-execution, new ledger, installed-package qualification or external review is authorized.
+handling, using synthetic public-command tests only. The operator subsequently
+authorized FR-5 source and installed-package qualification: isolated exact Git
+exports/builds, new disposable configuration-only ledgers, synthetic subjects and
+protected test cursor configuration through public CLIs. No existing/operator
+ledger, curated content change, external review, release, commit or push is
+authorized by this qualification scope.
 The explicitly authorized repaired-baseline listing gate may use
 new disposable ledgers through public CLIs only, never an existing ledger.
 For successor installer artifacts, also read `specs/installer-artifacts-v2.md`.
@@ -122,8 +126,10 @@ referenced evidence. FR-3's focused contract review and minor patch are complete
 Initial-only v2 apply now integrates fresh preflight, public readback, the separate
 11-write adapter and durable prepared/accepted checkpoints. The FR-2 planning
 adapter remains read-only. The runtime audit's repair findings are closed by a
-passing focused recheck recorded in `specs/implementation-plan.md`; exact
-installed-package qualification remains pending under FR-5. FR-4 contract and
+passing focused recheck recorded in `specs/implementation-plan.md`. FR-5's exact
+installed-package technical qualification has now passed locally; see
+`docs/fr5-qualification.md` for exact evidence and release limitations. Its new
+qualification tooling still needs bounded review. FR-4 contract and
 fixture work is authorized; its focused contract recheck passed with zero
 findings. The read-only foundation is committed; the operator subsequently
 authorized the admission/replay and internal continuation increments above.
@@ -136,7 +142,8 @@ operator-authorized CLI slice exposes these reviewed services with the existing
 flags and v2 artifacts, preserving v1 dispatch. Supplied source/result path
 aliases, including hard links to protected files, must fail before those paths
 are opened as artifacts. No new ledger or package qualification
-is part of this increment. Preserve the 0.9.1 inventory,
+was part of the CLI increment. FR-5 qualification is now separately authorized
+as described above and in `specs/architecture.md`. Preserve the 0.9.1 inventory,
 fixtures and earlier investigation as historical evidence.
 
 For documentation, contract, and planner changes, run:

@@ -24,14 +24,16 @@ That contract gate passed with a minor finding, now patched. `facet_execution`
 supplies request/evidence helpers; `facet_apply` and `facet_apply_transport` now
 integrate initial apply. The runtime audit's repair findings are closed by a
 passing focused recheck; see `implementation-plan.md` for current status and
-evidence. Exact installed-package/public-Spine qualification remains FR-5 work.
+evidence. Exact installed-package/public-Spine technical qualification has now
+passed locally under FR-5; see `../docs/fr5-qualification.md` and the boundary below.
 FR-4's recovery/verify contract and fixture recheck has passed. Its first runtime
 increment added read-only historical lineage observation and exact accepted-prefix
 comparison. Subsequent authorized increments add candidate/replay correlation and
 internal same-execution continuation and independent read-only verification.
 Their runtime repair recheck passed at `965326a` with zero findings. The next
 operator-authorized increment exposes CLI continuation and verify with synthetic
-public-command tests; FR-5 installed-package qualification remains separate.
+public-command tests; its separate FR-5 qualification evidence does not authorize
+a release or curated pack content.
 
 ## Relationship
 
@@ -83,7 +85,8 @@ For v2 source and verification-result inputs, compare resolved paths and existin
 file identities so symlink and hard-link aliases to protected files fail closed.
 No source discovery, source overwrite or artifact merging is introduced. The
 reviewed runtime services and this later CLI wiring have separate test evidence;
-FR-5 qualification remains pending.
+FR-5 technical qualification is recorded in `../docs/fr5-qualification.md`;
+bounded review of that qualification increment remains pending.
 
 `facet_verification.verify_installation` is a separate internal read-only
 boundary, with manifest/plan and optional captured apply-result input, no
@@ -177,6 +180,33 @@ closure without runtime dependencies or network schema resolution.
 no existing ledger, attests exported/wheel/installed Spine bytes against the
 exact Git tree, and exercises synthetic configuration through public CLIs only.
 This narrow gate does not complete FR-5 or authorize release/installation.
+
+### FR-5 qualification boundary
+
+The operator authorized `scripts/qualify_fr5.py` and the opt-in
+`tests/integration/test_facet_spine.py` harness to qualify source and clean-wheel
+v2 plan/apply/continuation/verify against exact Spine `0.10.0` above. This tooling
+MUST export exact Git commits into new private directories, build isolated
+packages, and attest Git/export/wheel/installed bytes before execution. It MUST
+retain all existing v1 supported-baseline source and installed regression gates.
+It MUST NOT substitute the reference checkout's HEAD or broaden any allowlist.
+
+Only newly allocated disposable ledgers are permitted. Public administrative
+CLIs may initialize them and bootstrap synthetic subjects; configuration setup
+may use the reviewed public commands. Protected cursor files contain generated
+test configuration. No existing-ledger argument is accepted. The harness MUST
+NOT import Spine internals, open database contents, author items/facet values,
+grant disclosure, materialize reminders or send notifications. Read-only phases
+check ledger/WAL file metadata without opening those files.
+
+Normal operations and continuation run in fresh CLI processes. Test-only fault
+injection may intercept the installer transport in-process to lose a genuine
+successful public response or fail before submission; it MUST NOT fabricate
+successful Spine responses. All 11 v2 writes require exact replay/request and
+returned-ID correlation. Installed tests MUST use bundled resources with no
+checkout module/schema fallback. Failures retain private evidence; success is
+local candidate qualification, not a release, deployment or consumer rendering
+claim. Version/content decisions and publication remain FR-6/separate approval.
 
 The intended data and authority flow is:
 
