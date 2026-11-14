@@ -190,6 +190,8 @@ MUST export exact Git commits into new private directories, build isolated
 packages, and attest Git/export/wheel/installed bytes before execution. It MUST
 retain all existing v1 supported-baseline source and installed regression gates.
 It MUST NOT substitute the reference checkout's HEAD or broaden any allowlist.
+Upstream Git invocations MUST disable replacement objects so local replacement
+refs cannot change the bytes attributed to an exact pin.
 
 Only newly allocated disposable ledgers are permitted. Public administrative
 CLIs may initialize them and bootstrap synthetic subjects; configuration setup
@@ -207,6 +209,17 @@ returned-ID correlation. Installed tests MUST use bundled resources with no
 checkout module/schema fallback. Failures retain private evidence; success is
 local candidate qualification, not a release, deployment or consumer rendering
 claim. Version/content decisions and publication remain FR-6/separate approval.
+Full qualification MUST require all four named scenarios in each harness to
+succeed without skipped scenarios or subtests; focused runs cannot authorize a
+full-matrix success marker. Package and matrix parents MUST validate completion
+evidence. Completed-checkpoint continuation MUST be tested with the original
+approval after live binding drift, requiring fresh-admission refusal without
+ledger mutation, source overwrite or new checkpoint/result publication.
+Parent completion checks MUST select their expected scenario IDs independently
+of the child report, using the shared v1/v2 registry for the harness invoked.
+Both reported ID lists MUST match that selected registry. Before drift, tests
+MUST read the exact continuation checkpoint file and assert its full ordered
+accepted-action sequence, null next action and null unresolved submission.
 
 The intended data and authority flow is:
 

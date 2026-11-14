@@ -6,7 +6,8 @@ its focused contract recheck has passed. Internal admission/replay and durable
 continuation and independent internal read-only verification have synthetic
 coverage. Their focused runtime repair recheck passed with zero findings at
 `965326a`. Operator-authorized CLI continuation/verify wiring now exposes those
-services using the existing flags; installed-package qualification remains FR-5.
+services using the existing flags. FR-5 source/installed technical qualification
+and its locally repaired rerun passed; focused bounded recheck remains pending.
 Current execution status is
 in `implementation-plan.md`.
 Revision-readback baseline adopted on 2026-10-16. Normative language below defines
@@ -515,8 +516,12 @@ has passed as described in Section 1; exact v2 artifact schemas,
 reference-slot syntax, aggregate observation budgets, response correlation and
 fault-injection oracles must be codified and reviewed before their runtime slices.
 The bounded FR-2 read-only public-CLI gate is recorded in
-`docs/fr2-qualification.md`; full successor apply/recovery/verify and clean-wheel
-qualification remain FR-5 work. If a
+`docs/fr2-qualification.md`. Full successor apply/recovery/verify and clean-wheel
+technical qualification ran locally under FR-5; see `docs/fr5-qualification.md`.
+Its bounded audit findings are locally repaired and the fresh qualification run
+passed; focused recheck remains pending before review closure. The retained
+local result is not a release or curated-content
+approval. If a
 public-command gap is found, report it; this task grants no Spine change authority.
 
 ## 11. Codification prerequisites and acceptance

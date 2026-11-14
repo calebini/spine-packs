@@ -32,6 +32,8 @@ REQUIRED_FILES = (
     "docs/fr5-qualification.md",
     "tests/integration/test_facet_spine.py",
     "tests/runtime/test_qualification_provenance.py",
+    "tests/runtime/test_qualification_completion.py",
+    "tests/integration/qualification_support.py",
     "tests/contract/test_fr2_contract.py",
     "docs/fr3-initial-apply-readiness.md",
     "contracts/installer-fr3-fixture-manifest.v2.json",

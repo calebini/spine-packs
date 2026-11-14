@@ -899,3 +899,85 @@ for its exact external payload. FR-6 curated field/label/template/default and
 distribution/release choices remain unresolved; these tests do not settle them.
 A committed release candidate still needs exact clean-commit qualification and
 separate tag/asset/publication approval.
+
+### FR-5 bounded audit repair increment (2026-11-14)
+
+The operator approved the frozen 21-file audit package for checkpoint `9a96492`.
+The single reviewer-only audit returned `needs_revision`, zero blockers, three
+majors and three minors. The operator then authorized all six locally accepted
+repairs. The approved payload and original qualification evidence remain frozen
+under `whetstone_runs/facet-rendering-fr5-qualification-audit-001/` and the
+private paths in `../docs/fr5-qualification.md`.
+
+The repair disables Git replacement objects in every upstream Git invocation,
+including the inherited FR-2 provenance gate. A temporary Git-object regression
+demonstrates the replacement substitution and requires original pinned export,
+read and attestation bytes. It never modifies a Spine checkout.
+
+A dependency-free test-only completion helper records successful test identities.
+Both harnesses require their four named scenarios with no scenario/subtest skips
+for full qualification, and package/matrix parents inspect the completion report
+before success publication. Focused runs remain distinct. Regressions cover
+omitted/empty/duplicate suites, failures/errors, scenario/subtest skips, focused
+runs and incomplete parent proof. The helper is included only in the sdist's
+integration tooling; it does not add wheel runtime or public artifact contracts.
+
+The real-CLI update scenario now retries its complete checkpoint with its
+original approval after public binding drift. It requires exit 7 with
+`unexplained_recovery_change`, no publication, unchanged ledger metadata and
+preserved checkpoint/approval bytes before resuming the existing update checks.
+The three minor reporting/status statements are corrected, preserving the
+historical 118-read measurement's actual post-reset interval and both permitted
+in-process fault modes.
+
+Local repair verification passed: 190-file repository verifier, 125 official
+contract tests without skips, 285 runtime tests including 11 focused completion/
+provenance test methods, and whitespace checks. The required system-Python
+contract run passed with 60 development-validator skips covered by the official
+run. All 32 scenarios in the fresh eight-run source/installed matrix completed
+with the required four successful identities and zero skips per run. Parents
+validated the reports before publishing success. Both v2 runs included the new
+complete-checkpoint drift refusal using the original approval; both FR-2 gates
+passed with replacement objects disabled. Supplemental official schema validation
+accepted all 390 saved v2 artifacts/manifests. The focused single-case run remained
+explicitly ineligible for full qualification.
+
+Fresh evidence and local asset hashes are in `../docs/fr5-qualification.md`.
+Candidate bytes match across all three package runs, with unchanged wheel bytes
+and the repaired harness/helper in the sdist. All six findings are locally fixed;
+the original audit verdict and payload remain frozen. Next is a separately
+approved focused bounded recheck. No runtime change, curated content, release,
+commit/push or new external reviewer is authorized by this repair.
+
+### FR-5 focused recheck follow-up (2026-11-14)
+
+The separately approved focused recheck closed consistency-001/004/005/006 and
+reopened consistency-002/003, both major qualification gaps. The operator
+authorized the two narrow patches and focused checks. Parent gates now select
+the trusted shared v1/v2 scenario registry independently of child reports. The
+drift case explicitly establishes the exact on-disk checkpoint's complete ordered
+prefix and null continuation fields before public setup changes the binding.
+
+Focused regressions cover cross-suite, arbitrary-ID and unknown/omitted-selector
+rejection. All 14 focused unit methods and all 288 runtime/125 official contract
+tests passed, together with the 190-file verifier and whitespace checks. The
+system-Python contract run passed with 60 development-validator skips covered
+by the official run. Actual cross-suite reports were rejected by independently
+selected wrong parents, and all eight retained full-matrix reports revalidated
+against their correct registry without rerunning those historical scenarios.
+
+The strengthened on-disk completeness/drift case passed from source and a fresh
+installed wheel/extracted sdist on exact Spine 0.10.0; both focused runs retain
+`full_qualification=false`. Current package qualification on exact Spine 0.6.0
+passed all four installed v1 scenarios with zero skips and the parent-selected
+v1 registry, plus resource/archive/build/installation checks. Exact reused
+upstream installations and the 32 FR-2 authority pins were independently
+reattested. Evidence and current local asset hashes are recorded in
+`../docs/fr5-qualification.md`. Both follow-up fixes are locally verified;
+independent focused recheck remains pending a new approved payload.
+
+This follow-up does
+not rerun or overwrite historical full-matrix evidence, reopen the four closed
+findings, change runtime/contracts/packs, or authorize another external reviewer,
+commit, push, release or deployment. Results will be recorded in
+`../docs/fr5-qualification.md`.

@@ -88,8 +88,13 @@ For the facet/rendering successor, `scripts/qualify_fr5.py` builds exact Git
 exports of Spine `0.10.0` and all three existing v1 baselines, attests installed
 source bytes, and runs source plus installed plan/apply/recovery/verify gates.
 See [FR-5 qualification](fr5-qualification.md) in the development checkout.
-The sdist includes both disposable integration harnesses and their small
-synthetic inputs. Its v2 flight input is contract evidence, not approved
+The sdist includes both disposable integration harnesses, their shared completion
+gate helper, and small synthetic inputs. Full qualification requires all four
+named scenarios per harness without skipped scenarios or subtests. Focused runs
+cannot satisfy the package or matrix success gate. Each parent independently
+selects the expected v1/v2 scenario IDs from the shared registry; IDs declared
+only by a child report cannot satisfy that gate. Its v2 flight input is
+contract evidence, not approved
 `kinflow-starter` content. The current `0.3.0` package metadata is retained for
 local candidate builds; these builds must not replace published assets. A
 successor release identity and exact committed release qualification remain

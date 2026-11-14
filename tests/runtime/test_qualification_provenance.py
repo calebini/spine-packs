@@ -1,6 +1,9 @@
 """Qualification must reject wrong source pins and incomplete/corrupt installs."""
 import importlib.util
+import os
 from pathlib import Path
+import subprocess
+import tarfile
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -10,9 +13,58 @@ ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location('qualify_fr5', ROOT / 'scripts/qualify_fr5.py')
 qualifier = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(qualifier)
+fr2_spec = importlib.util.spec_from_file_location('qualify_fr2', ROOT / 'scripts/qualify_fr2.py')
+fr2 = importlib.util.module_from_spec(fr2_spec)
+fr2_spec.loader.exec_module(fr2)
 
 
 class QualificationProvenanceTests(unittest.TestCase):
+    def test_replacement_refs_cannot_substitute_pinned_export_or_attestation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); repo = root / 'git'; repo.mkdir()
+            env = dict(PATH=os.environ['PATH'], GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='/dev/null',
+                GIT_AUTHOR_NAME='Qualification fixture', GIT_AUTHOR_EMAIL='fixture@example.invalid',
+                GIT_COMMITTER_NAME='Qualification fixture', GIT_COMMITTER_EMAIL='fixture@example.invalid')
+            def git(*args, data=None):
+                return subprocess.check_output(['git', '-C', str(repo), *args], input=data, env=env)
+            git('init', '--quiet', '--initial-branch=main')
+            def commit(value):
+                blob = git('hash-object', '-w', '--stdin', data=value).decode().strip()
+                tree = git('mktree', data=f'100644 blob {blob}\t__init__.py\n'.encode()).decode().strip()
+                for name in ('sample', 'src'):
+                    tree = git('mktree', data=f'040000 tree {tree}\t{name}\n'.encode()).decode().strip()
+                return git('commit-tree', tree, data=b'synthetic provenance fixture\n').decode().strip()
+            original = b'# exact original\n'; substituted = b'# replacement content\n'
+            pin = commit(original); replacement = commit(substituted)
+            git('replace', pin, replacement)
+            self.assertEqual(git('rev-parse', pin + '^{commit}').decode().strip(), pin)
+            self.assertEqual(git('show', pin + ':src/sample/__init__.py'), substituted)
+            qualifier.exact_commit(repo, pin)
+            for module in (qualifier, fr2):
+                self.assertEqual(subprocess.check_output(module.pinned_git(repo, 'show',
+                    pin + ':src/sample/__init__.py'), env=env), original)
+            archive = root / 'export.tar'
+            subprocess.check_call(qualifier.pinned_git(repo, 'archive', '--format=tar', '--output', str(archive), pin), env=env)
+            export = root / 'export'; export.mkdir()
+            with tarfile.open(archive) as tar: tar.extractall(export, filter='data')
+            self.assertEqual((export / 'src/sample/__init__.py').read_bytes(), original)
+            installed = root / 'installed'; (installed / 'sample').mkdir(parents=True)
+            wheel = root / 'sample.whl'
+            actual_output = subprocess.check_output
+            def output(argv, **kwargs):
+                if argv[0] == str(root / 'bin/python'): return str(installed) + '\n'
+                return actual_output(argv, **kwargs)
+            for value in (original, substituted):
+                with zipfile.ZipFile(wheel, 'w') as package: package.writestr('sample/__init__.py', value)
+                (installed / 'sample/__init__.py').write_bytes(value)
+                (export / 'src/sample/__init__.py').write_bytes(value)
+                with patch.object(qualifier.subprocess, 'check_output', side_effect=output):
+                    if value == original:
+                        self.assertEqual(qualifier.attest(repo, pin, export, wheel, root / 'bin', 'sample')['python_files'], 1)
+                    else:
+                        with self.assertRaisesRegex(RuntimeError, 'provenance mismatch'):
+                            qualifier.attest(repo, pin, export, wheel, root / 'bin', 'sample')
+
     def test_wrong_exact_commit_refused(self):
         with patch.object(qualifier.subprocess, 'check_output', return_value='different\n'):
             with self.assertRaisesRegex(RuntimeError, 'exact source commit unavailable'):

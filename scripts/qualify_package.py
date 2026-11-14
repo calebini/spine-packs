@@ -20,6 +20,8 @@ import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'tests/integration'))
+from qualification_support import require_full_qualification
 
 
 def require(condition, message):
@@ -91,6 +93,7 @@ def qualify(args, run):
                  "docs/spine-0.6.0-qualification.md",
                  "tests/integration/test_local_spine.py",
                  "tests/integration/test_facet_spine.py",
+                 "tests/integration/qualification_support.py",
                  "tests/fixtures/pack-manifest-v2/flight.json",
                  "tests/fixtures/pack-manifest/positive/medical_and_lesson.json"):
         source_members[name] = (ROOT / name).read_bytes()
@@ -118,11 +121,16 @@ def qualify(args, run):
             "--spine-command", args.spine_command.resolve(strict=True),
             "--spine-ledger-migrate", args.spine_ledger_migrate.resolve(strict=True),
             "--evidence-parent", run], timeout=900)
+    integration_runs = list(run.glob('spine-packs-integration-*'))
+    require(len(integration_runs) == 1, 'expected one installed integration run')
+    integration_result = integration_runs[0] / 'result.json'
+    require_full_qualification(json.loads(integration_result.read_text()), harness='v1')
     # Emit release checksums only after every local qualification gate passed.
     checksums = "".join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n"
                         for p in sorted((wheel, sdist)))
     (assets / "SHA256SUMS").write_text(checksums)
-    (run / "PASS.json").write_text(json.dumps({"passed": True, "assets": str(assets)}) + "\n")
+    (run / "PASS.json").write_text(json.dumps({"passed": True, "assets": str(assets),
+        "integration_result": str(integration_result)}) + "\n")
     print(f"Local candidate qualified; nothing published. Assets: {assets}", flush=True)
 
 

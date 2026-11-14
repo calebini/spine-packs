@@ -42,6 +42,7 @@ only-include = [
   "docs/spine-0.6.0-qualification.md",
   "tests/integration/test_local_spine.py",
   "tests/integration/test_facet_spine.py",
+  "tests/integration/qualification_support.py",
   "tests/fixtures/pack-manifest-v2/flight.json",
   "tests/fixtures/pack-manifest/positive/medical_and_lesson.json",
 ]

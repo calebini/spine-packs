@@ -21,6 +21,10 @@ from unittest.mock import patch
 import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from qualification_support import QualificationResult, SCENARIO_IDS, completion_report
+
+REQUIRED_SCENARIOS = tuple(name.rsplit('.',1)[1] for name in SCENARIO_IDS['v2'])
 if '--installed' not in sys.argv:
     sys.path.insert(0,str(ROOT/'src'))
 from spine_packs import artifacts as a
@@ -168,12 +172,13 @@ class FacetSpineTests(unittest.TestCase):
 
     def install(self):
         manifest=self.pack(); plan,p=self.plan(manifest); self.assertEqual(len(p['actions']),6)
-        result,value,cp=self.apply(manifest,plan,self.approve(p)); self.assertEqual(value['state'],'applied')
+        approved=self.approve(p)
+        result,value,cp=self.apply(manifest,plan,approved); self.assertEqual(value['state'],'applied')
         _,verified=self.invoke('verify',manifest=manifest,plan=plan,result=result)
         self.assertEqual(verified['state'],'verified'); self.assertEqual(verified['response_evidence'],'complete')
         self.assertEqual(verified['receipt_readback'],'captured_responses_only_spine_0.10.0')
         self.assertEqual(verified['disclosure'],'separate_operator_configuration_required')
-        return manifest,plan,result,cp
+        return manifest,plan,result,cp,approved
 
     def drift_binding(self):
         archetype=self.public('item_archetype.list',dict(contract_version='spine.item-archetypes.v1',owner=self.owner,limit='100'))['entries'][0]
@@ -187,7 +192,7 @@ class FacetSpineTests(unittest.TestCase):
         return other
 
     def test_create_retain_complete_checkpoint_and_read_only_verify(self):
-        manifest,plan,result,cp=self.install()
+        manifest,plan,result,cp,_=self.install()
         before=cp.read_bytes(); metadata=self.metadata()
         _,resumed,_=self.apply(manifest,plan,self.approve(a.load_json(plan)),source=cp,expected=2)
         # A new execution cannot adopt an old checkpoint.
@@ -203,7 +208,23 @@ class FacetSpineTests(unittest.TestCase):
         self.plan(draft_path,expected=3)
 
     def test_update_cascade_binding_drift_and_approval(self):
-        original,old_plan,old_result,_=self.install(); self.drift_binding()
+        original,old_plan,old_result,completed,approved=self.install()
+        # Reuse the original execution, not a newly generated approval. A
+        # completed checkpoint must still be admitted against fresh live state.
+        disk_checkpoint=a.load_json(completed)
+        self.assertEqual([e['action_id'] for e in disk_checkpoint['accepted_responses']],
+                         [action['action_id'] for action in a.load_json(old_plan)['actions']])
+        self.assertIsNone(disk_checkpoint['next_action_id'])
+        self.assertIsNone(disk_checkpoint['unresolved_submission'])
+        self.assertEqual(disk_checkpoint,a.load_json(old_result)['checkpoint'])
+        preserved=completed.read_bytes(); approval_bytes=approved.read_bytes()
+        self.drift_binding()
+        before=self.metadata()
+        _,refused,new_checkpoint=self.apply(original,old_plan,approved,source=completed,expected=7)
+        self.assertEqual(refused['error']['code'],'unexplained_recovery_change')
+        self.assertFalse(new_checkpoint.exists())
+        self.assertEqual(completed.read_bytes(),preserved); self.assertEqual(approved.read_bytes(),approval_bytes)
+        self.assertEqual(self.metadata(),before,'failed fresh admission changed ledger metadata')
         updated=self.pack(updated=True); plan,p=self.plan(updated,expected=5)
         expected={'item_archetype.revise','facet_schema.publish','item_archetype.facet_binding.set',
             'notification_rendering_definition.publish','notification_profile.metadata.update',
@@ -284,9 +305,10 @@ def main():
     save(run/'run.json',dict(baseline=BASELINE,installed=args.installed,installer=installer,module=a.__file__,schemas=str(a.SCHEMA_ROOT)))
     print(f'Private FR-5 evidence: {run}',flush=True)
     suite=unittest.TestSuite(FacetSpineTests(n) for n in args.test) if args.test else unittest.defaultTestLoader.loadTestsFromTestCase(FacetSpineTests)
-    result=unittest.TextTestRunner(verbosity=2).run(suite)
-    save(run/'result.json',dict(passed=result.wasSuccessful(),tests=result.testsRun,failures=len(result.failures),errors=len(result.errors)))
-    return 0 if result.wasSuccessful() else 1
+    result=unittest.TextTestRunner(verbosity=2,resultclass=QualificationResult).run(suite)
+    report=completion_report(result,SCENARIO_IDS['v2'],focused=bool(args.test))
+    save(run/'result.json',report)
+    return 0 if report['passed'] else 1
 
 
 if __name__=='__main__': raise SystemExit(main())

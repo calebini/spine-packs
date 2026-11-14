@@ -34,7 +34,9 @@ operator-authorized CLI wiring uses that same exact command/contract inventory
 without expanding any allowlist. FR-5 source and installed-package technical
 qualification passed on the exact 0.10.0 pin and all three existing v1 baselines;
 see `../docs/fr5-qualification.md`. This is working-tree candidate evidence,
-with bounded review still pending, not a new release or broader support claim.
+with bounded-review repairs locally verified and focused recheck still pending, not a new release
+or broader support claim. The repairs strengthen provenance/completion gates
+without changing this exact runtime or contract inventory.
 
 ## Compatibility dimensions
 

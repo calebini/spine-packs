@@ -129,7 +129,13 @@ adapter remains read-only. The runtime audit's repair findings are closed by a
 passing focused recheck recorded in `specs/implementation-plan.md`. FR-5's exact
 installed-package technical qualification has now passed locally; see
 `docs/fr5-qualification.md` for exact evidence and release limitations. Its new
-qualification tooling still needs bounded review. FR-4 contract and
+qualification tooling received a bounded review with three major and three
+minor findings. The operator authorized all six repairs plus required checks
+and affected source/installed qualification reruns. Those local checks and the
+fresh full matrix passed. The approved focused recheck closed four findings and
+reopened parent harness identity and explicit on-disk checkpoint completeness.
+The operator authorized those two narrow follow-ups and focused checks; further
+external recheck still needs separate exact-payload approval. FR-4 contract and
 fixture work is authorized; its focused contract recheck passed with zero
 findings. The read-only foundation is committed; the operator subsequently
 authorized the admission/replay and internal continuation increments above.

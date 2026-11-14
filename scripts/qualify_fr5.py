@@ -18,6 +18,8 @@ import tomllib
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'tests/integration'))
+from qualification_support import require_full_qualification
 SPINE_PINS = {
     '0.3.0': '72203f092de191a7633b1884bf0d61836a25abe4',
     '0.5.0': 'ab18a8a51c9bf548220f67e2db0220bfe9783888',
@@ -38,8 +40,12 @@ def save(path, value):
         out.write('\n')
 
 
+def pinned_git(repo, *args):
+    return ['git', '--no-replace-objects', '-C', str(repo), *args]
+
+
 def exact_commit(repo, pin):
-    actual = subprocess.check_output(['git', '-C', str(repo), 'rev-parse', pin + '^{commit}'], text=True).strip()
+    actual = subprocess.check_output(pinned_git(repo, 'rev-parse', pin + '^{commit}'), text=True).strip()
     require(actual == pin, 'exact source commit unavailable')
 
 
@@ -53,8 +59,8 @@ def attest(repo, pin, export, wheel, bin_dir, package):
     env = dict(PATH=str(bin_dir) + ':/usr/bin:/bin', PYTHONNOUSERSITE='1')
     installed = Path(subprocess.check_output([str(bin_dir / 'python'), '-I', '-c',
         'import sysconfig; print(sysconfig.get_paths()["purelib"])'], text=True, env=env).strip())
-    tracked = subprocess.check_output(['git', '-C', str(repo), 'ls-tree', '-r', '--name-only', pin,
-                                      '--', 'src/' + package], text=True).splitlines()
+    tracked = subprocess.check_output(pinned_git(repo, 'ls-tree', '-r', '--name-only', pin,
+                                      '--', 'src/' + package), text=True).splitlines()
     python_names = {n.removeprefix('src/') for n in tracked if n.endswith('.py')}
     with zipfile.ZipFile(wheel) as archive:
         names = archive.namelist()
@@ -63,7 +69,7 @@ def attest(repo, pin, export, wheel, bin_dir, package):
         require({n for n in members if n.endswith('.py')} == python_names,
                 'upstream wheel Python closure differs from exact commit')
         for name in sorted(members):
-            exact = subprocess.check_output(['git', '-C', str(repo), 'show', pin + ':src/' + name])
+            exact = subprocess.check_output(pinned_git(repo, 'show', pin + ':src/' + name))
             require(exact == (export / 'src' / name).read_bytes() == archive.read(name)
                     == (installed / name).read_bytes(), 'upstream package provenance mismatch: ' + name)
         installed_names = {str(p.relative_to(installed)) for p in (installed / package).rglob('*')
@@ -85,7 +91,7 @@ def qualify(args, run):
     exact_commit(args.tickerd_repo, TICKERD_PIN)
     save(run / 'environment.json', dict(python=sys.version, platform=platform.platform(),
         tools={p: importlib.metadata.version(p) for p in ('build', 'hatchling', 'setuptools', 'wheel')},
-        source=str(ROOT), source_commit=subprocess.check_output(['git', '-C', str(ROOT), 'rev-parse', 'HEAD'], text=True).strip(),
+        source=str(ROOT), source_commit=subprocess.check_output(pinned_git(ROOT, 'rev-parse', 'HEAD'), text=True).strip(),
         qualification='working-tree-local-candidate-not-release', spine_pins=SPINE_PINS, tickerd_pin=TICKERD_PIN))
 
     def command(label, argv, cwd=run, timeout=1800):
@@ -101,7 +107,7 @@ def qualify(args, run):
         folder = run / label
         folder.mkdir(mode=0o700)
         archive = folder / 'exact-source.tar'
-        command(label + '-export', ['git', '-C', repo, 'archive', '--format=tar', '--output', archive, pin])
+        command(label + '-export', pinned_git(repo, 'archive', '--format=tar', '--output', archive, pin))
         export = folder / 'source'
         export.mkdir(mode=0o700)
         with tarfile.open(archive) as tar:
@@ -128,25 +134,39 @@ def qualify(args, run):
         save(run / label / 'provenance.json', proof)
         installs[version] = dict(bin=bin_dir, export=export, wheel=wheel)
 
+    integration_results = {}
+    def integration(label, argv, *, harness):
+        parent = run / label
+        parent.mkdir(mode=0o700)
+        command(label, [*argv, '--evidence-parent', parent], timeout=3600)
+        runs = list(parent.glob('spine-packs-*integration-*'))
+        require(len(runs) == 1, 'expected one integration result: ' + label)
+        result_path = runs[0] / 'result.json'
+        require_full_qualification(json.loads(result_path.read_text()), harness=harness)
+        integration_results[label] = str(result_path)
+
     current = installs['0.10.0']
     current_bin = current['bin']
     command('source-fr2', [sys.executable, ROOT / 'scripts/qualify_fr2.py', '--bin-dir', current_bin,
         '--export', current['export'], '--spine-repo', args.spine_repo, '--wheel', current['wheel']])
-    command('source-v2', [sys.executable, ROOT / 'tests/integration/test_facet_spine.py',
-        '--spine-command', current_bin / 'spine-command', '--spine-ledger-migrate', current_bin / 'spine-ledger-migrate',
-        '--evidence-parent', run], timeout=3600)
+    integration('source-v2', [sys.executable, ROOT / 'tests/integration/test_facet_spine.py',
+        '--spine-command', current_bin / 'spine-command', '--spine-ledger-migrate', current_bin / 'spine-ledger-migrate'], harness='v2')
     package_runs = []
     for version in ('0.3.0', '0.5.0', '0.6.0'):
         bin_dir = installs[version]['bin']
-        options = ['--spine-command', bin_dir / 'spine-command', '--spine-ledger-migrate', bin_dir / 'spine-ledger-migrate',
-                   '--evidence-parent', run]
-        command('source-v1-' + version, [sys.executable, ROOT / 'tests/integration/test_local_spine.py', *options])
+        options = ['--spine-command', bin_dir / 'spine-command', '--spine-ledger-migrate', bin_dir / 'spine-ledger-migrate']
+        integration('source-v1-' + version, [sys.executable, ROOT / 'tests/integration/test_local_spine.py', *options], harness='v1')
         before = set(run.glob('spine-packs-package-*'))
-        command('package-v1-' + version, [sys.executable, ROOT / 'scripts/qualify_package.py', *options])
+        command('package-v1-' + version, [sys.executable, ROOT / 'scripts/qualify_package.py', *options, '--evidence-parent', run])
         added = set(run.glob('spine-packs-package-*')) - before
         require(len(added) == 1, 'expected one package qualification run')
         package_run = added.pop()
         require((package_run / 'PASS.json').is_file(), 'package gate incomplete')
+        package_proof = json.loads((package_run / 'PASS.json').read_text())
+        result_path = Path(package_proof['integration_result'])
+        require(package_proof['passed'] is True, 'package qualification failed')
+        require_full_qualification(json.loads(result_path.read_text()), harness='v1')
+        integration_results['installed-v1-' + version] = str(result_path)
         package_runs.append(package_run)
 
     # Same local candidate, same fixed timestamps and recorded tools for all
@@ -159,13 +179,13 @@ def qualify(args, run):
     package_run = package_runs[0]
     installed_python = package_run / 'installed/bin/python'
     sdist_root = package_run / 'sdist' / f'spine_packs-{version}'
-    command('installed-v2', [installed_python, '-I', sdist_root / 'tests/integration/test_facet_spine.py', '--installed',
-        '--spine-command', current_bin / 'spine-command', '--spine-ledger-migrate', current_bin / 'spine-ledger-migrate',
-        '--evidence-parent', run], timeout=3600)
+    integration('installed-v2', [installed_python, '-I', sdist_root / 'tests/integration/test_facet_spine.py', '--installed',
+        '--spine-command', current_bin / 'spine-command', '--spine-ledger-migrate', current_bin / 'spine-ledger-migrate'], harness='v2')
     command('installed-fr2', [installed_python, '-I', ROOT / 'scripts/qualify_fr2.py', '--installed-installer',
         '--bin-dir', current_bin, '--export', current['export'], '--spine-repo', args.spine_repo, '--wheel', current['wheel']])
     save(run / 'PASS.json', dict(passed=True, qualification='working-tree-local-candidate-not-release',
-        package_runs=[str(p) for p in package_runs], assets={n:hashlib.sha256((package_run / 'assets' / n).read_bytes()).hexdigest()
+        package_runs=[str(p) for p in package_runs], integration_results=integration_results,
+        assets={n:hashlib.sha256((package_run / 'assets' / n).read_bytes()).hexdigest()
         for n in asset_names}, gates=['source-fr2', 'source-v2', 'installed-fr2', 'installed-v2',
                                     'source-v1-and-installed-v1-each-supported-baseline']))
     print(f'FR-5 passed locally; nothing published. Evidence: {run}', flush=True)

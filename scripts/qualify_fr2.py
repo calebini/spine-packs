@@ -33,9 +33,13 @@ def require(value, message):
         raise RuntimeError(message)
 
 
+def pinned_git(repo, *args):
+    return ['git', '--no-replace-objects', '-C', str(repo), *args]
+
+
 def provenance(repo, export, wheel, bin_dir):
     pin = BASELINE['commit']
-    require(subprocess.check_output(['git', '-C', str(repo), 'rev-parse', pin + '^{commit}'], text=True).strip() == pin,
+    require(subprocess.check_output(pinned_git(repo, 'rev-parse', pin + '^{commit}'), text=True).strip() == pin,
             'exact commit unavailable')
     installed = Path(subprocess.check_output([str(bin_dir / 'python'), '-I', '-c',
         'import sysconfig; print(sysconfig.get_paths()["purelib"])'], text=True).strip())
@@ -44,7 +48,7 @@ def provenance(repo, export, wheel, bin_dir):
         for name in archive.namelist():
             if not name.startswith('spine/') or name.endswith('/'):
                 continue
-            exact = subprocess.check_output(['git', '-C', str(repo), 'show', pin + ':src/' + name])
+            exact = subprocess.check_output(pinned_git(repo, 'show', pin + ':src/' + name))
             require(archive.read(name) == exact == (export / 'src' / name).read_bytes()
                     == (installed / name).read_bytes(), 'package source/installed provenance mismatch')
             count += 1
@@ -54,7 +58,7 @@ def provenance(repo, export, wheel, bin_dir):
     authorities.update({k.removeprefix('upstream/'): v for k, v in inventory['source_sha256'].items()
                         if k.startswith('upstream/')})
     for name, digest in authorities.items():
-        exact = subprocess.check_output(['git', '-C', str(repo), 'show', pin + ':' + name])
+        exact = subprocess.check_output(pinned_git(repo, 'show', pin + ':' + name))
         require(exact == (export / name).read_bytes() and hashlib.sha256(exact).hexdigest() == digest,
                 'contract/source inventory provenance mismatch')
     return dict(commit=pin, package_files=count, authority_files=len(authorities),
