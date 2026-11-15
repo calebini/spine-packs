@@ -190,6 +190,25 @@ this closes the AL-2 runtime repair review gate. Preserve all original reports
 and approved payloads. The operator subsequently authorized the local AL-2
 checkpoint commit only; AL-3 exact-0.12.0 source/installed qualification, push,
 deployment and publication remain separate work.
+After checkpoint `8082b5d`, the operator explicitly authorized AL-3 source and
+installed-package qualification of exact Spine
+`3e65ef0de9e73b62047a0f6328731db08ca91023` (0.12.0/schema 20). This permits
+the bounded qualification harness updates, isolated exact Git exports/builds,
+locally provisioned and recorded dependency wheels, and new disposable
+configuration-only ledgers through public CLIs. Retain the 0.10.0 and all v1
+source/installed regression gates. Bind every result to the parent-selected
+baseline, installation mode and attested upstream paths. Freeze source/harness
+inputs throughout each matrix. No Spine checkout edits, existing/operator
+ledger, runtime expansion, curated content, disclosure, items, facet values,
+reminder materialization, sends, deployment, publication, commit or push is
+part of AL-3. Its external review still requires fresh exact-payload approval.
+AL-3 technical qualification subsequently passed with 40 source/installed
+scenarios, four nine-check read gates, all 11 replay writes on both v2 pins in
+both modes, matching candidate archives and unchanged source inputs. See
+`docs/al3-qualification.md` for exact evidence and limits. No runtime repair was
+needed. The bounded tooling review and final release qualification remain
+separate; no external review, commit, push or publication is authorized by this
+local pass.
 FR-4 contract and
 fixture work is authorized; its focused contract recheck passed with zero
 findings. The read-only foundation is committed; the operator subsequently

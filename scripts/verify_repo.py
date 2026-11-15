@@ -31,6 +31,8 @@ REQUIRED_FILES = (
     "scripts/qualify_fr5.py",
     "docs/fr5-qualification.md",
     "docs/spine-0.12.0-alignment.md",
+    "docs/al3-qualification.md",
+    "tests/runtime/test_alignment_qualification.py",
     "docs/spine-0.12.0-alignment.json",
     "specs/spine-0.12.0-alignment.md",
     "contracts/installer-spine-0.12.0-inventory.json",

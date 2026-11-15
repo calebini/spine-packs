@@ -22,7 +22,8 @@ if '--installed-installer' not in sys.argv:
     sys.path.insert(0, str(ROOT / 'src'))
 from spine_packs import artifacts as a
 from spine_packs.facet_contracts import seal, body
-from spine_packs.facet_inventory import BASELINE, COMMANDS, READ_COMMANDS
+from spine_packs.facet_inventory import COMMANDS, READ_COMMANDS
+from spine_packs.facet_baselines import BASELINES, DEFAULT_RUNTIME, runtime_baseline
 from spine_packs.facet_manifest import digest as manifest_digest
 from spine_packs.facet_planning import plan_installation
 from spine_packs.facet_transport import FacetSpineCommand
@@ -37,14 +38,23 @@ def pinned_git(repo, *args):
     return ['git', '--no-replace-objects', '-C', str(repo), *args]
 
 
-def provenance(repo, export, wheel, bin_dir):
-    pin = BASELINE['commit']
+def provenance(repo, export, wheel, bin_dir, runtime_version=DEFAULT_RUNTIME):
+    baseline = runtime_baseline(runtime_version)
+    pin = baseline.commit
     require(subprocess.check_output(pinned_git(repo, 'rev-parse', pin + '^{commit}'), text=True).strip() == pin,
             'exact commit unavailable')
     installed = Path(subprocess.check_output([str(bin_dir / 'python'), '-I', '-c',
         'import sysconfig; print(sysconfig.get_paths()["purelib"])'], text=True).strip())
     count = 0
+    tracked = subprocess.check_output(pinned_git(repo, 'ls-tree', '-r', '--name-only', pin,
+                                      '--', 'src/spine'), text=True).splitlines()
+    expected_python = {name.removeprefix('src/') for name in tracked if name.endswith('.py')}
     with zipfile.ZipFile(wheel) as archive:
+        names = archive.namelist()
+        require(len(names) == len(set(names)), 'duplicate Spine wheel members')
+        members = {name for name in names if name.startswith('spine/') and not name.endswith('/')}
+        require({name for name in members if name.endswith('.py')} == expected_python,
+                'Spine wheel Python closure mismatch')
         for name in archive.namelist():
             if not name.startswith('spine/') or name.endswith('/'):
                 continue
@@ -53,7 +63,10 @@ def provenance(repo, export, wheel, bin_dir):
                     == (installed / name).read_bytes(), 'package source/installed provenance mismatch')
             count += 1
     require(count > 299, 'incomplete Spine wheel')
-    inventory = json.loads((ROOT / 'contracts/installer-spine-0.10.0-inventory.json').read_text())
+    installed_names = {str(p.relative_to(installed)) for p in (installed / 'spine').rglob('*')
+                       if p.is_file() and '__pycache__' not in p.parts}
+    require(installed_names == members, 'unexpected installed Spine files')
+    inventory = json.loads((ROOT / ('contracts/installer-spine-' + baseline.runtime + '-inventory.json')).read_text())
     authorities = dict(inventory['revision_readback_authority_sha256'])
     authorities.update({k.removeprefix('upstream/'): v for k, v in inventory['source_sha256'].items()
                         if k.startswith('upstream/')})
@@ -61,15 +74,16 @@ def provenance(repo, export, wheel, bin_dir):
         exact = subprocess.check_output(pinned_git(repo, 'show', pin + ':' + name))
         require(exact == (export / name).read_bytes() and hashlib.sha256(exact).hexdigest() == digest,
                 'contract/source inventory provenance mismatch')
-    return dict(commit=pin, package_files=count, authority_files=len(authorities),
+    return dict(commit=pin, runtime=baseline.runtime, schema=baseline.schema, package_files=count, authority_files=len(authorities),
                 wheel_sha256=hashlib.sha256(wheel.read_bytes()).hexdigest())
 
 
-def qualify(bin_dir, export, repo, wheel):
+def qualify(bin_dir, export, repo, wheel, *, runtime_version=DEFAULT_RUNTIME, evidence_parent=None):
+    baseline = runtime_baseline(runtime_version)
     if '--installed-installer' in sys.argv:
         require((ROOT / 'src') not in Path(a.__file__).resolve().parents, 'source installer leaked into installed gate')
-    proof = provenance(repo, export, wheel, bin_dir)
-    run = Path(tempfile.mkdtemp(prefix='spine-packs-fr2-gate-')).resolve()
+    proof = provenance(repo, export, wheel, bin_dir, runtime_version)
+    run = Path(tempfile.mkdtemp(prefix='spine-packs-fr2-gate-', dir=evidence_parent)).resolve()
     ledger = run / 'new.sqlite'
     executable = (bin_dir / 'spine-command').resolve()
     env = {'PATH': str(bin_dir) + ':/usr/bin:/bin', 'PYTHONNOUSERSITE': '1',
@@ -77,7 +91,7 @@ def qualify(bin_dir, export, repo, wheel):
     transcript, reads, checks = [], [], []
     flow = json.loads((ROOT / 'tests/fixtures/installer-v2/flight-create.json').read_text())
     manifest, request = flow['manifest'], flow['request']
-    manifest['compatibility']['spine_runtime_versions'] = ['0.10.0']
+    manifest['compatibility']['spine_runtime_versions'] = [baseline.runtime]
     manifest['content_identity']['digest'] = manifest_digest(manifest)
     owner = request['request']['owner']
     setup = {'subject.upsert', 'item_archetype.create', 'facet_schema.create', 'facet_schema.publish',
@@ -116,7 +130,9 @@ def qualify(bin_dir, export, repo, wheel):
         require(not ledger.exists(), 'refusing existing ledger')
         invoke([str(bin_dir / 'spine-ledger-migrate'), '--db', str(ledger), '--initialize-if-empty'])
         info = cli('system.info', {})
-        require(info['runtime_version'] == '0.10.0' and info['ledger_schema_version'] == '19', 'baseline mismatch')
+        require(info['runtime_version'] == baseline.runtime
+                and info['ledger_schema_version'] == info['implemented_ledger_schema_version'] == baseline.schema,
+                'baseline mismatch')
         cli('subject.upsert', dict(command_id='fr2-owner', actor_subject_id=owner['owner_subject_id'],
             subject_id=owner['owner_subject_id'], subject_kind='person', display_name='Synthetic FR-2 owner',
             updated_at_utc='2035-02-01T12:00:00Z'))
@@ -210,10 +226,15 @@ def qualify(bin_dir, export, repo, wheel):
         checks += ['current_historical_retired_public_reads', 'missing_revision_exit4', 'invalid_request_exit2']
         (run / 'plan.json').write_text(json.dumps(first, indent=2) + '\n')
         (run / 'fixture.json').write_text(json.dumps(dict(manifest=manifest, request=request, reads=first_reads, plan=first), indent=2) + '\n')
-        return dict(status='passed', provenance=proof, checks=checks, run_directory=str(run),
+        report = dict(status='passed', provenance=proof, checks=checks, run_directory=str(run),
                     installer_module=str(Path(a.__file__).resolve()),
+                    installer_schemas=str(a.SCHEMA_ROOT.resolve()),
+                    installed_installer='--installed-installer' in sys.argv,
+                    spine_command=str(executable), spine_ledger_migrate=str((bin_dir / 'spine-ledger-migrate').resolve()),
                     setup_and_direct_read_calls=len(transcript), planner_read_calls=len(reads),
                     qualification='FR-2 read-only only; not successor apply/recovery/verify or release')
+        (run / 'PASS.json').write_text(json.dumps(report, indent=2) + '\n')
+        return report
     finally:
         (run / 'public-cli-transcript.json').write_text(json.dumps(transcript, indent=2) + '\n')
         (run / 'planner-reads.json').write_text(json.dumps(reads, indent=2) + '\n')
@@ -226,5 +247,8 @@ if __name__ == '__main__':
         parser.add_argument('--' + name, required=True, type=Path)
     parser.add_argument('--installed-installer', action='store_true',
                         help='Use the calling isolated interpreter\'s installed Spine Packs, not source-tree imports')
+    parser.add_argument('--runtime-version', choices=tuple(BASELINES), default=DEFAULT_RUNTIME)
+    parser.add_argument('--evidence-parent', type=Path, default=Path(tempfile.gettempdir()))
     args = parser.parse_args()
-    print(json.dumps(qualify(args.bin_dir.resolve(), args.export.resolve(), args.spine_repo.resolve(), args.wheel.resolve()), indent=2))
+    print(json.dumps(qualify(args.bin_dir.resolve(), args.export.resolve(), args.spine_repo.resolve(), args.wheel.resolve(),
+        runtime_version=args.runtime_version, evidence_parent=args.evidence_parent), indent=2))

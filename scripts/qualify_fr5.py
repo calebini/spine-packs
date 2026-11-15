@@ -10,6 +10,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import shutil
 import subprocess
 import sys
 import tarfile
@@ -27,6 +28,13 @@ SPINE_PINS = {
     '0.10.0': '8f3c50b6fd1b4aa534e50925b7417a7a80d19122',
 }
 TICKERD_PIN = 'ffe613c65ea3d6fc70a1dc3603c32068f06350df'
+SUCCESSOR_PINS = {
+    '0.10.0': dict(commit=SPINE_PINS['0.10.0'], schema='19'),
+    '0.12.0': dict(commit='3e65ef0de9e73b62047a0f6328731db08ca91023', schema='20'),
+}
+READ_GATE_CHECKS = frozenset(('all_missing_read_only_plan', 'A2_B2_B1_actual_root_and_immutable_history',
+    'repeated_pins_deduplicated_per_pass', 'mixed_v1_v2_complete_pagination', 'two_pass_page_independent_plan',
+    'unchanged_ledger_file_metadata', 'current_historical_retired_public_reads', 'missing_revision_exit4', 'invalid_request_exit2'))
 
 
 def require(value, message):
@@ -47,6 +55,53 @@ def pinned_git(repo, *args):
 def exact_commit(repo, pin):
     actual = subprocess.check_output(pinned_git(repo, 'rev-parse', pin + '^{commit}'), text=True).strip()
     require(actual == pin, 'exact source commit unavailable')
+
+
+def selected_pins(runtime):
+    require(runtime in SUCCESSOR_PINS, 'unsupported qualification baseline')
+    return dict(SPINE_PINS, **{runtime: SUCCESSOR_PINS[runtime]['commit']})
+
+
+def source_snapshot():
+    paths = [*ROOT.glob('src/spine_packs/*.py'), *ROOT.glob('contracts/schemas/*.schema.json'), *ROOT.glob('contracts/*.json'),
+             *ROOT.glob('tests/integration/*.py'), ROOT/'tests/fixtures/pack-manifest-v2/flight.json',
+             ROOT/'tests/fixtures/pack-manifest/positive/medical_and_lesson.json',
+             ROOT/'tests/fixtures/installer-v2/flight-create.json']
+    paths += [ROOT/p for p in ('pyproject.toml', 'README.md', 'LICENSE', '.gitignore',
+        'docs/releases.md', 'docs/local-qualification.md', 'docs/spine-0.6.0-qualification.md',
+        'scripts/qualify_fr2.py', 'scripts/qualify_fr5.py', 'scripts/qualify_package.py')]
+    return {str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(paths)}
+
+
+def require_identity(record, *, runtime, installed, bin_dir, installer_prefix=None):
+    expected = dict(commit=SUCCESSOR_PINS[runtime]['commit'], runtime=runtime, schema=SUCCESSOR_PINS[runtime]['schema'])
+    require(record.get('baseline') == expected and record.get('installed') is installed,
+            'integration baseline/mode mismatch')
+    require(record.get('spine_command') == str(bin_dir/'spine-command')
+            and record.get('spine_ledger_migrate') == str(bin_dir/'spine-ledger-migrate'), 'integration upstream path mismatch')
+    module = Path(record.get('module', '/missing')).resolve()
+    schemas = Path(record.get('schemas', '/missing')).resolve()
+    if installed:
+        require(installer_prefix is not None and module.is_relative_to(installer_prefix.resolve())
+                and module.name == 'artifacts.py' and module.parent.name == 'spine_packs'
+                and schemas == module.parent/'_schemas', 'installed integration source/resource leak')
+    else:
+        require(module == (ROOT/'src/spine_packs/artifacts.py').resolve()
+                and schemas == (ROOT/'contracts/schemas').resolve(), 'source integration identity mismatch')
+
+
+def require_read_gate(record, *, runtime, installed, bin_dir, wheel, installer_prefix=None):
+    proof = record.get('provenance', {})
+    require(record.get('status') == 'passed' and set(record.get('checks', [])) == READ_GATE_CHECKS
+            and len(record['checks']) == len(READ_GATE_CHECKS), 'incomplete read-only qualification')
+    require(proof.get('commit') == SUCCESSOR_PINS[runtime]['commit'] and proof.get('runtime') == runtime
+            and proof.get('schema') == SUCCESSOR_PINS[runtime]['schema']
+            and proof.get('wheel_sha256') == hashlib.sha256(wheel.read_bytes()).hexdigest(), 'read gate provenance mismatch')
+    require_identity(dict(baseline=dict(commit=proof['commit'],runtime=proof['runtime'],schema=proof['schema']),
+        installed=record.get('installed_installer'), spine_command=record.get('spine_command'),
+        spine_ledger_migrate=record.get('spine_ledger_migrate'), module=record.get('installer_module'),
+        schemas=record.get('installer_schemas')),
+        runtime=runtime, installed=installed, bin_dir=bin_dir, installer_prefix=installer_prefix)
 
 
 def attest(repo, pin, export, wheel, bin_dir, package):
@@ -86,13 +141,27 @@ def qualify(args, run):
     env = dict(PATH=str(Path(sys.executable).parent) + ':/usr/bin:/bin',
                PYTHONNOUSERSITE='1', PYTHONDONTWRITEBYTECODE='1',
                SOURCE_DATE_EPOCH='315532800', LC_ALL='C')
-    for pin in SPINE_PINS.values():
+    selected = getattr(args, 'successor_runtime', '0.10.0')
+    spine_pins = selected_pins(selected)
+    snapshot = source_snapshot()
+    save(run/'source-identity.json', snapshot)
+    dependencies = []
+    if selected == '0.12.0':
+        wheelhouse = getattr(args, 'dependency_wheels', None)
+        require(wheelhouse is not None and wheelhouse.is_dir(), '0.12.0 requires a preprovisioned dependency wheelhouse')
+        folder = run/'dependency-wheels'; folder.mkdir(mode=0o700)
+        for source in sorted(wheelhouse.glob('*.whl')):
+            target = folder/source.name; shutil.copyfile(source,target); dependencies.append(target)
+        require(bool(dependencies), 'empty dependency wheelhouse')
+        save(run/'dependency-wheels.json', {p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in dependencies})
+    for pin in spine_pins.values():
         exact_commit(args.spine_repo, pin)
     exact_commit(args.tickerd_repo, TICKERD_PIN)
     save(run / 'environment.json', dict(python=sys.version, platform=platform.platform(),
         tools={p: importlib.metadata.version(p) for p in ('build', 'hatchling', 'setuptools', 'wheel')},
         source=str(ROOT), source_commit=subprocess.check_output(pinned_git(ROOT, 'rev-parse', 'HEAD'), text=True).strip(),
-        qualification='working-tree-local-candidate-not-release', spine_pins=SPINE_PINS, tickerd_pin=TICKERD_PIN))
+        qualification='working-tree-local-candidate-not-release', successor_runtime=selected,
+        spine_pins=spine_pins, tickerd_pin=TICKERD_PIN))
 
     def command(label, argv, cwd=run, timeout=1800):
         log = run / (label + '.log')
@@ -121,21 +190,24 @@ def qualify(args, run):
 
     tick_export, tick_wheel = build(args.tickerd_repo, TICKERD_PIN, 'tickerd')
     installs = {}
-    for version, pin in SPINE_PINS.items():
+    for version, pin in spine_pins.items():
         label = 'spine-' + version
         export, wheel = build(args.spine_repo, pin, label)
         prefix = run / label / 'installed'
         command(label + '-venv', [sys.executable, '-m', 'venv', prefix])
         bin_dir = prefix / 'bin'
-        command(label + '-install', [bin_dir / 'python', '-m', 'pip', 'install', '--no-index', '--no-deps', tick_wheel, wheel])
+        command(label + '-install', [bin_dir / 'python', '-m', 'pip', 'install', '--no-index', '--no-deps',
+                                    *(dependencies if version == '0.12.0' else ()), tick_wheel, wheel])
         command(label + '-pip-check', [bin_dir / 'python', '-m', 'pip', 'check'])
         proof = dict(spine=attest(args.spine_repo, pin, export, wheel, bin_dir, 'spine'),
                      tickerd=attest(args.tickerd_repo, TICKERD_PIN, tick_export, tick_wheel, bin_dir, 'tickerd'))
         save(run / label / 'provenance.json', proof)
+        command(label + '-dependencies', [bin_dir/'python', '-I', '-c',
+            'import importlib.metadata as m,json; print(json.dumps({d.metadata["Name"]:d.version for d in m.distributions()},sort_keys=True))'])
         installs[version] = dict(bin=bin_dir, export=export, wheel=wheel)
 
     integration_results = {}
-    def integration(label, argv, *, harness):
+    def integration(label, argv, *, harness, runtime=None, installed=False, installer_prefix=None):
         parent = run / label
         parent.mkdir(mode=0o700)
         command(label, [*argv, '--evidence-parent', parent], timeout=3600)
@@ -143,14 +215,29 @@ def qualify(args, run):
         require(len(runs) == 1, 'expected one integration result: ' + label)
         result_path = runs[0] / 'result.json'
         require_full_qualification(json.loads(result_path.read_text()), harness=harness)
+        if runtime is not None:
+            require_identity(json.loads((runs[0]/'run.json').read_text()), runtime=runtime, installed=installed,
+                             bin_dir=installs[runtime]['bin'], installer_prefix=installer_prefix)
         integration_results[label] = str(result_path)
 
-    current = installs['0.10.0']
-    current_bin = current['bin']
-    command('source-fr2', [sys.executable, ROOT / 'scripts/qualify_fr2.py', '--bin-dir', current_bin,
-        '--export', current['export'], '--spine-repo', args.spine_repo, '--wheel', current['wheel']])
-    integration('source-v2', [sys.executable, ROOT / 'tests/integration/test_facet_spine.py',
-        '--spine-command', current_bin / 'spine-command', '--spine-ledger-migrate', current_bin / 'spine-ledger-migrate'], harness='v2')
+    successors = ['0.10.0'] if selected == '0.10.0' else ['0.10.0','0.12.0']
+    def read_gate(label, python, runtime, *, installed=False, installer_prefix=None):
+        current = installs[runtime]; parent=run/label; parent.mkdir(mode=0o700)
+        command(label, [python, '-I', ROOT/'scripts/qualify_fr2.py',
+            *(['--installed-installer'] if installed else []), '--runtime-version',runtime,
+            '--bin-dir',current['bin'],'--export',current['export'],'--spine-repo',args.spine_repo,
+            '--wheel',current['wheel'],'--evidence-parent',parent])
+        gates=list(parent.glob('spine-packs-fr2-gate-*')); require(len(gates)==1,'missing read-only gate')
+        report=gates[0]/'PASS.json'
+        require_read_gate(json.loads(report.read_text()),runtime=runtime,installed=installed,
+                          bin_dir=current['bin'],wheel=current['wheel'],installer_prefix=installer_prefix)
+        integration_results[label]=str(report)
+    for runtime in successors:
+        read_gate('source-fr2-'+runtime,sys.executable,runtime)
+        current_bin=installs[runtime]['bin']
+        integration('source-v2-'+runtime,[sys.executable,ROOT/'tests/integration/test_facet_spine.py',
+            '--runtime-version',runtime,'--spine-command',current_bin/'spine-command',
+            '--spine-ledger-migrate',current_bin/'spine-ledger-migrate'],harness='v2',runtime=runtime)
     package_runs = []
     for version in ('0.3.0', '0.5.0', '0.6.0'):
         bin_dir = installs[version]['bin']
@@ -179,15 +266,19 @@ def qualify(args, run):
     package_run = package_runs[0]
     installed_python = package_run / 'installed/bin/python'
     sdist_root = package_run / 'sdist' / f'spine_packs-{version}'
-    integration('installed-v2', [installed_python, '-I', sdist_root / 'tests/integration/test_facet_spine.py', '--installed',
-        '--spine-command', current_bin / 'spine-command', '--spine-ledger-migrate', current_bin / 'spine-ledger-migrate'], harness='v2')
-    command('installed-fr2', [installed_python, '-I', ROOT / 'scripts/qualify_fr2.py', '--installed-installer',
-        '--bin-dir', current_bin, '--export', current['export'], '--spine-repo', args.spine_repo, '--wheel', current['wheel']])
+    for runtime in successors:
+        current_bin=installs[runtime]['bin']
+        integration('installed-v2-'+runtime,[installed_python,'-I',sdist_root/'tests/integration/test_facet_spine.py',
+            '--installed','--runtime-version',runtime,'--spine-command',current_bin/'spine-command',
+            '--spine-ledger-migrate',current_bin/'spine-ledger-migrate'],harness='v2',runtime=runtime,
+            installed=True,installer_prefix=package_run/'installed')
+        read_gate('installed-fr2-'+runtime,installed_python,runtime,installed=True,installer_prefix=package_run/'installed')
+    require(source_snapshot()==snapshot,'qualification source/harness inputs changed during matrix')
     save(run / 'PASS.json', dict(passed=True, qualification='working-tree-local-candidate-not-release',
         package_runs=[str(p) for p in package_runs], integration_results=integration_results,
         assets={n:hashlib.sha256((package_run / 'assets' / n).read_bytes()).hexdigest()
-        for n in asset_names}, gates=['source-fr2', 'source-v2', 'installed-fr2', 'installed-v2',
-                                    'source-v1-and-installed-v1-each-supported-baseline']))
+        for n in asset_names}, successor_runtime=selected, source_identity='source-identity.json',
+        gates=list(integration_results)))
     print(f'FR-5 passed locally; nothing published. Evidence: {run}', flush=True)
 
 
@@ -196,6 +287,9 @@ def main():
     parser.add_argument('--spine-repo', required=True, type=Path)
     parser.add_argument('--tickerd-repo', required=True, type=Path)
     parser.add_argument('--evidence-parent', type=Path, default=Path(tempfile.gettempdir()))
+    parser.add_argument('--successor-runtime', choices=tuple(SUCCESSOR_PINS), default='0.10.0')
+    parser.add_argument('--dependency-wheels', type=Path,
+                        help='Preprovisioned jsonschema closure, required for exact 0.12.0; no downloads during qualification')
     args = parser.parse_args()
     if sys.version_info < (3, 12) or sys.prefix == sys.base_prefix:
         parser.error('use an isolated Python 3.12+ build environment')

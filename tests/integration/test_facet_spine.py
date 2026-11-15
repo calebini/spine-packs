@@ -31,7 +31,8 @@ from spine_packs import artifacts as a
 from spine_packs.__main__ import main as installer_main
 from spine_packs.facet_apply_transport import FacetApplyCommand
 from spine_packs.facet_contracts import artifact, body, seal, validate
-from spine_packs.facet_inventory import BASELINE, COMMANDS, READ_COMMANDS
+from spine_packs.facet_inventory import COMMANDS, READ_COMMANDS
+from spine_packs.facet_baselines import BASELINES, DEFAULT_RUNTIME, runtime_baseline
 from spine_packs.facet_execution import WRITE_COMMANDS
 from spine_packs.facet_manifest import digest as manifest_digest
 from spine_packs.planning import PlanError
@@ -92,10 +93,11 @@ class FacetSpineTests(unittest.TestCase):
         self.db=self.case/'new.sqlite'; self.assertFalse(self.db.exists())
         self.env=dict(self.config['env'])
         initialized=self.process([self.config['migrate'],'--db',self.db,'--initialize-if-empty'])
-        self.assertEqual(str(initialized['after_version']),'19')
-        info=self.public('system.info'); self.assertEqual(info['runtime_version'],'0.10.0')
+        baseline=self.config['baseline']
+        self.assertEqual(str(initialized['after_version']),baseline.schema)
+        info=self.public('system.info'); self.assertEqual(info['runtime_version'],baseline.runtime)
         self.assertEqual(info['ledger_schema_version'],info['implemented_ledger_schema_version'])
-        self.assertEqual(info['ledger_schema_version'],'19')
+        self.assertEqual(info['ledger_schema_version'],baseline.schema)
         self.actor='fr5_synthetic_operator'; self.owner=dict(owner_kind='subject',owner_subject_id=self.actor)
         self.public('subject.upsert',dict(command_id='fr5-bootstrap',actor_subject_id=self.actor,
             subject_id=self.actor,subject_kind='agent',display_name='Disposable FR-5 operator',
@@ -117,7 +119,7 @@ class FacetSpineTests(unittest.TestCase):
     def pack(self,updated=False):
         pack=a.load_json(ROOT/'tests/fixtures/pack-manifest-v2/flight.json')
         pack['pack']=dict(pack_id='fr5-flight-qualification',version='1.0.1' if updated else '1.0.0',status='released')
-        pack['compatibility']['spine_runtime_versions']=['0.10.0']
+        pack['compatibility']['spine_runtime_versions']=[self.config['baseline'].runtime]
         if updated:
             pack['archetypes'][0]['revision']['description']='Synthetic revised flight archetype'
             pack['facet_schemas'][0]['definition']['description']='Synthetic revised schema'
@@ -176,7 +178,7 @@ class FacetSpineTests(unittest.TestCase):
         result,value,cp=self.apply(manifest,plan,approved); self.assertEqual(value['state'],'applied')
         _,verified=self.invoke('verify',manifest=manifest,plan=plan,result=result)
         self.assertEqual(verified['state'],'verified'); self.assertEqual(verified['response_evidence'],'complete')
-        self.assertEqual(verified['receipt_readback'],'captured_responses_only_spine_0.10.0')
+        self.assertEqual(verified['receipt_readback'],self.config['baseline'].receipt_readback)
         self.assertEqual(verified['disclosure'],'separate_operator_configuration_required')
         return manifest,plan,result,cp,approved
 
@@ -287,6 +289,7 @@ def main():
     parser.add_argument('--evidence-parent',type=Path,default=Path(tempfile.gettempdir()))
     parser.add_argument('--test',action='append')
     parser.add_argument('--installed',action='store_true')
+    parser.add_argument('--runtime-version',choices=tuple(BASELINES),default=DEFAULT_RUNTIME)
     args=parser.parse_args()
     command=args.spine_command.resolve(strict=True); migrate=args.spine_ledger_migrate.resolve(strict=True)
     if command.parent!=migrate.parent: parser.error('use one isolated Spine installation')
@@ -301,8 +304,11 @@ def main():
     else:
         env['PYTHONPATH']=str(ROOT/'src'); installer=[sys.executable,'-m','spine_packs']
     run=Path(tempfile.mkdtemp(prefix='spine-packs-fr5-integration-',dir=args.evidence_parent)).resolve()
-    FacetSpineTests.config=dict(root=run,command=command,migrate=migrate,env=env,installer=installer)
-    save(run/'run.json',dict(baseline=BASELINE,installed=args.installed,installer=installer,module=a.__file__,schemas=str(a.SCHEMA_ROOT)))
+    baseline=runtime_baseline(args.runtime_version)
+    FacetSpineTests.config=dict(root=run,command=command,migrate=migrate,env=env,installer=installer,baseline=baseline)
+    save(run/'run.json',dict(baseline=dict(commit=baseline.commit,runtime=baseline.runtime,schema=baseline.schema),
+        installed=args.installed,installer=installer,module=a.__file__,schemas=str(a.SCHEMA_ROOT),
+        spine_command=str(command),spine_ledger_migrate=str(migrate)))
     print(f'Private FR-5 evidence: {run}',flush=True)
     suite=unittest.TestSuite(FacetSpineTests(n) for n in args.test) if args.test else unittest.defaultTestLoader.loadTestsFromTestCase(FacetSpineTests)
     result=unittest.TextTestRunner(verbosity=2,resultclass=QualificationResult).run(suite)

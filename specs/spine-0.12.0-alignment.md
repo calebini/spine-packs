@@ -3,7 +3,8 @@
 Status: AL-1 contract review and its final minor repair are complete. AL-2 runtime
 alignment, synthetic checks and bounded runtime repair review are complete;
 the final consistency-02 recheck passed with zero findings on 2026-11-15.
-AL-3 source/installed qualification remains a separate gate. This document extends the v2 successor
+AL-3 source/installed technical qualification passed on 2026-11-15; its bounded
+tooling review remains pending. This document extends the v2 successor
 specifications only; it does not qualify a deployment or change any v1 agreement
 or reusable pack.
 
@@ -253,3 +254,39 @@ notification send, deployment, publication, commit or push belongs to AL-1 or
 AL-2. AL-2's mandatory package regression may rebuild already supported upstream
 pins and use only new disposable ledgers; it is not new-baseline qualification.
 External Whetstone review needs approval of its exact staged payload.
+
+## AL-3 qualification execution
+
+The operator authorized this stage after AL-2 checkpoint `8082b5d`. Extend only
+the qualification tooling; installer runtime behavior and compatibility remain
+the reviewed AL-2 implementation. `qualify_fr5.py --successor-runtime 0.12.0`
+selects the exact schema-20 pin above while retaining the 0.10.0 regression path
+and all three v1 baselines. The omitted option retains the historical 0.10.0
+matrix. No automatic target discovery, range or HEAD substitution is permitted.
+
+For each successor baseline, run the complete read-only historical/mixed-catalog
+gate plus all four named v2 scenarios from source and installed package. Require
+all 11 actual response-loss replays, exact request/returned-ID correlation,
+durable checkpoint completeness and completed-checkpoint drift refusal. The
+parent MUST reject incomplete/skipped/focused suites, another baseline's
+runtime/schema/commit, wrong upstream CLI paths, wrong installation mode or
+source/schema-resource leakage. Child-supplied success flags alone are insufficient.
+
+Build and attest every packaged upstream file against its exact Git object,
+export, wheel and installed bytes, with the complete Python closure. Also check
+the selected pinned contract authority. Record a source/harness/input snapshot
+before the full matrix and require equality afterward. All passes must use the
+same candidate wheel/sdist bytes across the v1 regression matrix; installed v2
+uses the extracted sdist harness with the clean wheel's code/resources.
+
+Spine 0.12.0 requires its declared `jsonschema>=4.23` dependency closure. Provision
+that wheelhouse separately, copy and hash its exact wheels into the private run,
+install with `--no-index --no-deps`, record installed distributions and require
+`pip check`. Qualification itself performs no downloads. Spine Packs' wheel
+MUST still declare no runtime dependencies. No dependency addition is inferred
+for any older baseline.
+
+Evidence identifies the exact upstream target, source versus installed mode,
+public-CLI transcripts, read-only checks, named integration scenarios and local
+assets. It is technical qualification only; scoped tooling review and successor
+content/release gates remain separate. Commands never accept an existing ledger.

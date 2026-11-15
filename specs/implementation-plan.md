@@ -1286,3 +1286,34 @@ and installed synthetic probes. These are AL-2 regression evidence, not AL-3
 qualification of the 0.12.0 public CLI. The operator authorized a local checkpoint
 commit after this review. AL-3 exact-source and installed-package qualification,
 push, deployment, publication and curated successor content remain separate work.
+
+### AL-3 source and installed-package qualification (2026-11-15)
+
+The operator authorized qualification against exactly
+`3e65ef0de9e73b62047a0f6328731db08ca91023` (Spine 0.12.0, schema 20) after
+AL-2 checkpoint `8082b5d44a1afa2343a52867e3ab5885772f3bb4`. The existing
+qualification driver now accepts an explicit target selector while retaining
+its historical default. The selected matrix preserves all three v1 baselines
+and the exact 0.10.0 v2 baseline alongside the new pin, in source and installed
+modes. It uses isolated exact Git exports/builds, offline recorded dependency
+wheels and new disposable configuration-only ledgers through public CLIs.
+
+Parent checks bind completion to the expected scenarios, exact baseline,
+upstream CLI paths, installation mode, module/schema resources and complete
+read-gate evidence. Source and harness inputs must remain identical throughout
+the matrix. No installer runtime, pack artifacts or upstream checkout is changed.
+See `../docs/al3-qualification.md` for the procedure, evidence and limits.
+Technical qualification passed in `/private/tmp/spine-packs-fr5-rsacj94n`:
+40 scenarios across ten source/installed runs without skips, four complete
+nine-check read gates, and all 11 response-loss replays in each of four v2
+runs. Source inputs remained unchanged, candidate archives match across the
+three v1 package runs, and every upstream package was attested to its exact
+Git/export/wheel/installed bytes. An independent final evidence check also
+passed official schema/oracle validation of all 780 saved v2 manifests/artifacts.
+No runtime repair was needed. Required checks
+passed 140 official contract tests, 312 runtime tests, the five focused new
+tooling methods, 14 existing provenance/completion methods, the 204-file
+verifier and whitespace checks. The bounded AL-3 tooling review is still
+pending; local results do not authorize external review, release, deployment,
+commit or push. Final committed release qualification and curated successor
+content remain separate gates.
