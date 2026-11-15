@@ -510,7 +510,9 @@ class CliAndAdapterTests(unittest.TestCase):
                 with self.subTest(error=error):
                     exe.write_text("#!" + sys.executable + "\n" + program, encoding="utf-8")
                     exe.chmod(0o700)
-                    transport = SpineCommand(target, timeout=0.5)
+                    # Keep the explicit timeout probe short; ordinary cases
+                    # need bounded startup headroom under full-suite load.
+                    transport = SpineCommand(target, timeout=0.5 if error == "spine_timeout" else 5)
                     with patch.object(transport, "check_target"), patch("spine_packs.spine_command.RESPONSE_LIMIT", 1024):
                         if error:
                             with self.assertRaises(p.PlanError) as caught:

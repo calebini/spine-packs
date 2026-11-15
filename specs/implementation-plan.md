@@ -981,3 +981,146 @@ not rerun or overwrite historical full-matrix evidence, reopen the four closed
 findings, change runtime/contracts/packs, or authorize another external reviewer,
 commit, push, release or deployment. Results will be recorded in
 `../docs/fr5-qualification.md`.
+
+### FR-5 review closure and compatibility alignment kickoff
+
+The approved 16-file two-finding recheck passed at `6ebc1cc` with zero findings
+and `boundary_preserved=true`. This closes the FR-5 review gate on exact Spine
+0.10.0/schema 19; it neither selects nor qualifies a newer target. The earlier
+findings and all approved payloads remain historical evidence. See
+`../whetstone_runs/facet-rendering-fr5-qualification-recheck-002/completion.md`.
+
+The operator requested the subsequent compatibility alignment before FR-6.
+AL-0 compared exact local candidate `3e65ef0de9e73b62047a0f6328731db08ca91023`
+(0.12.0/schema 20) to the qualified pin using replacement-disabled Git reads,
+without executing Spine or touching a ledger. Thirty-one of 32 pinned authority
+files are unchanged, with only the command registry changed. Static projection
+of the existing 23 commands retains the same 12 reads, 11 writes and 18-contract
+union. Runtime/schema identity, changed dispatch/storage integration and Spine's
+new jsonschema runtime dependency still require separate qualification.
+
+Evidence and proposed AL-1/2/3 gates are in
+`../docs/spine-0.12.0-alignment.md` and its JSON companion. The exact intended
+staging/alignment commit has been asked of the operator and remains unresolved.
+No runtime baseline, public artifact shape, command boundary or pack has changed.
+Next: select the exact target, retain existing qualified capabilities, and specify
+additive closure/schema/fixture changes for bounded contract review
+before runtime admission. No publication, deployment, commit/push, Spine checkout
+change or external reviewer was performed for this kickoff.
+
+AL-0 verification passed: the 192-file repository verifier, all 125 official
+contract tests without skips, all 288 runtime tests and whitespace checks. The
+system-Python contract run passed with 60 development-validator skips covered
+by the official run. The candidate comparison was checked for its pinned
+32-file authority set and unchanged 23-command/18-contract projection. These
+checks preserve the existing baseline; no candidate runtime qualification is
+claimed. Exact target selection remains the next required input before AL-1.
+
+### AL-1 exact 0.12.0 contract and fixture slice (2026-11-15)
+
+The operator explicitly selected exact Spine
+`3e65ef0de9e73b62047a0f6328731db08ca91023`, runtime 0.12.0/schema 20, and
+authorized this contract/fixture increment. The normative additive requirements
+are in `spine-0.12.0-alignment.md`. The exact Git commit was reverified without
+replacement objects. The earlier AL-0 JSON inspection remains historical and
+does not attest a staging installation.
+
+The new inventory/closure retains all 23 commands, 12 reads, 11 writes and the
+18-contract execution union. Shared v2 schemas add only the singleton manifest
+variant, exact runtime/schema pairing and paired captured-response label;
+existing identifiers, digest domains, v1 shapes and historical fixture bytes
+are preserved. Two new deterministic synthetic derivations pin complete
+create/update artifacts, wire digests, 36 recovery boundaries and 25 negative
+vectors. The independent test oracle exercises comparison, correlation,
+continuation and verification without invoking Spine or modifying runtime code.
+An explicit regression retains rejection of the new baseline before transport
+use in the current runtime.
+
+Required checks and old-baseline package/resource qualification are recorded in
+the alignment report. Contract review is pending its own exact payload approval.
+Do not proceed to AL-2 routing until this gate passes. AL-3 exact-source/installed
+schema-20 qualification remains separate; no new ledger or Spine 0.12.0 process
+belongs to this slice. No commit, push, release, deployment or external reviewer
+has been authorized by AL-1.
+
+AL-1 verification passed: 199-file verifier, 134 official contract tests without
+skips, 288 runtime tests and whitespace checks. The system-Python contract run
+passed with 69 development-validator skips covered by the official run. All 34
+exact upstream source pins matched. Package/resource qualification on the existing
+0.6.0 baseline passed archive/build/resource checks and all four installed v1
+scenarios with zero skips, using reattested upstream bytes and fresh disposable
+ledgers only. No new-baseline runtime qualification is claimed. Evidence paths
+are in `../docs/spine-0.12.0-alignment.md`. External review remains uninvoked.
+
+### AL-1 audit findings and authorized narrow repair
+
+The operator approved the exact 14-file AL-1 payload. Its one-pass bounded
+Whetstone audit returned `needs_revision` with two major and three minor findings.
+Original payload, reports and local assessment remain under
+`../whetstone_runs/spine0120-al1-contract-audit-001/`. No Editor or retry ran.
+
+The operator authorized F01/F02/F04/F05 repairs and clarification of F03 without
+changing existing failure behavior. Rendering candidate checks now use the
+selected public-schema helper, with old/new entry-point regressions. The drift
+vector now proves valid observation/lineage and fails at the exact continuation
+comparison. Missing coverage is explicitly distinct from invalid coverage.
+The alignment specification records exact revision-readback failure ownership
+and existing regression names. Known immutable revision contradictions still
+abort verification under the environment contract without an artifact; invalid
+embedded execution correlation remains invalid coverage/mismatch. The draft
+negative matrix grows from 25 to 27 with both distinctions tested. Saved flow
+derivations, historical fixtures, pack bytes, schemas and runtime remain intact.
+
+Local verification is recorded in the alignment report. It does not revise the
+external verdict or authorize AL-2 routing. A focused external recheck still
+needs separate approval of a new exact payload. No new Spine process, ledger,
+package qualification, release, commit, push or external reviewer belongs to
+this test/documentation repair increment.
+
+Repair verification passed: all 17 focused methods, 136 official contract tests
+without skips, 288 runtime tests, the 199-file verifier and whitespace checks.
+The system-Python contract run passed with 71 development-validator skips
+covered by the official run. All 14 approved payload files/controls and 40
+historical machine/pack pins remain intact. Packaged source/schema/sdist inputs
+match the retained qualified candidate exactly; no package input changed or
+qualification rerun was necessary. Logs and integrity proof are recorded in the
+alignment report. The original `needs_revision` verdict remains unchanged;
+independent focused recheck is still pending new exact-payload approval.
+
+### AL-1 focused recheck and final minor coverage patch
+
+The separately approved 14-file focused recheck completed with
+`pass_with_minor_clarification`, preserved boundaries, no major findings and
+one F03 minor coverage gap. Reports remain in
+`../whetstone_runs/spine0120-al1-contract-recheck-001/`. The clarified immutable
+failure ownership was accepted; F01/F02/F04/F05 raised no remaining issues.
+
+The operator authorized patching the remaining test gap and focused checks.
+The existing `invalid_same_plan_evidence` vector now runs against both
+flight-create and flight-update, validates each resealed outer result and fresh
+observation, and asserts invalid coverage plus mismatch. Test counts and the
+27-vector/36-boundary matrix are unchanged; the previously unasserted create
+case is now explicit. Runtime behavior, command boundary, machine schemas,
+saved fixture bytes, package inputs and reusable packs remain unchanged.
+
+This closes the requested local minor repair, not a new external review.
+Retain both original verdicts and their approved payloads. AL-2 runtime routing
+and AL-3 qualification remain separate work; no reviewer, Spine/ledger process,
+commit, push or publication is authorized by this follow-up.
+
+Final verification passed: 11 focused alignment methods and the focused
+subprocess-boundary method, 136 official contract tests without skips, 288
+runtime tests, the 199-file verifier and whitespace checks. The system-Python
+contract run passed with 71 development-validator skips covered by the official
+run. A direct indexed-case witness confirms both create and update assertions.
+Two full-suite runs first hit the legacy subprocess success case's half-second
+startup allowance. Test-only startup headroom is now five seconds for ordinary
+cases; the dedicated timeout probe retains 0.5 seconds and runtime limits do
+not change. The isolated method and final full suite passed. Failed attempts
+and final evidence are retained in the alignment report.
+
+Both approved audit payloads/controls and historical machine/pack pins remain
+unchanged. Packaged inputs also match the retained qualified candidate, so no
+package qualification was repeated. The minor is patched and locally checked;
+the recorded external verdict remains `pass_with_minor_clarification`. No new
+external reviewer ran, and AL-2 remains the next separately scoped increment.

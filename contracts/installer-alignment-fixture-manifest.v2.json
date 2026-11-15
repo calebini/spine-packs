@@ -1,0 +1,184 @@
+{
+  "stage": "AL-1 exact 0.12.0/schema-20 contract gate; runtime not admitted",
+  "spine_commit": "3e65ef0de9e73b62047a0f6328731db08ca91023",
+  "runtime_version": "0.12.0",
+  "ledger_schema": "20",
+  "inventory": "contracts/installer-spine-0.12.0-inventory.json",
+  "readback_schema": "contracts/schemas/spine-readback-0.12.0.schema.json",
+  "fixtures": [
+    {
+      "path": "tests/fixtures/installer-v2/alignment-0.12.0.json",
+      "sha256": "a13efa3dd7f0cf2a5e43f6996275addbfb66375c4ddec293f2a46ee87fbdeef3"
+    }
+  ],
+  "preserved_inputs": [
+    {
+      "path": "contracts/installer-fixture-manifest.v2.json",
+      "sha256": "d51ff079bb1ca14324f066ac156235e91dcc26ff024ebdd2db5af1a51fbe84e7"
+    },
+    {
+      "path": "contracts/installer-fr3-fixture-manifest.v2.json",
+      "sha256": "8c6f83fb688d91d94222ddf9a675b01a68895835eb17c7eb816a63653dd660af"
+    },
+    {
+      "path": "contracts/installer-fr4-fixture-manifest.v2.json",
+      "sha256": "3b161048ef2ac82521c4e78e7815e4d451cd4d651e023e3bfb429a6b90928b07"
+    },
+    {
+      "path": "contracts/installer-spine-0.10.0-inventory.json",
+      "sha256": "e4694cfa53fd274df466420cbcca69af71da704a7917381c90f07bfc9a30d2a2"
+    },
+    {
+      "path": "contracts/installer-spine-0.9.1-inventory.json",
+      "sha256": "5837583b796de6b9f9fc90ea511851b271cdbdfcb63fc6a0028e54bc5003282a"
+    },
+    {
+      "path": "contracts/schemas/spine-pack-apply-checkpoint.v1.schema.json",
+      "sha256": "3796907a3740ea8a130b2c024c11a48d92007bfec481dd046715181c604f4ac6"
+    },
+    {
+      "path": "contracts/schemas/spine-pack-apply-result.v1.schema.json",
+      "sha256": "a6a036e88233904537e8ed44466e73e68a584f0f1d695ccaa19f977851c47c55"
+    },
+    {
+      "path": "contracts/schemas/spine-pack-embedded-values.v1.schema.json",
+      "sha256": "35f34ee2df956e44706545b973645ed4c979164d5145665f086aeb189d385d8c"
+    },
+    {
+      "path": "contracts/schemas/spine-pack-install-approval.v1.schema.json",
+      "sha256": "be392d002c2139f4ff614f2de9a04e01c2fc34b0159af6f4e61cbf5433085d14"
+    },
+    {
+      "path": "contracts/schemas/spine-pack-install-plan.v1.schema.json",
+      "sha256": "9e115dcf525f5d7e9de3459d75e6a5adf0980eab91fc6b93aa64e817dac8fb14"
+    },
+    {
+      "path": "contracts/schemas/spine-pack-install-request.v1.schema.json",
+      "sha256": "fe673791f20df6f274728efa87bae571c2246d5ca76657ab3f6b31d7d991ce0d"
+    },
+    {
+      "path": "contracts/schemas/spine-pack-installer-result.v1.schema.json",
+      "sha256": "bb363061fc907ceb04d683f22818a96b56b19ef3b8af83ffc44b47afa6631753"
+    },
+    {
+      "path": "contracts/schemas/spine-pack-installer-types.v1.schema.json",
+      "sha256": "a4d10169ac9823f22d926d110966919a61e41cb6cc0661db18e8c83162a7f717"
+    },
+    {
+      "path": "contracts/schemas/spine-pack-manifest.v1.schema.json",
+      "sha256": "e1769666de8f14b84d0c12e370bf97560c9f105cc3cc771a5a41466ae3f2d8d8"
+    },
+    {
+      "path": "contracts/schemas/spine-pack-verification-result.v1.schema.json",
+      "sha256": "c4d357a3641729f40aac6ff670403bed65016b9c3953669a5d79e8b4ada64808"
+    },
+    {
+      "path": "contracts/schemas/spine-readback-0.10.0.schema.json",
+      "sha256": "83af4190bbb1ceab9073b4471e8e60e1d24638f577f10f0b6e1fc416b844b08f"
+    },
+    {
+      "path": "contracts/schemas/spine-readback-0.9.1.schema.json",
+      "sha256": "90471d1674233e7b3d47575adf085c4095ddfecc92f1f2e7833f4be56d7d4204"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.1.json",
+      "sha256": "c0baa85773b72d69e5e0a27ef0ddf4d3faa1eabb705fb368768ec630ab2bc21f"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.10.json",
+      "sha256": "5fc5b139e54c49f565219c5fe65cc3e4b29f4419a53e646c83fe1dbad825569b"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.2.json",
+      "sha256": "28c1f6358908a63b2b6cde0f1aadeec32bee3c3bd3a8912fd12b3f5295b122ab"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.3.json",
+      "sha256": "d13bc7932eb5ab9fe5afaff149667445784d0453ddcbe7dbe95db0dee7301166"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.4.json",
+      "sha256": "51be7dbaf5d1fa6f5ecd3424d77d7492e0fe51a0aedcc77686b77558c711a6f2"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.5.json",
+      "sha256": "32e3a65d3b10a90136d6b5dea063233ff7b81d9dc4624727d8f65c1101140496"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.6.json",
+      "sha256": "69e68d88feb06c0540252d3b33d028427eb8e6ac641b4ef675a61c0f0f560173"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.7.json",
+      "sha256": "4817b4c8ad9b56e017f9ef498e0067c6c0931afdbad07294a9b848adf3bfecb6"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.8.json",
+      "sha256": "34b97ab631c2779d2462dabef9640037af11335396cac1a0c3b7c530d9293cbf"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0-draft.9.json",
+      "sha256": "4d7d242531d18833ca564057e4329f7f6630d1bfe3ca550f27ed1068778dd1d1"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.0.json",
+      "sha256": "a0d73767e5fdfe91080328bf7486734d283c134bb57db76c0af95d9644917d9f"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.1-draft.1.json",
+      "sha256": "fd915e5cb362c35917588f52a284abfee8b15cf01ae9f39d9ad9b553ecd8e057"
+    },
+    {
+      "path": "packs/kinflow-starter/kinflow-starter.1.0.1.json",
+      "sha256": "4ad2c351af5fb575827590efa45dabceebff8dfbf6aa3acea5a0ee143c45b491"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/flight-create-0.10.0.json",
+      "sha256": "9e3e586c95c69e7cdcf944b135fd1e8f52d938dbcc5953f94cb62a82d1945065"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/flight-create.json",
+      "sha256": "22b8a79711c58ce1ca7331dc906679fecba7f32ca5f733e33dbcbb7748d05dee"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/flight-update-0.10.0.json",
+      "sha256": "ce240e8aec27474e3e086d512eb76ec9766f08250c3b057567773d67a940a146"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/flight-update.json",
+      "sha256": "8ab30f967392fbd1ac1f4afdec08b9eb07171fd091818c2bd83ebcf320db4866"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/fr2-cross-root.json",
+      "sha256": "9e92e3538c1618d9832e189a90c72d9e456df0ffa0beb187b84dc57355614a3a"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/fr4-flight-create-0.10.0.json",
+      "sha256": "cf7725c962840972ebc4eb99289ae991325a30b83b1ab71c8b55c23b2a143f44"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/fr4-flight-update-0.10.0.json",
+      "sha256": "cc8b004dca0fe5dafc710a761e70fef2a53bffa62804501ea51628b97d63156d"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/public-wire-vectors.json",
+      "sha256": "d50469833dc229a09b328ffa9b044f5ef076054f6f4106356c5ac970e24ec159"
+    },
+    {
+      "path": "tests/fixtures/installer-v2/revision-readback-0.10.0.json",
+      "sha256": "f9f07c4222115f5f43aeb0233b3d21e5b0a9f02a3fa0aa434042de16cbc45361"
+    },
+    {
+      "path": "tests/fixtures/pack-manifest-v2/flight.json",
+      "sha256": "ab58374779ea3c960aef2386ea522cd230b6d8a91df6d01c9730a84a807b7019"
+    }
+  ],
+  "verification_receipt_readback": "captured_responses_only_spine_0.12.0",
+  "excluded": [
+    "runtime admission",
+    "Spine subprocess or ledger access",
+    "curated content or disclosure approval",
+    "installed-package qualification",
+    "migration of saved operator evidence"
+  ]
+}

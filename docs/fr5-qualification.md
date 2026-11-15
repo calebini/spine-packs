@@ -268,8 +268,18 @@ integration directories are identified in the checkpoint witness file.
 | `spine_packs-0.3.0-py3-none-any.whl` | `adc18693db6d6a54cc5c5d4681a82cd4a453694220f65c510f37ebc07c69deb1` |
 | `spine_packs-0.3.0.tar.gz` | `0c7d151251eed1a7af39547a6743f6ce57bae8293548e1fc26c084dc71021f84` |
 
-Both follow-ups are locally fixed and checked; a new independent focused recheck
-remains pending separate exact-payload approval. Prior full-matrix results remain
+Both follow-ups are fixed and checked. The subsequently approved 16-file focused
+recheck passed at `6ebc1cc` with zero findings and `boundary_preserved=true`,
+closing the two remaining findings. See
+`../whetstone_runs/facet-rendering-fr5-qualification-recheck-002/completion.md`.
+Prior full-matrix results remain
 historical evidence rather than a fresh run of these follow-ups. Frozen audit
-payloads, runtime/contracts, packs and released artifacts are unchanged. No
-additional reviewer, release, commit or push was performed.
+payloads, runtime/contracts, packs and released artifacts are unchanged. The
+follow-up repair/check phase performed no release, commit or push; its later
+committed checkpoint and approved review are recorded above.
+
+The operator has now requested the next compatibility alignment. Its initial
+candidate-only source comparison is in `spine-0.12.0-alignment.md`. The FR-5
+baseline and evidence above remain pinned to 0.10.0/schema 19; a newer target
+must complete its separate additive contract, implementation and qualification
+gates before any support or deployment claim.

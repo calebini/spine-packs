@@ -1,0 +1,589 @@
+{
+  "status": "candidate_inspection_only_not_runtime_admission_or_qualification",
+  "qualified": {
+    "commit": "8f3c50b6fd1b4aa534e50925b7417a7a80d19122",
+    "runtime": "0.10.0",
+    "schema": "19"
+  },
+  "candidate": {
+    "commit": "3e65ef0de9e73b62047a0f6328731db08ca91023",
+    "runtime": "0.12.0",
+    "schema": "20",
+    "staging_identity_confirmed": false
+  },
+  "authority_files": [
+    {
+      "path": "contracts/facet-schema-revision-readback-fixture-manifest.json",
+      "qualified_sha256": "0e0d357b9fb94dbd9b0b0b5aaa9648b9633014bb5e1efc24752394a7d3c18aa1",
+      "candidate_sha256": "0e0d357b9fb94dbd9b0b0b5aaa9648b9633014bb5e1efc24752394a7d3c18aa1",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/facet-schema-revision-readback.v1.json",
+      "qualified_sha256": "3dca53927ac184abda906bbb810b1e1c73d563012b95cabc27c64182e6f8d4b8",
+      "candidate_sha256": "3dca53927ac184abda906bbb810b1e1c73d563012b95cabc27c64182e6f8d4b8",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/archetype-facet-commands.schema.json",
+      "qualified_sha256": "29321672a1b7ba31599080e968c1b30295fe68748560cba0a64468a4d0e341aa",
+      "candidate_sha256": "29321672a1b7ba31599080e968c1b30295fe68748560cba0a64468a4d0e341aa",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/archetype-facet-failure.schema.json",
+      "qualified_sha256": "eaaee30acf5002f3da4bb5d41c622d648ed19254ab2323799a6e1632cfa3a25b",
+      "candidate_sha256": "eaaee30acf5002f3da4bb5d41c622d648ed19254ab2323799a6e1632cfa3a25b",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/archetype-facet-responses.schema.json",
+      "qualified_sha256": "ef713cd19b37b48ee014e7fc7e97a23bb7a4657a080a77d6fac3396c0c0ab49e",
+      "candidate_sha256": "ef713cd19b37b48ee014e7fc7e97a23bb7a4657a080a77d6fac3396c0c0ab49e",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/archetype-facet-types.schema.json",
+      "qualified_sha256": "689163800b0aaa07b87a1fc75a7bea7150bd70f1bcf2fbad901466cdf594dcda",
+      "candidate_sha256": "689163800b0aaa07b87a1fc75a7bea7150bd70f1bcf2fbad901466cdf594dcda",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/facet-schema-revision-show-failure.schema.json",
+      "qualified_sha256": "bd270c411dbb0442d27450f993bfe4ac907d6498f5c5ebc3783d7ddc6910c04f",
+      "candidate_sha256": "bd270c411dbb0442d27450f993bfe4ac907d6498f5c5ebc3783d7ddc6910c04f",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/facet-schema-revision-show-request.schema.json",
+      "qualified_sha256": "d46eb34485c64624be347d65ae4d8e309cc8ed20dd59459995d947ef8e4a1d12",
+      "candidate_sha256": "d46eb34485c64624be347d65ae4d8e309cc8ed20dd59459995d947ef8e4a1d12",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/facet-schema-revision-show-response.schema.json",
+      "qualified_sha256": "48be527872412111b35a964ba172609422465cc7e349693701c420c296a9a2fb",
+      "candidate_sha256": "48be527872412111b35a964ba172609422465cc7e349693701c420c296a9a2fb",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-profile-commands-v2.schema.json",
+      "qualified_sha256": "a1ee1cfd3d522426a58d35ef43956c7609456ac1a2224d4482edc3f526bc6d54",
+      "candidate_sha256": "a1ee1cfd3d522426a58d35ef43956c7609456ac1a2224d4482edc3f526bc6d54",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-profile-commands.schema.json",
+      "qualified_sha256": "573d7b1bed42a1190887291f860c6edac0b6b52199c72023c3afd2b354743781",
+      "candidate_sha256": "573d7b1bed42a1190887291f860c6edac0b6b52199c72023c3afd2b354743781",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-profile-responses-v2.schema.json",
+      "qualified_sha256": "8edc2234ed3797e571430e0db1404f849cb5e2eadd58580fe01af76bd7bba0b9",
+      "candidate_sha256": "8edc2234ed3797e571430e0db1404f849cb5e2eadd58580fe01af76bd7bba0b9",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-profile-types-v2.schema.json",
+      "qualified_sha256": "e1587494d473198b49f16be89e27de12e32df512821d5670f9c8bf48f654f875",
+      "candidate_sha256": "e1587494d473198b49f16be89e27de12e32df512821d5670f9c8bf48f654f875",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-profile-types.schema.json",
+      "qualified_sha256": "182353b53719d924cb062d898d7e3cae1f0de9e124bb2b793c26fa6a59ab6b8c",
+      "candidate_sha256": "182353b53719d924cb062d898d7e3cae1f0de9e124bb2b793c26fa6a59ab6b8c",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-rendering-cursor-config.schema.json",
+      "qualified_sha256": "ac4a753ebb403db3b0d430b8e412b15fdf38fcc71135854ed35bc1e8ac106829",
+      "candidate_sha256": "ac4a753ebb403db3b0d430b8e412b15fdf38fcc71135854ed35bc1e8ac106829",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-rendering-definition-commands.schema.json",
+      "qualified_sha256": "755135d632e81e3b492533004f8878ab0a9bf20bd3ccb01b94cb76fdc0f45e6d",
+      "candidate_sha256": "755135d632e81e3b492533004f8878ab0a9bf20bd3ccb01b94cb76fdc0f45e6d",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-rendering-definition-responses.schema.json",
+      "qualified_sha256": "df4352d013699072b0d37ea38299cae613e7ef2123690523a72d23f815d9f4af",
+      "candidate_sha256": "df4352d013699072b0d37ea38299cae613e7ef2123690523a72d23f815d9f4af",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-rendering-definition-types.schema.json",
+      "qualified_sha256": "3b6ea94ce86bbb06f45c63516700235edba43cd0800ed4be05261fc774848344",
+      "candidate_sha256": "3b6ea94ce86bbb06f45c63516700235edba43cd0800ed4be05261fc774848344",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-rendering-integration-failure.schema.json",
+      "qualified_sha256": "25a887ebb1569d299ede8353fec2c0752cdccca92dc29e615290d6387e68cc8e",
+      "candidate_sha256": "25a887ebb1569d299ede8353fec2c0752cdccca92dc29e615290d6387e68cc8e",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-rendering-integration-types.schema.json",
+      "qualified_sha256": "5740b6f3e92cdac2f48daf4f85ea79b37803345dfb54a705f5fd8c37ff320aa6",
+      "candidate_sha256": "5740b6f3e92cdac2f48daf4f85ea79b37803345dfb54a705f5fd8c37ff320aa6",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/notification-types.schema.json",
+      "qualified_sha256": "48507bcf78b6df80a6c9ca8ebf7b0a5fa7e26b8b691befdc1e7353ae63b7b2c1",
+      "candidate_sha256": "48507bcf78b6df80a6c9ca8ebf7b0a5fa7e26b8b691befdc1e7353ae63b7b2c1",
+      "unchanged": true
+    },
+    {
+      "path": "contracts/schemas/system-info-response-v3.schema.json",
+      "qualified_sha256": "d4031875ec3029b907113b650b6634fdf8d0eb7b5814a401f21cc2e92c1bd9e8",
+      "candidate_sha256": "d4031875ec3029b907113b650b6634fdf8d0eb7b5814a401f21cc2e92c1bd9e8",
+      "unchanged": true
+    },
+    {
+      "path": "specs/facet-schema-revision-readback.md",
+      "qualified_sha256": "be263114ca40f397f392acabce7f5a8b1d10b32ab44692cd9275d67190a88ca6",
+      "candidate_sha256": "be263114ca40f397f392acabce7f5a8b1d10b32ab44692cd9275d67190a88ca6",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/commands/registry.py",
+      "qualified_sha256": "23d67494679ac8bbf1e0d17763a63ad34ecbe3e443ea3143da7296b835674173",
+      "candidate_sha256": "c4b0f7073986d4140e82eb1ec6939cb2f38e75fa7cc2db64c6d247b51e696ba7",
+      "unchanged": false
+    },
+    {
+      "path": "src/spine/contracts/revision_readback/facet-schema-revision-readback.v1.json",
+      "qualified_sha256": "3dca53927ac184abda906bbb810b1e1c73d563012b95cabc27c64182e6f8d4b8",
+      "candidate_sha256": "3dca53927ac184abda906bbb810b1e1c73d563012b95cabc27c64182e6f8d4b8",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/contracts/revision_readback/pins.v1.json",
+      "qualified_sha256": "3c67785c1a6c9c7d6c8c8a2f5183a464fca8934e763000cd60d59929c32b9816",
+      "candidate_sha256": "3c67785c1a6c9c7d6c8c8a2f5183a464fca8934e763000cd60d59929c32b9816",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/contracts/revision_readback/schemas/archetype-facet-types.schema.json",
+      "qualified_sha256": "689163800b0aaa07b87a1fc75a7bea7150bd70f1bcf2fbad901466cdf594dcda",
+      "candidate_sha256": "689163800b0aaa07b87a1fc75a7bea7150bd70f1bcf2fbad901466cdf594dcda",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/contracts/revision_readback/schemas/facet-schema-revision-show-failure.schema.json",
+      "qualified_sha256": "bd270c411dbb0442d27450f993bfe4ac907d6498f5c5ebc3783d7ddc6910c04f",
+      "candidate_sha256": "bd270c411dbb0442d27450f993bfe4ac907d6498f5c5ebc3783d7ddc6910c04f",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/contracts/revision_readback/schemas/facet-schema-revision-show-request.schema.json",
+      "qualified_sha256": "d46eb34485c64624be347d65ae4d8e309cc8ed20dd59459995d947ef8e4a1d12",
+      "candidate_sha256": "d46eb34485c64624be347d65ae4d8e309cc8ed20dd59459995d947ef8e4a1d12",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/contracts/revision_readback/schemas/facet-schema-revision-show-response.schema.json",
+      "qualified_sha256": "48be527872412111b35a964ba172609422465cc7e349693701c420c296a9a2fb",
+      "candidate_sha256": "48be527872412111b35a964ba172609422465cc7e349693701c420c296a9a2fb",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/contracts/revision_readback/schemas/notification-profile-types.schema.json",
+      "qualified_sha256": "182353b53719d924cb062d898d7e3cae1f0de9e124bb2b793c26fa6a59ab6b8c",
+      "candidate_sha256": "182353b53719d924cb062d898d7e3cae1f0de9e124bb2b793c26fa6a59ab6b8c",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/contracts/revision_readback/schemas/notification-types.schema.json",
+      "qualified_sha256": "48507bcf78b6df80a6c9ca8ebf7b0a5fa7e26b8b691befdc1e7353ae63b7b2c1",
+      "candidate_sha256": "48507bcf78b6df80a6c9ca8ebf7b0a5fa7e26b8b691befdc1e7353ae63b7b2c1",
+      "unchanged": true
+    }
+  ],
+  "authority_summary": {
+    "compared": 32,
+    "unchanged": 31,
+    "changed": [
+      "src/spine/commands/registry.py"
+    ]
+  },
+  "selected_registry": {
+    "method": "Static AST inspection only: literal containers, named constants and bounded literal dict comprehensions; no Spine imports or execution. Additional requirement groups are projected onto the existing 23 commands; unchanged helper/common-loop syntax is pinned.",
+    "unchanged": true,
+    "commands": {
+      "facet_schema.create": {
+        "access_mode": "write",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.facet-schemas.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "facet_schema.list": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.facet-cursor.v1",
+          "spine.facet-schemas.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "facet_schema.publish": {
+        "access_mode": "write",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.facet-schemas.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "facet_schema.revision.show": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.facet-schema-revision-readback.v1",
+          "spine.facet-schemas.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "facet_schema.show": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.facet-schemas.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "item_archetype.create": {
+        "access_mode": "write",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.item-archetypes.v1",
+          "spine.notification-profile-catalog-cursor.v1",
+          "spine.notification-profile-readback.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "item_archetype.facet_binding.list": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.archetype-facet-bindings.v1",
+          "spine.canonical-json.v1",
+          "spine.facet-cursor.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "item_archetype.facet_binding.set": {
+        "access_mode": "write",
+        "required_contracts": [
+          "spine.archetype-facet-bindings.v1",
+          "spine.canonical-json.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "item_archetype.list": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.item-archetypes.v1",
+          "spine.notification-profile-catalog-cursor.v1",
+          "spine.notification-profile-readback.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "item_archetype.revise": {
+        "access_mode": "write",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.item-archetypes.v1",
+          "spine.notification-profile-catalog-cursor.v1",
+          "spine.notification-profile-readback.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "item_archetype.show": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.item-archetypes.v1",
+          "spine.notification-profile-catalog-cursor.v1",
+          "spine.notification-profile-readback.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "notification_profile.binding.list": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.item-archetypes.v1",
+          "spine.notification-profile-bindings.v1",
+          "spine.notification-profile-catalog-cursor.v1",
+          "spine.notification-profile-readback.v1",
+          "spine.notification-profiles.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "notification_profile.binding.set": {
+        "access_mode": "write",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.item-archetypes.v1",
+          "spine.notification-profile-bindings.v1",
+          "spine.notification-profile-catalog-cursor.v1",
+          "spine.notification-profile-readback.v1",
+          "spine.notification-profiles.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "notification_profile.create": {
+        "access_mode": "write",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.notification-profile-catalog-cursor.v1",
+          "spine.notification-profile-readback.v1",
+          "spine.notification-profiles.v1",
+          "spine.notification-profiles.v2",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "notification_profile.list": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.notification-profile-catalog-cursor.v1",
+          "spine.notification-profile-readback.v1",
+          "spine.notification-profiles.v1",
+          "spine.notification-profiles.v2",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "notification_profile.metadata.update": {
+        "access_mode": "write",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.notification-profile-catalog-cursor.v1",
+          "spine.notification-profile-metadata-update.v1",
+          "spine.notification-profile-readback.v1",
+          "spine.notification-profiles.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "notification_profile.revise": {
+        "access_mode": "write",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.notification-profile-catalog-cursor.v1",
+          "spine.notification-profile-readback.v1",
+          "spine.notification-profiles.v1",
+          "spine.notification-profiles.v2",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "notification_profile.show": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.notification-profile-catalog-cursor.v1",
+          "spine.notification-profile-readback.v1",
+          "spine.notification-profiles.v1",
+          "spine.notification-profiles.v2",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "notification_rendering_definition.create": {
+        "access_mode": "write",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.notification-rendering-definitions.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "notification_rendering_definition.list": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.notification-rendering-cursor.v1",
+          "spine.notification-rendering-definitions.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "notification_rendering_definition.publish": {
+        "access_mode": "write",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.notification-rendering-definitions.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "notification_rendering_definition.show": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.notification-rendering-definitions.v1",
+          "spine.notification-rendering-integration.v1"
+        ]
+      },
+      "system.info": {
+        "access_mode": "read",
+        "required_contracts": [
+          "spine.canonical-json.v1",
+          "spine.ledger-instance.v1",
+          "spine.notification-rendering-integration.v1",
+          "spine.system-info.v3",
+          "spine.tickerd-compatibility.v1"
+        ]
+      }
+    },
+    "qualified_contract_union": [
+      "spine.archetype-facet-bindings.v1",
+      "spine.canonical-json.v1",
+      "spine.facet-cursor.v1",
+      "spine.facet-schema-revision-readback.v1",
+      "spine.facet-schemas.v1",
+      "spine.item-archetypes.v1",
+      "spine.ledger-instance.v1",
+      "spine.notification-profile-bindings.v1",
+      "spine.notification-profile-catalog-cursor.v1",
+      "spine.notification-profile-metadata-update.v1",
+      "spine.notification-profile-readback.v1",
+      "spine.notification-profiles.v1",
+      "spine.notification-profiles.v2",
+      "spine.notification-rendering-cursor.v1",
+      "spine.notification-rendering-definitions.v1",
+      "spine.notification-rendering-integration.v1",
+      "spine.system-info.v3",
+      "spine.tickerd-compatibility.v1"
+    ],
+    "candidate_contract_union": [
+      "spine.archetype-facet-bindings.v1",
+      "spine.canonical-json.v1",
+      "spine.facet-cursor.v1",
+      "spine.facet-schema-revision-readback.v1",
+      "spine.facet-schemas.v1",
+      "spine.item-archetypes.v1",
+      "spine.ledger-instance.v1",
+      "spine.notification-profile-bindings.v1",
+      "spine.notification-profile-catalog-cursor.v1",
+      "spine.notification-profile-metadata-update.v1",
+      "spine.notification-profile-readback.v1",
+      "spine.notification-profiles.v1",
+      "spine.notification-profiles.v2",
+      "spine.notification-rendering-cursor.v1",
+      "spine.notification-rendering-definitions.v1",
+      "spine.notification-rendering-integration.v1",
+      "spine.system-info.v3",
+      "spine.tickerd-compatibility.v1"
+    ],
+    "helper_syntax_sha256": {
+      "_requirements": "d389a37307b4fb682829ee894dc8ad87472a687a18137db1fb9d887f08193464",
+      "common_integration_loop": "8c0208de9237885f2ba8bef82181e7b27ad5169ca04b5bd14f12424fb850d91f",
+      "_entry": "167c782f9b9318d6faa4ce41c9b8741df5961341ce063fa0999a9e46364ab2d9"
+    }
+  },
+  "implementation_files": [
+    {
+      "path": "src/spine/commands/core.py",
+      "qualified_sha256": "dc48336e009795ca070eef32a1a47b888c02eaf09d00b6d84cadd02965116c23",
+      "candidate_sha256": "510c969cd14124bbc3e3c0b86d424c20e2b691f7edb8173f8e093ad0a1eb84c2",
+      "unchanged": false
+    },
+    {
+      "path": "src/spine/commands/cli.py",
+      "qualified_sha256": "2fd9f80f36ac16d6b4d79a4263a8e243e0a3b24f82c843353f2084bc830815ab",
+      "candidate_sha256": "0a663e049fa9b541dcc3f6310d1caea22ed8fa091f3cbf42df34f45e6a277ced",
+      "unchanged": false
+    },
+    {
+      "path": "src/spine/commands/facets.py",
+      "qualified_sha256": "7245a364ffdcd4f8334183b555b923fc11e15b5b2a52d531cda527fc958113d6",
+      "candidate_sha256": "54d32c19337cf64fdbdbb0df4ef0f850da1235ffc08b6ecd05f84b30fd9cc494",
+      "unchanged": false
+    },
+    {
+      "path": "src/spine/commands/rendering_candidate.py",
+      "qualified_sha256": "14363914ea733ec9ef9b9b1377b34d1573742050198f8ecfa807aaf4589e400e",
+      "candidate_sha256": "afd34af38244228a2bd9009bfaaab30ebb76d33a455a9cde269d2293f0fa9936",
+      "unchanged": false
+    },
+    {
+      "path": "src/spine/commands/notification_profiles.py",
+      "qualified_sha256": "72f4d01abc94a13f8e65b4bd63a4cecf5f5b08b068807d669e5db2833bcde1c8",
+      "candidate_sha256": "72f4d01abc94a13f8e65b4bd63a4cecf5f5b08b068807d669e5db2833bcde1c8",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/commands/rendering_profiles.py",
+      "qualified_sha256": "50514edcda184aa7eec106cb93cb65d461e2f075438e4e5675bc48d6384deb19",
+      "candidate_sha256": "50514edcda184aa7eec106cb93cb65d461e2f075438e4e5675bc48d6384deb19",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/commands/rendering_catalog.py",
+      "qualified_sha256": "ad6656165e104aa2ef2f529b1eda0caeb9888dabd70fa881bcd35a07ca50420a",
+      "candidate_sha256": "ad6656165e104aa2ef2f529b1eda0caeb9888dabd70fa881bcd35a07ca50420a",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/commands/facet_runtime.py",
+      "qualified_sha256": "2c96a345bd554e3dca10bb9b4a6abf7540f49afc99b2f6654d4b412df48150b5",
+      "candidate_sha256": "2c96a345bd554e3dca10bb9b4a6abf7540f49afc99b2f6654d4b412df48150b5",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/commands/facet_reads.py",
+      "qualified_sha256": "b22db01b18c1c90b775b37cd1030d0ea28be13e5ec71a4faaea750eabbc28c65",
+      "candidate_sha256": "b22db01b18c1c90b775b37cd1030d0ea28be13e5ec71a4faaea750eabbc28c65",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/core/facets.py",
+      "qualified_sha256": "b89544dc0fb9b508ac5dd616219b1bffd3466e58620c59cdb55ae744fe0ec60f",
+      "candidate_sha256": "b89544dc0fb9b508ac5dd616219b1bffd3466e58620c59cdb55ae744fe0ec60f",
+      "unchanged": true
+    },
+    {
+      "path": "src/spine/ledger/notification_profiles.py",
+      "qualified_sha256": "ecf814b3b072c10b659190c10689ef397c2171a1b9125b45dac9faec6c5a9c65",
+      "candidate_sha256": "436cb12244f556f0140262f32d0365f149d914ec7a1d20dc044e8b832161beb9",
+      "unchanged": false
+    },
+    {
+      "path": "src/spine/ledger/rendering_definitions.py",
+      "qualified_sha256": "7cb7d1627aa8aee4a61e4a0d0ea3f496d7dc88abb658e272514e0ca297d2d260",
+      "candidate_sha256": "f5828388aa3e12ea3ba8e2ec9584b3b2674f1d3314a327375a8a9eedb3ec5584",
+      "unchanged": false
+    }
+  ],
+  "project_metadata": {
+    "qualified_sha256": "c1e18b8de6213710319856ca290218f5789baf431ad246257891f1823c4479f1",
+    "candidate_sha256": "0fa8d202996cef222f3cef23671d2677af559102e4c824e6586d4bb4d9d0ad6e",
+    "qualified_dependencies": [],
+    "candidate_dependencies": [
+      "jsonschema>=4.23"
+    ]
+  },
+  "safety": {
+    "spine_checkout_modified": false,
+    "ledger_access": false,
+    "spine_imports": false,
+    "runtime_allowlists_changed": false
+  },
+  "schema_identity_source": [
+    {
+      "baseline": "qualified",
+      "path": "src/spine/__init__.py",
+      "sha256": "6a8e2a61945a4dea38af65b2f2545142cad7265cf5fa381947c3d536b674276f",
+      "implemented_ledger_schema": 19
+    },
+    {
+      "baseline": "candidate",
+      "path": "src/spine/__init__.py",
+      "sha256": "77e160381bfcaaed9a9cf5fbb6c2a88d3026515705ef0e6cadac442bde001aa5",
+      "implemented_ledger_schema": 20
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://spine-packs.local/contracts/schemas/spine-pack-installer-types.v2.schema.json",
-  "$comment": "Draft FR-1. Semantic correlation, contextual embedded validation, canonical ordering, digests and byte ceilings are normative in specs/installer-artifacts-v2.md. FR-2 adds an exact 0.10.0 encoding at 8f3c50b6fd1b4aa534e50925b7417a7a80d19122. 0.9.1 remains decodable solely for historical FR-1 fixtures; current successor planning rejects it. No runtime range or v1 compatibility expansion.",
+  "$comment": "Draft FR-1. Semantic correlation, contextual embedded validation, canonical ordering, digests and byte ceilings are normative in specs/installer-artifacts-v2.md. FR-2 adds an exact 0.10.0 encoding at 8f3c50b6fd1b4aa534e50925b7417a7a80d19122. 0.9.1 remains decodable solely for historical FR-1 fixtures; current successor planning rejects it. No runtime range or v1 compatibility expansion. AL-1 adds contract-only exact 0.12.0/schema 20 at 3e65ef0de9e73b62047a0f6328731db08ca91023, governed by specs/spine-0.12.0-alignment.md. Existing runtime admission remains exact 0.10.0 pending review and AL-2 routing.",
   "$defs": {
     "id": {
       "type": "string",
@@ -386,14 +386,15 @@
         "runtime_version": {
           "enum": [
             "0.9.1",
-            "0.10.0"
+            "0.10.0",
+            "0.12.0"
           ]
         },
         "ledger_schema_implemented": {
-          "const": "19"
+          "enum": ["19", "20"]
         },
         "ledger_schema_current": {
-          "const": "19"
+          "enum": ["19", "20"]
         },
         "ledger_instance_id": {
           "type": "string",
@@ -415,6 +416,19 @@
         "ledger_schema_current",
         "ledger_instance_id",
         "advertised_contracts"
+      ],
+      "allOf": [
+        {
+          "if": {"properties": {"runtime_version": {"const": "0.12.0"}}},
+          "then": {"properties": {
+            "ledger_schema_implemented": {"const": "20"},
+            "ledger_schema_current": {"const": "20"}
+          }},
+          "else": {"properties": {
+            "ledger_schema_implemented": {"const": "19"},
+            "ledger_schema_current": {"const": "19"}
+          }}
+        }
       ],
       "additionalProperties": false
     },
@@ -1224,7 +1238,7 @@
               "environment": {
                 "properties": {
                   "runtime_version": {
-                    "const": "0.10.0"
+                    "enum": ["0.10.0", "0.12.0"]
                   }
                 }
               }
@@ -1590,7 +1604,8 @@
         "receipt_readback": {
           "enum": [
             "captured_responses_only_spine_0.9.1",
-            "captured_responses_only_spine_0.10.0"
+            "captured_responses_only_spine_0.10.0",
+            "captured_responses_only_spine_0.12.0"
           ]
         },
         "disclosure": {
@@ -1661,9 +1676,16 @@
             }
           },
           "else": {
-            "properties": {
+            "if": {"properties": {"environment": {
+              "properties": {"runtime_version": {"const": "0.12.0"}},
+              "required": ["runtime_version"]
+            }}, "required": ["environment"]},
+            "then": {"properties": {
+              "receipt_readback": {"const": "captured_responses_only_spine_0.12.0"}
+            }},
+            "else": {"properties": {
               "receipt_readback": {"const": "captured_responses_only_spine_0.9.1"}
-            }
+            }}
           }
         }
       ],

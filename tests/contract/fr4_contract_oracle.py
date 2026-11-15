@@ -76,8 +76,7 @@ def candidate_check(plan, approval, cp, row, record=None):
         desired = request['revision']
         # The semantic projection alone carries no publication provenance.
         o.require(record is not None, 'missing rendering provenance')
-        o.validator('spine-readback-0.10.0.schema.json',
-                    o.COMMANDS['notification_rendering_definition.show']['response']).validate(
+        o.public_schema('notification_rendering_definition.show', 'response',
             dict(ok=True, command='notification_rendering_definition.show',
                  contract_version='spine.notification-rendering-definitions.v1', record=record))
         o.require(record['revision'] == desired and record['owner'] == row['owner'] and
@@ -212,6 +211,9 @@ def verification(flow, fresh, result=None, *, environment=None, target=None):
                 coverage = 'complete' if result['state'] == 'applied' else 'missing'
         except (ValueError, KeyError, ValidationError):
             coverage, accepted = 'invalid', []
+    # Preserve fresh-readback failure ownership: a known immutable revision
+    # changing root/decoder/body aborts, even if each row validates alone.
+    # This intentionally stays outside the captured-evidence coverage handler.
     lineage(plan['observation']['entries'] + plan['observation']['historical_revisions'] +
             [e['post_observation'] for e in accepted] + fresh['entries'] + fresh['historical_revisions'])
     expected = {r['object_key']: r for r in plan['observation']['entries']}

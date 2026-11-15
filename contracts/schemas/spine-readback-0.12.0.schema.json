@@ -1,0 +1,463 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spine-packs.local/contracts/schemas/spine-readback-0.12.0.schema.json",
+  "$comment": "AL-1 contract-only closure for exact Spine 3e65ef0de9e73b62047a0f6328731db08ca91023 (0.12.0/schema 20). Every reachable public definition is unchanged from the pinned 0.10.0 closure; reuse immutable sibling definitions offline. This is not runtime admission or installed-package qualification.",
+  "$defs": {
+    "public_0002": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0002"
+    },
+    "public_0003": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0003"
+    },
+    "public_0001": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0001"
+    },
+    "public_0004": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0004"
+    },
+    "public_0005": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0005"
+    },
+    "public_0007": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0007"
+    },
+    "public_0006": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0006"
+    },
+    "public_0000": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0000"
+    },
+    "public_0009": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0009"
+    },
+    "public_0010": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0010"
+    },
+    "public_0011": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0011"
+    },
+    "public_0012": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0012"
+    },
+    "public_0013": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0013"
+    },
+    "public_0008": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0008"
+    },
+    "public_0014": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0014"
+    },
+    "public_0015": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0015"
+    },
+    "public_0017": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0017"
+    },
+    "public_0016": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0016"
+    },
+    "public_0018": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0018"
+    },
+    "public_0019": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0019"
+    },
+    "public_0021": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0021"
+    },
+    "public_0020": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0020"
+    },
+    "public_0023": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0023"
+    },
+    "public_0024": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0024"
+    },
+    "public_0025": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0025"
+    },
+    "public_0027": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0027"
+    },
+    "public_0032": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0032"
+    },
+    "public_0035": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0035"
+    },
+    "public_0034": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0034"
+    },
+    "public_0037": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0037"
+    },
+    "public_0036": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0036"
+    },
+    "public_0033": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0033"
+    },
+    "public_0031": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0031"
+    },
+    "public_0030": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0030"
+    },
+    "public_0038": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0038"
+    },
+    "public_0042": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0042"
+    },
+    "public_0041": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0041"
+    },
+    "public_0044": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0044"
+    },
+    "public_0045": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0045"
+    },
+    "public_0043": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0043"
+    },
+    "public_0040": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0040"
+    },
+    "public_0039": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0039"
+    },
+    "public_0029": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0029"
+    },
+    "public_0047": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0047"
+    },
+    "public_0046": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0046"
+    },
+    "public_0049": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0049"
+    },
+    "public_0048": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0048"
+    },
+    "public_0028": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0028"
+    },
+    "public_0026": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0026"
+    },
+    "public_0022": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0022"
+    },
+    "public_0051": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0051"
+    },
+    "public_0052": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0052"
+    },
+    "public_0050": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0050"
+    },
+    "public_0053": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0053"
+    },
+    "public_0054": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0054"
+    },
+    "public_0056": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0056"
+    },
+    "public_0057": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0057"
+    },
+    "public_0058": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0058"
+    },
+    "public_0061": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0061"
+    },
+    "public_0060": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0060"
+    },
+    "public_0059": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0059"
+    },
+    "public_0055": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0055"
+    },
+    "public_0062": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0062"
+    },
+    "public_0063": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0063"
+    },
+    "public_0065": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0065"
+    },
+    "public_0064": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0064"
+    },
+    "public_0066": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0066"
+    },
+    "public_0067": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0067"
+    },
+    "public_0069": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0069"
+    },
+    "public_0070": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0070"
+    },
+    "public_0072": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0072"
+    },
+    "public_0071": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0071"
+    },
+    "public_0068": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0068"
+    },
+    "public_0075": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0075"
+    },
+    "public_0074": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0074"
+    },
+    "public_0073": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0073"
+    },
+    "public_0076": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0076"
+    },
+    "public_0077": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0077"
+    },
+    "public_0078": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0078"
+    },
+    "public_0081": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0081"
+    },
+    "public_0083": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0083"
+    },
+    "public_0084": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0084"
+    },
+    "public_0082": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0082"
+    },
+    "public_0080": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0080"
+    },
+    "public_0079": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0079"
+    },
+    "public_0085": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0085"
+    },
+    "public_0086": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0086"
+    },
+    "public_0087": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0087"
+    },
+    "public_0089": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0089"
+    },
+    "public_0088": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0088"
+    },
+    "public_0090": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0090"
+    },
+    "public_0094": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0094"
+    },
+    "public_0095": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0095"
+    },
+    "public_0093": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0093"
+    },
+    "public_0092": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0092"
+    },
+    "public_0091": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0091"
+    },
+    "public_0096": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0096"
+    },
+    "public_0097": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0097"
+    },
+    "public_0099": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0099"
+    },
+    "public_0100": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0100"
+    },
+    "public_0098": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0098"
+    },
+    "public_0102": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0102"
+    },
+    "public_0101": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0101"
+    },
+    "public_0103": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0103"
+    },
+    "public_0106": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0106"
+    },
+    "public_0107": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0107"
+    },
+    "public_0105": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0105"
+    },
+    "public_0104": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0104"
+    },
+    "public_0108": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0108"
+    },
+    "public_0110": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0110"
+    },
+    "public_0109": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0109"
+    },
+    "public_0111": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0111"
+    },
+    "public_0112": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0112"
+    },
+    "public_0113": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0113"
+    },
+    "public_0114": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0114"
+    },
+    "emptyRequest": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/emptyRequest"
+    },
+    "public_0115": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0115"
+    },
+    "public_0116": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0116"
+    },
+    "public_0123": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0123"
+    },
+    "public_0126": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0126"
+    },
+    "public_0125": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0125"
+    },
+    "public_0128": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0128"
+    },
+    "public_0127": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0127"
+    },
+    "public_0124": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0124"
+    },
+    "public_0122": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0122"
+    },
+    "public_0121": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0121"
+    },
+    "public_0129": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0129"
+    },
+    "public_0132": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0132"
+    },
+    "public_0134": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0134"
+    },
+    "public_0135": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0135"
+    },
+    "public_0133": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0133"
+    },
+    "public_0131": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0131"
+    },
+    "public_0130": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0130"
+    },
+    "public_0120": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0120"
+    },
+    "public_0137": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0137"
+    },
+    "public_0136": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0136"
+    },
+    "public_0119": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0119"
+    },
+    "public_0118": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0118"
+    },
+    "public_0117": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0117"
+    },
+    "semantic_archetype": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/semantic_archetype"
+    },
+    "semantic_schema": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/semantic_schema"
+    },
+    "semantic_rendering": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/semantic_rendering"
+    },
+    "semantic_profile": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/semantic_profile"
+    },
+    "semantic_profile_v1": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/semantic_profile_v1"
+    },
+    "semantic_facet_binding": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/semantic_facet_binding"
+    },
+    "semantic_binding": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/semantic_binding"
+    },
+    "public_0138": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0138"
+    },
+    "public_0139": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0139"
+    },
+    "public_0140": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/public_0140"
+    },
+    "revision_readback_141": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/revision_readback_141"
+    },
+    "revision_readback_142": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/revision_readback_142"
+    },
+    "revision_readback_143": {
+      "$ref": "spine-readback-0.10.0.schema.json#/$defs/revision_readback_143"
+    }
+  }
+}

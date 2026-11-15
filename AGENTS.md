@@ -134,8 +134,30 @@ minor findings. The operator authorized all six repairs plus required checks
 and affected source/installed qualification reruns. Those local checks and the
 fresh full matrix passed. The approved focused recheck closed four findings and
 reopened parent harness identity and explicit on-disk checkpoint completeness.
-The operator authorized those two narrow follow-ups and focused checks; further
-external recheck still needs separate exact-payload approval. FR-4 contract and
+The operator authorized those two narrow follow-ups and focused checks. The
+approved 16-file recheck passed at `6ebc1cc` with zero findings, closing FR-5 on
+the recorded baseline. The operator then requested compatibility alignment;
+AL-0 candidate inspection of exact `3e65ef0de9e73b62047a0f6328731db08ca91023`
+(0.12.0/schema 20) is documented in `docs/spine-0.12.0-alignment.md`. The operator
+then selected that exact pin and authorized the AL-1 contract/fixture slice in
+`specs/spine-0.12.0-alignment.md`. It adds singleton manifest/environment/label
+variants and an additive pinned closure without changing runtime routing,
+historical fixture bytes or pack artifacts. Preserve existing qualified
+capabilities and immutable evidence. Bounded contract review must precede AL-2
+runtime alignment; AL-3 qualification remains separate. Further external review still requires separate
+exact-payload approval. The approved 14-file AL-1 audit returned two major and
+three minor findings. The operator authorized the four agreed test/context
+repairs and clarification of the remaining major while preserving existing
+known-immutable-revision failure behavior. Local repair checks do not close
+the external review gate or authorize AL-2. Preserve that original payload and
+verdict; any focused recheck needs its own exact-payload approval.
+The separately approved 14-file AL-1 focused recheck subsequently returned
+`pass_with_minor_clarification`, with no major findings and preserved boundaries.
+The operator authorized its remaining minor test gap: assert invalid captured
+evidence coverage/mismatch for both create and update flows. That assertion is
+now added; see the implementation plan for checks. This follow-up does not
+authorize AL-2 runtime routing, qualification, another external reviewer,
+commit or push. FR-4 contract and
 fixture work is authorized; its focused contract recheck passed with zero
 findings. The read-only foundation is committed; the operator subsequently
 authorized the admission/replay and internal continuation increments above.

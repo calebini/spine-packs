@@ -86,7 +86,12 @@ file identities so symlink and hard-link aliases to protected files fail closed.
 No source discovery, source overwrite or artifact merging is introduced. The
 reviewed runtime services and this later CLI wiring have separate test evidence;
 FR-5 technical qualification is recorded in `../docs/fr5-qualification.md`;
-bounded review of that qualification increment remains pending.
+its approved focused review passed with zero findings at `6ebc1cc`. Newer-baseline
+alignment began with the candidate-only inspection in
+`../docs/spine-0.12.0-alignment.md`. The operator selected that exact pin and
+authorized AL-1 contracts/fixtures, specified in `spine-0.12.0-alignment.md`;
+this does not change the executable runtime boundary. AL-2 routing and AL-3
+qualification follow separately after contract review.
 
 `facet_verification.verify_installation` is a separate internal read-only
 boundary, with manifest/plan and optional captured apply-result input, no

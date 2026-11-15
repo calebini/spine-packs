@@ -7,7 +7,12 @@ continuation and independent internal read-only verification have synthetic
 coverage. Their focused runtime repair recheck passed with zero findings at
 `965326a`. Operator-authorized CLI continuation/verify wiring now exposes those
 services using the existing flags. FR-5 source/installed technical qualification
-and its locally repaired rerun passed; focused bounded recheck remains pending.
+and its locally repaired rerun passed. The approved focused recheck passed with
+zero findings at `6ebc1cc`, closing FR-5 on the recorded baseline. The newer
+compatibility inspection and subsequent exact operator selection are in
+`../docs/spine-0.12.0-alignment.md`. The AL-1 draft extension in
+`spine-0.12.0-alignment.md` adds contract-only 0.12.0/schema-20 variants to the
+0.10.0 rules below; runtime admission and qualification remain separate gates.
 Current execution status is
 in `implementation-plan.md`.
 Revision-readback baseline adopted on 2026-10-16. Normative language below defines
@@ -518,8 +523,8 @@ fault-injection oracles must be codified and reviewed before their runtime slice
 The bounded FR-2 read-only public-CLI gate is recorded in
 `docs/fr2-qualification.md`. Full successor apply/recovery/verify and clean-wheel
 technical qualification ran locally under FR-5; see `docs/fr5-qualification.md`.
-Its bounded audit findings are locally repaired and the fresh qualification run
-passed; focused recheck remains pending before review closure. The retained
+Its bounded audit findings are repaired, the qualification run passed and the
+approved focused recheck closed the review with zero findings at `6ebc1cc`. The retained
 local result is not a release or curated-content
 approval. If a
 public-command gap is found, report it; this task grants no Spine change authority.

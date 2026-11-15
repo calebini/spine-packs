@@ -1,5 +1,26 @@
 # Compatibility
 
+## Compatibility alignment in progress
+
+FR-5's approved two-finding recheck passed with zero findings at `6ebc1cc`;
+see `../whetstone_runs/facet-rendering-fr5-qualification-recheck-002/completion.md`.
+The operator requested the next compatibility alignment and selected exact
+`3e65ef0de9e73b62047a0f6328731db08ca91023`
+(`0.12.0`, schema `20`), following the inspection recorded in
+`../docs/spine-0.12.0-alignment.md` and its hashed JSON evidence.
+The original source comparison remains inspection
+evidence, not runtime or deployed-package qualification. The operator-authorized
+AL-1 contract/fixture extension is normative in `spine-0.12.0-alignment.md`:
+additive singleton 0.12.0 manifest decoding, the exact 0.12.0/20 environment,
+paired captured-response label and unchanged 23-command/18-contract inventory.
+The focused AL-1 review returned `pass_with_minor_clarification`; its remaining
+both-flow test assertion is now added under operator authorization. See
+`implementation-plan.md` for verification and preserved review evidence.
+Runtime routing remains on the qualified baseline pending AL-2.
+Preserve existing qualified capabilities; baseline retirement is outside
+this alignment. V1 contracts, prior inventories/fixtures and all packs remain
+unchanged. No compatibility range or automatic schema migration is authorized.
+
 ## Proposed 0.10.0 successor — not a support claim
 
 [facet-rendering-packs.md](facet-rendering-packs.md) proposes manifest v2 and
@@ -34,15 +55,16 @@ operator-authorized CLI wiring uses that same exact command/contract inventory
 without expanding any allowlist. FR-5 source and installed-package technical
 qualification passed on the exact 0.10.0 pin and all three existing v1 baselines;
 see `../docs/fr5-qualification.md`. This is working-tree candidate evidence,
-with bounded-review repairs locally verified and focused recheck still pending, not a new release
+with bounded-review repairs and focused recheck passed, not a new release
 or broader support claim. The repairs strengthen provenance/completion gates
 without changing this exact runtime or contract inventory.
 
 ## Compatibility dimensions
 
 The old 0.9.1 manifest/artifact declarations remain decodable solely to preserve
-FR-1 fixtures and audit evidence. Draft v2 structural schemas admit either exact
-singleton; the FR-2 runtime rejects 0.9.1 and all unlisted runtimes before catalog
+FR-1 fixtures and audit evidence. AL-1 adds an exact 0.12.0 singleton encoding
+and schema-20 environment; see the alignment spec. The existing FR-2 runtime
+still rejects everything except 0.10.0 before catalog
 observation. New pack content still needs a successor immutable release. This
 does not alter stable packs 1.0.0/1.0.1 or installer-v1 supported baselines.
 

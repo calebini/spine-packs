@@ -8,6 +8,10 @@ read-only planner for exact Spine `0.10.0` / schema `19` at
 FR-4 recovery/verify services passed their runtime repair recheck and now have
 separately authorized CLI wiring with synthetic tests. This does not amend the closed v1 objects below or
 create a curated successor manifest or release.
+The operator-authorized AL-1 draft in `spine-0.12.0-alignment.md` adds exact
+0.12.0/schema-20 v2 contract/fixture variants only. Its bounded review and minor
+follow-up are recorded in `implementation-plan.md`; runtime alignment remains
+separate. The v1 requirements and reusable pack artifacts stay intact.
 
 ## Status and identity
 

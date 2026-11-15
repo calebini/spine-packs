@@ -7,7 +7,14 @@ increments add candidate/replay correlation, internal durable continuation and
 independent read-only verification.
 The focused runtime repair recheck passed with zero findings at `965326a`.
 The subsequent operator-authorized CLI wiring exposes continuation/verify with
-synthetic public-command tests. This does not complete FR-5 qualification.
+synthetic public-command tests. Subsequent FR-5 source/installed qualification
+and the approved focused recheck passed on the exact baseline below; see
+`../docs/fr5-qualification.md`. The subsequently selected exact 0.12.0 baseline
+has an AL-1 draft additive contract/fixture extension in
+`spine-0.12.0-alignment.md`: singleton manifest variant, paired schema-20
+environment and captured-response label, with existing identifiers/digest domains.
+It does not admit that runtime or rewrite old artifacts. The baseline below
+remains the implemented, qualified path until the separate AL-2/3 gates pass.
 Read `facet-rendering-packs.md` first. The exact
 Spine pin is `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime `0.10.0`, schema
 `19`. Existing v1 artifacts, runtime compatibility and released packs are unchanged.
@@ -266,7 +273,9 @@ not fail final verification (but do fail continuation).
 
 `receipt_readback` MUST be `captured_responses_only_spine_0.9.1` for historical
 0.9.1 environments or `captured_responses_only_spine_0.10.0` for exact 0.10.0
-environments. Cross-pairing is invalid structurally, not just semantically.
+environments. AL-1 additionally specifies `captured_responses_only_spine_0.12.0`
+only for the exact 0.12.0/schema-20 environment. Cross-pairing is invalid
+structurally, not just semantically.
 `disclosure=separate_operator_configuration_required` remains mandatory. No missing
 receipt is repaired by replay in verify. No result claims item creation,
 disclosure approval, rendering correctness or notification delivery.
@@ -408,6 +417,16 @@ be guessed from current content: report an unprovable selected object as blocked
 while retaining its actual observed projection. This does not turn unavailable
 or corrupt public readback into an object-level mismatch: observation failures
 abort under their owning environment/transport/input contracts.
+
+In particular, preserve combined immutable lineage validation across saved plan
+rows, validated captured post-observations and fresh rows. Reuse of a known
+revision ID with a different root, decoder or immutable body aborts verification
+as `transport_or_environment_failure` (installer exit 11), with no verification
+artifact; it is not downgraded to invalid captured coverage/mismatch. This is
+the existing known-immutable-corruption behavior, including when each fresh row
+passes independent schema/hash checks. Mutable profile metadata is not immutable
+revision content. Invalid embedded request/response or execution correlation
+remains the separate invalid-coverage case described above.
 
 Objects with blocked/null plan resolutions remain unprovable even if their old
 rows are readable; verification must not report those old rows as equivalent

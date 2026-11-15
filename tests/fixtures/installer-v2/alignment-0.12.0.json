@@ -1,0 +1,522 @@
+{
+  "stage": "AL-1 deterministic synthetic artifact derivations; no runtime or public CLI qualification",
+  "spine_commit": "3e65ef0de9e73b62047a0f6328731db08ca91023",
+  "runtime_version": "0.12.0",
+  "ledger_schema": "20",
+  "flows": [
+    {
+      "id": "flight-create",
+      "source": {
+        "path": "tests/fixtures/installer-v2/flight-create-0.10.0.json",
+        "sha256": "9e3e586c95c69e7cdcf944b135fd1e8f52d938dbcc5953f94cb62a82d1945065"
+      },
+      "expected": {
+        "manifest_digest": "d07dea1317494e91ce520c00e44e52188024d5176115a6aae9b77ddf280ba048",
+        "artifact_digests": {
+          "request": "ee2d217423d9ffa0b0a697933ff39c811f7032b3b099da4055af730a9641589e",
+          "plan": "c2286db9a42d28a1a01adf9d23d8228ce6479647f4da05b8e918e5e8e683b4f3",
+          "approval": "a278b90931ab177fd181c239da6b55ac68ea4028b422e0e6e652579e2a1c40c3",
+          "initial_checkpoint": "340abe578298da567ecd0725e05fec791387fc8b522bd3b8bf3cf55a98289e7d",
+          "final_checkpoint": "19943633bdbf13740ec2ab9f76702bc9f3504d0eb4dd8b0b0e6038b7848d1e18",
+          "prepared_checkpoint": "5aaa83ae33d9e971dcf13003d095e01d0917e7988a68202bbdaaee89a34e5373",
+          "partial_result": "c0bcdfb67443eaa34eb66760c36cfca6901a4945ee3720fd635fdf9e07ba4f9d",
+          "empty_prefix_partial": "1baa9faf3edf921e119483b17a8b8db9906ef5fa33ab8f71f838f73d7dc3a2e5",
+          "apply_result": "b1ecdedd65a29f8eced35d76c56be15926088c1efec354a12e96b33b21b1fb82",
+          "verification": "539ad1b656e1c1252ceb8bf7bfb172218f6a1d7df4ecd2518d307571f18cfb08"
+        },
+        "wire": [
+          {
+            "action_id": "action-000000",
+            "command": "item_archetype.create",
+            "command_id": "spack_c3310700b1e3544a4814bb60efd47a6c6c3a30d2796f67640782ded91cc70007",
+            "request_digest": "7eb71c21e8aff667db1e31733b92ad83b813d0a16735a9861b7dd24951fa00d9",
+            "response_digest": "c78840781465aaea24e59bb62af33169c423541ae2a549f97fbd0a1b648e6702"
+          },
+          {
+            "action_id": "action-000001",
+            "command": "facet_schema.create",
+            "command_id": "spack_9a9288f416d8c8666094a62a8228d8522c9ab3b16c10b0207311ed0d260dbb83",
+            "request_digest": "dcd4578fbd1756dc816edadad06af32964af85214f9cae300e137d46eb74781e",
+            "response_digest": "b7397c55373aedb22c264846332da50f6a917ed8485445dee39d7524e0944a76"
+          },
+          {
+            "action_id": "action-000002",
+            "command": "item_archetype.facet_binding.set",
+            "command_id": "spack_a433d72236f9498e8216de99930f3e12774e96762e5334052536c4383016ee1a",
+            "request_digest": "8a1afc275a67651b4cc031f8699369f30f42f128525074154baf1b625b9d06fc",
+            "response_digest": "829aff928cf44ce8f1154a8354cd184384ef26714256cce24f6017a3999569ad"
+          },
+          {
+            "action_id": "action-000003",
+            "command": "notification_rendering_definition.create",
+            "command_id": "spack_437c188ac2d4621ef2cdd19050ae4409b6f4b6eb125d85cc9ab722cd3ab3cad7",
+            "request_digest": "821212eaaa0624a747a845b2c89dbd807a1f48be8344fcb6a0474c011d08b7ed",
+            "response_digest": "c13c9cce381034dcb26a5ebb1c6760bfaddb6fea23a007948b4ecbcd0ef45bb0"
+          },
+          {
+            "action_id": "action-000004",
+            "command": "notification_profile.create",
+            "command_id": "spack_f432ba6a4c1d8dac5e698bb7c457512f2c5a91a9c10cbf20e7f47ae6c46e2241",
+            "request_digest": "eb61149eccfe080eda582da03f81993334e290673047bdc64db984fc22708b96",
+            "response_digest": "d99796d39e5a4f895cbff65efcf9495a047f7cc95261470d7c332da95388d7f6"
+          },
+          {
+            "action_id": "action-000005",
+            "command": "notification_profile.binding.set",
+            "command_id": "spack_3b736dc5855c3cf044d87abd19851d4df7ecf6fe5bb03e2c58851de55d53f036",
+            "request_digest": "4ed651f12deb26ab4d14c33bce574be8946e07cd25a73272469aa4b01aa074b0",
+            "response_digest": "9b751c8113ef3594a09ea93d502f6987dffa071fbcac924fe15afc92fc0d48e2"
+          }
+        ],
+        "observation_digests": [
+          "536131d08f76699d0d1962a6dfa33b77cd1cc52ee1bd2693c28655afe1a483df",
+          "9e92730b4c3c70390ab94bbb3474882019a6c5d9e93dc668b329e064e8b3f295",
+          "876226b21960e354f2e21e20d685406bd96dea880a5fa29a6e7709cb2405d467",
+          "1782faad9a968c68521af1fe4744b1d58e597d699693afa069b1bf1389e1acc9",
+          "6b77dffb84d38c8e191956ebbf105b9abe06e41105a287768d15017fa2b8c261",
+          "043e5dea799be2d6311fac6a15b435cde4a04ba9ee1b4d233ca2ce9c49284077",
+          "ca12ca1fb56f106bf1871e82ac945da1da6454656e01463a790b3dd37e7a98cc"
+        ]
+      }
+    },
+    {
+      "id": "flight-update",
+      "source": {
+        "path": "tests/fixtures/installer-v2/flight-update-0.10.0.json",
+        "sha256": "ce240e8aec27474e3e086d512eb76ec9766f08250c3b057567773d67a940a146"
+      },
+      "expected": {
+        "manifest_digest": "4daf7aff657efd60d88f42f899552e202a010d90fd295bea7604006af5112abf",
+        "artifact_digests": {
+          "request": "ee2d217423d9ffa0b0a697933ff39c811f7032b3b099da4055af730a9641589e",
+          "plan": "842b177e7adc168c2928e796bed9b225c45eb6364ca62b7c1edfc029b3afa28a",
+          "approval": "ba3297ad47139129a4d239ceb266e1b8de3a132698ab90f37f92c4af28854517",
+          "initial_checkpoint": "5d157738041593c7299a1e1f17bd52f214fcb9751d5342482202147dfb65a7d0",
+          "final_checkpoint": "799508db9d0e1103927ae0dfbc39f0a6f5bdb6e35f392022ff87f26a46a70f48",
+          "prepared_checkpoint": "bc2f96a6bac673169c6a9aa9c19c625374c294e84f0be121172dae599c39199f",
+          "partial_result": "d402548bebe7731a903343bf01d78c881ac529d159dc7dc184418cc98d8bfc1f",
+          "empty_prefix_partial": "091ad8be5abebaf59640bcd3ffba52c77e7b28dbc02df18fee14c6deaf1093db",
+          "apply_result": "a114c41b09c256c1460997020a3b8604542d63613dc44df73722f8455312a33b",
+          "verification": "7806d81b8302c28a2256f5d7db6dd2153f5129116671539c61844e7e62afbc9a"
+        },
+        "wire": [
+          {
+            "action_id": "action-000000",
+            "command": "item_archetype.revise",
+            "command_id": "spack_994b98b9c9f96066a08916d14fc5f92945b2161135a47ee6dd0cae3a87dcf008",
+            "request_digest": "4e5dba1974c63de59465c4f2c17b7b49f47b5284e78e3294dee170ac47bce819",
+            "response_digest": "c7c8cdb01b54ac184281a9c2ccc3d870779e2173d794aff8f0d6e92cd65dbca7"
+          },
+          {
+            "action_id": "action-000001",
+            "command": "facet_schema.publish",
+            "command_id": "spack_1a0668139b42c53960f69db4022f8f3deed8433d0bf6fa87518cfe45cdc2b468",
+            "request_digest": "35400a9f2833cf0a27bdf795abca16c6c4463beff6b28fbce6c940fa690aa0d2",
+            "response_digest": "785d42f7554636276ac11da8e6eff162d5e2193b477fd1db0b7a3e1889ed3d96"
+          },
+          {
+            "action_id": "action-000002",
+            "command": "item_archetype.facet_binding.set",
+            "command_id": "spack_d59b45538058c20f9ab2595ab19b630b0fd8e6d5889f30e4196f88f907a6d24c",
+            "request_digest": "1362c25247893bda195ef386e788c5a8a6517f5f4d4a607c876bed917cfabe4e",
+            "response_digest": "4324a050658b89242d031d4aa567d1d6e6ddb994295987f812635a6d0680772c"
+          },
+          {
+            "action_id": "action-000003",
+            "command": "notification_rendering_definition.publish",
+            "command_id": "spack_ee41183fd9e1d9681252892898a6b123ab0d168192c196e9e13e0ea50857c04a",
+            "request_digest": "8bedb3a7da0ef0a346e2ca635feec67b81f5f17884ea37843c6a0a4e6459003c",
+            "response_digest": "d09aabe0304c6960b38c54d059ddaf65322c4a5b0c1cbafee75e18f6f409a245"
+          },
+          {
+            "action_id": "action-000004",
+            "command": "notification_profile.metadata.update",
+            "command_id": "spack_43dab16467ce4d0a85344e7a540399cf3a66d0f2d61380104f41a9eee08fba38",
+            "request_digest": "85bca05ecb47a63149891812cad5d69334ace627abda7e2517f947b069339133",
+            "response_digest": "0762c0315d00233c4507a28026f9f832e8bd9c96c1304aaa2b8685caee5f0432"
+          },
+          {
+            "action_id": "action-000005",
+            "command": "notification_profile.revise",
+            "command_id": "spack_8611251e09a0a362e134d8d9989ea48d9e3036daee415becf99857cc137302f3",
+            "request_digest": "65668c89fe613b90103395f18b258160e6e1f0b7d5b2573829b608e276fde6da",
+            "response_digest": "8e720a18477a1cfadc87daf8d7b6ae1a7de7307a3e99b1c76d0b6c52a0df1fcd"
+          }
+        ],
+        "observation_digests": [
+          "ca12ca1fb56f106bf1871e82ac945da1da6454656e01463a790b3dd37e7a98cc",
+          "145f9c592bd0c4f9f00bc8f4d4b033f33e38919bd204ea9f25822f718b63854e",
+          "0dabfbfaf07c4a90fb158cf04eb3ee3143eebcfcfdb019f1ee050848071dcf01",
+          "b84415cfcd78c0a4dfaa35e4884c8eb8a1cab72b04e803c0d6410080548e9490",
+          "7d8cf3bbb69bad708b18ef6985b68fce5671d6799f863eb56dea111685daf7d9",
+          "d2034924fe607c4f65c60ad578cf229ed0712e4f30eb00b58edaf7f13d3dc5b2",
+          "4276146d155c68db88587c3a0a0f698143a3a145620c5b47906be3209beb0f8d"
+        ]
+      }
+    }
+  ],
+  "recovery_vectors": [
+    {
+      "id": "flight-create-0-prepared_before_submit",
+      "flow": "flight-create",
+      "prefix_length": "0",
+      "boundary": "prepared_before_submit",
+      "command": "item_archetype.create"
+    },
+    {
+      "id": "flight-create-0-accepted_response_lost",
+      "flow": "flight-create",
+      "prefix_length": "0",
+      "boundary": "accepted_response_lost",
+      "command": "item_archetype.create"
+    },
+    {
+      "id": "flight-create-0-accepted_durable",
+      "flow": "flight-create",
+      "prefix_length": "0",
+      "boundary": "accepted_durable",
+      "command": "item_archetype.create"
+    },
+    {
+      "id": "flight-create-1-prepared_before_submit",
+      "flow": "flight-create",
+      "prefix_length": "1",
+      "boundary": "prepared_before_submit",
+      "command": "facet_schema.create"
+    },
+    {
+      "id": "flight-create-1-accepted_response_lost",
+      "flow": "flight-create",
+      "prefix_length": "1",
+      "boundary": "accepted_response_lost",
+      "command": "facet_schema.create"
+    },
+    {
+      "id": "flight-create-1-accepted_durable",
+      "flow": "flight-create",
+      "prefix_length": "1",
+      "boundary": "accepted_durable",
+      "command": "facet_schema.create"
+    },
+    {
+      "id": "flight-create-2-prepared_before_submit",
+      "flow": "flight-create",
+      "prefix_length": "2",
+      "boundary": "prepared_before_submit",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-create-2-accepted_response_lost",
+      "flow": "flight-create",
+      "prefix_length": "2",
+      "boundary": "accepted_response_lost",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-create-2-accepted_durable",
+      "flow": "flight-create",
+      "prefix_length": "2",
+      "boundary": "accepted_durable",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-create-3-prepared_before_submit",
+      "flow": "flight-create",
+      "prefix_length": "3",
+      "boundary": "prepared_before_submit",
+      "command": "notification_rendering_definition.create"
+    },
+    {
+      "id": "flight-create-3-accepted_response_lost",
+      "flow": "flight-create",
+      "prefix_length": "3",
+      "boundary": "accepted_response_lost",
+      "command": "notification_rendering_definition.create"
+    },
+    {
+      "id": "flight-create-3-accepted_durable",
+      "flow": "flight-create",
+      "prefix_length": "3",
+      "boundary": "accepted_durable",
+      "command": "notification_rendering_definition.create"
+    },
+    {
+      "id": "flight-create-4-prepared_before_submit",
+      "flow": "flight-create",
+      "prefix_length": "4",
+      "boundary": "prepared_before_submit",
+      "command": "notification_profile.create"
+    },
+    {
+      "id": "flight-create-4-accepted_response_lost",
+      "flow": "flight-create",
+      "prefix_length": "4",
+      "boundary": "accepted_response_lost",
+      "command": "notification_profile.create"
+    },
+    {
+      "id": "flight-create-4-accepted_durable",
+      "flow": "flight-create",
+      "prefix_length": "4",
+      "boundary": "accepted_durable",
+      "command": "notification_profile.create"
+    },
+    {
+      "id": "flight-create-5-prepared_before_submit",
+      "flow": "flight-create",
+      "prefix_length": "5",
+      "boundary": "prepared_before_submit",
+      "command": "notification_profile.binding.set"
+    },
+    {
+      "id": "flight-create-5-accepted_response_lost",
+      "flow": "flight-create",
+      "prefix_length": "5",
+      "boundary": "accepted_response_lost",
+      "command": "notification_profile.binding.set"
+    },
+    {
+      "id": "flight-create-5-accepted_durable",
+      "flow": "flight-create",
+      "prefix_length": "5",
+      "boundary": "accepted_durable",
+      "command": "notification_profile.binding.set"
+    },
+    {
+      "id": "flight-update-0-prepared_before_submit",
+      "flow": "flight-update",
+      "prefix_length": "0",
+      "boundary": "prepared_before_submit",
+      "command": "item_archetype.revise"
+    },
+    {
+      "id": "flight-update-0-accepted_response_lost",
+      "flow": "flight-update",
+      "prefix_length": "0",
+      "boundary": "accepted_response_lost",
+      "command": "item_archetype.revise"
+    },
+    {
+      "id": "flight-update-0-accepted_durable",
+      "flow": "flight-update",
+      "prefix_length": "0",
+      "boundary": "accepted_durable",
+      "command": "item_archetype.revise"
+    },
+    {
+      "id": "flight-update-1-prepared_before_submit",
+      "flow": "flight-update",
+      "prefix_length": "1",
+      "boundary": "prepared_before_submit",
+      "command": "facet_schema.publish"
+    },
+    {
+      "id": "flight-update-1-accepted_response_lost",
+      "flow": "flight-update",
+      "prefix_length": "1",
+      "boundary": "accepted_response_lost",
+      "command": "facet_schema.publish"
+    },
+    {
+      "id": "flight-update-1-accepted_durable",
+      "flow": "flight-update",
+      "prefix_length": "1",
+      "boundary": "accepted_durable",
+      "command": "facet_schema.publish"
+    },
+    {
+      "id": "flight-update-2-prepared_before_submit",
+      "flow": "flight-update",
+      "prefix_length": "2",
+      "boundary": "prepared_before_submit",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-update-2-accepted_response_lost",
+      "flow": "flight-update",
+      "prefix_length": "2",
+      "boundary": "accepted_response_lost",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-update-2-accepted_durable",
+      "flow": "flight-update",
+      "prefix_length": "2",
+      "boundary": "accepted_durable",
+      "command": "item_archetype.facet_binding.set"
+    },
+    {
+      "id": "flight-update-3-prepared_before_submit",
+      "flow": "flight-update",
+      "prefix_length": "3",
+      "boundary": "prepared_before_submit",
+      "command": "notification_rendering_definition.publish"
+    },
+    {
+      "id": "flight-update-3-accepted_response_lost",
+      "flow": "flight-update",
+      "prefix_length": "3",
+      "boundary": "accepted_response_lost",
+      "command": "notification_rendering_definition.publish"
+    },
+    {
+      "id": "flight-update-3-accepted_durable",
+      "flow": "flight-update",
+      "prefix_length": "3",
+      "boundary": "accepted_durable",
+      "command": "notification_rendering_definition.publish"
+    },
+    {
+      "id": "flight-update-4-prepared_before_submit",
+      "flow": "flight-update",
+      "prefix_length": "4",
+      "boundary": "prepared_before_submit",
+      "command": "notification_profile.metadata.update"
+    },
+    {
+      "id": "flight-update-4-accepted_response_lost",
+      "flow": "flight-update",
+      "prefix_length": "4",
+      "boundary": "accepted_response_lost",
+      "command": "notification_profile.metadata.update"
+    },
+    {
+      "id": "flight-update-4-accepted_durable",
+      "flow": "flight-update",
+      "prefix_length": "4",
+      "boundary": "accepted_durable",
+      "command": "notification_profile.metadata.update"
+    },
+    {
+      "id": "flight-update-5-prepared_before_submit",
+      "flow": "flight-update",
+      "prefix_length": "5",
+      "boundary": "prepared_before_submit",
+      "command": "notification_profile.revise"
+    },
+    {
+      "id": "flight-update-5-accepted_response_lost",
+      "flow": "flight-update",
+      "prefix_length": "5",
+      "boundary": "accepted_response_lost",
+      "command": "notification_profile.revise"
+    },
+    {
+      "id": "flight-update-5-accepted_durable",
+      "flow": "flight-update",
+      "prefix_length": "5",
+      "boundary": "accepted_durable",
+      "command": "notification_profile.revise"
+    }
+  ],
+  "negative_vectors": [
+    {
+      "id": "wrong_runtime",
+      "stage": "plan"
+    },
+    {
+      "id": "wrong_current_schema",
+      "stage": "plan"
+    },
+    {
+      "id": "wrong_implemented_schema",
+      "stage": "plan"
+    },
+    {
+      "id": "manifest_runtime_mismatch",
+      "stage": "plan"
+    },
+    {
+      "id": "mixed_manifest_runtimes",
+      "stage": "plan"
+    },
+    {
+      "id": "unavailable_contract",
+      "stage": "plan"
+    },
+    {
+      "id": "wrong_execution_union",
+      "stage": "plan"
+    },
+    {
+      "id": "stale_plan_digest",
+      "stage": "plan"
+    },
+    {
+      "id": "old_baseline_approval",
+      "stage": "approval"
+    },
+    {
+      "id": "unauthorized_update",
+      "stage": "approval"
+    },
+    {
+      "id": "old_baseline_checkpoint",
+      "stage": "continuation"
+    },
+    {
+      "id": "old_baseline_partial",
+      "stage": "continuation"
+    },
+    {
+      "id": "wrong_fresh_environment",
+      "stage": "continuation"
+    },
+    {
+      "id": "wrong_fresh_schema",
+      "stage": "continuation"
+    },
+    {
+      "id": "old_baseline_replay",
+      "stage": "continuation"
+    },
+    {
+      "id": "changed_replay_request",
+      "stage": "continuation"
+    },
+    {
+      "id": "wrong_replay_root",
+      "stage": "continuation"
+    },
+    {
+      "id": "incomplete_prefix",
+      "stage": "continuation"
+    },
+    {
+      "id": "stale_preimage",
+      "stage": "continuation"
+    },
+    {
+      "id": "wrong_receipt_label",
+      "stage": "verification"
+    },
+    {
+      "id": "old_baseline_verification",
+      "stage": "verification"
+    },
+    {
+      "id": "old_baseline_result",
+      "stage": "verification"
+    },
+    {
+      "id": "wrong_current_head",
+      "stage": "verification"
+    },
+    {
+      "id": "wrong_binding_pin",
+      "stage": "verification"
+    },
+    {
+      "id": "missing_response_evidence",
+      "stage": "verification"
+    },
+    {
+      "id": "invalid_same_plan_evidence",
+      "stage": "verification"
+    },
+    {
+      "id": "known_immutable_revision_contradiction",
+      "stage": "verification"
+    }
+  ]
+}

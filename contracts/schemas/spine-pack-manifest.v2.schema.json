@@ -156,6 +156,9 @@
             ],
             [
               "0.10.0"
+            ],
+            [
+              "0.12.0"
             ]
           ]
         },
@@ -900,5 +903,5 @@
       ]
     }
   },
-  "$comment": "Draft manifest-only codification of specs/facet-rendering-packs.md. Exact Spine 57cda1c2d5589360ee8efe7155fd20b503034c2a, runtime 0.9.1/schema 19. Not installer runtime support. Facet definition/key/integer/field fragments derive from archetype-facet-types.schema.json; rendering revision/selection fragments from notification-rendering-definition-types.schema.json, with portable references substituted. Normalization, graph, ordering and digest rules require semantic validation. FR-2 adds an exact 0.10.0 encoding at 8f3c50b6fd1b4aa534e50925b7417a7a80d19122. 0.9.1 remains decodable solely for historical FR-1 fixtures; current successor planning rejects it. No runtime range or v1 compatibility expansion."
+  "$comment": "Draft manifest-only codification of specs/facet-rendering-packs.md. Exact Spine 57cda1c2d5589360ee8efe7155fd20b503034c2a, runtime 0.9.1/schema 19. Not installer runtime support. Facet definition/key/integer/field fragments derive from archetype-facet-types.schema.json; rendering revision/selection fragments from notification-rendering-definition-types.schema.json, with portable references substituted. Normalization, graph, ordering and digest rules require semantic validation. FR-2 adds an exact 0.10.0 encoding at 8f3c50b6fd1b4aa534e50925b7417a7a80d19122. 0.9.1 remains decodable solely for historical FR-1 fixtures; current successor planning rejects it. No runtime range or v1 compatibility expansion. AL-1 adds contract-only exact 0.12.0/schema 20 at 3e65ef0de9e73b62047a0f6328731db08ca91023, governed by specs/spine-0.12.0-alignment.md. Existing runtime admission remains exact 0.10.0 pending review and AL-2 routing."
 }
