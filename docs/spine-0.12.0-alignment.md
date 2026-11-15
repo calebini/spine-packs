@@ -5,9 +5,12 @@ exact candidate and authorized AL-1 contracts/fixtures. The approved AL-1 audit
 returned findings; the operator authorized narrow local repairs and preservation
 clarification. The separately approved focused recheck returned
 `pass_with_minor_clarification` with preserved boundaries; its remaining test
-assertion is now added under operator authorization. No new runtime admission,
-staging package identity or baseline
-qualification is claimed. Normative extension: `../specs/spine-0.12.0-alignment.md`.
+assertion is now added under operator authorization. The operator subsequently
+authorized AL-2 runtime alignment: matching exact routing and synthetic tests
+are implemented alongside the qualified 0.10.0 path. AL-3 new-baseline source and
+installed-package qualification remains separate; no staging identity or
+deployment qualification is claimed. Normative extension:
+`../specs/spine-0.12.0-alignment.md`.
 
 The operator requested compatibility alignment after FR-5's approved two-finding
 recheck passed with zero findings at `6ebc1cc`. The exact qualified baseline
@@ -298,3 +301,154 @@ Evidence:
 The remaining minor is addressed locally. The external verdict remains
 `pass_with_minor_clarification`; AL-2 implementation is the next separately
 scoped increment.
+
+## AL-2 runtime alignment
+
+The operator subsequently authorized AL-2. The exact 0.12.0 Git pin was
+reverified without replacement objects. The runtime now carries one immutable
+baseline configuration from manifest validation through planning, execution,
+continuation, readback and verification; concrete adapters cannot switch
+baselines after binding. No CLI flag or command authority changes. See the
+normative alignment spec and `../specs/implementation-plan.md` for boundaries.
+The qualified 0.10.0 path, all v1 paths, old machine evidence and reusable packs
+are preserved. The new runtime path has synthetic evidence only.
+
+Checks passed:
+
+- 139 official contract tests, no skips; the required system-Python contract
+  run passed with 74 development-validator skips covered by that official run.
+- 303 runtime tests; the final focused 15-method AL-2 run also passed after
+  adding both-flow invalid captured evidence and fresh-environment assertions
+  for initial apply, continuation and verification.
+- Repository verifier: 202 required files. Whitespace checks passed.
+- Package regression: direct and sdist-built wheels match; a clean environment
+  contains the complete source/schema closure and no runtime dependencies. All
+  four installed v1 integration scenarios passed on new disposable ledgers
+  using freshly exported/built exact Spine 0.6.0 and Tickerd 0.2.0. Upstream package bytes
+  were checked against exact Git/export/wheel/installed files before use. Only
+  these already supported public CLIs were invoked; no 0.12.0 process ran.
+- A separate clean-wheel synthetic smoke test imported the installed baseline
+  registry, validated the new plan and materialized a request using bundled
+  schemas. This is resource/routing evidence, not AL-3 upstream qualification.
+
+The previous temporary development/qualification installations were no longer
+available. The isolated build environment was recreated in
+`/private/tmp/spine-packs-al2-dev`; the installer itself still has zero runtime
+dependencies. Earlier recorded results remain historical evidence.
+
+Final evidence:
+
+- `/private/tmp/spine-packs-al2-contract-official.log`
+- `/private/tmp/spine-packs-al2-contract-system.log`
+- `/private/tmp/spine-packs-al2-runtime.log`
+- `/private/tmp/spine-packs-al2-focused-final-3.log`
+- `/private/tmp/spine-packs-al2-official-focused-2.log`
+- `/private/tmp/spine-packs-al2-package-1qjivo1z/upstream-provenance.json`
+- `/private/tmp/spine-packs-al2-package-final.log`
+- `/private/tmp/spine-packs-al2-package-final/spine-packs-package-fu8_3mbk/PASS.json`
+- `/private/tmp/spine-packs-al2-installed-smoke.json`
+
+All assets are local candidate evidence. No version assignment or publication
+approval is implied. Bounded AL-2 runtime review needs its own exact-payload
+approval; at that implementation checkpoint no reviewer was invoked. AL-3 source/installed qualification against
+exact 0.12.0/schema 20 remains separate, followed by FR-6 content/release gates.
+No commit or push was performed.
+
+## AL-2 runtime audit and manual repair
+
+The separately approved 20-file audit in
+`../whetstone_runs/spine0120-al2-runtime-audit-001/` returned `needs_revision`,
+with two majors and two minors. The operator authorized the two runtime fixes,
+the missing regression/reference evidence and provenance link, plus local checks.
+The approved payload and original external verdict are preserved.
+
+Initial apply now rejects a transport target different from the complete approved
+target before observing or writing. Ordinary read failures validate their
+published family or existing common envelope plus the exact CLI exit, preserving
+closed common-preflight and dedicated revision-readback behavior. Malformed
+failures become installer environment failures; valid rejections retain their
+owning category. The shared read/write error/exit map comes from the identical
+`commands/cli.py` agreement at both exact pins. No write command, public schema,
+version range or reusable pack changes.
+
+The schema evidence gap is addressed with a focused runtime regression and an
+independent official reference-chain/validation test. Both selected public
+`semantic_profile_v1` references resolve through 0.10.0/0.9.1 to
+`spine-readback-0.9.1.schema.json#/$defs/public_0117`, exactly the definition
+reached by the prior embedded `profile_v1` reference. Valid legacy profiles pass;
+v2-only template fields remain invalid under that decoder.
+
+The earlier package evidence gap has an existing source:
+`spine-packs-integration-wyarx_sd/run.json` explicitly names the upstream CLI
+under `spine-packs-al2-package-1qjivo1z`. The retained local copy is
+`../whetstone_runs/spine0120-al2-runtime-audit-001/local-followup/qualification-run.json`;
+source/reference hashes are in the sibling `evidence-assessment.json`. These
+were not sent in the original payload. Further external evidence submission
+requires a newly approved focused recheck.
+
+### Repair verification
+
+Passed: 140 official contract tests without skips, 307 runtime tests, 19 focused
+AL-2 runtime methods and four focused official contract methods. The required
+system-Python contract run passed with 75 development-validator skips covered
+by the official run. The 202-file verifier and whitespace checks passed.
+
+The patched package passed all four installed regression scenarios using new
+disposable configuration ledgers and reattested exact Spine 0.6.0 / Tickerd 0.2.0
+packages. No new-baseline Spine process or ledger was used. The direct and
+sdist-built wheels match; source/schema closure and zero runtime dependencies
+are checked. A clean-wheel synthetic smoke check exercises both selected
+baselines' legacy-profile decoding and read-failure classification, plus initial
+target refusal, without starting Spine.
+
+Evidence is archived in
+`../whetstone_runs/spine0120-al2-runtime-audit-001/repair-evidence/`, indexed by
+source path, exact byte count and hash. The sibling `repair-verification.json`
+records the result. The package evidence includes `invocation.json`,
+`upstream-provenance.json`, `failure-authority.json` and `qualification-link.json`,
+plus the referenced package and integration records. It explicitly links the
+final integration's actual upstream paths to the attested wheels and exact
+commits, closing the local provenance gap without attributing a pass to a
+different run by inference.
+
+The external verdict remains `needs_revision`; local repair success does not
+close that review gate. A focused recheck needs its own exact-payload approval.
+No commit, push, release or AL-3 qualification was performed.
+
+### Focused recheck: remaining request-preflight case
+
+The separately approved 20-file focused runtime repair recheck returned one
+remaining major, consistency-02. The target mismatch and the two evidence gaps
+were not reopened. The empty-message `invalid_request` / `request` case could
+still bypass the strict preflight recognizer through the common handler
+envelope and receive installer exit 8.
+
+The follow-up within the existing authorized repair adds `request` to the guarded
+preflight signatures and checks them before handler fallback. Both baseline CLI
+tests now distinguish the valid rejection / 8 from the empty-message environment
+failure / 11 without publishing output. The approved recheck payload and verdict
+remain frozen in `../whetstone_runs/spine0120-al2-runtime-recheck-001/`.
+This local fix does not close the external gate or authorize another review,
+AL-3 qualification, commit or push.
+
+The local follow-up passed 140 official contract tests, 307 runtime tests,
+19 focused runtime and four focused official contract methods, repository
+verification and whitespace checks. Old-baseline package regression passed all
+four installed scenarios; an installed synthetic probe confirms both message
+cases at each selected baseline without starting Spine. Evidence is retained
+in the first focused recheck's `followup-evidence/`. Its `needs_revision` verdict
+is unchanged; a smaller recheck of consistency-02 requires separate approval.
+
+### Final runtime review closure
+
+The separately approved ten-file consistency-02 recheck passed with zero
+findings and `boundary_preserved=true`; see
+`../whetstone_runs/spine0120-al2-runtime-recheck-002/change_audit/change_audit_report.md`
+and its `completion.json` for the post-run hash checks. The first focused
+recheck did not reopen consistency-01/03/04. This closes the AL-2 runtime review
+gate while preserving all previous payloads and their original verdicts.
+
+The operator subsequently authorized the local AL-2 checkpoint commit. Exact
+Spine 0.12.0/schema-20 source and installed-package public-CLI qualification is
+still AL-3. No staging identity, deployment, publication or broader runtime
+range is established by this checkpoint.

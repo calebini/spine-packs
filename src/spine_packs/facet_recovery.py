@@ -103,7 +103,7 @@ class RecoveryPreimage(ExecutionContext):
     def compare_prefix(self, fresh, *, environment, target):
         require(environment == self._plan['environment']
                 and target == self._plan['request']['target'], 'recovery_target_changed', STALE)
-        observation(fresh, self._plan['request']['owner'])
+        observation(fresh, self._plan['request']['owner'], runtime_version=self._baseline.runtime)
         immutable_lineage([*self._expected['entries'], *self._expected['historical_revisions'],
                            *fresh['entries'], *fresh['historical_revisions']])
         require(forward_view(fresh, []) == self._expected, 'recovery_prefix_changed', STALE)
@@ -121,7 +121,7 @@ class RecoveryPreimage(ExecutionContext):
         require(transport.target == self._plan['request']['target'], 'recovery_target_changed', STALE)
         environment, fresh = observe(transport, self._plan['request']['owner'], self._plan['closure'],
             page_size=page_size, content_contracts=self._content_contracts,
-            lineage=self.lineage())
+            lineage=self.lineage(), runtime_version=self._baseline.runtime)
         self.compare_prefix(fresh, environment=environment, target=transport.target)
         return fresh
 
@@ -133,7 +133,7 @@ class RecoveryPreimage(ExecutionContext):
         action = plan['actions'][index]
         request = self.materialize(cp['accepted_responses'])
         command = action['command']
-        value = projected_state(row, plan['request']['owner'])
+        value = projected_state(row, plan['request']['owner'], runtime_version=self._baseline.runtime)
         require(row['object_key'] == action['object_key'] and row['status'] == 'active',
                 'invalid_candidate_object', STALE)
         if action['expected'] is not None:
@@ -145,8 +145,8 @@ class RecoveryPreimage(ExecutionContext):
             require(archetype_record is not None, 'candidate_archetype_record_required', STALE)
             validate(dict(ok=True, command='item_archetype.show', response_contract='spine.item-archetypes.v1',
                 item_archetype=archetype_record),
-                'spine-readback-0.10.0.schema.json', COMMANDS['item_archetype.show']['response'], category=ENVIRONMENT)
-            require(state('archetype', archetype_record, plan['request']['owner']) == row,
+                self._baseline.public_schema, COMMANDS['item_archetype.show']['response'], category=ENVIRONMENT)
+            require(state('archetype', archetype_record, plan['request']['owner'], runtime_version=self._baseline.runtime) == row,
                     'candidate_archetype_record_mismatch', STALE)
             provenance = dict(created_by_command_id=request['command_id'],
                 created_by_subject_id=request['actor_subject_id'], created_at_utc=request['action_timestamp_utc'])
@@ -162,9 +162,9 @@ class RecoveryPreimage(ExecutionContext):
             require(record is not None, 'candidate_rendering_record_required', STALE)
             validate(dict(ok=True, command='notification_rendering_definition.show',
                 contract_version=COMMANDS[command]['selector'], record=record),
-                'spine-readback-0.10.0.schema.json',
+                self._baseline.public_schema,
                 COMMANDS['notification_rendering_definition.show']['response'], category=ENVIRONMENT)
-            require(state('rendering', record, plan['request']['owner']) == row,
+            require(state('rendering', record, plan['request']['owner'], runtime_version=self._baseline.runtime) == row,
                     'candidate_rendering_record_mismatch', STALE)
             provenance = {k: request[k] for k in ('command_id', 'actor_subject_id', 'action_timestamp_utc')}
             require(record['published'] == provenance, 'candidate_publication_mismatch', STALE)
@@ -200,7 +200,7 @@ class RecoveryPreimage(ExecutionContext):
         fresh, rendering_record, archetype_record = deepcopy((fresh, rendering_record, archetype_record))
         require(environment == self._plan['environment'] and target == self._plan['request']['target'],
                 'recovery_target_changed', STALE)
-        observation(fresh, self._plan['request']['owner'])
+        observation(fresh, self._plan['request']['owner'], runtime_version=self._baseline.runtime)
         immutable_lineage([*self._expected['entries'], *self._expected['historical_revisions'],
                            *fresh['entries'], *fresh['historical_revisions']])
         actual = forward_view(fresh, [])
@@ -254,7 +254,8 @@ def preflight_continuation(manifest, plan, approval, source, transport, *, page_
             record_key = action['object_key']
     observed = observe(transport, context._plan['request']['owner'], context._plan['closure'],
         page_size=page_size, content_contracts=context._content_contracts,
-        lineage=context.lineage(include_pending=True), record_key=record_key)
+        lineage=context.lineage(include_pending=True), record_key=record_key,
+        runtime_version=context._baseline.runtime)
     environment, fresh = observed[:2]
     record = observed[2] if record_key is not None else None
     return context.admit(fresh, environment=environment, target=transport.target,

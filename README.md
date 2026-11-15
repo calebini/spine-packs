@@ -22,6 +22,9 @@ by passing focused rechecks. The subsequent CLI wiring has synthetic runtime
 coverage. FR-5 adds opt-in disposable source and installed-wheel qualification;
 the harness and its limits are described in [FR-5 qualification](docs/fr5-qualification.md).
 Local candidate qualification is separate from release approval.
+The separately authorized AL-2 alignment adds exact Spine `0.12.0` / schema `20`
+routing with synthetic tests; its source and installed-package qualification
+remains AL-3. See [the alignment scope](specs/spine-0.12.0-alignment.md).
 Continuation uses a supplied checkpoint or terminal partial result, the original
 approval, and new private checkpoint/output paths. Verify takes a plan and
 optional apply result, without an approval file. See

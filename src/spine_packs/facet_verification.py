@@ -8,6 +8,7 @@ from copy import deepcopy
 from .facet_contracts import artifact, body, seal
 from .facet_execution import ExecutionContext, guarded, immutable_lineage, observation, validate_saved_plan
 from .facet_observation import observe
+from .facet_baselines import manifest_baseline
 from .planning import ENVIRONMENT, INVALID, PlanError, require
 
 STALE = 'stale_plan_or_target_mismatch'
@@ -101,12 +102,14 @@ def verify_installation(manifest, plan, transport, result=None, *, page_size=100
     """Read-only selected-state verification; no approval or write authority."""
     manifest, plan, result = deepcopy((manifest, plan, result))
     validate_verification_inputs(manifest, plan, result)
+    baseline = manifest_baseline(manifest)
     coverage, accepted = response_coverage(manifest, plan, result)
     require(transport.target == plan['request']['target'], 'verification_target_mismatch', STALE)
     environment, fresh = observe(transport, plan['request']['owner'], plan['closure'],
-        page_size=page_size, content_contracts=manifest['compatibility']['spine_content_contracts'])
+        page_size=page_size, content_contracts=manifest['compatibility']['spine_content_contracts'],
+        runtime_version=baseline.runtime)
     require(environment == plan['environment'], 'verification_environment_mismatch', STALE)
-    observation(fresh, plan['request']['owner'])
+    observation(fresh, plan['request']['owner'], runtime_version=baseline.runtime)
     immutable_lineage([*plan['observation']['entries'], *plan['observation']['historical_revisions'],
         *[e['post_observation'] for e in accepted], *fresh['entries'], *fresh['historical_revisions']], category=ENVIRONMENT)
     objects = object_results(plan, fresh, accepted)
@@ -116,7 +119,7 @@ def verify_installation(manifest, plan, transport, result=None, *, page_size=100
             result['content_identity']['digest'] if result is not None and plan['actions'] else None),
         pack=deepcopy(plan['pack']), target=deepcopy(plan['request']['target']), environment=environment,
         observation=deepcopy(fresh), closure=deepcopy(plan['closure']), object_results=objects,
-        response_evidence=coverage, receipt_readback='captured_responses_only_spine_0.10.0',
+        response_evidence=coverage, receipt_readback=baseline.receipt_readback,
         disclosure='separate_operator_configuration_required', state='verified' if success else 'mismatch'))
     artifact(value, 'verification-result')
     return value

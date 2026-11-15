@@ -10,9 +10,11 @@ services using the existing flags. FR-5 source/installed technical qualification
 and its locally repaired rerun passed. The approved focused recheck passed with
 zero findings at `6ebc1cc`, closing FR-5 on the recorded baseline. The newer
 compatibility inspection and subsequent exact operator selection are in
-`../docs/spine-0.12.0-alignment.md`. The AL-1 draft extension in
-`spine-0.12.0-alignment.md` adds contract-only 0.12.0/schema-20 variants to the
-0.10.0 rules below; runtime admission and qualification remain separate gates.
+`../docs/spine-0.12.0-alignment.md`. The AL-1 extension in
+`spine-0.12.0-alignment.md` adds exact 0.12.0/schema-20 variants to the
+0.10.0 rules below. Following contract review and the final minor repair, the
+operator authorized AL-2 runtime routing and synthetic tests. AL-3 new-baseline
+source and installed-package qualification remains separate.
 Current execution status is
 in `implementation-plan.md`.
 Revision-readback baseline adopted on 2026-10-16. Normative language below defines
@@ -284,7 +286,9 @@ binding is part of an immutable archetype revision.
 
 ## 6. Compatibility and command boundary
 
-The first v2 pack declares exactly runtime `["0.10.0"]`. Content contracts are:
+The original v2 fixtures declare exactly runtime `["0.10.0"]`. The additive
+AL-1/2 variant declares exactly `["0.12.0"]`; do not edit an old manifest to
+retarget it. No curated v2 pack has been released. Content contracts are:
 
 ```text
 spine.archetype-facet-bindings.v1

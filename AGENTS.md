@@ -101,6 +101,9 @@ without separate review and authorization. Planning must retain its strict
 read-command allowlist. V1 apply may use only its six reviewed write commands;
 the separate FR-3 v2 apply adapter may use only the 11 configuration writes
 in the exact 0.10.0 inventory.
+The separately authorized AL-2 alignment also admits the identical reviewed
+12-read/11-write inventory at exact Spine 0.12.0/schema 20 below. It adds no
+commands; all v1 and qualified 0.10.0 capabilities remain intact.
 Mark unresolved design details explicitly instead of silently choosing them.
 
 When the repository advances, add only the smallest structure required by real
@@ -110,8 +113,10 @@ material belongs in `docs/` only when the README is insufficient.
 
 ## Change checks
 
-The facet/rendering proposal now pins exact Spine commit
-`8f3c50b6fd1b4aa534e50925b7417a7a80d19122` (`0.10.0`, schema `19`). The original
+The qualified facet/rendering baseline remains exact Spine commit
+`8f3c50b6fd1b4aa534e50925b7417a7a80d19122` (`0.10.0`, schema `19`). AL-2 separately
+adds exact `3e65ef0de9e73b62047a0f6328731db08ca91023` (`0.12.0`, schema `20`)
+runtime routing under the scope below; it is not new-baseline qualification. The original
 `01ebce7b0c5fb9234e0eab55daca96b01c5cb6a7` listing finding and audit are historical
 evidence and MUST NOT be rewritten. Existing
 runtime allowlists, v1 contracts and pack artifacts remain unchanged. Do not
@@ -155,9 +160,37 @@ The separately approved 14-file AL-1 focused recheck subsequently returned
 `pass_with_minor_clarification`, with no major findings and preserved boundaries.
 The operator authorized its remaining minor test gap: assert invalid captured
 evidence coverage/mismatch for both create and update flows. That assertion is
-now added; see the implementation plan for checks. This follow-up does not
-authorize AL-2 runtime routing, qualification, another external reviewer,
-commit or push. FR-4 contract and
+now added; see the implementation plan for checks. That follow-up did not itself
+authorize AL-2. The operator subsequently explicitly authorized AL-2 runtime
+alignment: bind each operation to the validated manifest's exact baseline and
+route plan/apply/continuation/verify through that reviewed closure, with synthetic
+public-command tests and independent contract checks. Preserve all error
+ownership, budgets, strict read/write allowlists, cross-baseline evidence refusal,
+historical fixtures, v1 routing and released pack bytes. AL-2 may run the required
+old-baseline package regression on new disposable configuration ledgers only.
+AL-3 new-baseline public-CLI/source/wheel qualification, external review, commit,
+push and release remain separately authorized work. The separately approved
+20-file AL-2 runtime audit returned two majors and two minors (`needs_revision`,
+boundary not preserved). The operator authorized manual repair of initial-apply
+transport-target equality, ordinary read-failure envelope/exit validation, the
+v1-decoded profile regression/reference-chain evidence, and the package
+provenance link, plus focused and required checks. Preserve the original payload
+and verdict; local repair success does not close the external findings or
+authorize a reviewer rerun or AL-3. No commit or push is part of this repair.
+The separately approved 20-file focused AL-2 repair recheck returned only
+consistency-02, for an empty invalid_request/request preflight message falling
+through to a handler rejection. The other three findings were not reopened.
+The same already-authorized failure-validation repair now rejects malformed
+request-preflight signatures before handler fallback, with regressions for both
+baselines. Preserve both external verdicts and approved payloads; local follow-up
+checks do not authorize another reviewer call, AL-3, commit or push.
+The separately approved final ten-file consistency-02 recheck passed with zero
+findings and boundary_preserved=true. Together with the prior focused recheck,
+this closes the AL-2 runtime repair review gate. Preserve all original reports
+and approved payloads. The operator subsequently authorized the local AL-2
+checkpoint commit only; AL-3 exact-0.12.0 source/installed qualification, push,
+deployment and publication remain separate work.
+FR-4 contract and
 fixture work is authorized; its focused contract recheck passed with zero
 findings. The read-only foundation is committed; the operator subsequently
 authorized the admission/replay and internal continuation increments above.

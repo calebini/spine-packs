@@ -89,9 +89,15 @@ FR-5 technical qualification is recorded in `../docs/fr5-qualification.md`;
 its approved focused review passed with zero findings at `6ebc1cc`. Newer-baseline
 alignment began with the candidate-only inspection in
 `../docs/spine-0.12.0-alignment.md`. The operator selected that exact pin and
-authorized AL-1 contracts/fixtures, specified in `spine-0.12.0-alignment.md`;
-this does not change the executable runtime boundary. AL-2 routing and AL-3
-qualification follow separately after contract review.
+authorized AL-1 contracts/fixtures, specified in `spine-0.12.0-alignment.md`.
+After that contract review and its final minor repair, the operator separately
+authorized AL-2 runtime alignment. `facet_baselines` selects an immutable exact
+runtime/schema/public-schema configuration from the validated manifest. Concrete
+transports bind once; observation, execution, continuation and verification use
+that same configuration. Both reviewed inventories have the unchanged shared
+12-read/11-write map and 18-contract union. The old 0.10.0 path and all v1 paths
+remain available. AL-2 uses synthetic public-command tests; AL-3 new-baseline
+source and installed-package qualification remains separate.
 
 `facet_verification.verify_installation` is a separate internal read-only
 boundary, with manifest/plan and optional captured apply-result input, no
@@ -115,7 +121,7 @@ valid changes alone do not fail verification. Corrupt or unavailable public
 evidence aborts observation rather than becoming an object mismatch.
 
 The sealed v2 result separates captured-response coverage from fresh state, with
-the exact 0.10.0 captured-only receipt label and mandatory separate-disclosure
+the selected exact baseline's captured-only receipt label and mandatory separate-disclosure
 marker. No-write draft state may verify without a result, but a supplied execution
 claim for an ineligible plan is invalid. Completed verification publishes a new
 private sealed artifact and exits 0 for verified state or 10 for mismatch. It

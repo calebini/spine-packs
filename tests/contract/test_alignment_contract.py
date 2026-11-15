@@ -343,7 +343,7 @@ class AlignmentContractTests(unittest.TestCase):
                 valid = o.validator('spine-pack-verification-result.v2.schema.json').is_valid(o.seal(changed))
                 self.assertEqual(valid, label == 'captured_responses_only_spine_' + value['environment']['runtime_version'])
 
-    def test_v1_rejects_new_artifacts_and_runtime_admission_is_still_closed(self):
+    def test_v1_rejects_new_artifacts_and_runtime_rejects_historical_baseline(self):
         import sys
         from unittest.mock import Mock
         sys.path.insert(0, str(o.ROOT / 'src'))
@@ -356,9 +356,13 @@ class AlignmentContractTests(unittest.TestCase):
                     self.assertFalse(o.validator('spine-pack-' + kind + '.v1.schema.json').is_valid(value))
             source = o.load(o.ROOT / vector['source']['path'])
             validate_inputs(source['manifest'], source['request'])
+            validate_inputs(flow['manifest'], flow['request'])
+            historical = deepcopy(flow['manifest'])
+            historical['compatibility']['spine_runtime_versions'] = ['0.9.1']
+            historical['content_identity']['digest'] = digest(historical)
             transport = Mock()
             with self.assertRaises(PlanError) as caught:
-                plan_installation(flow['manifest'], flow['request'], transport)
+                plan_installation(historical, flow['request'], transport)
             self.assertEqual(caught.exception.category, INCOMPATIBLE)
             self.assertEqual(transport.mock_calls, [])
 

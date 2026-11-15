@@ -6,6 +6,7 @@ from .facet_contracts import artifact, blob, body, seal
 from .facet_manifest import validate as validate_manifest, rendering_size_floor
 from .facet_graph import manifest_objects, closure, desired_semantics, allowed_slots, expected_template
 from .facet_inventory import COMMANDS, CONTRACTS
+from .facet_baselines import manifest_baseline
 from .facet_observation import observe
 from .planning import require, INVALID, PACK_INVALID, INCOMPATIBLE
 
@@ -26,6 +27,10 @@ def dependencies(key, desired):
 
 
 def build_plan(manifest, request, environment, observation):
+    baseline = manifest_baseline(manifest)
+    require(environment['runtime_version'] == baseline.runtime
+            and environment['ledger_schema_current'] == environment['ledger_schema_implemented'] == baseline.schema,
+            'manifest_environment_baseline_mismatch', INCOMPATIBLE)
     objects = manifest_objects(manifest)
     selected = closure(manifest, request['request']['selection'])
     existing = {r['object_key']: r for r in observation['entries']}
@@ -103,7 +108,7 @@ def build_plan(manifest, request, environment, observation):
 
 def validate_inputs(manifest, request):
     validate_manifest(manifest)
-    require(manifest['compatibility']['spine_runtime_versions'] == ['0.10.0'], 'successor_requires_exact_0100', INCOMPATIBLE)
+    manifest_baseline(manifest)
     artifact(request, 'install-request')
     # Request-body semantics and target normalization are unchanged from v1.
     original = a.seal(dict(artifact_schema='spine.pack-install-request.v1', request=request['request']))
@@ -119,7 +124,8 @@ def plan_installation(manifest, request, transport, *, page_size=100):
     validate_inputs(manifest, request)
     selected = closure(manifest, request['request']['selection'])
     environment, view = observe(transport, request['request']['owner'], selected, page_size=page_size,
-                                content_contracts=manifest['compatibility']['spine_content_contracts'])
+        content_contracts=manifest['compatibility']['spine_content_contracts'],
+        runtime_version=manifest_baseline(manifest).runtime)
     require(set(manifest['compatibility']['spine_content_contracts']) <= set(environment['advertised_contracts']),
             'missing_content_contracts', INCOMPATIBLE)
     return build_plan(manifest, request, environment, view)

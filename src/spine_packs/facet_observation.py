@@ -6,6 +6,7 @@ import unicodedata
 from . import artifacts as a
 from .facet_contracts import blob, body, validate
 from .facet_inventory import COMMANDS, CONTRACTS
+from .facet_baselines import DEFAULT_RUNTIME, runtime_baseline, bind_transport
 from .facet_transport import ObservationBudget
 from .planning import require, ENVIRONMENT, INCOMPATIBLE, owner_matches, validate_entry
 
@@ -25,8 +26,8 @@ def canonical_key(value):
     require(re.fullmatch(r'[a-z][a-z0-9_-]{0,63}', value) is not None, 'noncanonical_catalog_key')
 
 
-def schema_semantics(definition):
-    validate(definition, 'spine-readback-0.10.0.schema.json', 'semantic_schema', category=ENVIRONMENT)
+def schema_semantics(definition, *, runtime_version=DEFAULT_RUNTIME):
+    validate(definition, runtime_baseline(runtime_version).public_schema, 'semantic_schema', category=ENVIRONMENT)
     require(len(a.canonical_text(definition).encode()) <= 32768, 'facet_definition_capacity')
     def inspect(v):
         if isinstance(v, str):
@@ -45,8 +46,8 @@ def schema_semantics(definition):
             require(-(2**63) <= int(f['min']) <= int(f['max']) < 2**63, 'invalid_facet_range')
 
 
-def rendering_semantics(revision):
-    validate(revision, 'spine-readback-0.10.0.schema.json', 'semantic_rendering', category=ENVIRONMENT)
+def rendering_semantics(revision, *, runtime_version=DEFAULT_RUNTIME):
+    validate(revision, runtime_baseline(runtime_version).public_schema, 'semantic_rendering', category=ENVIRONMENT)
     require(len(a.canonical_text(revision).encode()) <= 8192, 'rendering_capacity')
     canonical_order(revision['compatible_item_types'])
     for text in [revision['display_name'], revision['description'], *[s['label'] for s in revision['selections']]]:
@@ -79,7 +80,7 @@ def profile_content(revision):
     return content
 
 
-def state(family, value, owner, *, historical=False):
+def state(family, value, owner, *, historical=False, runtime_version=DEFAULT_RUNTIME):
     """Project only after wire shape, owner, identity, normalization and hashes."""
     prefix, key_field, id_field, _ = FAMILIES[family]
     row = value['root'] if family == 'schema' else value
@@ -95,13 +96,13 @@ def state(family, value, owner, *, historical=False):
     if family == 'schema':
         rev_id = revision['facet_schema_revision_id']
         require(revision['facet_schema_id'] == row[id_field], 'revision_root_mismatch')
-        semantic = revision['definition']; schema_semantics(semantic)
+        semantic = revision['definition']; schema_semantics(semantic, runtime_version=runtime_version)
         require(revision['definition_hash'] == a.digest(dict(derivation_version='spine.facet-definition.v1', definition=semantic)),
                 'facet_definition_hash_mismatch')
         decoder = 'spine.facet-schemas.v1'
     elif family == 'rendering':
         rev_id = row['notification_rendering_definition_revision_id']
-        semantic = revision; rendering_semantics(semantic)
+        semantic = revision; rendering_semantics(semantic, runtime_version=runtime_version)
         decoder = 'spine.notification-rendering-definitions.v1'
         require(row['definition_hash'] == a.digest(dict(contract_version=decoder,
                 canonical_json_version='spine.canonical-json.v1', revision=semantic)), 'rendering_hash_mismatch')
@@ -138,7 +139,8 @@ def snapshots(entries):
 
 
 class Observer:
-    def __init__(self, transport, owner, selection, page_size=100, *, lineage=()):
+    def __init__(self, transport, owner, selection, page_size=100, *, lineage=(), runtime_version=DEFAULT_RUNTIME):
+        self.baseline = runtime_baseline(runtime_version)
         require(type(page_size) is int and 1 <= page_size <= 100, 'invalid_page_size')
         require(isinstance(lineage, (list, tuple)) and len(lineage) <= 4096, 'observation_entry_capacity')
         self.lineage = deepcopy(lineage)
@@ -163,8 +165,9 @@ class Observer:
 
     def read(self, command, **fields):
         request = dict(contract_version=COMMANDS[command]['selector'], **fields)
+        validate(request, self.baseline.public_schema, COMMANDS[command]['request'], category=ENVIRONMENT)
         result = self.transport.read(command, request)
-        validate(result, 'spine-readback-0.10.0.schema.json', COMMANDS[command]['response'], category=ENVIRONMENT)
+        validate(result, self.baseline.public_schema, COMMANDS[command]['response'], category=ENVIRONMENT)
         require(not result.get('dry_run'), 'dry_run_readback')
         return result
 
@@ -207,7 +210,7 @@ class Observer:
         if identity in self.exact: return self.exact[identity]
         result = self.read('facet_schema.revision.show', facet_schema_revision_id=identity)
         require(result['revision']['facet_schema_revision_id'] == identity, 'requested_revision_mismatch')
-        row = state('schema', result, self.owner, historical=True)
+        row = state('schema', result, self.owner, historical=True, runtime_version=self.baseline.runtime)
         current = self.entries.get(row['object_key'])
         require(current is not None and current['root_id'] == row['root_id'], 'revision_root_not_in_catalog')
         require(result['root'] == self.raw[row['object_key']]['root'], 'revision_root_changed')
@@ -225,7 +228,7 @@ class Observer:
         current = rows[0]
         record = self.read('notification_rendering_definition.show', notification_rendering_definition_id=root_id,
             notification_rendering_definition_revision_id=revision_id)['record']
-        row = state('rendering', record, self.owner, historical=True)
+        row = state('rendering', record, self.owner, historical=True, runtime_version=self.baseline.runtime)
         require(row['root_id'] == root_id and row['revision_id'] == revision_id
                 and row['object_key'] == current['object_key'], 'rendering_pin_mismatch')
         original = self.raw[current['object_key']]
@@ -282,7 +285,7 @@ class Observer:
                     require({k: v for k, v in record.items() if k != 'revision'} ==
                             {k: v for k, v in original.items() if k != 'revision'},
                             'lineage_root_changed')
-                    row = state(family, record, self.owner, historical=True)
+                    row = state(family, record, self.owner, historical=True, runtime_version=self.baseline.runtime)
                     self.add(row, True)
             require(row['object_key'] == key and row['root_id'] == expected['root_id']
                     and row['revision_id'] == revision, 'lineage_revision_mismatch')
@@ -305,7 +308,7 @@ class Observer:
                 shown = self.read(prefix + '.show', **{id_field: listed[id_field]})
                 value = shown if family == 'schema' else shown['record' if family == 'rendering' else prefix]
                 require((value['root'] if family == 'schema' else value) == listed, 'list_show_mismatch')
-                row = state(family, value, self.owner)
+                row = state(family, value, self.owner, runtime_version=self.baseline.runtime)
                 self.add(row); self.raw[row['object_key']] = value
         roots = [r['root_id'] for r in self.entries.values()]
         require(len(set(roots)) == len(roots), 'duplicate_root_identity')
@@ -359,7 +362,9 @@ class Observer:
         return view
 
 
-def observe(transport, owner, selection, *, page_size=100, content_contracts=(), lineage=(), record_key=None):
+def observe(transport, owner, selection, *, page_size=100, content_contracts=(), lineage=(), record_key=None,
+            runtime_version=DEFAULT_RUNTIME):
+    baseline = bind_transport(transport, runtime_version)
     require(record_key is None or (isinstance(record_key, str)
             and record_key.split(':', 1)[0] in ('archetype', 'rendering')), 'invalid_record_capture')
     budget = ObservationBudget()
@@ -367,17 +372,17 @@ def observe(transport, owner, selection, *, page_size=100, content_contracts=(),
     transport.check_target()
     def environment():
         info = transport.read('system.info', {})
-        require(info.get('runtime_version') == '0.10.0', 'incompatible_runtime', INCOMPATIBLE)
-        validate(info, 'spine-readback-0.10.0.schema.json', COMMANDS['system.info']['response'], category=ENVIRONMENT)
+        require(info.get('runtime_version') == baseline.runtime, 'incompatible_runtime', INCOMPATIBLE)
+        validate(info, baseline.public_schema, COMMANDS['system.info']['response'], category=ENVIRONMENT)
         canonical_order(info['implemented_contract_versions'])
-        require(info['ledger_schema_version'] == info['implemented_ledger_schema_version'] == '19'
+        require(info['ledger_schema_version'] == info['implemented_ledger_schema_version'] == baseline.schema
                 and set(CONTRACTS) | set(content_contracts) <= set(info['implemented_contract_versions']), 'incompatible_contracts_or_schema', INCOMPATIBLE)
-        return dict(runtime_version='0.10.0', ledger_schema_current='19', ledger_schema_implemented='19',
+        return dict(runtime_version=baseline.runtime, ledger_schema_current=baseline.schema, ledger_schema_implemented=baseline.schema,
                     ledger_instance_id=info['ledger_instance_id'], advertised_contracts=info['implemented_contract_versions'])
     env = environment()
-    first_reader = Observer(transport, owner, selection, page_size, lineage=lineage)
+    first_reader = Observer(transport, owner, selection, page_size, lineage=lineage, runtime_version=baseline.runtime)
     first = first_reader.collect()
-    second_reader = Observer(transport, owner, selection, page_size, lineage=lineage)
+    second_reader = Observer(transport, owner, selection, page_size, lineage=lineage, runtime_version=baseline.runtime)
     second = second_reader.collect()
     require(first == second and env == environment(), 'catalog_changed_between_passes')
     if record_key is not None:

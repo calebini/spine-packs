@@ -16,7 +16,10 @@ paired captured-response label and unchanged 23-command/18-contract inventory.
 The focused AL-1 review returned `pass_with_minor_clarification`; its remaining
 both-flow test assertion is now added under operator authorization. See
 `implementation-plan.md` for verification and preserved review evidence.
-Runtime routing remains on the qualified baseline pending AL-2.
+The operator subsequently authorized AL-2 runtime alignment. It adds exact
+0.12.0/20 routing beside 0.10.0/19, with synthetic public-command regressions and
+independent contract checks. New-baseline source and installed-package
+qualification remain AL-3; runtime admission is not a qualification claim.
 Preserve existing qualified capabilities; baseline retirement is outside
 this alignment. V1 contracts, prior inventories/fixtures and all packs remain
 unchanged. No compatibility range or automatic schema migration is authorized.
@@ -28,7 +31,8 @@ installer-artifact v2 against exact Spine commit
 `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime `0.10.0`, schema `19`.
 The inspected command/contract matrix is in
 [the baseline evidence](../docs/facet-rendering-baseline.md). The repaired listing
-gate at 0.9.1 remains historical. FR-2 planning now requires exactly `0.10.0`. This adds
+gate at 0.9.1 remains historical. FR-2 originally required exactly `0.10.0`;
+the additive AL-2 variant is specified above. This adds
 nothing to any existing v1 manifest, schema or runtime allowlist.
 The new content and compatibility require successor releases, separately reviewed
 machine contracts and exact-baseline qualification. Existing v1 support is unchanged.
@@ -63,9 +67,9 @@ without changing this exact runtime or contract inventory.
 
 The old 0.9.1 manifest/artifact declarations remain decodable solely to preserve
 FR-1 fixtures and audit evidence. AL-1 adds an exact 0.12.0 singleton encoding
-and schema-20 environment; see the alignment spec. The existing FR-2 runtime
-still rejects everything except 0.10.0 before catalog
-observation. New pack content still needs a successor immutable release. This
+and schema-20 environment; see the alignment spec. AL-2 selects exactly 0.10.0
+or 0.12.0 from the manifest before catalog observation and rejects all other
+runtimes, including historical 0.9.1. New pack content still needs a successor immutable release. This
 does not alter stable packs 1.0.0/1.0.1 or installer-v1 supported baselines.
 
 Every manifest MUST declare compatibility independently for:

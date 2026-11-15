@@ -1,9 +1,11 @@
 # Exact Spine 0.12.0 compatibility alignment
 
-Status: AL-1 draft contract/fixture slice, operator-authorized on 2026-11-15.
-Bounded contract review is required before AL-2 runtime routing. This document
-extends the v2 successor specifications only. It does not qualify a deployment,
-admit a new runtime in executable code, or change any v1 agreement or pack.
+Status: AL-1 contract review and its final minor repair are complete. AL-2 runtime
+alignment, synthetic checks and bounded runtime repair review are complete;
+the final consistency-02 recheck passed with zero findings on 2026-11-15.
+AL-3 source/installed qualification remains a separate gate. This document extends the v2 successor
+specifications only; it does not qualify a deployment or change any v1 agreement
+or reusable pack.
 
 ## Baseline and preservation
 
@@ -56,6 +58,66 @@ correlation remains through the complete plan digest and execution identity.
 Changing the baseline therefore requires a new plan and exact approval. Do not
 relabel an old approval, checkpoint, request, response or verification artifact.
 An unchanged execution-contract union does not make old source evidence reusable.
+
+## Runtime baseline selection
+
+`facet_baselines` holds immutable configurations for only the exact 0.10.0/19
+and 0.12.0/20 pins. Resolve the validated manifest singleton before the first
+catalog read; do not select a baseline from the observed runtime, an environment
+variable, a version range, or a mutable global. Existing direct helper calls may
+default to 0.10.0; installer operations explicitly carry their selected runtime.
+Bind each concrete public transport once and reject a later attempt to change
+its baseline. Independent transports may use different baselines concurrently.
+
+Use that same configuration for both observation passes, exact historical
+lookups, semantic projections, saved-plan reconstruction, initial apply readback,
+continuation/candidate/replay checks, captured response validation and the
+verification receipt label. Shared command and execution-contract maps remain
+closed and equal to both reviewed inventories. Public schema entry points stay
+baseline-specific even though their current definitions are equivalent.
+
+All saved artifacts bind the manifest and exact environment through the plan
+digest; choosing a new baseline requires fresh planning and approval. Fresh
+preflight must match that saved environment before initial writes, continuation
+publication/replay or completed verification. Invalid cross-baseline approval or
+checkpoint input fails before constructing a CLI transport. A structurally valid
+result from another plan follows the preserved invalid-coverage rule below.
+
+Initial apply MUST also compare the supplied transport's complete target with
+the approved request target before observing or writing. Rebuilding a plan from
+the saved request does not establish that equality. A mismatch is
+`stale_plan_or_target_mismatch`, returned under initial preflight as `not_applied`,
+with no checkpoint publication or configuration writes. Continuation and verify
+retain their existing target checks.
+
+### Ordinary public read failures
+
+Before classifying a non-revision read failure, validate its applicable existing
+closed failure envelope and actual CLI exit. Facet catalog/binding reads use
+`public_0138`; profile show/list use `public_0139` in the selected public entry
+point. Families without a contextual failure schema in the reviewed inventory
+use the existing shared `commandFailure` compatibility envelope. This adds no
+schema or command authority. Public failure schemas alone do not validate exits.
+
+Use the exact `commands/cli.py` `EXIT_BY_ERROR` agreement shared by both reviewed
+pins, plus its final `runtime_failure` fallback at exit 1. Valid handler
+rejections retain installer `spine_command_rejection` / 8; handler environment
+or runtime failures retain `transport_or_environment_failure` / 11. Missing
+referenced rows are rejections, never absence evidence. Missing/extra fields,
+unknown codes, wrong command correlation or unsupported exit pairings fail as
+environment failures, without exposing raw output. In particular, `ok=false`
+with exit zero cannot become an ordinary rejection.
+
+Preserve the separately recognized closed common-preflight cases and their
+owning rejection category: `invalid_request` for `db`/`input` at CLI exit 3 or
+`request` at exit 2; `environment_failure` for `runtime_contracts`/`ledger` at
+exit 7. These are not handler failures. A malformed preflight must not fall
+through as a handler rejection; `db`/`input` with exit 2 is invalid. The dedicated
+`facet_schema.revision.show` schema/field/exit mapping below is unchanged.
+An `invalid_request` / `request` signature that fails the closed preflight check,
+including an empty message at exit 2, MUST fail as installer environment failure
+before handler fallback. The common handler envelope's permissive message shape
+does not waive that preflight rule. A valid counterpart retains rejection / 8.
 
 ## Exact command agreement and offline closure
 
@@ -174,9 +236,11 @@ drift MUST pass observation/fingerprint and lineage validation before failing
 at continuation comparison. Rendering candidates MUST use the context-selected
 public schema entry point; tests must exercise both 0.12.0 and 0.10.0 contexts.
 
-AL-1 does not run Spine 0.12.0. After an approved bounded contract review, AL-2
-implements exact routing and synthetic regressions while preserving 0.10.0 and
-all v1 paths. AL-3 independently qualifies source and installed-package public
+AL-1 does not run Spine 0.12.0. Following its approved bounded contract review
+and final minor repair, the operator authorized AL-2 exact routing and synthetic
+regressions while preserving 0.10.0 and all v1 paths. AL-2's runtime outputs must
+also pass independent official schema and semantic-oracle checks. AL-3
+independently qualifies source and installed-package public
 CLIs on newly allocated disposable schema-20 configuration ledgers, including
 all 11 response-loss replays and complete-checkpoint drift refusal. Spine's new
 `jsonschema>=4.23` dependency closure MUST be provisioned and recorded for isolated
@@ -185,5 +249,7 @@ support claim precedes those gates. FR-6 content and release work follows.
 
 No existing ledger, SQL/internal API, checkout mutation, migration of operator
 state, item/facet-value authoring, disclosure management, reminder materialization,
-notification send, deployment, publication, commit or push belongs to AL-1.
+notification send, deployment, publication, commit or push belongs to AL-1 or
+AL-2. AL-2's mandatory package regression may rebuild already supported upstream
+pins and use only new disposable ledgers; it is not new-baseline qualification.
 External Whetstone review needs approval of its exact staged payload.

@@ -11,12 +11,12 @@ import hashlib
 from . import artifacts as a
 from .facet_contracts import artifact, blob, body, seal, validate
 from .facet_graph import allowed_slots, expected_template
-from .facet_inventory import BASELINE, COMMANDS, CONTRACTS
+from .facet_inventory import COMMANDS, CONTRACTS
+from .facet_baselines import DEFAULT_RUNTIME, runtime_baseline, manifest_baseline
 from .facet_observation import snapshots
 from .facet_planning import build_plan, validate_inputs
 from .planning import ENVIRONMENT, INVALID, PACK_INVALID, PlanError, require
 
-PUBLIC_SCHEMA = 'spine-readback-0.10.0.schema.json'
 TYPES = 'spine-pack-installer-types.v2.schema.json'
 WRITE_COMMANDS = frozenset(k for k, v in COMMANDS.items() if v['phase'] is not None)
 
@@ -53,7 +53,7 @@ def pointer(value, path, replacement=None, *, replace=False):
     return value[key]
 
 
-def projected_state(row, owner):
+def projected_state(row, owner, *, runtime_version=DEFAULT_RUNTIME):
     validate(row, TYPES, 'state', category=ENVIRONMENT)
     require(row['owner'] == owner and row['root_id'] is not None, 'post_owner_or_root')
     family = row['object_key'].split(':')[0]
@@ -71,13 +71,13 @@ def projected_state(row, owner):
             'schema': 'spine.facet-schemas.v1', 'rendering': 'spine.notification-rendering-definitions.v1'}[family],
             'post_decoder')
     value = body(row['value'])
-    validate(value, 'spine-pack-embedded-values.v2.schema.json', family, category=ENVIRONMENT)
+    validate(value, runtime_baseline(runtime_version).public_schema, 'semantic_' + family, category=ENVIRONMENT)
     if binding:
         require(value['item_archetype_id'] == row['root_id'], 'binding_root_mismatch')
     return value
 
 
-def observation(view, owner):
+def observation(view, owner, *, runtime_version=DEFAULT_RUNTIME):
     validate(view, TYPES, 'observation')
     require(view['owner'] == owner and view['digest'] == a.digest(dict(
         derivation_version='spine.pack-observation.v2', view={k: v for k, v in view.items() if k != 'digest'})),
@@ -87,7 +87,7 @@ def observation(view, owner):
     for keys in ([r['object_key'] for r in entries], [(r['object_key'], r['revision_id']) for r in history]):
         require(keys == sorted(set(keys)), 'observation_order', INVALID)
     for row in entries + history:
-        projected_state(row, owner)
+        projected_state(row, owner, runtime_version=runtime_version)
     current = {r['object_key']: r for r in entries}
     for row in history:
         parent = current.get(row['object_key'])
@@ -123,15 +123,17 @@ def validate_saved_plan(manifest, plan):
     req = seal(dict(artifact_schema='spine.pack-install-request.v2', request=plan['request']))
     validate_inputs(manifest, req)
     env = plan['environment']
-    require(env['runtime_version'] == BASELINE['runtime']
-            and env['ledger_schema_current'] == env['ledger_schema_implemented'] == BASELINE['schema'],
+    baseline = manifest_baseline(manifest, category=INVALID)
+    require(env['runtime_version'] == baseline.runtime
+            and env['ledger_schema_current'] == env['ledger_schema_implemented'] == baseline.schema,
             'execution_baseline_mismatch', INVALID)
     advertised = env['advertised_contracts']
     require(advertised == sorted(set(advertised)) and set(CONTRACTS) <= set(advertised)
             and set(manifest['compatibility']['spine_content_contracts']) <= set(advertised)
             and plan['required_execution_contracts'] == CONTRACTS, 'execution_contracts_mismatch', INVALID)
-    observation(plan['observation'], plan['request']['owner'])
+    observation(plan['observation'], plan['request']['owner'], runtime_version=baseline.runtime)
     require(build_plan(manifest, req, env, plan['observation']) == plan, 'plan_rebuild_mismatch', INVALID)
+    return baseline
 
 
 def immutable_lineage(rows, *, category=INVALID):
@@ -156,7 +158,8 @@ class ExecutionContext:
         require(all(isinstance(v, dict) for v in (manifest, plan, approval)), 'invalid_execution_inputs', INVALID)
         self._plan, self._approval = deepcopy(plan), deepcopy(approval)
         p, ap = self._plan, self._approval
-        validate_saved_plan(manifest, p); artifact(ap, 'install-approval')
+        self._baseline = validate_saved_plan(manifest, p)
+        artifact(ap, 'install-approval')
         require(p['pack']['status'] == 'released', 'draft_plan_not_applicable', PACK_INVALID)
         require(not p['blocked_object_keys'], 'blocked_plan_not_applicable', 'blocked_desired_state')
         require(p['apply_eligible'] and ap['plan_digest'] == p['content_identity']['digest']
@@ -183,7 +186,7 @@ class ExecutionContext:
             pointer(request, path, identity, replace=True)
         request.update({k: ap['execution'][k] for k in ('actor_subject_id', 'action_timestamp_utc')},
             command_id=command_id(p['content_identity']['digest'], ap['execution']['execution_id'], action['action_id']))
-        validate(request, PUBLIC_SCHEMA, COMMANDS[cmd]['request'])
+        validate(request, self._baseline.public_schema, COMMANDS[cmd]['request'])
         if cmd.startswith('notification_rendering_definition.'):
             require(len(a.canonical_text(request['revision']).encode()) <= 8192, 'resolved_rendering_capacity', INVALID)
         if cmd.startswith('facet_schema.'):
@@ -194,7 +197,7 @@ class ExecutionContext:
 
     def _check_response(self, action, request, response, post):
         cmd = action['command']; owner = self._plan['request']['owner']
-        validate(response, PUBLIC_SCHEMA, COMMANDS[cmd]['response'], category=ENVIRONMENT)
+        validate(response, self._baseline.public_schema, COMMANDS[cmd]['response'], category=ENVIRONMENT)
         require(response.get('ok') is True and response.get('command') == cmd
                 and not response.get('dry_run'), 'invalid_write_response')
         rec = response.get('receipt', response)
@@ -203,7 +206,7 @@ class ExecutionContext:
             require(rec['semantic_facts_hash'] == a.digest(request)
                     and rec['created_at_utc'] == request['action_timestamp_utc']
                     and rec['effect'] == response['effect'], 'catalog_receipt_mismatch')
-        value = projected_state(post, owner)
+        value = projected_state(post, owner, runtime_version=self._baseline.runtime)
         require(post['object_key'] == action['object_key'] and post['status'] == 'active', 'post_object_or_status')
         if 'status' in response:
             require(response['status'] == post['status'], 'response_status_mismatch')

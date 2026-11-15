@@ -7,6 +7,7 @@ from .apply import checkpoint_writer as durable_writer, failure
 from .facet_contracts import artifact, blob, seal, validate
 from .facet_execution import ExecutionContext, public_body
 from .facet_inventory import COMMANDS
+from .facet_baselines import bind_transport, runtime_baseline
 from .facet_observation import Observer, state
 from .facet_planning import plan_installation
 from .facet_transport import ObservationBudget
@@ -43,9 +44,10 @@ def checkpoint_writer(path):
 def reader(transport, plan, page_size):
     # Each bounded readback/recheck operation has its own global budget; writes
     # retain their independent 30-second/16-MiB subprocess ceiling.
+    baseline = bind_transport(transport, plan['environment']['runtime_version'])
     transport.begin_observation(ObservationBudget())
     transport.check_target()
-    return Observer(transport, plan['request']['owner'], plan['closure'], page_size)
+    return Observer(transport, plan['request']['owner'], plan['closure'], page_size, runtime_version=baseline.runtime)
 
 
 def binding_row(observer, action, request):
@@ -91,7 +93,8 @@ def readback(transport, plan, action, request, raw_response, page_size):
     require(isinstance(raw_response, bytes), 'invalid_write_wire_evidence')
     raw = raw_response[:-1] if raw_response.endswith(b'\n') else raw_response
     response = public_body(dict(json_text=raw.decode('utf-8'), digest=hashlib.sha256(raw).hexdigest()))
-    validate(response, 'spine-readback-0.10.0.schema.json', COMMANDS[action['command']]['response'], category=ENVIRONMENT)
+    baseline = runtime_baseline(plan['environment']['runtime_version'])
+    validate(response, baseline.public_schema, COMMANDS[action['command']]['response'], category=ENVIRONMENT)
     obs = reader(transport, plan, page_size)
     family = action['object_key'].split(':')[0]
     if family in ('binding', 'facet_binding'):
@@ -112,7 +115,7 @@ def readback(transport, plan, action, request, raw_response, page_size):
     elif 'revision_number' in response:
         require(str(response['revision_number']) == str(value['revision']['revision_number']),
                 'revision_number_readback_mismatch')
-    return state(family, value, plan['request']['owner'])
+    return state(family, value, plan['request']['owner'], runtime_version=baseline.runtime)
 
 
 def apply_initial(manifest, plan, approval, transport, writer, *, page_size=100):
@@ -122,6 +125,7 @@ def apply_initial(manifest, plan, approval, transport, writer, *, page_size=100)
     accepted = []
     cp = checkpoint(plan, approval, accepted)
     try:
+        require(transport.target == plan['request']['target'], 'initial_target_changed', STALE)
         request = seal(dict(artifact_schema='spine.pack-install-request.v2', request=plan['request']))
         fresh = plan_installation(manifest, request, transport, page_size=page_size)
         require(fresh == plan, 'stale_plan', STALE)

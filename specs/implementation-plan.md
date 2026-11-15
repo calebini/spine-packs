@@ -1124,3 +1124,165 @@ unchanged. Packaged inputs also match the retained qualified candidate, so no
 package qualification was repeated. The minor is patched and locally checked;
 the recorded external verdict remains `pass_with_minor_clarification`. No new
 external reviewer ran, and AL-2 remains the next separately scoped increment.
+
+### AL-2 exact runtime alignment (2026-11-15)
+
+The operator explicitly authorized AL-2 after the AL-1 checkpoint in `c5ff18d`.
+Exact `3e65ef0de9e73b62047a0f6328731db08ca91023` was reverified through Git
+objects with replacement objects disabled. `facet_baselines` now selects only
+the reviewed 0.10.0/19 or 0.12.0/20 configuration from the validated manifest;
+each concrete transport binds once. Plan, both public observation passes, exact
+historical lookup, initial execution/readback, continuation/candidate/replay
+correlation and verification use that selected closure. Verification labels
+remain paired with the exact environment. No global schema switch, version
+range, inferred runtime, new command, contract, flag or artifact migration is
+introduced. V1 dispatch, the common 12-read/11-write map and 18-contract union,
+all old schemas/inventories/fixtures and immutable pack bytes remain unchanged.
+
+`tests/runtime/test_runtime_alignment.py` derives synthetic create/update flows
+independently of runtime request compilation and checks every digest against
+the ratified AL-1 vectors. It exercises all 11 requests and response-loss replays,
+durable prefix ordering, complete and terminal-partial continuation, valid fresh
+drift refusal, cross-root historical reads/deduplication, exact revision failure
+mapping/capacity, mixed-baseline source rejection, invalid versus missing captured
+evidence, immutable contradictions, CLI publication and the selected receipt
+label. Schema-selection spies cover public transport, observation, execution,
+readback and candidate validation. Wrong fresh environments prevent initial
+writes (`not_applied`), continuation publication/replay and verification output
+under their existing failure contracts. No synthetic test invokes Spine.
+
+`tests/contract/test_runtime_alignment_contract.py` independently checks actual
+runtime plans, requests, evidence, checkpoints, results and verification using
+official offline Draft 2020-12 validators and the separate semantic oracles.
+The AL-1 runtime-admission assertion now admits both reviewed variants while
+still rejecting historical 0.9.1 before transport use; frozen fixture bytes are
+unchanged.
+
+Verification passed: 139 official contract tests without skips, 303 runtime
+tests, all 15 focused AL-2 methods after the final additional failure assertions,
+the 202-file verifier and whitespace checks. The required system-Python contract
+run passed with 74 development-validator skips covered by the official run.
+Old-baseline package regression passed using freshly exported/built and attested
+exact Spine 0.6.0 plus Tickerd 0.2.0, four installed public-CLI scenarios on new
+disposable configuration ledgers, equal direct/sdist wheels, complete bundled
+resources and zero installer runtime dependencies. A clean-wheel synthetic
+smoke test selected 0.12.0 and materialized a request using bundled schemas;
+it did not invoke Spine or qualify that baseline. Detailed evidence is in
+`../docs/spine-0.12.0-alignment.md`.
+
+AL-2 implementation and synthetic checks are complete; bounded runtime review
+remains pending separate exact-payload approval. Do not carry earlier payload
+approval forward. AL-3 exact-0.12.0 source and installed-package public-CLI
+qualification is the next implementation increment after review; its new schema-20
+ledgers and upstream dependency closure are not exercised or qualified here.
+No Spine checkout change, existing/operator ledger, item/facet-value authoring,
+disclosure, send, deployment, publication, commit or push occurred.
+
+### AL-2 runtime audit and authorized repairs (2026-11-15)
+
+The approved 20-file reviewer-only audit in
+`../whetstone_runs/spine0120-al2-runtime-audit-001/` completed with
+`needs_revision`, `boundary_preserved=false`: two majors and two minors. Its
+payload, original verdict and retained prompt remain frozen. The operator
+authorized all four repairs and the required local checks, not a reviewer rerun,
+AL-3 qualification, commit or push.
+
+- **consistency-01:** Initial apply now compares `transport.target` with the
+  complete approved target inside its preflight failure boundary, before reads.
+  The regression supplies a different executable but identical ledger/catalog
+  and environment under both exact baselines, requiring `not_applied`, stale
+  target classification, no checkpoint publication and no writes.
+- **consistency-02:** Ordinary read failures now validate the applicable pinned
+  family/common envelope and exact CLI exit before classification. The existing
+  write error/exit map is shared without changing write handling. Closed common
+  preflight rejection semantics and dedicated revision-readback behavior remain
+  unchanged. Tests exercise all 11 ordinary reads at both pins, malformed and
+  valid failures, handler environment/runtime failures, preflight exit mismatch,
+  secret-safe errors, and actual CLI exit 11 versus 8 without output publication.
+- **consistency-03:** A v1-decoded profile is explicitly projected under each
+  selected entry point, while a v2-only field is rejected. The independent
+  official contract test follows both `semantic_profile_v1` reference chains
+  and the prior embedded `profile_v1` reference to the same exact terminal
+  definition. No public schema is changed.
+- **consistency-04:** The final installed integration's existing `run.json`
+  names the upstream CLI installation recorded in the earlier provenance file.
+  It was omitted from the review payload, not missing from the actual run. That
+  proof is retained in the audit's `local-followup/`; the repair evidence must
+  include this link and explicit invocation/provenance for the patched package
+  regression, rather than merely juxtaposing separate run roots.
+
+The new regression suite reproduced the majors before the runtime repair.
+All 19 focused AL-2 runtime methods and four independent official contract
+methods subsequently passed. Full required checks and package regression are
+recorded in the alignment documentation after completion. Local tests do not
+close the external findings or convert the original verdict into a pass.
+
+All required local checks passed on the repaired candidate: 140 official
+contract tests without skips, 307 runtime tests, 19 focused AL-2 runtime methods,
+four focused official contract methods, the 202-file verifier and whitespace
+checks. The system-Python contract run passed with 75 development-validator
+skips covered by the official run. All four old-baseline installed-package
+regression scenarios passed on newly allocated disposable ledgers with the
+reattested exact-0.6.0/0.2.0 upstream packages. Direct and sdist wheels match;
+packaged source/schema bytes and zero runtime dependencies are verified. A
+clean-wheel synthetic check covers both exact runtime configurations, initial
+target refusal, read-failure classification and legacy-profile projection with
+no Spine subprocesses. The new qualification-link manifest connects invocation,
+upstream provenance, package pass and integration result/run records. Evidence
+is archived under the original audit's `repair-evidence/` with a separate
+`repair-verification.json`; approved outgoing bytes and verdict are unchanged.
+No external recheck, AL-3 qualification, commit or push ran.
+
+### AL-2 focused recheck and request-preflight follow-up (2026-11-15)
+
+The operator separately approved the new 20-file package in
+`../whetstone_runs/spine0120-al2-runtime-recheck-001/`. One reviewer-only pass
+returned `needs_revision`, `boundary_preserved=false`, with only consistency-02
+remaining; consistency-01/03/04 were not reopened. The remaining case is
+`invalid_request` / `request`, CLI exit 2, with an empty message: the closed
+preflight recognizer rejects it, but the common handler schema accepts that
+message and previously let it become a handler rejection / 8.
+
+Under the existing manual repair authorization for consistency-02, the follow-up
+guard now rejects malformed `db`, `input` and `request` preflight signatures
+before handler fallback. The exact-revision branch is untouched. The existing
+CLI test now asserts missing-error and empty-message failures as exit 11, valid
+preflight as exit 8, and no output artifact on both exact baselines. The ordinary
+read matrix also includes the empty-message case for all 11 commands at each
+baseline. The regression reproduced 14 failing subcases before this narrow fix;
+all 19 focused runtime and four focused official contract methods then passed.
+Neither external verdict nor approved payload is rewritten. Further external
+recheck still needs fresh exact-payload approval; AL-3, commit and push remain
+outside this follow-up.
+
+The follow-up passed all 140 official contract tests without skips, 307 runtime
+tests, the 19 focused runtime and four focused official contract methods, the
+202-file verifier and whitespace checks. The required system-Python contract
+run passed with 75 development-validator skips covered by the official run.
+All four old-baseline installed-package regression scenarios passed, with a new
+explicit invocation/provenance/package/integration link. The clean-wheel
+synthetic probe confirms valid-message rejection and empty-message environment
+failure on both baselines without invoking Spine. Retained local evidence is
+under the first focused recheck's `followup-evidence/`; its external verdict
+is preserved. A smaller final recheck is staged separately, not invoked or
+authorized by the prior payload approval.
+
+### AL-2 final runtime review closure and checkpoint (2026-11-15)
+
+The operator separately approved the final ten-file consistency-02 payload in
+`../whetstone_runs/spine0120-al2-runtime-recheck-002/`. Its single reviewer-only
+pass returned `pass`, `boundary_preserved=true`, with zero findings. The exact
+outgoing hashes, source snapshots, launch controls, prompt and normalized
+input/feedback hashes were checked after completion. The earlier audit and
+focused-recheck payloads and original `needs_revision` reports remain unchanged.
+Consistency-01/03/04 were not reopened in the first focused recheck; this final
+pass closes the remaining consistency-02 finding and the AL-2 runtime review gate.
+
+The repaired candidate's checks are 140 official contract tests, 307 runtime
+tests, 19 focused runtime methods, four focused official contract methods, the
+202-file verifier and whitespace checks. Old-baseline package regression passed
+all four installed scenarios, with explicit source/wheel/installation/run links
+and installed synthetic probes. These are AL-2 regression evidence, not AL-3
+qualification of the 0.12.0 public CLI. The operator authorized a local checkpoint
+commit after this review. AL-3 exact-source and installed-package qualification,
+push, deployment, publication and curated successor content remain separate work.

@@ -10,11 +10,13 @@ The subsequent operator-authorized CLI wiring exposes continuation/verify with
 synthetic public-command tests. Subsequent FR-5 source/installed qualification
 and the approved focused recheck passed on the exact baseline below; see
 `../docs/fr5-qualification.md`. The subsequently selected exact 0.12.0 baseline
-has an AL-1 draft additive contract/fixture extension in
+has an AL-1 additive contract/fixture extension in
 `spine-0.12.0-alignment.md`: singleton manifest variant, paired schema-20
 environment and captured-response label, with existing identifiers/digest domains.
-It does not admit that runtime or rewrite old artifacts. The baseline below
-remains the implemented, qualified path until the separate AL-2/3 gates pass.
+Following the AL-1 review and final minor repair, the operator separately
+authorized AL-2 exact runtime routing and synthetic tests. It does not rewrite
+old artifacts. The baseline below remains the qualified path; 0.12.0 source and
+installed-package qualification is the separate AL-3 gate.
 Read `facet-rendering-packs.md` first. The exact
 Spine pin is `8f3c50b6fd1b4aa534e50925b7417a7a80d19122`, runtime `0.10.0`, schema
 `19`. Existing v1 artifacts, runtime compatibility and released packs are unchanged.
@@ -100,8 +102,9 @@ Installer failure envelopes retain the existing exit taxonomy (Spine's CLI exit
 is not blindly copied as the installer exit). Errors must not leak raw output.
 
 The 0.9.1 inventory, closure and saved FR-1 fixtures remain immutable historical
-evidence. The draft v2 schemas permit either singleton baseline declaration for
-decoding that evidence; runtime FR-2 accepts only 0.10.0. Plans bind the matching
+evidence. V2 schemas permit the historical 0.9.1 singleton plus exact 0.10.0 and
+0.12.0 variants. Runtime AL-2 accepts only the latter two, using each matching
+reviewed closure. Plans bind the matching
 exact 17- or 18-contract union. This is not a compatibility range or permission
 to execute old fixtures. Future execution/recovery/verification codification
 must refresh its own gates; the historical receipt-readback label is not changed
