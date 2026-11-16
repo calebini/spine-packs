@@ -65,6 +65,7 @@ BUILD_ROOT=$(mktemp -d /private/tmp/spine-packs-build.XXXXXX)
 python3 -m venv "$BUILD_ROOT/venv"
 "$BUILD_ROOT/venv/bin/python" -m pip install 'build>=1.2,<2' 'hatchling>=1.27,<2'
 "$BUILD_ROOT/venv/bin/python" scripts/qualify_package.py \
+  --runtime-version 0.5.0 \
   --spine-command "$QUAL_ROOT/venv/bin/spine-command" \
   --spine-ledger-migrate "$QUAL_ROOT/venv/bin/spine-ledger-migrate"
 ```

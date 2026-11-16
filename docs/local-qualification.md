@@ -45,9 +45,10 @@ environment. Record the source commits and tool versions with qualification
 evidence; executable hashes alone do not attest installed package contents.
 
 For the `0.3.0` regression pass, allocate another fresh directory and substitute
-only its pinned Spine commit above. Do not replace an existing test environment.
-The harness checks the observed runtime/schema pair and makes its synthetic
-manifest explicitly compatible with that pair. It does not admit unknown
+its pinned Spine commit and matching `--runtime-version` below. Do not replace
+an existing test environment. The harness requires an explicitly selected runtime,
+checks the observed runtime/current/implemented-schema pair against it, and makes
+its synthetic manifest compatible with that selection. It does not admit unknown
 versions, migrate an operator ledger, or relax compatibility for curated packs.
 
 ## Execute the source-tree tests
@@ -56,6 +57,7 @@ From the spine-packs checkout:
 
 ```sh
 python3 tests/integration/test_local_spine.py \
+  --runtime-version 0.5.0 \
   --spine-command "$QUAL_ROOT/venv/bin/spine-command" \
   --spine-ledger-migrate "$QUAL_ROOT/venv/bin/spine-ledger-migrate"
 ```

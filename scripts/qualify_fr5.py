@@ -20,7 +20,8 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tests/integration'))
-from qualification_support import require_full_qualification
+from qualification_support import (require_full_qualification, require_run_identity, require_installation_identity, V1_BASELINES,
+    attest_console_scripts, verify_console_scripts)
 SPINE_PINS = {
     '0.3.0': '72203f092de191a7633b1884bf0d61836a25abe4',
     '0.5.0': 'ab18a8a51c9bf548220f67e2db0220bfe9783888',
@@ -74,20 +75,23 @@ def source_snapshot():
 
 
 def require_identity(record, *, runtime, installed, bin_dir, installer_prefix=None):
-    expected = dict(commit=SUCCESSOR_PINS[runtime]['commit'], runtime=runtime, schema=SUCCESSOR_PINS[runtime]['schema'])
-    require(record.get('baseline') == expected and record.get('installed') is installed,
-            'integration baseline/mode mismatch')
-    require(record.get('spine_command') == str(bin_dir/'spine-command')
-            and record.get('spine_ledger_migrate') == str(bin_dir/'spine-ledger-migrate'), 'integration upstream path mismatch')
-    module = Path(record.get('module', '/missing')).resolve()
-    schemas = Path(record.get('schemas', '/missing')).resolve()
-    if installed:
-        require(installer_prefix is not None and module.is_relative_to(installer_prefix.resolve())
-                and module.name == 'artifacts.py' and module.parent.name == 'spine_packs'
-                and schemas == module.parent/'_schemas', 'installed integration source/resource leak')
-    else:
-        require(module == (ROOT/'src/spine_packs/artifacts.py').resolve()
-                and schemas == (ROOT/'contracts/schemas').resolve(), 'source integration identity mismatch')
+    require(not installed or installer_prefix is not None, 'missing selected installer prefix')
+    expected = (V1_BASELINES[runtime] if runtime in V1_BASELINES else
+        dict(commit=SUCCESSOR_PINS[runtime]['commit'], runtime=runtime, schema=SUCCESSOR_PINS[runtime]['schema']))
+    require_run_identity(record, baseline=expected, installed=installed, bin_dir=bin_dir,
+                         source_root=ROOT, installer_prefix=installer_prefix,
+                         expected_installer=([str(installer_prefix/'bin/spine-packs')] if installed
+                                             else [sys.executable, '-m', 'spine_packs']))
+
+
+def require_replay_coverage(run, runtime):
+    inventory = json.loads((ROOT/('contracts/installer-spine-'+runtime+'-inventory.json')).read_text())
+    expected = {name for name, value in inventory['commands'].items() if value['phase'] is not None}
+    paths = list(run.rglob('covered-writes.json'))
+    require(len(paths) == 1 and len(expected) == 11, 'missing or ambiguous replay coverage')
+    covered = json.loads(paths[0].read_text())
+    require(isinstance(covered, list) and len(covered) == 11 and all(isinstance(x, str) for x in covered)
+            and len(set(covered)) == 11 and set(covered) == expected, 'incomplete replay coverage')
 
 
 def require_read_gate(record, *, runtime, installed, bin_dir, wheel, installer_prefix=None):
@@ -97,11 +101,12 @@ def require_read_gate(record, *, runtime, installed, bin_dir, wheel, installer_p
     require(proof.get('commit') == SUCCESSOR_PINS[runtime]['commit'] and proof.get('runtime') == runtime
             and proof.get('schema') == SUCCESSOR_PINS[runtime]['schema']
             and proof.get('wheel_sha256') == hashlib.sha256(wheel.read_bytes()).hexdigest(), 'read gate provenance mismatch')
-    require_identity(dict(baseline=dict(commit=proof['commit'],runtime=proof['runtime'],schema=proof['schema']),
+    require_installation_identity(dict(baseline=dict(commit=proof['commit'],runtime=proof['runtime'],schema=proof['schema']),
         installed=record.get('installed_installer'), spine_command=record.get('spine_command'),
         spine_ledger_migrate=record.get('spine_ledger_migrate'), module=record.get('installer_module'),
         schemas=record.get('installer_schemas')),
-        runtime=runtime, installed=installed, bin_dir=bin_dir, installer_prefix=installer_prefix)
+        baseline=dict(commit=SUCCESSOR_PINS[runtime]['commit'],runtime=runtime,schema=SUCCESSOR_PINS[runtime]['schema']),
+        installed=installed, bin_dir=bin_dir, source_root=ROOT, installer_prefix=installer_prefix)
 
 
 def attest(repo, pin, export, wheel, bin_dir, package):
@@ -130,9 +135,14 @@ def attest(repo, pin, export, wheel, bin_dir, package):
         installed_names = {str(p.relative_to(installed)) for p in (installed / package).rglob('*')
                            if p.is_file() and '__pycache__' not in p.parts}
         require(installed_names == members, 'unexpected installed upstream package files')
-    return dict(commit=pin, package_files=len(members), python_files=len(python_names),
+    proof = dict(commit=pin, package_files=len(members), python_files=len(python_names),
                 wheel=str(wheel), wheel_sha256=hashlib.sha256(wheel.read_bytes()).hexdigest(),
                 installed_root=str(installed / package))
+    if package == 'spine':
+        project = subprocess.check_output(pinned_git(repo, 'show', pin+':pyproject.toml'))
+        require(project == (export/'pyproject.toml').read_bytes(), 'upstream project metadata differs from pin')
+        proof['console_scripts'] = attest_console_scripts(project, wheel, bin_dir, installed)
+    return proof
 
 
 def qualify(args, run):
@@ -204,10 +214,12 @@ def qualify(args, run):
         save(run / label / 'provenance.json', proof)
         command(label + '-dependencies', [bin_dir/'python', '-I', '-c',
             'import importlib.metadata as m,json; print(json.dumps({d.metadata["Name"]:d.version for d in m.distributions()},sort_keys=True))'])
-        installs[version] = dict(bin=bin_dir, export=export, wheel=wheel)
+        installs[version] = dict(bin=bin_dir, export=export, wheel=wheel, proof=proof['spine'])
 
     integration_results = {}
     def integration(label, argv, *, harness, runtime=None, installed=False, installer_prefix=None):
+        require(runtime is not None, 'parent-selected runtime required')
+        verify_console_scripts(installs[runtime]['proof']['console_scripts'], installs[runtime]['bin'])
         parent = run / label
         parent.mkdir(mode=0o700)
         command(label, [*argv, '--evidence-parent', parent], timeout=3600)
@@ -215,14 +227,16 @@ def qualify(args, run):
         require(len(runs) == 1, 'expected one integration result: ' + label)
         result_path = runs[0] / 'result.json'
         require_full_qualification(json.loads(result_path.read_text()), harness=harness)
-        if runtime is not None:
-            require_identity(json.loads((runs[0]/'run.json').read_text()), runtime=runtime, installed=installed,
-                             bin_dir=installs[runtime]['bin'], installer_prefix=installer_prefix)
+        require_identity(json.loads((runs[0]/'run.json').read_text()), runtime=runtime, installed=installed,
+                         bin_dir=installs[runtime]['bin'], installer_prefix=installer_prefix)
+        if harness == 'v2':
+            require_replay_coverage(runs[0], runtime)
         integration_results[label] = str(result_path)
 
     successors = ['0.10.0'] if selected == '0.10.0' else ['0.10.0','0.12.0']
     def read_gate(label, python, runtime, *, installed=False, installer_prefix=None):
         current = installs[runtime]; parent=run/label; parent.mkdir(mode=0o700)
+        verify_console_scripts(current['proof']['console_scripts'], current['bin'])
         command(label, [python, '-I', ROOT/'scripts/qualify_fr2.py',
             *(['--installed-installer'] if installed else []), '--runtime-version',runtime,
             '--bin-dir',current['bin'],'--export',current['export'],'--spine-repo',args.spine_repo,
@@ -241,9 +255,10 @@ def qualify(args, run):
     package_runs = []
     for version in ('0.3.0', '0.5.0', '0.6.0'):
         bin_dir = installs[version]['bin']
-        options = ['--spine-command', bin_dir / 'spine-command', '--spine-ledger-migrate', bin_dir / 'spine-ledger-migrate']
-        integration('source-v1-' + version, [sys.executable, ROOT / 'tests/integration/test_local_spine.py', *options], harness='v1')
+        options = ['--runtime-version', version, '--spine-command', bin_dir / 'spine-command', '--spine-ledger-migrate', bin_dir / 'spine-ledger-migrate']
+        integration('source-v1-' + version, [sys.executable, ROOT / 'tests/integration/test_local_spine.py', *options], harness='v1', runtime=version)
         before = set(run.glob('spine-packs-package-*'))
+        verify_console_scripts(installs[version]['proof']['console_scripts'], bin_dir)
         command('package-v1-' + version, [sys.executable, ROOT / 'scripts/qualify_package.py', *options, '--evidence-parent', run])
         added = set(run.glob('spine-packs-package-*')) - before
         require(len(added) == 1, 'expected one package qualification run')
@@ -253,6 +268,10 @@ def qualify(args, run):
         result_path = Path(package_proof['integration_result'])
         require(package_proof['passed'] is True, 'package qualification failed')
         require_full_qualification(json.loads(result_path.read_text()), harness='v1')
+        require(result_path.parent.parent == package_run and result_path.parent.name.startswith('spine-packs-integration-'),
+                'installed v1 report outside current package run')
+        require_identity(json.loads((result_path.parent/'run.json').read_text()), runtime=version,
+                         installed=True, bin_dir=bin_dir, installer_prefix=package_run/'installed')
         integration_results['installed-v1-' + version] = str(result_path)
         package_runs.append(package_run)
 
@@ -274,6 +293,8 @@ def qualify(args, run):
             installed=True,installer_prefix=package_run/'installed')
         read_gate('installed-fr2-'+runtime,installed_python,runtime,installed=True,installer_prefix=package_run/'installed')
     require(source_snapshot()==snapshot,'qualification source/harness inputs changed during matrix')
+    for current in installs.values():
+        verify_console_scripts(current['proof']['console_scripts'], current['bin'])
     save(run / 'PASS.json', dict(passed=True, qualification='working-tree-local-candidate-not-release',
         package_runs=[str(p) for p in package_runs], integration_results=integration_results,
         assets={n:hashlib.sha256((package_run / 'assets' / n).read_bytes()).hexdigest()

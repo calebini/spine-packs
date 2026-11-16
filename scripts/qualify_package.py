@@ -21,7 +21,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tests/integration'))
-from qualification_support import require_full_qualification
+from qualification_support import require_full_qualification, require_run_identity, V1_BASELINES
 
 
 def require(condition, message):
@@ -118,6 +118,7 @@ def qualify(args, run):
     command("module-help", [python, "-I", "-m", "spine_packs", "--help"])
     command("installed-integration", [python, "-I", extracted / f"spine_packs-{version}" /
             "tests/integration/test_local_spine.py", "--installed",
+            "--runtime-version", args.runtime_version,
             "--spine-command", args.spine_command.resolve(strict=True),
             "--spine-ledger-migrate", args.spine_ledger_migrate.resolve(strict=True),
             "--evidence-parent", run], timeout=900)
@@ -125,6 +126,10 @@ def qualify(args, run):
     require(len(integration_runs) == 1, 'expected one installed integration run')
     integration_result = integration_runs[0] / 'result.json'
     require_full_qualification(json.loads(integration_result.read_text()), harness='v1')
+    require_run_identity(json.loads((integration_runs[0]/'run.json').read_text()),
+        baseline=V1_BASELINES[args.runtime_version], installed=True,
+        bin_dir=args.spine_command.resolve(strict=True).parent, source_root=ROOT, installer_prefix=clean,
+        expected_installer=[str(cli)])
     # Emit release checksums only after every local qualification gate passed.
     checksums = "".join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n"
                         for p in sorted((wheel, sdist)))
@@ -137,6 +142,7 @@ def qualify(args, run):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--spine-command", required=True, type=Path)
+    parser.add_argument("--runtime-version", choices=tuple(V1_BASELINES), required=True)
     parser.add_argument("--spine-ledger-migrate", required=True, type=Path)
     parser.add_argument("--evidence-parent", type=Path, default=Path(tempfile.gettempdir()))
     args = parser.parse_args()

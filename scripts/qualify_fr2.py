@@ -18,6 +18,8 @@ from unittest.mock import patch
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'tests/integration'))
+from qualification_support import attest_console_scripts, verify_console_scripts
 if '--installed-installer' not in sys.argv:
     sys.path.insert(0, str(ROOT / 'src'))
 from spine_packs import artifacts as a
@@ -36,6 +38,67 @@ def require(value, message):
 
 def pinned_git(repo, *args):
     return ['git', '--no-replace-objects', '-C', str(repo), *args]
+
+
+class LimitCheckedFacetCommand(FacetSpineCommand):
+    """Enforce plan(limit) on every profile-list read, before transport/capture."""
+    def __init__(self, *args, expected_profile_limit, **kwargs):
+        super().__init__(*args, **kwargs)
+        require(type(expected_profile_limit) is int and expected_profile_limit > 0,
+                'invalid expected profile limit')
+        self.expected_profile_limit = expected_profile_limit
+
+    def read(self, command, value):
+        if command == 'notification_profile.list':
+            require(value.get('limit') == str(self.expected_profile_limit),
+                    'profile page limit differs from selected plan limit')
+        return super().read(command, value)
+
+
+def require_profile_pagination(reads, expected, *, limit):
+    """Both observation passes must finish a stable chain and contain each seed."""
+    rows = [row for row in reads if row['command'] == 'notification_profile.list']
+    require(type(limit) is int and limit > 0, 'invalid expected profile limit')
+    cursor, observed, starts, completed = None, {}, 0, 0
+    snapshot, query = None, None
+    used_cursors = set()
+    page_counts, pages = [], 0
+    for row in rows:
+        request, response = row['request'], row['response']
+        require(request.get('limit') == str(limit), 'profile page limit differs from selected limit')
+        require(request.get('cursor') == cursor, 'profile page cursor chain mismatch')
+        if cursor is None:
+            starts += 1
+            require(starts <= 2 and not observed, 'unexpected profile observation pass')
+            snapshot = response['catalog_snapshot_hash']
+            query = {k:v for k,v in request.items() if k != 'cursor'}
+            used_cursors = set()
+            pages = 0
+        require(response['catalog_snapshot_hash'] == snapshot
+                and {k:v for k,v in request.items() if k != 'cursor'} == query, 'profile page query/snapshot changed')
+        entries = response['entries']
+        require(response['count'] == str(len(entries)) and len(entries) <= int(request['limit']),
+                'profile page count mismatch')
+        for entry in entries:
+            key = entry['profile_key']
+            require(key not in observed, 'duplicate profile identity in pagination')
+            observed[key] = (entry['notification_profile_id'], entry['current_revision_id'],
+                             entry['revision']['revision_contract'])
+        pages += 1
+        require(type(response['has_more']) is bool, 'invalid profile continuation')
+        cursor = response['next_cursor']
+        if response['has_more']:
+            require(isinstance(cursor, str) and cursor and cursor not in used_cursors, 'missing/repeated profile cursor')
+            used_cursors.add(cursor)
+        else:
+            require(cursor is None and observed == expected, 'incomplete seeded profile catalog')
+            completed += 1
+            page_counts.append(pages)
+            observed = {}
+    require(starts == completed == 2 and cursor is None, 'incomplete profile observation passes')
+    return dict(passes=completed, pages=page_counts, profile_keys=sorted(expected))
+
+
 
 
 def provenance(repo, export, wheel, bin_dir, runtime_version=DEFAULT_RUNTIME):
@@ -74,7 +137,10 @@ def provenance(repo, export, wheel, bin_dir, runtime_version=DEFAULT_RUNTIME):
         exact = subprocess.check_output(pinned_git(repo, 'show', pin + ':' + name))
         require(exact == (export / name).read_bytes() and hashlib.sha256(exact).hexdigest() == digest,
                 'contract/source inventory provenance mismatch')
+    project = subprocess.check_output(pinned_git(repo, 'show', pin+':pyproject.toml'))
+    require(project == (export/'pyproject.toml').read_bytes(), 'pinned project metadata mismatch')
     return dict(commit=pin, runtime=baseline.runtime, schema=baseline.schema, package_files=count, authority_files=len(authorities),
+                console_scripts=attest_console_scripts(project, wheel, bin_dir, installed),
                 wheel_sha256=hashlib.sha256(wheel.read_bytes()).hexdigest())
 
 
@@ -116,7 +182,7 @@ def qualify(bin_dir, export, repo, wheel, *, runtime_version=DEFAULT_RUNTIME, ev
         return cli(name, dict(contract_version=contract, command_id=f'fr2-setup-{len(transcript)}',
             actor_subject_id=owner['owner_subject_id'], action_timestamp_utc='2035-02-01T12:00:00Z', **fields))
 
-    class Logged(FacetSpineCommand):
+    class Logged(LimitCheckedFacetCommand):
         def read(self, command, value):
             result = super().read(command, value)
             reads.append(dict(command=command, request=deepcopy(value), response=deepcopy(result)))
@@ -154,7 +220,8 @@ def qualify(bin_dir, export, repo, wheel, *, runtime_version=DEFAULT_RUNTIME, ev
         def plan(limit):
             before = stat_ledger()
             with patch.dict(os.environ, env, clear=True):
-                adapter = Logged(request['request']['target'], host_resolver=lambda: 'fr2-test.invalid')
+                adapter = Logged(request['request']['target'], expected_profile_limit=limit,
+                                 host_resolver=lambda: 'fr2-test.invalid')
                 result = plan_installation(manifest, request, adapter, page_size=limit)
             require(before == stat_ledger(), 'ledger file metadata changed during read-only planning')
             return result
@@ -185,6 +252,8 @@ def qualify(bin_dir, export, repo, wheel, *, runtime_version=DEFAULT_RUNTIME, ev
                     'notification_rendering_definition_id', 'notification_rendering_definition_revision_id')})
         del profile['intended_status']
         created = write('notification_profile.create', owner=owner, **profile)
+        expected_profiles = {created['profile_key']: (created['notification_profile_id'],
+            created['notification_profile_revision_id'], 'spine.notification-profiles.v2')}
         write('notification_profile.binding.set', owner=owner, item_archetype_id=arch['item_archetype_id'],
               notification_profile_id=created['notification_profile_id'])
         for key, version in [('a_legacy', 'v1'), ('b_ordinary', 'v2')]:
@@ -193,11 +262,17 @@ def qualify(bin_dir, export, repo, wheel, *, runtime_version=DEFAULT_RUNTIME, ev
             payload = dict(contract_version='spine.notification-profiles.' + version, command_id='fr2-' + key,
                 actor_subject_id=owner['owner_subject_id'], action_timestamp_utc='2035-02-01T12:00:00Z',
                 owner=owner, profile_key=key, display_name=key, description=None, revision=ordinary)
-            cli('notification_profile.create', payload)
+            ordinary_created = cli('notification_profile.create', payload)
+            expected_profiles[key] = (ordinary_created['notification_profile_id'],
+                ordinary_created['notification_profile_revision_id'], 'spine.notification-profiles.'+version)
         reads.clear()
         first = plan(1)
         first_reads = deepcopy(reads)
+        small_pages = require_profile_pagination(first_reads, expected_profiles, limit=1)
+        reads.clear()
         second = plan(100)
+        large_pages = require_profile_pagination(reads, expected_profiles, limit=100)
+        reads[:0] = first_reads
         require(first == second, 'page boundaries changed plan')
         b1 = root_b['facet_schema_revision_id']
         exact = [r for r in first_reads if r['command'] == 'facet_schema.revision.show']
@@ -226,7 +301,9 @@ def qualify(bin_dir, export, repo, wheel, *, runtime_version=DEFAULT_RUNTIME, ev
         checks += ['current_historical_retired_public_reads', 'missing_revision_exit4', 'invalid_request_exit2']
         (run / 'plan.json').write_text(json.dumps(first, indent=2) + '\n')
         (run / 'fixture.json').write_text(json.dumps(dict(manifest=manifest, request=request, reads=first_reads, plan=first), indent=2) + '\n')
+        verify_console_scripts(proof['console_scripts'], bin_dir)
         report = dict(status='passed', provenance=proof, checks=checks, run_directory=str(run),
+                    profile_pagination=dict(page_size_1=small_pages, page_size_100=large_pages),
                     installer_module=str(Path(a.__file__).resolve()),
                     installer_schemas=str(a.SCHEMA_ROOT.resolve()),
                     installed_installer='--installed-installer' in sys.argv,

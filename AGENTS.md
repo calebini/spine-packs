@@ -209,6 +209,72 @@ both modes, matching candidate archives and unchanged source inputs. See
 needed. The bounded tooling review and final release qualification remain
 separate; no external review, commit, push or publication is authorized by this
 local pass.
+The separately approved sixteen-file AL-3 tooling audit (audit notes plus fifteen
+specs/support files) returned four majors and three minors. The operator
+authorized all seven bounded repairs, focused negative checks and affected
+source/installed qualification reruns using new disposable configuration-only
+ledgers. Preserve the original payload/verdict. Bind all v1 results explicitly,
+gate v2 replay coverage at the parent, prove seeded mixed-catalog traversal,
+and attest the actual console dispatch/interpreter. Supply helper context and
+clarify refusal/count wording. This authorizes no installer runtime change,
+new external reviewer, existing ledger, commit, push, deployment or publication.
+The seven repairs subsequently passed 13 focused methods, 14 preserved
+provenance/completion methods, 140 official contract tests, 320 runtime tests
+and a fresh full source/installed matrix (40 scenarios, 36 read checks, all 44
+v2 replay cases). Exact console proofs, all six v1 identities, seeded page
+chains and unchanged source/archive identities passed. Independent official
+validation passed 780 saved v2 manifests/artifacts. These local results do not
+close the original external verdict; a focused recheck requires fresh approval.
+The separately approved fourteen-file focused AL-3 recheck returned three
+majors and three minors. The operator authorized patching those follow-ups and
+preparing another focused recheck: exact installed locations from the selected
+clean interpreter, installer-argv binding, expected pagination limits, executable
+permission rechecks, parent-role wording and the missing corrected source
+excerpt. Run focused/required checks and affected disposable qualification.
+Preserve both original payloads/verdicts; the next changed reviewer payload
+still needs exact approval. No runtime change, existing ledger, commit, push,
+deployment or publication is included.
+These follow-ups passed 17 focused methods, 14 preserved provenance/completion
+methods, 140 official contract tests, 324 runtime tests and another fresh full
+source/installed matrix (40 scenarios, 36 read checks, 44 v2 replay cases).
+Independent validation passed 780 saved v2 artifacts/manifests and recorded
+actual requested limits and parent-derived exact installer locations/argv.
+Both earlier verdicts and approved payloads remain frozen. Stage the next
+focused recheck for fresh exact-payload approval; local success does not grant
+external review, commit, push, release or deployment authority.
+The second approved fourteen-file recheck returned two majors and two evidence
+reference minors. The operator authorized fixing the remaining capture-time
+limit check and symlink relocation gap, correcting stale verifier/log packaging,
+running focused checks and staging the next recheck. Use new disposable ledgers
+for affected read/package gates; label retained full-matrix execution evidence
+as historical rather than claiming a new full matrix. Preserve all three
+earlier payloads/verdicts. The next exact payload requires separate approval;
+no runtime change, existing ledger, commit, push or publication is authorized.
+These remaining-gap repairs passed 20 focused methods, 14 preserved
+provenance/completion methods, 140 official contract tests and 327 runtime tests.
+Affected gates passed on new disposable ledgers: one installed-package suite
+(four scenarios) and source/installed read gates at both exact v2 pins (36 read
+checks). Ten retained execution reports were readmitted by the stricter parent
+checks; those executions remain historical. The runtime wheel and child
+harness/completion logic are unchanged. This is targeted repair qualification,
+not a new full matrix or release qualification. Stage the next exact payload
+with verifier/log references checked against current result metadata.
+The separately approved third fourteen-file focused recheck passed with minor
+clarifications: zero majors, four minors and boundary_preserved=true. The operator
+authorized all four evidence-guard/test follow-ups and focused checks: bind count
+and success to the terminal unittest summary, use the failed log's actual digest
+in its negative fixture, require all selected suite names, and bind a supplied
+current verifier path while preserving historical hash-only metadata. Preserve
+all four approved payloads/verdicts. This authorizes no installer runtime change,
+new external review, commit, push, deployment or publication.
+These four minor follow-ups passed 23 focused methods, 14 preserved
+provenance/completion methods, 140 official contract tests and 330 runtime tests.
+A fresh installed-package gate passed four scenarios on exact Spine 0.6.0,
+using new disposable ledgers; the runtime wheel is unchanged. The selected
+historical evidence remains historical, with no new read/full-matrix/release
+qualification claim. Preserve the third recheck's pass-with-minor verdict and
+all earlier payloads. Local repair success grants no new external review,
+commit, push, deployment or publication authority.
 FR-4 contract and
 fixture work is authorized; its focused contract recheck passed with zero
 findings. The read-only foundation is committed; the operator subsequently

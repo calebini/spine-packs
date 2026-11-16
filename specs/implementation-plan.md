@@ -1317,3 +1317,143 @@ verifier and whitespace checks. The bounded AL-3 tooling review is still
 pending; local results do not authorize external review, release, deployment,
 commit or push. Final committed release qualification and curated successor
 content remain separate gates.
+
+### AL-3 bounded audit repairs (2026-11-15)
+
+The separately approved sixteen-file review (audit notes plus fifteen numbered
+specs/support files) returned `needs_revision`, boundary not preserved, with
+four majors and three minors. Its payload and original verdict remain unchanged
+in `../whetstone_runs/spine0120-al3-qualification-audit-001/`. The operator
+authorized all seven bounded repairs, focused checks and affected source/package
+qualification reruns; no new reviewer, commit, push or publication is included.
+
+C01 adds an explicit expected v1 runtime to both harness/package commands and
+binds actual environment plus result identity at both parents, including mode,
+code/resources and attested executables. C02 checks the selected inventory's
+eleven unique replay names inside parent admission before matrix success.
+C03 proves each observation pass traverses the complete profile cursor chain
+and includes all seeded key/root/revision/contract identities. C04 connects exact
+project mappings, wheel/installed metadata and both actual launchers to the
+selected interpreter and callable, records their hashes and rechecks them at
+execution gates and matrix completion. These changes affect qualification
+tooling only; installer runtime and reusable pack bytes remain unchanged.
+
+C05 records the narrow official-validator/semantic-helper excerpts showing
+exception-based failure. C06 says fresh admission refuses the original complete
+checkpoint after live binding drift. C07 clarifies the notes-plus-fifteen count;
+no outgoing file was missing. Context and source hashes are in the original
+audit's new `repair-evidence/`, outside its frozen outgoing payload.
+
+All 13 focused AL-3 methods and 14 preserved provenance/completion methods passed.
+The actual console launchers in all five prior isolated installations matched
+the new pinned-entry/interpreter checks. A fresh full matrix passed at
+`/private/tmp/spine-packs-fr5-o3m6xkrj`; every configuration ledger was new and
+disposable. All 40 scenarios passed across ten full runs without skips, along
+with 36 read checks and 44 v2 replay cases. The matrix checked all six v1
+identities, and the package parent also checked its three installed identities;
+every v2 replay list was compared with its selected inventory
+before matrix success. Every read gate proved all seeded profile identities
+and complete page chains in both passes. Exact package/entry-point/launcher/
+interpreter proofs and source inputs remained unchanged, and the candidate
+archives match across all three v1 package runs. The runtime wheel is unchanged
+from the prior local AL-3 candidate; the sdist contains the tooling repairs.
+
+Required checks passed 140 official contract tests, 320 runtime tests, the
+204-file verifier and whitespace checks. The system-Python contract run passed
+with 75 development-validator skips covered by the official run. Independent
+post-run validation passed every gate/identity/console proof and official
+schema/oracle validation of all 780 saved v2 manifests/artifacts, recording the
+exact validation-helper hashes. See `../docs/al3-qualification.md` and the
+original audit's `repair-evidence/` for links and limitations. The original
+payload and verdict are preserved; no local pass closes the external audit
+gate or authorizes another reviewer, commit, push or publication.
+
+### AL-3 focused-recheck follow-up (2026-11-16)
+
+The approved fourteen-file focused recheck returned three majors and three
+minors. C02/C05/C07 were not reopened; the original and focused verdicts/payloads
+remain frozen. The operator requested the six narrow fixes and another focused
+recheck. Its changed outgoing payload still requires fresh exact approval.
+
+C01-module obtains purelib from the selected clean interpreter, verifies its
+prefix/executable and compares exact resolved module/schema locations.
+C01-installer binds recorded normal-CLI argv to the independently selected
+source interpreter/module command or installed CLI. In-process read gates
+continue checking installation identity without inventing an installer CLI
+execution. C03-limit compares every profile-list request with the selected
+expected page size. C04-mode repeats executable/regular-file checks at final
+console verification. C01-account states that the matrix checks all six v1
+runs, and the package parent additionally checks its three installed runs.
+C06-excerpt will supply the exact already-corrected Local run sentence, source
+lines and hash in the next package.
+
+All 17 focused methods and 14 preserved provenance/completion methods passed.
+The stricter gates accept all correctly recorded identities from the prior
+matrix; this smoke check does not replace fresh qualification. The subsequent
+fresh matrix passed at `/private/tmp/spine-packs-fr5-k1a7z26g`: all 40 scenarios,
+36 read checks and 44 v2 replay cases, without skips. Exact module/resource
+locations, selected installer argv, actual page limits, console permissions and
+source/archive identities passed at the responsible parents. Independent
+post-run validation recorded the derived locations/argv and captured limit
+sequences and passed official schema/oracle validation of all 780 saved v2
+manifests/artifacts. Required checks passed 140 official contract tests, 324
+runtime tests, the 204-file verifier and whitespace checks. The system contract
+run's 75 development-validator skips are covered by the official run.
+
+The runtime wheel is unchanged from earlier local candidates; all v1 package
+gates produce identical wheel/sdist/checksum bytes. Details and proof links are
+in `../docs/al3-qualification.md` and the first recheck's `followup-evidence/`.
+Both original verdicts/payloads are preserved. No installer runtime, contract,
+released pack or Spine checkout is changed. The focused recheck still needs
+fresh exact-payload approval; no commit/push/publication or deployment is part
+of this follow-up.
+
+### AL-3 remaining capture/path gaps and evidence references (2026-11-16)
+
+The second approved focused recheck left two majors and two evidence-reference
+minors. The operator authorized the capture-time limit and physical symlink fixes,
+consistent evidence packaging, focused checks and staging the next recheck.
+Every plan now uses a limit-checked adapter before transport/capture, including
+empty and retired plans. Expected package children stay fixed beneath resolved
+purelib; observed paths resolve for comparison. Real directory-symlink and
+retired-only wrong-limit negatives pass. A staging guard ties verifier source
+and test-log path/hash/count to current result metadata, rejecting stale excerpts.
+
+All 20 focused methods, 14 preserved provenance/completion methods, 140 official
+contract tests and 327 runtime tests passed. Targeted affected qualification
+passed in `/private/tmp/spine-packs-al3-narrow-lbil0yj6`: one fresh installed
+package suite on exact 0.6.0 (four scenarios), plus four fresh read gates on exact
+0.10.0/0.12.0 source/installed modes (36 checks). All use new disposable ledgers.
+Retained upstream packages were reattested; ten historical execution reports
+were readmitted with the corrected parent checks. Runtime wheel, child harnesses
+and completion logic are unchanged. Those executions are not relabelled as a
+fresh 40-scenario/44-replay matrix. Final release qualification remains separate.
+
+The targeted summary, actual verifier and current log-reference manifest are
+retained under that new run root. No previous approved payload/verdict was
+rewritten, no runtime/contract/released pack/Spine checkout changed, and no
+external recheck, commit, push, deployment or publication was performed. The
+next reviewer-only payload must pass current evidence-reference guards and
+receive separate exact-payload approval.
+
+### AL-3 evidence-guard minor follow-up (2026-11-16)
+
+The third approved fourteen-file recheck passed with minor clarifications,
+zero majors, four minors and preserved boundaries. The operator authorized
+all four local repairs and focused checks. The guard binds count/success to
+the terminal unittest summary, requires every selected suite, and binds a
+current verifier path plus hash while preserving historical hash-only records.
+The failed-log regression now uses its actual digest with correct path/count.
+Negatives cover an earlier expected count with a different terminal count,
+missing/extra suites and a byte-identical verifier at another path.
+
+All 23 focused tests, 14 preserved provenance/completion tests, 140 official
+contract tests and 330 runtime tests passed. A fresh installed-package gate
+against exact Spine 0.6.0 passed all four scenarios on new disposable ledgers;
+the source archive carries the corrected helper and the runtime wheel is
+unchanged. Actual verifier and current log references are retained under
+`/private/var/folders/sg/n2czprsx78764j63m_mjcm1m0000gn/T/spine-packs-al3-minor-followup-clhezgfe/`.
+No read gate or full matrix was rerun for this evidence-only change, and no
+release qualification is claimed. Preserve all four approved payloads/verdicts.
+No installer runtime/contract/pack or Spine checkout change, new external
+review, commit, push, deployment or publication is included in this follow-up.

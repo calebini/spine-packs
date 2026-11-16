@@ -4,7 +4,10 @@ Status: AL-1 contract review and its final minor repair are complete. AL-2 runti
 alignment, synthetic checks and bounded runtime repair review are complete;
 the final consistency-02 recheck passed with zero findings on 2026-11-15.
 AL-3 source/installed technical qualification passed on 2026-11-15; its bounded
-tooling review remains pending. This document extends the v2 successor
+tooling review returned `needs_revision`, and its seven bounded repairs are
+operator-authorized with affected qualification reruns. Local repair checks and
+the fresh full qualification matrix passed; review closure remains
+pending. This document extends the v2 successor
 specifications only; it does not qualify a deployment or change any v1 agreement
 or reusable pack.
 
@@ -290,3 +293,44 @@ Evidence identifies the exact upstream target, source versus installed mode,
 public-CLI transcripts, read-only checks, named integration scenarios and local
 assets. It is technical qualification only; scoped tooling review and successor
 content/release gates remain separate. Commands never accept an existing ledger.
+
+All v1 source/package runs MUST also carry an explicit parent-selected exact
+runtime/schema/pin and match the attested executable installation, mode and
+module/resource paths at the matrix parent; the package parent additionally
+checks its installed runs. Observed runtime is confirmation, not a
+selector. The matrix MUST admit each v2 replay suite only after comparing its
+coverage file with the selected inventory's eleven unique writes. The read gate
+MUST prove complete cursor traversal and all seeded profile identities in each
+observation pass before claiming mixed-catalog pagination. Console provenance
+MUST connect pinned project mappings, wheel/installed entry-point metadata and
+both actual executable launchers to the selected interpreter and callables;
+record and recheck their identities before execution gates and matrix success.
+
+Installed module and schema paths MUST equal the resolved expected locations
+derived from the parent-selected clean interpreter's `sysconfig` purelib, not
+merely reside somewhere inside its prefix. Normal CLI integration evidence MUST
+bind the exact selected installer argv: the source interpreter with
+`-m spine_packs`, or the selected clean prefix's `bin/spine-packs`. In-process
+read gates retain installation/resource checks without inventing a CLI invocation.
+Every captured profile-list request MUST use the parent-selected expected page
+limit. Final console rechecks MUST retain the initial regular-file and executable
+requirements as well as path/content identity.
+
+The expected package child paths remain fixed beneath the already resolved
+purelib; resolving those expected children through a package-directory symlink
+must not redefine the admitted installation. Resolve observed module/schema
+paths for comparison with those fixed expectations. Limit checking occurs at
+every profile-list transport/capture boundary under the enclosing `plan(limit)`,
+including initial-empty and retired-state plans, before any reads can be cleared.
+Staged verifier and test-log sources MUST match the verifier hash and log
+path/hash/test counts in the selected qualification/check metadata. Historical
+execution evidence must remain distinguished from newly executed affected gates.
+
+When the selected summary provides a verifier path, the staged verifier MUST
+match its resolved path as well as its hash. Historical summaries that provide
+only a verifier hash retain hash-based validation. Supplied test-suite names
+MUST exactly match the selected repository checks. Each log's terminal unittest
+summary MUST supply both the expected test count and successful status; an
+earlier matching count elsewhere in the log is insufficient. Negative fixtures
+for terminal failure MUST retain the failed log's actual hash, correct path and
+expected count so they isolate status rejection.

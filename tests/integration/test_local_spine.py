@@ -20,7 +20,7 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from qualification_support import QualificationResult, SCENARIO_IDS, completion_report
+from qualification_support import QualificationResult, SCENARIO_IDS, completion_report, V1_BASELINES, require_environment
 
 REQUIRED_SCENARIOS = tuple(name.rsplit('.', 1)[1] for name in SCENARIO_IDS['v1'])
 if "--installed" not in sys.argv:
@@ -83,6 +83,7 @@ class LocalSpineTests(unittest.TestCase):
             "ledger": {"kind": "path", "path": str(self.db.resolve())}}
         info = self.public_process([str(self.config["command"]), "--db", str(self.db), "system.info"])
         self.runtime_version = info["runtime_version"]
+        require_environment(info, self.config['baseline'])
         self.assertIn(self.runtime_version, a.RUNTIME_SCHEMAS)
         self.assertEqual(info["ledger_schema_version"], a.RUNTIME_SCHEMAS[self.runtime_version])
         self.assertEqual(str(initialized["after_version"]), info["ledger_schema_version"])
@@ -287,6 +288,8 @@ class LocalSpineTests(unittest.TestCase):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--spine-command", required=True, type=Path)
+    parser.add_argument("--runtime-version", choices=tuple(V1_BASELINES), required=True,
+                        help="expected exact v1 runtime; never inferred from the observed installation")
     parser.add_argument("--spine-ledger-migrate", required=True, type=Path)
     parser.add_argument("--evidence-parent", type=Path, default=Path(tempfile.gettempdir()))
     parser.add_argument("--test", action="append", help="optional exact unittest method name")
@@ -316,8 +319,9 @@ def main():
         installer = [sys.executable, "-m", "spine_packs"]
     env["PYTHONDONTWRITEBYTECODE"] = "1"
     LocalSpineTests.config = {"root": run, "command": command, "migrate": migrate,
-                             "env": env, "installer": installer}
+                             "env": env, "installer": installer, "baseline": V1_BASELINES[args.runtime_version]}
     save(run / "run.json", {"spine_command": str(command), "spine_ledger_migrate": str(migrate),
+                           "baseline": V1_BASELINES[args.runtime_version],
                            "python": sys.version, "qualification": "synthetic-disposable-ledgers-only",
                            "installed": args.installed, "installer": installer,
                            "module": a.__file__, "schemas": str(a.SCHEMA_ROOT)})
