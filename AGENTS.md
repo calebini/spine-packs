@@ -104,6 +104,11 @@ in the exact 0.10.0 inventory.
 The separately authorized AL-2 alignment also admits the identical reviewed
 12-read/11-write inventory at exact Spine 0.12.0/schema 20 below. It adds no
 commands; all v1 and qualified 0.10.0 capabilities remain intact.
+The operator authorized the FR-6 draft manifest and tests for the separate
+`kinflow-flight` pack on the exact 0.12.0/schema 20 baseline. Use
+`specs/flight-content-proposal.md` for the draft content. The operator selected
+`flight_details_standard` as the default. The ordinary `flight_standard`
+profile is available through whole-pack selection. The draft is inspection-only.
 Mark unresolved design details explicitly instead of silently choosing them.
 
 When the repository advances, add only the smallest structure required by real

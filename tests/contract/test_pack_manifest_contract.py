@@ -447,8 +447,12 @@ class PackManifestContractTests(unittest.TestCase):
             with self.subTest(manifest=manifest_path.name):
                 self.assertEqual(load_json(manifest_path), load_json(fixture_path))
 
-    def test_fixture_manifest_covers_every_pack_manifest(self) -> None:
-        actual = {path.relative_to(ROOT).as_posix() for path in (ROOT / "packs").rglob("*.json")}
+    def test_fixture_manifest_covers_every_v1_pack_manifest(self) -> None:
+        actual = {
+            path.relative_to(ROOT).as_posix()
+            for path in (ROOT / "packs").rglob("*.json")
+            if load_json(path)["manifest_schema"] == "spine.pack-manifest.v1"
+        }
         declared = {
             case["fixture"] for case in self.fixture_manifest["cases"]
             if case["fixture"].startswith("packs/") and case["valid"]

@@ -1,34 +1,30 @@
-# FR-6 flight-content proposal
+# FR-6 flight pack content
 
-Status: proposed for operator review on 2026-11-17. The operator approved
-capturing optional arrival timestamp/timezone text as informational data while
-deferring its notification rendering, and making `flight_number` and
-`destination` queryable. The operator also approved optional, non-queryable
-`departure_gate`, flight-number/airport rendering at seven days and four hours,
-and gate-only rendering at one hour. Remaining content choices are pending
-as identified below. This document is a review draft, not a pack manifest,
-release, disclosure authorization or instruction to install configuration.
+The operator approved a separate `kinflow-flight` pack and selected
+`flight_details_standard` as its default profile. The implemented
+[1.0.0-draft.1 manifest](../packs/kinflow-flight/kinflow-flight.1.0.0-draft.1.json)
+is available for inspection through the read-only planner. Release and
+installation are later gates.
 
 The governing contracts are [facet-rendering-packs.md](facet-rendering-packs.md),
 [spine-0.12.0-alignment.md](spine-0.12.0-alignment.md) and the existing
 [flight content](kinflow-starter.md#flight). Implementation status and evidence
 remain in [implementation-plan.md](implementation-plan.md).
 
-## Recommendation for review
+## Draft content
 
-Start with a small flight-only pack containing the existing ordinary flight
-profile and a new, explicitly selected details profile. Keep `flight_standard`
-as the default. Offer flight number, departure-airport label and arrival-airport
-label on the seven-day and four-hour reminders. The one-hour reminder selects
+The default is `flight_details_standard`. The ordinary profile
+`flight_standard` is also included for explicit selection.
+The details profile selects flight number and departure and arrival airport
+labels on the seven-day and four-hour reminders. Its one-hour reminder selects
 only departure gate as optional detail; the 24-hour reminder stays ordinary.
-Also capture arrival timestamp and
-destination timezone as optional informational text, without selecting them
-for notification rendering. All six fields remain optional.
+Arrival timestamp and destination timezone are optional informational text.
+All six fields are optional.
 
-Install the whole flight-only pack so the opt-in profile is included. Existing
-items and profile applications are not updated by installation. Details become
-usable only through a separate, explicitly authorized Spine authoring and
-destination-disclosure workflow.
+Use whole-pack selection to include both profiles. The binding applies when
+an authoring request selects the archetype's default in a matching owner
+scope. Item presentation and destination disclosure are managed through the
+Spine authoring workflow.
 
 ## Existing behavior to preserve
 
@@ -40,7 +36,7 @@ destination-disclosure workflow.
   existing Spine item/scheduling fields. Facets do not replace those authorities.
 - Existing starter drafts, stable packs and published installer assets remain
   byte-for-byte unchanged. This work starts a successor artifact, not a rewrite.
-- The candidate compatibility target is only exact Spine
+- The draft targets exact Spine
   `3e65ef0de9e73b62047a0f6328731db08ca91023`, runtime `0.12.0`, ledger schema
   `20`. That exact Git object was available for this proposal. Its source
   documents were read at that commit, not at checkout HEAD. Other installer
@@ -50,23 +46,22 @@ AL-3 technical qualification and the tooling-review repairs are checkpointed
 in `8dd5861`. That evidence does not release the new content or qualify the
 eventual committed release candidate.
 
-## Proposed fields
+## Fields
 
-Use one schema, suggested key `flight_details`, compatible with exactly `event`.
-Bind it to the existing `flight` archetype under facet key `flight`. A binding
-makes a facet available; it does not attach values or require every flight to
-have the facet.
+The pack declares one schema, `flight_details`, compatible with exactly `event`.
+It binds the schema to the existing `flight` archetype under facet key `flight`.
+The binding lets an authoring agent attach the optional facet.
 
 | Field key | Meaning and type | Required when facet is attached | Queryable |
 | --- | --- | --- | --- |
 | `flight_number` | Flight designator, e.g. fictional `EX123`; `text`, maximum 32 Unicode code points | No | Yes (approved) |
 | `origin` | Departure airport; `reference`, `target_kind=location` | No | No |
 | `destination` | Arrival airport; `reference`, `target_kind=location` | No | Yes (approved) |
-| `arrival_at` | Informational destination-local arrival timestamp including date and explicit UTC offset; `text`, proposed maximum 64 Unicode code points | No | No |
-| `arrival_timezone` | Destination IANA timezone name; `text`, proposed maximum 128 Unicode code points | No | No |
-| `departure_gate` | Recorded departure gate, e.g. fictional `B12`; `text`, proposed maximum 32 Unicode code points | No (approved) | No (approved) |
+| `arrival_at` | Informational destination-local arrival timestamp including date and explicit UTC offset; `text`, maximum 64 Unicode code points | No | No |
+| `arrival_timezone` | Destination IANA timezone name; `text`, maximum 128 Unicode code points | No | No |
+| `departure_gate` | Recorded departure gate, e.g. fictional `B12`; `text`, maximum 32 Unicode code points | No | No |
 
-Recommended display name: `Flight details`. Recommended description:
+The schema display name is `Flight details`. Its description is
 `Optional flight number, airport references, departure gate, and informational arrival timestamp and destination timezone for a scheduled flight.`
 
 The operator approved `queryable=true` for `flight_number` and `destination`.
@@ -79,21 +74,17 @@ the intended location before filtering by it; no location IDs belong in the pack
 The installer provisions these definition flags only. Item queries are separate
 Spine operations and are not added to the installer's command allowlist.
 
-The operator approved `queryable=false` for `departure_gate`.
-Recommend retaining `queryable=false` for `origin`, `arrival_at` and
-`arrival_timezone`. This prevents direct facet-query filtering on those fields,
+The draft uses `queryable=false` for `departure_gate`, `origin`, `arrival_at`
+and `arrival_timezone`. This prevents direct facet-query filtering on those fields,
 while preserving ordinary readback and explicitly selected rendering. The flag
 controls query indexing, not permissions, disclosure or notification selection.
 Neither enabling both approved fields nor storing arrival text adds compound
 queries or timestamp-range filtering. Changing released queryability later
 would require a schema revision and explicit consumer updates.
 
-Incomplete travel information should not block attaching a partial facet, so
-all fields remain optional in the proposal.
+All six fields are optional so an agent can attach a partial facet.
 Absent optional values are omitted, not represented by null, placeholder data
-or invented values. Remaining required/queryable choices are identified below;
-the arrival fields' optionality, gate optionality/non-queryability, and the two
-approved true query flags are settled.
+or invented values.
 
 Exclude airline, terminal, flight status, booking references, passport
 details and live external lookups from this first schema. No policy says those
@@ -107,16 +98,15 @@ The operator approved these two optional data fields after deferring native
 arrival-time rendering. For illustration only, an authoring agent could record
 `arrival_at=2026-11-18T08:45:00+01:00` and
 `arrival_timezone=Europe/Paris`. These are fictional item values, not constants
-or defaults to embed in the reusable pack. Text-length bounds above remain
-proposed content details for review.
+or defaults to embed in the reusable pack.
 
 Spine validates the supported text-field shape and bounds. It does not validate
 RFC 3339 timestamp semantics, IANA timezone membership, agreement between the
 offset and named zone, or chronological consistency merely because of these
 field names. The authoring agent must validate supplied values: use a full
 destination-local timestamp with date and explicit offset, check a supplied IANA
-zone against the applicable timezone data, and check that the offset agrees at the arrival
-instant when both fields are present. When departure is known, compare instants
+zone against the applicable timezone data, and check that the offset agrees at
+the arrival instant when both fields are present. When departure is known, compare instants
 to check chronology; local clock values alone are insufficient across timezones
 and date-line crossings. Unknown facts remain absent rather than guessed from
 airport labels or other prose. These are authoring responsibilities, not a new
@@ -135,7 +125,7 @@ Native timestamp validation, destination-local date/time formatting and
 selection of authoritative arrival time remain deferred capabilities; this
 proposal does not require an upstream Spine change to store the two text fields.
 
-## Proposed rendering definitions
+## Rendering definitions
 
 Both definitions support exactly `event`, using the existing base rendering
 contract `spine.notification-rendering.v1` and profile
@@ -144,8 +134,8 @@ contract `spine.notification-rendering.v1` and profile
 
 ### Flight number and airports — seven days and four hours
 
-Suggested definition key/display name: `flight_details` / `Flight details`.
-Suggested description: `Selected flight number and airport labels for flight reminders.`
+The definition `flight_details` has display name `Flight details` and description
+`Selected flight number and airport labels for flight reminders.`
 
 | Presentation order | Selection key | Source | Literal label | Projection |
 | ---: | --- | --- | --- | --- |
@@ -172,9 +162,8 @@ airports do not replace the event's primary location or time authority.
 
 ### Departure gate only — one hour
 
-Suggested definition key/display name:
-`flight_departure_gate` / `Flight departure gate`.
-Suggested description: `Optional recorded departure gate for a flight boarding reminder.`
+The definition `flight_departure_gate` has display name `Flight departure gate`
+and description `Optional recorded departure gate for a flight boarding reminder.`
 
 | Presentation order | Selection key | Source | Literal label | Projection |
 | ---: | --- | --- | --- | --- |
@@ -182,8 +171,8 @@ Suggested description: `Optional recorded departure gate for a flight boarding r
 
 This definition selects only the gate field. It does not select flight number
 or airport fields at one hour; the ordinary reminder body remains unchanged.
-When the optional gate value is missing, Spine
-omits that detail and retains the eligible ordinary reminder. Missing optional
+When the optional gate value is missing, Spine omits that detail and retains
+the eligible ordinary reminder. Missing optional
 fields are omitted independently; for example, a missing airport field does
 not suppress an available flight number in the other definition. Existing
 disclosure, admission, normalization and size rules continue to apply; a
@@ -197,21 +186,21 @@ A future authorized advisory/authoring workflow may update or clear the value
 through Spine. Source provenance and freshness policy for that workflow remain
 separate work, not additional required fields in this first facet.
 
-## Proposed notification profiles
+## Notification profiles
 
-Retain `flight_standard` as the ordinary default. Add a distinct, flight-specific
-profile with suggested key `flight_details_standard`, display name
-`Flight details standard`, and description:
+`flight_details_standard` is the archetype default. It has display name
+`Flight details standard`
+and description
 `Booking, travel-document, packing, check-in, gate, and boarding reminders for a scheduled flight, with selected flight details at seven days and four hours and an optional departure gate at one hour.`
 
 Both profiles retain exactly these existing schedules and late-delivery windows:
 
-| Template key | Before departure, elapsed time | Late-delivery window | Rendering in the proposed details profile |
+| Template key | Before departure, elapsed time | Late-delivery window | Rendering in the details profile |
 | --- | --- | --- | --- |
-| `seven_days_before` | 7 days | 24 hours | Pin the proposed `flight_details` definition |
+| `seven_days_before` | 7 days | 24 hours | Pin `flight_details` |
 | `twenty_four_hours_before` | 24 hours | 6 hours | Ordinary |
-| `four_hours_before` | 4 hours | 1 hour | Pin the proposed `flight_details` definition |
-| `one_hour_before` | 1 hour | 15 minutes | Pin the proposed `flight_departure_gate` definition; omit gate detail when missing |
+| `four_hours_before` | 4 hours | 1 hour | Pin `flight_details` |
+| `one_hour_before` | 1 hour | 15 minutes | Pin `flight_departure_gate` and omit gate detail when missing |
 
 `flight_standard` remains ordinary on all four reminders. In manifest v2 every
 template states its rendering explicitly. Storage order remains canonical by
@@ -224,52 +213,37 @@ projections without duplicating schedules or adding a gate-specific reminder.
 Do not apply both complete profiles to the same item merely to add details;
 the agent should deliberately choose the intended profile application.
 
-## Default, selection and distribution choices
+## Default, selection and distribution
 
-Recommend a separate flight-only pack, suggested ID `kinflow-flight`, with an
-initial proposed draft `1.0.0-draft.1` toward `1.0.0`. These are proposed names
-and versions for review, not allocated or published identities. Use
-`spine.pack-manifest.v2`, the exact 0.12.0 compatibility singleton and its seven
-reviewed content contracts; keep `dependencies=[]`. Installer versioning and
-tag/publication approval remain separate release decisions.
+The standalone `kinflow-flight` pack starts at `1.0.0-draft.1`. The draft uses
+`spine.pack-manifest.v2`, declares the exact 0.12.0 runtime and its seven
+reviewed content contracts, and has `dependencies=[]`. Installer versioning
+and tag/publication approval remain separate release decisions.
 
-The proposed pack declares one archetype, one schema, one facet binding, two
+The pack declares one archetype, one schema, one facet binding, two
 rendering definitions, two profiles and one default binding:
-`flight -> flight_standard`. The ordinary profile's existing semantic content
-is retained; explicit v2 ordinary markers do not authorize a forced revision
-of an equivalent historical v1 profile. The new details profile is nondefault.
+`flight -> flight_details_standard`. An equivalent historical v1
+`flight_standard` can be retained when selected because its ordinary
+presentation and timing match the draft.
 
-There are two existing format/selection constraints worth making explicit:
+Use selection `all` to include all eight configuration objects.
+Archetype-only selection includes seven objects covering the default profile,
+both rendering definitions and the facet configuration. The ordinary profile
+is the extra object selected by `all`.
 
-1. Manifest v2 requires at least one default binding. An entirely binding-free
-   opt-in pack would need a separately reviewed format change. Keeping the
-   ordinary flight default supplies the required binding without such a change.
-2. Granular selection of `flight` follows its default profile and facet binding;
-   it does not pull in the unreferenced details profile/rendering definitions.
-   The supported proposal therefore uses selection `all` on this small
-   flight-only pack. No installer selector or dependency rule is changed.
-
-Here `all` selects eight configuration objects. Archetype-only selection
-selects five, leaving out the nondefault profile and both rendering definitions.
-
-On a fresh owner catalog this creates the ordinary default. An equivalent
-existing default is retained. If an operator has another flight default,
-the plan reports binding drift and requires explicit authorization before
-changing it; opting into the pack is not permission to override that choice.
-Likewise, conflicting schema/profile/definition keys fail closed without exact
-update approval. A separate pack is a distribution boundary, not isolated
-catalog ownership or permission to overwrite shared owner-local keys.
-
-The alternative is a successor starter release carrying the other 51
-archetypes unchanged, or making the new details profile the flight default.
-Those alternatives increase release scope or change future authoring behavior;
-neither is selected by this proposal. Supporting nondefault-profile inclusion
-under archetype-only selection would be separate installer/contract work.
+On a fresh owner catalog the plan proposes the details default. It retains an
+equivalent binding. A preexisting `flight_standard` binding or any other
+different flight default appears as binding drift and requires explicit
+authorization for an update. The same approval boundary applies to conflicts
+on shared owner-local schema, profile and definition keys.
 
 ## Disclosure, application and historical behavior
 
-The proposed selections answer what this profile can request, not who may
-receive it. An operator still chooses the item owner, exact definition revision,
+An agent can request the details default while facet values are still absent.
+Once a policy uses an authorized rendering definition, Spine checks the
+available values at render time. A gate supplied later can appear on the
+one-hour reminder if it is available and authorized when Spine renders it.
+An operator chooses the item owner, exact definition revision,
 approved selection subset, profile-scoped use, destination and permitted airport
 location identities through Spine's disclosure workflow. None belongs in the
 reusable pack. A narrower approved subset may omit `From` or `To` without
@@ -278,18 +252,19 @@ The flight-details and gate definitions are distinct scopes; neither borrows
 the other's disclosure approval. Authoring a selected definition still needs
 valid presentation/disclosure configuration when its optional values are absent.
 
-Missing approval at authoring is not permission to downgrade silently. The
-authoring agent must explicitly choose ordinary presentation or complete the
-separate authorization/application workflow. At attempt time, eligible ordinary
-reminders can omit missing or unauthorized optional details under Spine's
-existing rules. Corruption, unsupported evidence and operational failures are
-not treated as missing optional values.
+Spine's v3 authoring request requires a presentation choice for each surviving
+definition-pinned template. The agent can explicitly choose ordinary
+presentation or select the definition with valid disclosure configuration.
+Spine's existing attempt rules omit missing or unauthorized optional details
+when the reminder is otherwise eligible.
 
 The pinned guide at this exact baseline requires fresh trusted-local items to
 start with ordinary presentation, followed by explicit ownership/adoption,
-facet authoring and presentation setup if details are wanted. Consumer readiness
-for that workflow must be checked separately. Installing this pack performs
-none of those item-level operations and cannot claim delivery readiness.
+facet authoring and presentation setup if details are wanted. The selected
+profile supplies the schedule and template pins. The agent can enable the
+authorized detail presentation with a presentation-only edit, even before
+the optional values are populated. Consumer readiness for this workflow
+must be verified separately.
 
 Installed schema/rendering/profile revisions are pinned exactly. Publishing
 later content does not upgrade existing profile applications or historical
@@ -297,52 +272,16 @@ notifications. Changing fields, labels, order, reminder pins or defaults needs
 a new reviewed pack version and explicit installation changes. Item/facet
 values remain separately authored Spine data; packs never contain travel facts.
 
-## Decisions requested from the operator
+## Draft verification and release gates
 
-Arrival capture as optional informational text, excluded from rendering, is
-approved, as is queryability of `flight_number` and `destination`. Optional,
-non-queryable gate capture and the per-reminder selection contents/timing in D2
-are also approved. Remaining field bounds/display metadata and D3-D4 choices
-remain pending. Approval of the proposal
-should identify any deviations; preparing it does not approve those choices.
+The content tests check the draft digest, field declarations, exact rendering
+selections and the two profiles' schedules against the starter release.
+Planning tests use synthetic catalog evidence to check both selection modes,
+resolve the rendering references and prove the draft cannot be applied.
 
-| Decision | Recommended choice |
-| --- | --- |
-| D1: fields and validation | Approved: optional informational arrival text, `queryable=true` for `flight_number`/`destination`, and optional non-queryable `departure_gate`. Remaining recommendations: all fields optional, origin/arrival fields non-queryable and proposed text bounds/metadata as described above |
-| D2: visible details | Approved: flight number/airports at seven days and four hours, gate only at one hour when present, 24-hour reminder ordinary. Proposed labels/order remain `Flight`, `From`, `To` and `Gate` in their respective definitions |
-| D3: profile/default | Add `flight_details_standard` for explicit use; keep `flight_standard` as the default; retain all existing timing/grace values |
-| D4: distribution/identity | Separate `kinflow-flight`, proposed `1.0.0-draft.1` toward `1.0.0`; install with selection `all`; use the proposed schema/definition keys and display metadata above |
-
-Destination-specific disclosure and item authoring remain later operator
-configuration. Installer release version, consumer readiness, exact staging
-baseline and publication/deployment permissions remain separate release gates.
-
-## Next bounded implementation after content approval
-
-1. Record the approved choices, create the one new draft manifest and content
-   assertions, and leave all existing pack artifacts unchanged. Verify both
-   projections, both profile schedules, selection closure and reference edges,
-   including the explicitly selected nondefault profile.
-   Assert both arrival fields are optional supported text declarations and are
-   absent from every rendering selection. Distinguish these content assertions
-   from timestamp/timezone semantic validation by future item-authoring agents.
-   Assert the approved flight-number/destination query flags. Document exact
-   location-reference matching rather than promising label-based queries.
-   Assert optional, non-queryable gate text; two distinct rendering definitions;
-   and exact seven-day/four-hour/one-hour template pins with 24-hour ordinary
-   rendering. Preserve Spine's per-selection omission behavior for missing
-   optional values without claiming a new pack-level rendering engine.
-2. Exercise missing/retain/authorized-drift/refused-drift and read-only verify
-   with new disposable configuration-only ledgers and the exact qualified public
-   CLI. Check that `all` includes every proposed object while archetype-only
-   selection has the narrower closure described above. No item/facet values,
-   disclosure grants, materialization or sends are part of pack installation.
-3. Complete the scoped content review and any required separately approved
-   external audit. Finalize successor pack/installer release identities, then
-   qualify the exact committed release candidate and its checksum-pinned assets.
-4. Prepare the staging handoff with explicit owner/target, selected pack,
-   plan approval and readback verification. Report consumer/disclosure setup
-   separately. Publication and operator installation require separate approval.
+The remaining work is tracked in the
+[implementation plan](implementation-plan.md). Destination disclosure, item
+authoring and consumer readiness are checked separately from pack content.
 
 ## Inspected sources
 

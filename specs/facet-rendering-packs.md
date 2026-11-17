@@ -486,12 +486,11 @@ presentation workflow if details are wanted. The installer must not silently set
 up that workflow or stop services. Making a rendering-enabled profile the default
 therefore affects future authoring compatibility, even though it sends nothing.
 
-## 10. Flight proof and unresolved product choices
+## 10. Flight proof and curated draft
 
-The FR-6 [flight-content proposal](flight-content-proposal.md) presents concrete
-field, label, template, default and distribution choices for operator review.
-It is proposed content, not approval or an installable manifest. Its opt-in
-recommendation accounts for the current default-binding and selection rules.
+The FR-6 [flight content spec](flight-content-proposal.md) records the decisions
+implemented in the separate `kinflow-flight 1.0.0-draft.1` manifest. The draft
+supports read-only plan inspection on the exact 0.12.0/schema 20 baseline.
 
 Keep `flight` event-only and preserve `flight_standard`'s four approved template
 keys, offsets and grace windows from `specs/kinflow-starter.md`: 7 days/24h grace,
@@ -499,42 +498,21 @@ keys, offsets and grace windows from `specs/kinflow-starter.md`: 7 days/24h grac
 Synthetic fixtures may use test-only IDs outside `packs/`; they are not installable
 curated content or permission to create an item.
 
-Candidate proof: one `flight_details` schema, one flight facet binding, one
+The original synthetic flight proof uses one `flight_details` schema, one flight facet binding, one
 rendering definition with a scalar flight-number selection and a location-label
-selection, one profile and one default binding. Test both projections even if
-the eventual curated profile initially selects fewer details. Do not copy Spine's
+selection, one profile and one default binding. Do not copy Spine's
 illustrative fixtures as an approved field policy: the facet example uses
 `origin`/`destination`, whereas rendering examples also use `terminal` and
 `departure_airport`. These are examples, not a canonical shared flight schema.
 
-Decisions requiring operator choice before curated content:
-
-1. Exact field vocabulary and required/queryable settings. Recommendation for
-   review: begin with `flight_number`, `origin`, `destination`; leave terminal,
-   status and secrets out. Decide which values, if any, are mandatory when
-   a facet is attached; the facet itself remains optional.
-   During FR-6 review, the operator approved adding optional informational
-   `arrival_at` and `arrival_timezone` text, with authoring-agent semantic
-   validation and no arrival rendering. The proposal records that bounded
-   decision; it does not add a datetime type or change scheduling authority.
-   The operator subsequently approved `queryable=true` for `flight_number`
-   and `destination`, using existing typed equality queries; destination
-   predicates match a location reference, not a rendered airport label.
-   The operator also approved optional non-queryable `departure_gate` text.
-2. Display labels/order and which reminders pin details. The FR-6 operator
-   decision supersedes the earlier one-hour-only pilot recommendation: flight
-   number/airport details at seven days and four hours, gate-only details at
-   one hour when present, and ordinary rendering at 24 hours. The proposal
-   describes two definitions and pending metadata. These choices do not grant
-   disclosure or authorize profile application to an item.
-3. Opt-in coexistence versus replacing `flight_standard` for future defaults.
-   Recommendation: a distinctly keyed opt-in profile until consuming agents
-   support v2 applications. A default-binding replacement still requires exact
-   update approval and changes future authoring expectations. Do not choose a
-   duplicate root name, pack ID or version on the operator's behalf.
-4. Distribution identity: a separate flight-focused pack or a successor starter
-   release containing unchanged other definitions. Recommendation: qualify with
-   synthetic flight-only fixtures first; decide the release layout afterward.
+The curated draft uses six optional fields and two rendering definitions.
+Only flight number and destination are queryable. Destination equality uses
+the Spine location reference. Arrival timestamp and timezone are informational
+text with semantic validation by the authoring agent and no rendering selection.
+The default `flight_details_standard` pins flight number and airport details at
+seven days and four hours and gate-only detail at one hour, with ordinary
+rendering at 24 hours. Whole-pack selection also includes `flight_standard`
+for explicit selection of four ordinary reminders.
 
 Technical review gates, not product-policy questions: the repaired profile-list gate
 has passed as described in Section 1; exact v2 artifact schemas,

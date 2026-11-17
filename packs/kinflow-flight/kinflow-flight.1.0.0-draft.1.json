@@ -1,0 +1,367 @@
+{
+  "manifest_schema": "spine.pack-manifest.v2",
+  "pack": {
+    "pack_id": "kinflow-flight",
+    "version": "1.0.0-draft.1",
+    "status": "draft"
+  },
+  "compatibility": {
+    "spine_runtime_versions": [
+      "0.12.0"
+    ],
+    "spine_content_contracts": [
+      "spine.archetype-facet-bindings.v1",
+      "spine.facet-schemas.v1",
+      "spine.item-archetypes.v1",
+      "spine.notification-profile-bindings.v1",
+      "spine.notification-profiles.v2",
+      "spine.notification-rendering-definitions.v1",
+      "spine.notification-rendering.v1"
+    ]
+  },
+  "dependencies": [],
+  "archetypes": [
+    {
+      "archetype_key": "flight",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Flight",
+        "description": "Scheduled flight departures.",
+        "compatible_item_types": [
+          "event"
+        ]
+      }
+    }
+  ],
+  "notification_profiles": [
+    {
+      "profile_key": "flight_details_standard",
+      "display_name": "Flight details standard",
+      "description": "Booking, travel-document, packing, check-in, gate, and boarding reminders for a scheduled flight, with selected flight details at seven days and four hours and an optional departure gate at one hour.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-14400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            },
+            "rendering": {
+              "kind": "definition",
+              "definition_ref": {
+                "definition_key": "flight_details"
+              }
+            }
+          },
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            },
+            "rendering": {
+              "kind": "definition",
+              "definition_ref": {
+                "definition_key": "flight_departure_gate"
+              }
+            }
+          },
+          {
+            "template_key": "seven_days_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-604800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            },
+            "rendering": {
+              "kind": "definition",
+              "definition_ref": {
+                "definition_key": "flight_details"
+              }
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            },
+            "rendering": {
+              "kind": "ordinary"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "profile_key": "flight_standard",
+      "display_name": "Flight standard",
+      "description": "Booking, travel-document, packing, check-in, gate, and boarding reminders for a scheduled flight.",
+      "intended_status": "active",
+      "revision": {
+        "compatible_item_types": [
+          "event"
+        ],
+        "templates": [
+          {
+            "template_key": "four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-14400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "3600"
+            },
+            "rendering": {
+              "kind": "ordinary"
+            }
+          },
+          {
+            "template_key": "one_hour_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-3600"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "900"
+            },
+            "rendering": {
+              "kind": "ordinary"
+            }
+          },
+          {
+            "template_key": "seven_days_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-604800"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "86400"
+            },
+            "rendering": {
+              "kind": "ordinary"
+            }
+          },
+          {
+            "template_key": "twenty_four_hours_before",
+            "schedule": {
+              "kind": "once",
+              "at": {
+                "kind": "target_offset",
+                "offset_basis": "elapsed",
+                "offset_seconds": "-86400"
+              }
+            },
+            "late_handling": {
+              "kind": "deliver_within",
+              "grace_seconds": "21600"
+            },
+            "rendering": {
+              "kind": "ordinary"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "binding_intents": [
+    {
+      "binding_kind": "archetype_default",
+      "archetype_key": "flight",
+      "notification_profile_key": "flight_details_standard"
+    }
+  ],
+  "facet_schemas": [
+    {
+      "schema_key": "flight_details",
+      "intended_status": "active",
+      "definition": {
+        "display_name": "Flight details",
+        "description": "Optional flight number, airport references, departure gate, and informational arrival timestamp and destination timezone for a scheduled flight.",
+        "compatible_item_types": [
+          "event"
+        ],
+        "fields": [
+          {
+            "key": "arrival_at",
+            "type": "text",
+            "max_length": "64",
+            "required": false,
+            "queryable": false
+          },
+          {
+            "key": "arrival_timezone",
+            "type": "text",
+            "max_length": "128",
+            "required": false,
+            "queryable": false
+          },
+          {
+            "key": "departure_gate",
+            "type": "text",
+            "max_length": "32",
+            "required": false,
+            "queryable": false
+          },
+          {
+            "key": "destination",
+            "type": "reference",
+            "target_kind": "location",
+            "required": false,
+            "queryable": true
+          },
+          {
+            "key": "flight_number",
+            "type": "text",
+            "max_length": "32",
+            "required": false,
+            "queryable": true
+          },
+          {
+            "key": "origin",
+            "type": "reference",
+            "target_kind": "location",
+            "required": false,
+            "queryable": false
+          }
+        ]
+      }
+    }
+  ],
+  "archetype_facet_bindings": [
+    {
+      "archetype_key": "flight",
+      "facet_key": "flight",
+      "schema_ref": {
+        "schema_key": "flight_details"
+      }
+    }
+  ],
+  "rendering_definitions": [
+    {
+      "definition_key": "flight_departure_gate",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Flight departure gate",
+        "description": "Optional recorded departure gate for a flight boarding reminder.",
+        "compatible_item_types": [
+          "event"
+        ],
+        "base_rendering_contract": "spine.notification-rendering.v1",
+        "base_rendering_profile": "spine.notification-rendering.concise-en-ca.v1",
+        "selections": [
+          {
+            "selection_key": "departure_gate",
+            "facet_key": "flight",
+            "schema_ref": {
+              "schema_key": "flight_details"
+            },
+            "field_key": "departure_gate",
+            "label": "Gate",
+            "projection": "value"
+          }
+        ]
+      }
+    },
+    {
+      "definition_key": "flight_details",
+      "intended_status": "active",
+      "revision": {
+        "display_name": "Flight details",
+        "description": "Selected flight number and airport labels for flight reminders.",
+        "compatible_item_types": [
+          "event"
+        ],
+        "base_rendering_contract": "spine.notification-rendering.v1",
+        "base_rendering_profile": "spine.notification-rendering.concise-en-ca.v1",
+        "selections": [
+          {
+            "selection_key": "flight_number",
+            "facet_key": "flight",
+            "schema_ref": {
+              "schema_key": "flight_details"
+            },
+            "field_key": "flight_number",
+            "label": "Flight",
+            "projection": "value"
+          },
+          {
+            "selection_key": "origin",
+            "facet_key": "flight",
+            "schema_ref": {
+              "schema_key": "flight_details"
+            },
+            "field_key": "origin",
+            "label": "From",
+            "projection": "location_label"
+          },
+          {
+            "selection_key": "destination",
+            "facet_key": "flight",
+            "schema_ref": {
+              "schema_key": "flight_details"
+            },
+            "field_key": "destination",
+            "label": "To",
+            "projection": "location_label"
+          }
+        ]
+      }
+    }
+  ],
+  "content_identity": {
+    "algorithm": "sha256",
+    "canonical_json_version": "spine.canonical-json.v1",
+    "digest": "9b8aa240f98b8b2f6be78f10f3c2640092929a280bfb74e3ccea46051d15329d"
+  }
+}

@@ -1537,3 +1537,58 @@ Documentation checks passed: the 204-file repository verifier, 140 official
 contract tests, 330 runtime tests and whitespace checks. The gate field flags,
 two definition selections, template-pin table and object counts were checked
 for agreement. No pack artifact, schema, runtime or Spine checkout changed.
+
+### FR-6 standalone flight pack draft (2026-11-17)
+
+The operator selected the separate `kinflow-flight` pack and authorized the
+draft manifest and tests. The operator subsequently selected
+`flight_details_standard` as the default so the templates are ready to use
+when optional facet values arrive. The owner-neutral
+[`1.0.0-draft.1` manifest](../packs/kinflow-flight/kinflow-flight.1.0.0-draft.1.json)
+targets exact Spine 0.12.0/schema 20. It contains the six optional fields, two
+renderings and two profiles described in the
+[flight content spec](flight-content-proposal.md). The draft adopts the proposed
+field lengths, display metadata and labels. Whole-pack selection also includes
+`flight_standard` as the explicit ordinary profile.
+
+Content tests check the official v2 schema, independent content digest, field
+flags, the rendering selections and profile timing against the starter pack.
+Synthetic catalog plans check the default binding and template references in
+both selection modes. Whole-pack selection includes eight objects and
+archetype-only selection includes seven. The draft requires explicit
+inspection posture and is ineligible for apply.
+
+The repository verifier, 146 contract tests with the official validator,
+330 runtime tests and whitespace checks passed. The v1 fixture index retains
+coverage of all v1 curated manifests. The v2 content tests cover the new draft.
+
+### FR-6 disposable-ledger rehearsal (2026-11-18)
+
+Both configuration scenarios passed using the source-tree installer and the
+public CLI from an isolated install of exact Spine commit
+`3e65ef0de9e73b62047a0f6328731db08ca91023` (0.12.0, schema 20).
+The Spine wheel SHA-256 was
+`df25c188394c6adb4ea6da0c437b931c499d2fdb5424bb0e6e291412eeee0107`.
+The inspected draft had content digest
+`9b8aa240f98b8b2f6be78f10f3c2640092929a280bfb74e3ccea46051d15329d`.
+Apply used a local test copy with the same definitions and a separate pack
+identity, lifecycle status and resulting digest.
+
+- On a fresh catalog, whole-pack inspection planned eight objects and
+  archetype-only inspection planned seven. Both selected
+  `flight_details_standard` as the default. Apply correctly refused the
+  draft. The test copy applied eight configuration writes and verified all
+  eight objects.
+- On a second fresh ledger seeded with the ordinary default, the planner
+  retained the v1 `flight_standard` profile and identified the binding as the
+  only update that required action approval. Apply refused an approval
+  missing that action before making any writes. With exact approval, it
+  applied five creates and the binding update. Public readback verified the
+  active details default and all eight objects.
+- Both repeat plans proposed zero writes. Read-only verification of both
+  retained plans succeeded.
+
+This rehearsal verified the draft's configuration graph and approval behavior
+on disposable catalogs. Consumer presentation readiness, destination
+disclosure, exact committed release qualification, publication and staging
+approval are separate gates.
