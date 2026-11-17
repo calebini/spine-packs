@@ -488,6 +488,11 @@ therefore affects future authoring compatibility, even though it sends nothing.
 
 ## 10. Flight proof and unresolved product choices
 
+The FR-6 [flight-content proposal](flight-content-proposal.md) presents concrete
+field, label, template, default and distribution choices for operator review.
+It is proposed content, not approval or an installable manifest. Its opt-in
+recommendation accounts for the current default-binding and selection rules.
+
 Keep `flight` event-only and preserve `flight_standard`'s four approved template
 keys, offsets and grace windows from `specs/kinflow-starter.md`: 7 days/24h grace,
 24h/6h, 4h/1h, 1h/15m. No flight values or notification text bodies go into packs.
@@ -506,11 +511,22 @@ Decisions requiring operator choice before curated content:
 
 1. Exact field vocabulary and required/queryable settings. Recommendation for
    review: begin with `flight_number`, `origin`, `destination`; leave terminal,
-   gate, status and secrets out. Decide which values, if any, are mandatory when
+   status and secrets out. Decide which values, if any, are mandatory when
    a facet is attached; the facet itself remains optional.
-2. Display labels/order and which reminders pin details. Recommendation: pilot
-   only `one_hour_before`, leaving the other three explicitly ordinary. This is
-   not yet approved content or a disclosure grant.
+   During FR-6 review, the operator approved adding optional informational
+   `arrival_at` and `arrival_timezone` text, with authoring-agent semantic
+   validation and no arrival rendering. The proposal records that bounded
+   decision; it does not add a datetime type or change scheduling authority.
+   The operator subsequently approved `queryable=true` for `flight_number`
+   and `destination`, using existing typed equality queries; destination
+   predicates match a location reference, not a rendered airport label.
+   The operator also approved optional non-queryable `departure_gate` text.
+2. Display labels/order and which reminders pin details. The FR-6 operator
+   decision supersedes the earlier one-hour-only pilot recommendation: flight
+   number/airport details at seven days and four hours, gate-only details at
+   one hour when present, and ordinary rendering at 24 hours. The proposal
+   describes two definitions and pending metadata. These choices do not grant
+   disclosure or authorize profile application to an item.
 3. Opt-in coexistence versus replacing `flight_standard` for future defaults.
    Recommendation: a distinctly keyed opt-in profile until consuming agents
    support v2 applications. A default-binding replacement still requires exact

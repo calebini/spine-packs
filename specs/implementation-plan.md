@@ -1457,3 +1457,83 @@ No read gate or full matrix was rerun for this evidence-only change, and no
 release qualification is claimed. Preserve all four approved payloads/verdicts.
 No installer runtime/contract/pack or Spine checkout change, new external
 review, commit, push, deployment or publication is included in this follow-up.
+
+### FR-6 flight-content proposal for operator review (2026-11-17)
+
+After checkpoint `8dd5861`, the operator authorized preparing the actual flight
+content proposal for review. [flight-content-proposal.md](flight-content-proposal.md)
+owns the pending D1-D4 choices: optional flight number/airport references,
+ordered detail labels on the one-hour reminder, a distinct opt-in profile with
+the ordinary default retained, and a small separately versioned flight pack.
+The proposal explicitly accounts for mandatory default-binding declarations
+and whole-pack selection needed to include a nondefault profile under the
+current graph closure. It adds no selector or format change.
+
+This is documentation only. No draft/released manifest, runtime, fixture,
+Spine checkout, owner/disclosure/item configuration or release artifact changes
+are authorized by preparing it. The next content implementation waits for
+operator decisions; no external review, commit, push, publication or deployment
+is included in this proposal task.
+
+Documentation checks passed: repository verifier (204 required files), 140
+official contract tests, 330 runtime tests and whitespace checks. The proposal's
+relative spec links resolve. No new behavioral tests or package qualification
+were needed for this documentation-only increment. No product choices have
+been ratified by these checks.
+
+### FR-6 informational arrival-data decision (2026-11-17)
+
+The operator deferred native arrival-time rendering, then explicitly approved
+capturing optional `arrival_at` and `arrival_timezone` as informational text
+fields in the proposed flight facet. The proposal now distinguishes supported
+text validation from the authoring agent's timestamp, timezone and consistency
+checks. Both fields remain unselected by every notification rendering. They
+do not replace departure/event-end temporal authority or change scheduling.
+Arrival text bounds and remaining D1/D2-D4 content choices remain proposed;
+this decision does not approve the rest of the pack or authorize a manifest,
+runtime change, upstream work, installation, release, commit or push.
+
+The documentation follow-up passed the 204-file repository verifier, 140
+official contract tests, 330 runtime tests and whitespace checks. Proposal
+links and its illustrative timestamp/timezone pair were checked. This does not
+claim runtime timestamp validation or installation of the proposed fields.
+
+### FR-6 flight-number and destination query decision (2026-11-17)
+
+The operator explicitly selected `queryable=true` for `flight_number` and
+`destination`. The proposal records those flags as approved, while retaining
+the proposed false flags for origin and the two arrival text fields. Existing
+Spine typed equality query semantics apply: flight-number text is case-sensitive,
+and destination predicates use a location reference ID rather than a display
+label. No new query capability, lookup heuristic or compound/range filtering
+is introduced. Other content decisions remain pending; this is a proposal
+update, not a manifest, runtime change, installation, commit or release.
+
+Documentation checks passed: the 204-file repository verifier, 140 official
+contract tests, 330 runtime tests and whitespace checks. The proposal's field
+table and decision summary agree on the two approved true flags. No query was
+run on an operator ledger, and no installer command allowlist was expanded.
+
+### FR-6 gate and per-reminder rendering decisions (2026-11-17)
+
+The operator approved optional, non-queryable `departure_gate` and moved the
+flight-number/airport definition to the seven-day and four-hour reminders.
+In response to the explicit clarification question, the operator selected
+gate-only details at one hour; 24-hour rendering remains ordinary. The proposal
+now describes two rendering definitions sharing the one flight facet schema,
+with unchanged schedules/grace values. Missing optional gate detail leaves the
+ordinary eligible reminder intact under Spine's existing omission rules.
+
+Whole-pack selection now contains eight configuration objects; archetype-only
+selection remains five because it excludes the nondefault profile and both
+rendering definitions. Arrival data remains unrendered, and only flight number
+and destination are queryable. No gate-freshness timeout, external advisory,
+automatic value population or new Spine capability is introduced. Remaining
+pack identity/default and field-bound/display choices stay pending; no manifest,
+runtime change, installation, external review, commit or release is authorized
+by this proposal update.
+
+Documentation checks passed: the 204-file repository verifier, 140 official
+contract tests, 330 runtime tests and whitespace checks. The gate field flags,
+two definition selections, template-pin table and object counts were checked
+for agreement. No pack artifact, schema, runtime or Spine checkout changed.
