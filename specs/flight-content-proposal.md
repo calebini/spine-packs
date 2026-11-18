@@ -1,10 +1,10 @@
 # FR-6 flight pack content
 
 The operator approved a separate `kinflow-flight` pack and selected
-`flight_details_standard` as its default profile. The implemented
-[1.0.0-draft.1 manifest](../packs/kinflow-flight/kinflow-flight.1.0.0-draft.1.json)
-is available for inspection through the read-only planner. Release and
-installation are later gates.
+`flight_details_standard` as the departure default.
+[1.0.0-draft.2](../packs/kinflow-flight/kinflow-flight.1.0.0-draft.2.json)
+adds the `flight_arrival` event and its default profile. The read-only planner
+can inspect both drafts. Release and installation are later gates.
 
 The governing contracts are [facet-rendering-packs.md](facet-rendering-packs.md),
 [spine-0.12.0-alignment.md](spine-0.12.0-alignment.md) and the existing
@@ -213,14 +213,15 @@ projections without duplicating schedules or adding a gate-specific reminder.
 Do not apply both complete profiles to the same item merely to add details;
 the agent should deliberately choose the intended profile application.
 
-## Default, selection and distribution
+## Departure draft selection
 
-The standalone `kinflow-flight` pack starts at `1.0.0-draft.1`. The draft uses
+The standalone `kinflow-flight` pack starts at
+[`1.0.0-draft.1`](../packs/kinflow-flight/kinflow-flight.1.0.0-draft.1.json). It uses
 `spine.pack-manifest.v2`, declares the exact 0.12.0 runtime and its seven
 reviewed content contracts, and has `dependencies=[]`. Installer versioning
 and tag/publication approval remain separate release decisions.
 
-The pack declares one archetype, one schema, one facet binding, two
+Draft 1 declares one archetype, one schema, one facet binding, two
 rendering definitions, two profiles and one default binding:
 `flight -> flight_details_standard`. An equivalent historical v1
 `flight_standard` can be retained when selected because its ordinary
@@ -272,12 +273,64 @@ notifications. Changing fields, labels, order, reminder pins or defaults needs
 a new reviewed pack version and explicit installation changes. Item/facet
 values remain separately authored Spine data; packs never contain travel facts.
 
+## Flight arrival and pickup task
+
+`1.0.0-draft.2` adds active, event-only `flight_arrival` with display name
+`Flight arrival`. The authoring agent sets the event start to scheduled
+landing in the destination's timezone and sets the arrival airport as
+`item.primary_location`. It can create a place with a label such as
+`Toronto Pearson (YYZ)` or reuse a known Spine location by ID. The time anchor
+carries its own timezone. The facet adds the inbound flight number, origin
+airport and terminal.
+
+The pickup is a separate task. Its due anchor holds the agreed meetup time,
+and its first-class primary location holds the specific meetup point, such as
+`Terminal 2 arrivals curb, Door B`. The agent can author a fixed due time or
+use Spine's event-start-to-task-due binding when creating a task with an elapsed
+offset from landing. For timing that follows the event, opt into Spine's
+`follow_source` behavior. Keep the meetup point and task reminders on the
+task. The manifest provisions the arrival configuration. Task creation,
+location selection and any temporal binding belong to item authoring.
+
+The `flight_arrival` facet binding pins the `flight_arrival_details` schema.
+All fields below are optional:
+
+| Field | Type | Queryable |
+| --- | --- | --- |
+| `arrival_terminal` | Text, maximum 32 Unicode code points | No |
+| `flight_number` | Text, maximum 32 Unicode code points | Yes, exact match |
+| `origin` | Spine location reference for the departure airport | No |
+
+The `flight_arrival_details` rendering definition selects these in order:
+`Flight` from `flight_number` via `value`, `From` from `origin` via
+`location_label`, and `Terminal` from `arrival_terminal` via `value`.
+Spine can omit an unavailable detail independently at render time. Authoring
+uses explicit presentation choices and disclosure for the selected fields.
+
+The default profile `flight_arrival_standard` uses once-only elapsed
+offsets from the arrival event start:
+
+| Template key | Offset in seconds | Late window in seconds | Rendering |
+| --- | ---: | ---: | --- |
+| `twenty_four_hours_before` | `-86400` | `21600` | Ordinary |
+| `one_hour_before` | `-3600` | `1800` | `flight_arrival_details` |
+| `at_scheduled_landing` | `0` | `900` | `flight_arrival_details` |
+
+Use a title such as `Scheduled arrival of EX123` so the ordinary message
+describes the time as scheduled. The reminder at offset zero signals the event
+anchor. Confirmation of actual landing comes from a separate source.
+
+The departure configuration carries forward from draft 1. Selecting
+`flight_arrival` in draft 2 includes its six configuration objects.
+Selecting `flight` includes its seven default configuration objects.
+Whole-pack selection includes all 14 objects and both defaults.
+
 ## Draft verification and release gates
 
-The content tests check the draft digest, field declarations, exact rendering
-selections and the two profiles' schedules against the starter release.
-Planning tests use synthetic catalog evidence to check both selection modes,
-resolve the rendering references and prove the draft cannot be applied.
+The content tests check draft digests, field declarations, rendering
+selections and profile schedules, including the exact landing offset.
+Planning tests use synthetic catalog evidence to check the arrival, departure
+and whole-pack selections and their rendering references.
 
 The remaining work is tracked in the
 [implementation plan](implementation-plan.md). Destination disclosure, item

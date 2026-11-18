@@ -109,6 +109,9 @@ The operator authorized the FR-6 draft manifest and tests for the separate
 `specs/flight-content-proposal.md` for the draft content. The operator selected
 `flight_details_standard` as the default. The ordinary `flight_standard`
 profile is available through whole-pack selection. The draft is inspection-only.
+The operator authorized draft 2 to add a `flight_arrival` event, optional
+arrival facet and default profile. See `specs/flight-content-proposal.md` for
+the scheduled landing anchor and separate pickup task authoring boundary.
 Mark unresolved design details explicitly instead of silently choosing them.
 
 When the repository advances, add only the smallest structure required by real

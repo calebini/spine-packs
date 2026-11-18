@@ -491,6 +491,8 @@ therefore affects future authoring compatibility, even though it sends nothing.
 The FR-6 [flight content spec](flight-content-proposal.md) records the decisions
 implemented in the separate `kinflow-flight 1.0.0-draft.1` manifest. The draft
 supports read-only plan inspection on the exact 0.12.0/schema 20 baseline.
+Draft 2 extends the pack with the event-only `flight_arrival` archetype,
+its optional facet and its scheduled landing profile under the same baseline.
 
 Keep `flight` event-only and preserve `flight_standard`'s four approved template
 keys, offsets and grace windows from `specs/kinflow-starter.md`: 7 days/24h grace,

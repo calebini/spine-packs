@@ -1592,3 +1592,22 @@ This rehearsal verified the draft's configuration graph and approval behavior
 on disposable catalogs. Consumer presentation readiness, destination
 disclosure, exact committed release qualification, publication and staging
 approval are separate gates.
+
+### FR-6 flight arrival draft (2026-11-18)
+
+The operator selected a scheduled landing event and a separate pickup task.
+`kinflow-flight 1.0.0-draft.2` adds event-only `flight_arrival`, the optional
+arrival facet, and the default `flight_arrival_standard` profile. The arrival
+airport and pickup meetup point use each item's own primary location. The
+arrival profile anchors its three reminders to the event start. Task due time,
+location and any elapsed offset binding are item-authoring inputs.
+
+Draft 2 carries forward draft 1's departure definitions and exact
+0.12.0/schema 20 compatibility. It adds six arrival configuration objects.
+Contract tests cover both draft digests, preservation of draft 1 bytes,
+the arrival field declarations and rendering choices, exact landing offset
+and the arrival, departure and whole-pack selection closures. The prior
+disposable-ledger rehearsal covered draft 1's departure configuration.
+
+The repository verifier, 151 contract tests with the official validator,
+330 runtime tests and whitespace checks passed for draft 2.

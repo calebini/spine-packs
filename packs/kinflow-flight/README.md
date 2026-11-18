@@ -1,8 +1,12 @@
 # kinflow-flight
 
-[Version 1.0.0-draft.1](kinflow-flight.1.0.0-draft.1.json) is the first draft of
-the standalone flight pack for Spine 0.12.0, ledger schema 20. The installer can
-plan it with `draft_posture=inspect_only`. The plan is ineligible for apply.
+[Version 1.0.0-draft.2](kinflow-flight.1.0.0-draft.2.json) adds scheduled
+flight arrivals to the departures in
+[version 1.0.0-draft.1](kinflow-flight.1.0.0-draft.1.json). Both drafts target
+Spine 0.12.0, ledger schema 20, and support read-only planning with
+`draft_posture=inspect_only`.
+
+## Flight departure
 
 `flight` is a scheduled departure. Its default profile is
 `flight_details_standard`. Missing values are omitted when Spine renders an
@@ -22,8 +26,23 @@ facet queries. Destination queries match the referenced Spine location ID.
 Arrival timestamp and timezone are informational text excluded from both
 rendering definitions.
 
-Use `selection.mode=all` in a v2 install request to inspect the complete
-eight-object pack, including `flight_standard`. Selecting only the `flight`
-archetype includes the seven objects in its default configuration. See the
-[content design](../../specs/flight-content-proposal.md) for exact field,
-rendering and disclosure semantics.
+## Flight arrival
+
+`flight_arrival` uses the scheduled landing instant as the event start and
+the arrival airport as its primary location. A separate pickup task holds
+the meetup due time and the specific meetup location. The arrival facet has
+three optional fields: flight number, origin airport, and arrival terminal.
+Only flight number is queryable.
+
+| Relative to scheduled landing | Presentation in `flight_arrival_standard` | Late-delivery window |
+| --- | --- | --- |
+| 24 hours before | Ordinary reminder | 6 hours |
+| 1 hour before | Flight number, origin-airport label and terminal when available and authorized | 30 minutes |
+| At scheduled landing | The same arrival details when available and authorized | 15 minutes |
+
+In draft 2, select `flight_arrival` to inspect the six arrival objects or
+`flight` to inspect the seven objects for the departure default.
+`selection.mode=all` includes all 14 objects, including the ordinary
+`flight_standard` departure profile. See the
+[content specification](../../specs/flight-content-proposal.md) for item
+authoring and disclosure semantics.
