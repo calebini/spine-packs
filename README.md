@@ -5,13 +5,12 @@ operator-installable archetype and notification-profile packs for Spine. Packs
 are declarative, reusable content; they are not services and do not become
 authoritative runtime state merely by existing here.
 
-Release finalization: installer candidate `0.3.0` adds the pinned
-Spine `0.6.0` / schema 15 baseline. Published installer `0.2.0` and pack `1.0.0`
-do not admit `0.6.0`. Stable pack successor `1.0.1` is prepared from the
-compatibility-only `1.0.1-draft.1`; the draft remains ineligible for apply.
-Neither new release is published yet. See
-[0.6.0 qualification](docs/spine-0.6.0-qualification.md) for scope and gates;
-do not edit released manifests or relax version checks on staging.
+Installer candidate `0.4.0` adds the v2 installation workflow for the exact
+Spine 0.10.0/schema-19 and 0.12.0/schema-20 pins. The first v2 release
+candidates are [kinflow-flight](packs/kinflow-flight/README.md) and
+[kinflow-appointments](packs/kinflow-appointments/README.md), each at `1.0.0`
+and scoped to Spine 0.12.0/schema 20. See
+[release preparation](docs/releases.md) for packaging and publication gates.
 
 ## Authority and boundaries
 

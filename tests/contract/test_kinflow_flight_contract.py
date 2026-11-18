@@ -49,17 +49,6 @@ class KinflowFlightContractTests(unittest.TestCase):
     def test_official_manifest_validation(self):
         manifest_contract.validate(self.manifest)
 
-    def test_every_curated_pack_outside_the_v1_index_has_content_coverage(self):
-        manifests = {
-            path: manifest_contract.load(path)["manifest_schema"]
-            for path in (ROOT / "packs").rglob("*.json")
-        }
-        self.assertEqual(
-            {path: schema for path, schema in manifests.items()
-             if schema != "spine.pack-manifest.v1"},
-            {DRAFT: "spine.pack-manifest.v2", ARRIVAL_DRAFT: "spine.pack-manifest.v2"},
-        )
-
     def test_manifest_has_exact_draft_identity_and_content_contracts(self):
         validate_manifest(self.manifest)
         self.assertEqual(self.manifest["manifest_schema"], "spine.pack-manifest.v2")

@@ -1,12 +1,39 @@
 # Installer releases on GitHub
 
-Candidate installer `0.3.0` adds the exact Spine `0.6.0` / schema 15 baseline.
-It requires qualification on all three pinned baselines, bounded review, an
-exact committed release candidate, and separate version/tag/asset approval.
-It is not published by the earlier `0.2.0` authorization. Released pack `1.0.0`
-also excludes `0.6.0`; stable compatibility successor `1.0.1` is prepared
-but its publication still requires separate approval.
-See [0.6.0 qualification](spine-0.6.0-qualification.md).
+## Installer 0.4.0 and the first v2 pack releases
+
+Installer `0.4.0` is the candidate for the reviewed v2 planning, apply,
+continuation and verification paths. Its compatibility is scoped to the exact
+0.12.0/schema-20 and 0.10.0/schema-19 Spine pins and the three supported v1 pins.
+Qualify the exact candidate with the full
+[AL-3 matrix](al3-qualification.md#required-matrix).
+
+The separate `kinflow-flight 1.0.0` and `kinflow-appointments 1.0.0` manifest
+candidates carry forward the definitions from flight draft 2 and appointments
+draft 1. Both require the exact Spine 0.12.0/schema-20 pin. Rehearse installing
+and verifying these exact manifest bytes on new disposable ledgers with the
+qualified installer wheel.
+
+Proposed GitHub Releases:
+
+| Tag | Exact asset names |
+| --- | --- |
+| `installer-v0.4.0` | `spine_packs-0.4.0-py3-none-any.whl`, `spine_packs-0.4.0.tar.gz`, `SHA256SUMS` |
+| `pack-kinflow-flight-v1.0.0` | `kinflow-flight.1.0.0.json`, `SHA256SUMS` |
+| `pack-kinflow-appointments-v1.0.0` | `kinflow-appointments.1.0.0.json`, `SHA256SUMS` |
+
+Each release has its own checksum file. Use the candidate commit and exact
+asset hashes in the publication approval. Staging and production each require
+their own target, existing owner, actor, selection and plan approval. Verify
+that the target's authoring application supports the selected v2 profiles.
+Configure any needed flight-detail disclosure through Spine for the intended
+destination separately from pack installation.
+
+## Previous installer releases
+
+Installer `0.3.0` and `kinflow-starter 1.0.1` added the exact Spine
+`0.6.0` / schema 15 pin. See
+[0.6.0 qualification](spine-0.6.0-qualification.md).
 
 The initial distribution channel is GitHub Releases in `calebini/spine-packs`,
 not PyPI. The operator approved installer version `0.1.0`, MIT licensing, and
@@ -46,8 +73,8 @@ The installer requires Python 3.11+ and local POSIX filesystem behavior. The
 support. Qualification tooling and the external Spine baseline need Python
 3.12+. A compatible Spine CLI is provisioned separately. Published installer
 `0.2.0` supports the pinned `0.3.0` / schema 12 and `0.5.0` / schema 15
-baselines. Candidate installer `0.3.0` retains those baselines and adds the
-pinned `0.6.0` / schema 15 baseline; its release requires separate approval.
+baselines. Installer `0.3.0` retains those baselines and adds the
+pinned `0.6.0` / schema 15 baseline.
 The package does not install, deploy, upgrade, or configure Spine. Packs are separately
 selected inputs; shipping an installer does not make the current drafts
 apply-eligible.
@@ -96,10 +123,9 @@ cannot satisfy the package or matrix success gate. Each parent independently
 selects the expected v1/v2 scenario IDs from the shared registry; IDs declared
 only by a child report cannot satisfy that gate. Its v2 flight input is
 contract evidence, not approved
-`kinflow-starter` content. The current `0.3.0` package metadata is retained for
-local candidate builds; these builds must not replace published assets. A
-successor release identity and exact committed release qualification remain
-separate operator decisions.
+`kinflow-starter` content. Historical FR-5 and AL-3 qualifications used
+`0.3.0` metadata. Use the successor version and its own clean-commit
+qualification for new assets.
 
 For releases supporting `0.2.0`'s baselines, repeat qualification against both exact Spine commits
 in `local-qualification.md`. Only a candidate passing both may proceed to

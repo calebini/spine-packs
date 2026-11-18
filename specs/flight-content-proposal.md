@@ -6,6 +6,10 @@ The operator approved a separate `kinflow-flight` pack and selected
 adds the `flight_arrival` event and its default profile. The read-only planner
 can inspect both drafts. Release and installation are later gates.
 
+The [stable 1.0.0 candidate](../packs/kinflow-flight/kinflow-flight.1.0.0.json)
+preserves the definitions and compatibility of draft 2. The selected
+departure and arrival defaults are therefore carried into the release.
+
 The governing contracts are [facet-rendering-packs.md](facet-rendering-packs.md),
 [spine-0.12.0-alignment.md](spine-0.12.0-alignment.md) and the existing
 [flight content](kinflow-starter.md#flight). Implementation status and evidence

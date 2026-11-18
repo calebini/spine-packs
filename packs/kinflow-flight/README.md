@@ -1,5 +1,9 @@
 # kinflow-flight
 
+The [1.0.0 release candidate](kinflow-flight.1.0.0.json) carries the
+departures and arrivals from draft 2 unchanged, with stable manifest status.
+Use the checksum-verified release asset for installation after publication.
+
 [Version 1.0.0-draft.2](kinflow-flight.1.0.0-draft.2.json) adds scheduled
 flight arrivals to the departures in
 [version 1.0.0-draft.1](kinflow-flight.1.0.0-draft.1.json). Both drafts target

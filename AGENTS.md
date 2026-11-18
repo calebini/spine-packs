@@ -112,6 +112,13 @@ profile is available through whole-pack selection. The draft is inspection-only.
 The operator authorized draft 2 to add a `flight_arrival` event, optional
 arrival facet and default profile. See `specs/flight-content-proposal.md` for
 the scheduled landing anchor and separate pickup task authoring boundary.
+The separate `kinflow-appointments` draft uses the exact 0.12.0/schema 20
+baseline and the medical appointment cadence under its own ordinary profile.
+See `specs/kinflow-appointments.md` for its inspection-only content scope.
+The operator authorized preparing stable `1.0.0` candidates for both packs
+and qualification of the successor installer on exact Spine 0.12.0/schema 20
+with existing regression baselines. Use the published-release gates in
+`docs/releases.md` before distributing those artifacts.
 Mark unresolved design details explicitly instead of silently choosing them.
 
 When the repository advances, add only the smallest structure required by real
